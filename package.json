@@ -5,7 +5,8 @@
   "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev --inspect --respawn --transpile-only server.ts"
+    "dev": "ts-node-dev --inspect --respawn --transpile-only server.ts",
+    "prisma-update": "npx prisma migrate dev && npx prisma generate"
   },
   "repository": {
     "type": "git",
