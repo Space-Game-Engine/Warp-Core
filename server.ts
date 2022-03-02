@@ -3,9 +3,13 @@ import { ApolloServer } from "apollo-server";
 import * as path from "path";
 import { buildSchema } from "type-graphql";
 import { PrismaClient } from "@prisma/client";
+import { Container } from "typedi";
 
 import { ApolloContext } from "./src/ApolloContext";
 import { HabitatResolver } from "./src/habitat/HabitatResolver";
+
+const prisma = new PrismaClient();
+Container.set({id: "PRISMA", factory: () => prisma});
 
 async function bootstrap() {
     // build TypeGraphQL executable schema
@@ -13,14 +17,13 @@ async function bootstrap() {
         resolvers: [HabitatResolver],
         // automatically create `schema.gql` file with schema definition in current folder
         emitSchemaFile: path.resolve(__dirname, "schema.gql"),
+        container: Container,
     });
-
-    const prisma = new PrismaClient();
 
     // Create GraphQL server
     const server = new ApolloServer({
         schema,
-        context: (): ApolloContext => ({ prisma }),
+        context: (): ApolloContext => ({ prisma: Container.get("PRISMA") }),
         // enable GraphQL Playground
         // playground: true,
     });
