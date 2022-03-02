@@ -2,7 +2,9 @@ import "reflect-metadata";
 import { ApolloServer } from "apollo-server";
 import * as path from "path";
 import { buildSchema } from "type-graphql";
+import { PrismaClient } from "@prisma/client";
 
+import { ApolloContext } from "./src/ApolloContext";
 import { HabitatResolver } from "./src/habitat/HabitatResolver";
 
 async function bootstrap() {
@@ -13,9 +15,12 @@ async function bootstrap() {
         emitSchemaFile: path.resolve(__dirname, "schema.gql"),
     });
 
+    const prisma = new PrismaClient();
+
     // Create GraphQL server
     const server = new ApolloServer({
         schema,
+        context: (): ApolloContext => ({ prisma }),
         // enable GraphQL Playground
         // playground: true,
     });
@@ -25,4 +30,4 @@ async function bootstrap() {
     console.log(`Server is running, GraphQL Playground available at ${url}`);
 }
 
-bootstrap();
+bootstrap().catch(console.error);
