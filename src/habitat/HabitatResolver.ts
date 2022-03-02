@@ -3,16 +3,16 @@ import {
     Query,
     Arg,
     Ctx,
+    Mutation,
 } from "type-graphql";
 import { ApolloContext } from "../ApolloContext";
 
 import { Habitat } from "./Habitat";
+import { NewHabitatInput } from "./NewHabitatInput";
 
 @Resolver(Habitat)
 export class HabitatResolver {
-    // constructor(private recipeService: RecipeService) { }
-
-    @Query(returns => Habitat, { nullable: true })
+    @Query(returns => Habitat, { nullable: true, description: "Get single habitat by its id" })
     habitat(
         @Arg("id") id: number,
         @Ctx() context: ApolloContext
@@ -24,7 +24,7 @@ export class HabitatResolver {
         });
     }
 
-    @Query(returns => [Habitat], { nullable: true })
+    @Query(returns => [Habitat], { nullable: true, description: "Get all habitats for single user id" })
     userHabitats(
         @Arg("userId") id: number,
         @Ctx() context: ApolloContext
@@ -35,25 +35,20 @@ export class HabitatResolver {
             }
         });
     }
-/*
 
-    @Mutation(returns => Recipe)
-    @Authorized()
-    addRecipe(
-        @Arg("newRecipeData") newRecipeData: NewRecipeInput,
-        @Ctx("user") user: User,
-    ): Promise<Recipe> {
-        return this.recipeService.addNew({ data: newRecipeData, user });
+    @Mutation(returns => Habitat, {description: "Create new habitat for single user"})
+    async addHabitat(
+        @Arg('newHabitatData') newHabitatData: NewHabitatInput,
+        @Ctx() context: ApolloContext
+    ) {
+        const newHabitat = context.prisma.habitat.create({
+            data: {
+                userId: newHabitatData.userId,
+                name: newHabitatData.name,
+                isMain: newHabitatData.isMain,
+            }
+        });
+
+        return newHabitat;
     }
-
-    @Mutation(returns => Boolean)
-    @Authorized(Roles.Admin)
-    async removeRecipe(@Arg("id") id: string) {
-        try {
-            await this.recipeService.removeById(id);
-            return true;
-        } catch {
-            return false;
-        }
-    }*/
 }
