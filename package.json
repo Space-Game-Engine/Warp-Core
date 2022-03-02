@@ -1,0 +1,39 @@
+{
+  "name": "warp-core",
+  "version": "0.0.1",
+  "description": "It is the main game core that stores habitat with buildings and technologies.",
+  "main": "server.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --inspect --respawn --transpile-only server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/space-engine/warp-core.git"
+  },
+  "keywords": [
+    "game-engine",
+    "game",
+    "web-game"
+  ],
+  "author": "Krzysztof Węgrzyn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/space-engine/warp-core/issues"
+  },
+  "homepage": "https://gitlab.com/space-engine/warp-core#readme",
+  "devDependencies": {
+    "prisma": "^3.10.0",
+    "ts-node": "^10.5.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "@prisma/client": "^3.10.0",
+    "apollo-server": "^3.6.3",
+    "class-validator": "^0.13.2",
+    "graphql": "^15.8.0",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1"
+  }
+}
