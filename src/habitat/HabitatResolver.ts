@@ -1,13 +1,10 @@
 import {
     Resolver,
     Query,
-    FieldResolver,
     Arg,
-    Root,
-    Mutation,
-    Int,
-    ResolverInterface,
+    Ctx,
 } from "type-graphql";
+import { ApolloContext } from "../ApolloContext";
 
 import { Habitat } from "./Habitat";
 
@@ -15,22 +12,30 @@ import { Habitat } from "./Habitat";
 export class HabitatResolver {
     // constructor(private recipeService: RecipeService) { }
 
-    @Query(returns => Habitat)
-    habitat(@Arg("id") id: number) {
-        const habitat = new Habitat();
-        habitat.id = id;
-        habitat.name = "lorem ipsum";
-        habitat.isMain = true;
-        // if (recipe === undefined) {
-        //     throw new RecipeNotFoundError(id);
-        // }
-        return habitat;
+    @Query(returns => Habitat, { nullable: true })
+    habitat(
+        @Arg("id") id: number,
+        @Ctx() context: ApolloContext
+    ) {
+        return context.prisma.habitat.findFirst({
+            where: {
+                id: id
+            }
+        });
+    }
+
+    @Query(returns => [Habitat], { nullable: true })
+    userHabitats(
+        @Arg("userId") id: number,
+        @Ctx() context: ApolloContext
+    ) {
+        return context.prisma.habitat.findMany({
+            where: {
+                userId: id
+            }
+        });
     }
 /*
-    @Query(returns => [Recipe])
-    recipes(@Args() { skip, take }: RecipesArgs) {
-        return this.recipeService.findAll({ skip, take });
-    }
 
     @Mutation(returns => Recipe)
     @Authorized()
