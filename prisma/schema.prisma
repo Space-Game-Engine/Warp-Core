@@ -1,0 +1,62 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Habitat {
+  id             Int              @id @default(autoincrement())
+  userId         Int
+  name           String
+  isMain         Boolean          @default(true)
+  buildingZones  BuildingZone[]
+  resourceAmount ResourceAmount[]
+}
+
+model Building {
+  id            Int             @id @default(autoincrement())
+  name          String
+  role          Int
+  buildingZones BuildingZone[]
+  buildingCosts BuildingCosts[]
+}
+
+model BuildingZone {
+  habitat    Habitat  @relation(fields: [habitatId], references: [id])
+  habitatId  Int
+  building   Building @relation(fields: [buildingId], references: [id])
+  buildingId Int
+  level      Int
+  placement  String
+
+  @@id([habitatId, buildingId])
+}
+
+model Resource {
+  id        Int              @id @default(autoincrement())
+  name      String
+  type      Int
+  buildings BuildingCosts[]
+  habitats  ResourceAmount[]
+}
+
+model BuildingCosts {
+  building   Building @relation(fields: [buildingId], references: [id])
+  buildingId Int
+  resource   Resource @relation(fields: [resourceId], references: [id])
+  resourceId Int
+
+  @@id([buildingId, resourceId])
+}
+
+model ResourceAmount {
+  habitat    Habitat  @relation(fields: [habitatId], references: [id])
+  habitatId  Int
+  resource   Resource @relation(fields: [resourceId], references: [id])
+  resourceId Int
+
+  @@id([habitatId, resourceId])
+}
