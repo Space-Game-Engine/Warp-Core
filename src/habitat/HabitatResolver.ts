@@ -28,29 +28,15 @@ export class HabitatResolver {
 
     @Query(returns => [Habitat], { nullable: true, description: "Get all habitats for single user id" })
     userHabitats(
-        @Arg("userId") id: number,
-        @Ctx() context: ApolloContext
+        @Arg("userId") id: number
     ) {
-        return context.prisma.habitat.findMany({
-            where: {
-                userId: id
-            }
-        });
+        return this.habitatService.getHabitatsByUserId(id);
     }
 
     @Mutation(returns => Habitat, {description: "Create new habitat for single user"})
     async addHabitat(
-        @Arg('newHabitatData') newHabitatData: NewHabitatInput,
-        @Ctx() context: ApolloContext
+        @Arg('newHabitatData') newHabitatData: NewHabitatInput
     ) {
-        const newHabitat = context.prisma.habitat.create({
-            data: {
-                userId: newHabitatData.userId,
-                name: newHabitatData.name,
-                isMain: newHabitatData.isMain,
-            }
-        });
-
-        return newHabitat;
+        return this.habitatService.createNewHabitat(newHabitatData);
     }
 }
