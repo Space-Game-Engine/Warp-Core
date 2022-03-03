@@ -25,14 +25,13 @@ model Building {
 }
 
 model BuildingZone {
+  id         Int      @id @default(autoincrement())
   habitat    Habitat  @relation(fields: [habitatId], references: [id])
   habitatId  Int
   building   Building @relation(fields: [buildingId], references: [id])
   buildingId Int
   level      Int
   placement  String
-
-  @@id([habitatId, buildingId])
 }
 
 model Resource {
