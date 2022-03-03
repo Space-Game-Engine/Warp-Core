@@ -2,10 +2,8 @@ import {
     Resolver,
     Query,
     Arg,
-    Ctx,
     Mutation,
 } from "type-graphql";
-import { ApolloContext } from "../ApolloContext";
 import { Service } from "typedi";
 
 import { Habitat } from "./Habitat";
@@ -17,7 +15,7 @@ import { NewHabitatInput } from "./NewHabitatInput";
 export class HabitatResolver {
     constructor(
         private readonly habitatService: HabitatService
-    ){}
+    ) { }
 
     @Query(returns => Habitat, { nullable: true, description: "Get single habitat by its id" })
     habitat(
@@ -33,7 +31,7 @@ export class HabitatResolver {
         return this.habitatService.getHabitatsByUserId(id);
     }
 
-    @Mutation(returns => Habitat, {description: "Create new habitat for single user"})
+    @Mutation(returns => Habitat, { description: "Create new habitat for single user" })
     async addHabitat(
         @Arg('newHabitatData') newHabitatData: NewHabitatInput
     ) {

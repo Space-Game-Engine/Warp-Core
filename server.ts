@@ -7,6 +7,7 @@ import { Container } from "typedi";
 
 import { ApolloContext } from "./src/ApolloContext";
 import { HabitatResolver } from "./src/habitat/HabitatResolver";
+import { BuildingResolver } from "./src/building/BuildingResolver";
 
 const prisma = new PrismaClient();
 Container.set({id: "PRISMA", factory: () => prisma});
@@ -14,7 +15,7 @@ Container.set({id: "PRISMA", factory: () => prisma});
 async function bootstrap() {
     // build TypeGraphQL executable schema
     const schema = await buildSchema({
-        resolvers: [HabitatResolver],
+        resolvers: [HabitatResolver, BuildingResolver],
         // automatically create `schema.gql` file with schema definition in current folder
         emitSchemaFile: path.resolve(__dirname, "schema.gql"),
         container: Container,
