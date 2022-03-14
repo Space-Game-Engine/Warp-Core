@@ -4,7 +4,7 @@
   "description": "It is the main game core that stores habitat with buildings and technologies.",
   "main": "server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "ts-node-dev --inspect --respawn --transpile-only server.ts",
     "prisma-update": "npx prisma migrate dev && npx prisma generate"
   },
@@ -24,7 +24,11 @@
   },
   "homepage": "https://gitlab.com/space-engine/warp-core#readme",
   "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "jest": "^27.5.1",
+    "jest-mock-extended": "^2.0.4",
     "prisma": "^3.10.0",
+    "ts-jest": "^27.1.3",
     "ts-node": "^10.5.0",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.5.5"

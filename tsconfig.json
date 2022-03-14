@@ -7,6 +7,15 @@
             "esnext.asynciterable"
         ],
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
-    }
+        "emitDecoratorMetadata": true,
+        "types": [
+            "node",
+            "jest"
+        ],
+        "strictNullChecks": true,
+    },
+    "exclude": [
+        "./tests/",
+        "./node_modules/",
+    ],
 }
