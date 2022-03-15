@@ -22,10 +22,7 @@ export class BuildingService {
 
     async createNewBuilding(buildingInput: BuildingInput) {
         const newBuilding = await this.prisma.building.create({
-            data: {
-                name: buildingInput.name,
-                role: buildingInput.role,
-            }
+            data: buildingInput
         });
 
         return newBuilding;
@@ -36,10 +33,7 @@ export class BuildingService {
             where: {
                 id: buildingId,
             },
-            data: {
-                name: buildingInput.name,
-                role: buildingInput.role,
-            }
+            data: buildingInput
         });
 
         return updatedBuilding;

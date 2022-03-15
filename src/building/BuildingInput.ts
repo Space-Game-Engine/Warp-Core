@@ -1,12 +1,12 @@
 import { InputType, Field } from "type-graphql";
 import { Building } from "./Building";
 
-@InputType({ description: "Creates new building type" })
+@InputType({ description: "Create or edit building" })
 export class BuildingInput implements Partial<Building> {
 
-    @Field({ nullable: true, description: "Name of the building" })
-    name?: string;
+    @Field({description: "Name of the building" })
+    name: string;
 
-    @Field({ nullable: true, description: "Type of the building" })
-    role?: number;
+    @Field({description: "Type of the building" })
+    role: number;
 }
