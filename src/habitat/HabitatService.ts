@@ -26,11 +26,7 @@ export class HabitatService {
 
     async createNewHabitat(newHabitatData: NewHabitatInput) {
         const newHabitat = await this.prisma.habitat.create({
-            data: {
-                userId: newHabitatData.userId,
-                name: newHabitatData.name,
-                isMain: newHabitatData.isMain,
-            }
+            data: newHabitatData
         });
 
         return newHabitat;
