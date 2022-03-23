@@ -3,6 +3,8 @@ import {
     Query,
     Arg,
     Mutation,
+    Root,
+    FieldResolver,
 } from "type-graphql";
 import { Service } from "typedi";
 
@@ -11,7 +13,7 @@ import { HabitatService } from "./HabitatService";
 import { NewHabitatInput } from "./NewHabitatInput";
 
 @Service()
-@Resolver(Habitat)
+@Resolver(of => Habitat)
 export class HabitatResolver {
     constructor(
         private readonly habitatService: HabitatService
@@ -36,5 +38,12 @@ export class HabitatResolver {
         @Arg('newHabitatData') newHabitatData: NewHabitatInput
     ) {
         return this.habitatService.createNewHabitat(newHabitatData);
+    }
+
+    @FieldResolver()
+    buildingZones(
+        @Root() habitat: Habitat
+    ) {
+        return this.habitatService.getAllBuildingZonesForSingleHabitat(habitat.id);
     }
 }

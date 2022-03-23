@@ -1,5 +1,5 @@
 import { Service, Inject } from "typedi";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { NewHabitatInput } from "./NewHabitatInput";
 
 @Service()
@@ -8,27 +8,35 @@ export class HabitatService {
         @Inject("PRISMA") private readonly prisma: PrismaClient
     ) { }
 
-    async getHabitatById(habitatId: number) {
-        return await this.prisma.habitat.findFirst({
+    getHabitatById(habitatId: number) {
+        return this.prisma.habitat.findFirst({
             where: {
                 id: habitatId
             }
         });
     }
 
-    async getHabitatsByUserId(userId: number) {
-        return await this.prisma.habitat.findMany({
+    getHabitatsByUserId(userId: number) {
+        return this.prisma.habitat.findMany({
             where: {
                 userId: userId
             }
         });
     }
 
-    async createNewHabitat(newHabitatData: NewHabitatInput) {
-        const newHabitat = await this.prisma.habitat.create({
+    createNewHabitat(newHabitatData: NewHabitatInput) {
+        return this.prisma.habitat.create({
             data: newHabitatData
         });
+    }
 
-        return newHabitat;
+    async getAllBuildingZonesForSingleHabitat(habitatId: number) {
+        const habitat = await this.prisma.habitat.findFirst({
+            where: {
+                id: habitatId
+            },
+            include: { buildingZones: true }
+        });
+        return habitat?.buildingZones;
     }
 }
