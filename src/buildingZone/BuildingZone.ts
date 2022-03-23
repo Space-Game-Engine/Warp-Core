@@ -4,18 +4,23 @@ import { Habitat } from "../habitat/Habitat";
 
 @ObjectType({ description: "Single bulding zone, you can build here single building and level it up" })
 export class BuildingZone {
-    @Field(type => ID)
+    // Real Id of building zone
     id: number;
 
-    @Field(type => Habitat, {description: "Habitat connected to that building zone"})
+    @Field({ description: "Building zone id counted for single habitat", name: "zoneId" })
+    counterPerHabitat: number;
+
+    @Field(type => Habitat, { description: "Habitat connected to that building zone" })
     habitat: Habitat;
 
-    @Field(type => Building, {nullable: true, description: "What kind of building is placed here"})
+    habitatId: number;
+
+    @Field(type => Building, { nullable: true, description: "What kind of building is placed here" })
     building?: Building;
 
-    @Field({description: "What level is that"})
+    @Field({ description: "What level is that" })
     level: number = 0;
 
-    @Field({nullable: true, description: "Where is that building zone placed in our habitat"})
+    @Field({ nullable: true, description: "Where is that building zone placed in our habitat" })
     placement?: string;
 }
