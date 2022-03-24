@@ -7,6 +7,7 @@ import {
     FieldResolver,
 } from "type-graphql";
 import { Service } from "typedi";
+import { BuildingZoneService } from "../buildingZone/BuildingZoneService";
 
 import { Habitat } from "./Habitat";
 import { HabitatService } from "./HabitatService";
@@ -16,7 +17,8 @@ import { NewHabitatInput } from "./NewHabitatInput";
 @Resolver(of => Habitat)
 export class HabitatResolver {
     constructor(
-        private readonly habitatService: HabitatService
+        private readonly habitatService: HabitatService,
+        private readonly buildingZoneService: BuildingZoneService,
     ) { }
 
     @Query(returns => Habitat, { nullable: true, description: "Get single habitat by its id" })
@@ -44,6 +46,6 @@ export class HabitatResolver {
     buildingZones(
         @Root() habitat: Habitat
     ) {
-        return this.habitatService.getAllBuildingZonesForSingleHabitat(habitat.id);
+        return this.buildingZoneService.getAllBuildingZonesByHabitatId(habitat.id);
     }
 }

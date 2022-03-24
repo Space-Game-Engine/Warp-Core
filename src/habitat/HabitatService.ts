@@ -29,14 +29,4 @@ export class HabitatService {
             data: newHabitatData
         });
     }
-
-    async getAllBuildingZonesForSingleHabitat(habitatId: number) {
-        const habitat = await this.prisma.habitat.findFirst({
-            where: {
-                id: habitatId
-            },
-            include: { buildingZones: true }
-        });
-        return habitat?.buildingZones;
-    }
 }

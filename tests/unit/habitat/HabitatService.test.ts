@@ -68,33 +68,4 @@ describe("Habitat service tests", () => {
 
         await expect(habitatService.createNewHabitat(newHabitatInput)).resolves.toEqual(habitatObject);
     });
-
-    test("Get building zones for single habitat", async () => {
-        const habitatId = 5;
-        const userId = 1;
-        const buildingZones = [
-            {
-                counterPerHabitat: 1
-            },
-            {
-                counterPerHabitat: 2
-            }
-        ];
-        const habitatObject = {
-            id: habitatId,
-            name: "test",
-            userId: userId,
-            isMain: true,
-            buildingZones: buildingZones,
-        };
-
-        prismaMock.habitat.findFirst.mockResolvedValue(habitatObject).calledWith({
-            where: {
-                id: habitatId
-            },
-            include: { buildingZones: true }
-        });
-
-        await expect(habitatService.getAllBuildingZonesForSingleHabitat(habitatId)).resolves.toEqual(buildingZones);
-    })
 });
