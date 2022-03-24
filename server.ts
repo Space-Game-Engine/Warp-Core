@@ -9,7 +9,7 @@ import { ApolloContext } from "./src/ApolloContext";
 import { resolvers } from "./src/Resolvers";
 
 const prisma = new PrismaClient();
-Container.set({id: "PRISMA", factory: () => prisma});
+Container.set({ id: "PRISMA", factory: () => prisma });
 
 async function bootstrap() {
     // build TypeGraphQL executable schema

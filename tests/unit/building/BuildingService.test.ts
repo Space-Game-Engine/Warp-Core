@@ -32,10 +32,10 @@ describe("Building service tests", () => {
     test("Get single building details by its id", async () => {
         const buildingId = 1;
         const buildingObject = {
-                id: buildingId,
-                name: 'Lorem',
-                role: 5
-            };
+            id: buildingId,
+            name: 'Lorem',
+            role: 5
+        };
 
         prismaMock.building.findFirst.mockResolvedValue(buildingObject).calledWith({
             where: {
@@ -55,10 +55,10 @@ describe("Building service tests", () => {
         };
 
         const buildingObject = {
-                id: buildingId,
-                name: buildingInput.name,
-                role: buildingInput.role
-            };
+            id: buildingId,
+            name: buildingInput.name,
+            role: buildingInput.role
+        };
 
         prismaMock.building.create.mockResolvedValue(buildingObject).calledWith({
             data: buildingInput
@@ -76,10 +76,10 @@ describe("Building service tests", () => {
         };
 
         const buildingObject = {
-                id: buildingId,
-                name: buildingInput.name,
-                role: buildingInput.role
-            };
+            id: buildingId,
+            name: buildingInput.name,
+            role: buildingInput.role
+        };
 
         prismaMock.building.update.mockResolvedValue(buildingObject).calledWith({
             where: {
