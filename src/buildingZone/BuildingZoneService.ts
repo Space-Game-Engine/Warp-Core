@@ -15,6 +15,14 @@ export class BuildingZoneService {
         });
     }
 
+    getAllBuildingZonesByHabitatId(habitatId: number) {
+        return this.prisma.buildingZone.findMany({
+            where: {
+                habitatId: habitatId,
+            }
+        });
+    }
+
     getSingleBuildingZone(counterPerHabitat: number, habitatId: number) {
         return this.prisma.buildingZone.findFirst({
             where: {
@@ -31,18 +39,5 @@ export class BuildingZoneService {
                 habitatId: habitatId,
             }
         })
-    }
-
-    async getHabitat(id: number) {
-        const singleBuildingZone = await this.prisma.buildingZone.findFirst({
-            where: {
-                id: id,
-            },
-            include: {
-                habitat: true,
-            }
-        });
-
-        return singleBuildingZone?.habitat;
     }
 }

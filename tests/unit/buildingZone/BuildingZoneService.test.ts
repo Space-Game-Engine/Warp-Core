@@ -14,7 +14,7 @@ describe('Tests of bulding zone service', () => {
         const habitatId = 5;
         const countedElements = 10;
 
-        prismaMock.buildingZone.count.mockResolvedValue(countedElements).calledWith({where: {habitatId: habitatId}});
+        prismaMock.buildingZone.count.mockResolvedValue(countedElements).calledWith({ where: { habitatId: habitatId } });
 
         await expect(buildingZoneService.countBuildingZonesOnHabitatByHabitatId(habitatId)).resolves.toBe(countedElements);
     });
@@ -42,7 +42,43 @@ describe('Tests of bulding zone service', () => {
         await expect(buildingZoneService.getSingleBuildingZone(counterPerHabitat, habitatId)).resolves.toBe(buildingZone);
     });
 
-    // test('Get all building zones for one habitat')
+    test('Get all building zones for one habitat', async () => {
+        const habitatId = 5;
+        const buildingZones = [
+            {
+                id: 3,
+                habitatId: habitatId,
+                buildingId: null,
+                level: 0,
+                placement: 'fake',
+                counterPerHabitat: 1
+            },
+            {
+                id: 7,
+                habitatId: habitatId,
+                buildingId: null,
+                level: 0,
+                placement: 'fake',
+                counterPerHabitat: 2
+            },
+            {
+                id: 10,
+                habitatId: habitatId,
+                buildingId: null,
+                level: 0,
+                placement: 'fake',
+                counterPerHabitat: 3
+            },
+        ];
+
+        prismaMock.buildingZone.findMany.mockResolvedValue(buildingZones).calledWith({
+            where: {
+                habitatId: habitatId,
+            }
+        });
+
+        await expect(buildingZoneService.getAllBuildingZonesByHabitatId(habitatId)).resolves.toBe(buildingZones);
+    });
 
     test('Should create new building zone for existing habitat when there is no building zones for that habitat', async () => {
         const habitatId = 5;
@@ -68,6 +104,37 @@ describe('Tests of bulding zone service', () => {
                 counterPerHabitat: existingHabitats + 1,
                 habitatId: habitatId
             }
-        })
+        });
+
+        await expect(buildingZoneService.createNewBuildingZone(habitatId)).resolves.toBe(newBuildingZone);
+    });
+
+    test('Should create new building zone for existing habitat when there are multiple building zones for that habitat', async () => {
+        const habitatId = 5;
+        const existingHabitats = 5;
+
+        const newBuildingZone = {
+            id: 3,
+            habitatId: habitatId,
+            buildingId: null,
+            level: 0,
+            placement: null,
+            counterPerHabitat: existingHabitats + 1
+        };
+
+        prismaMock.buildingZone.count.mockResolvedValue(existingHabitats).calledWith({
+            where: {
+                habitatId: habitatId
+            }
+        });
+
+        prismaMock.buildingZone.create.mockResolvedValue(newBuildingZone).calledWith({
+            data: {
+                counterPerHabitat: existingHabitats + 1,
+                habitatId: habitatId
+            }
+        });
+
+        await expect(buildingZoneService.createNewBuildingZone(habitatId)).resolves.toBe(newBuildingZone);
     });
 });

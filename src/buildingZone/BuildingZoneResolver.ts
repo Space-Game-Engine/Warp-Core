@@ -7,6 +7,7 @@ import {
     Root,
 } from "type-graphql";
 import { Service } from "typedi";
+import { HabitatService } from "../habitat/HabitatService";
 import { BuildingZone } from "./BuildingZone";
 import { BuildingZoneService } from "./BuildingZoneService";
 
@@ -14,7 +15,8 @@ import { BuildingZoneService } from "./BuildingZoneService";
 @Resolver(of => BuildingZone)
 export class BuildingZoneResolver {
     constructor(
-        private readonly buildingZoneService: BuildingZoneService
+        private readonly buildingZoneService: BuildingZoneService,
+        private readonly habitatService: HabitatService,
     ) { }
 
     @Query(returns => BuildingZone, { nullable: true, description: "Returns single building zone" })
@@ -25,12 +27,14 @@ export class BuildingZoneResolver {
         return this.buildingZoneService.getSingleBuildingZone(counterPerHabitat, habitatId);
     }
 
-    // @Query(returns => [BuildingZone], { nullable: true, description: "Returns all possible building types" })
-    // allBuildings() {
-    //     return this.buildingZoneService.getAllBuildings();
-    // }
+    @Query(returns => [BuildingZone], { nullable: true, description: "Returns all building zones for single habitat" })
+    allBuildingZones(
+        @Arg("habitatId") habitatId: number
+    ) {
+        return this.buildingZoneService.getAllBuildingZonesByHabitatId(habitatId);
+    }
 
-    @Mutation(returns => BuildingZone, { description: "Create new building type" })
+    @Mutation(returns => BuildingZone, { description: "Create new building zone for selected habitat" })
     createNewBuildingZone(
         @Arg("habitatId") habitatId: number,
     ) {
@@ -41,6 +45,6 @@ export class BuildingZoneResolver {
     habitat(
         @Root() buildingZone: BuildingZone
     ) {
-        return this.buildingZoneService.getHabitat(buildingZone.id);
+        return this.habitatService.getHabitatById(buildingZone.habitatId);
     }
 }
