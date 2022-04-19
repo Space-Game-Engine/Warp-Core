@@ -18,6 +18,8 @@ export class BuildingZone {
     @Field(type => Building, { nullable: true, description: "What kind of building is placed here" })
     building?: Building;
 
+    buildingId: number;
+
     @Field({ description: "What level is that" })
     level: number = 0;
 
