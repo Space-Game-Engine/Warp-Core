@@ -54,6 +54,13 @@ export class BuildingZoneResolver {
         return this.buildingZoneService.constructBuildingOnBuildingZone(counterPerHabitat, habitatId, constructBuilding);
     }
 
+    @Mutation(returns => BuildingZone, { description: "Constructs a building on single building zone" })
+    upgradeBuildingZone(
+        @Args() { habitatId, counterPerHabitat }: GetSingleBuildingZoneArgs
+    ) {
+        return this.buildingZoneService.upgradeBuildingZone(counterPerHabitat, habitatId);
+    }
+
     @FieldResolver()
     habitat(
         @Root() buildingZone: BuildingZone

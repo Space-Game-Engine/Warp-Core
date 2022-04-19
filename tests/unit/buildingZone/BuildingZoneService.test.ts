@@ -298,7 +298,7 @@ describe('Tests of bulding zone service', () => {
             level: 1,
             placement: buildingZone.placement,
             counterPerHabitat: buildingZone.counterPerHabitat,
-        }
+        };
 
         prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
             where: {
@@ -405,5 +405,87 @@ describe('Tests of bulding zone service', () => {
         buildingService.getBuildingById.mockResolvedValue(building).calledWith(buildingId);
 
         await expect(buildingZoneService.constructBuildingOnBuildingZone(counterPerHabitat, habitatId, { buildingId: buildingId })).rejects.toThrow(BuildingZoneUserInputError);
+    });
+
+    test('Should upgrade level on building zone when building zone exists and is connected to building', async () => {
+        const habitatId = 5;
+        const counterPerHabitat = 1;
+        const buildingId = 20;
+
+        const buildingZone = {
+            id: 5,
+            habitatId: habitatId,
+            buildingId: buildingId,
+            level: 1,
+            placement: 'fake',
+            counterPerHabitat: counterPerHabitat
+        };
+
+        const updatedBuildingZone = {
+            id: buildingZone.id,
+            habitatId: buildingZone.habitatId,
+            buildingId: buildingZone.id,
+            level: buildingZone.level + 1,
+            placement: buildingZone.placement,
+            counterPerHabitat: buildingZone.counterPerHabitat,
+        };
+
+        prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
+            where: {
+                counterPerHabitat: counterPerHabitat,
+                habitatId: habitatId,
+            }
+        });
+
+        prismaMock.buildingZone.update.mockResolvedValue(updatedBuildingZone).calledWith({
+            where: {
+                id: buildingZone.id,
+            },
+            data: {
+                level: buildingZone.level + 1,
+            }
+        });
+
+        await expect(buildingZoneService.upgradeBuildingZone(counterPerHabitat, habitatId)).resolves.toBe(updatedBuildingZone);
+    });
+
+    test('Should not upgrade level on building zone and throw exception when building zone not exists', async () => {
+        const habitatId = 5;
+        const counterPerHabitat = 1;
+
+        const buildingZone = null;
+
+        prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
+            where: {
+                counterPerHabitat: counterPerHabitat,
+                habitatId: habitatId,
+            }
+        });
+
+        await expect(buildingZoneService.upgradeBuildingZone(counterPerHabitat, habitatId)).rejects.toThrow(BuildingZoneUserInputError);
+    });
+
+    test('Should not upgrade level on building zone and throw exception when building zone exists but is not connected to any building', async () => {
+        const habitatId = 5;
+        const counterPerHabitat = 1;
+        const buildingId = null;
+
+        const buildingZone = {
+            id: 5,
+            habitatId: habitatId,
+            buildingId: buildingId,
+            level: 1,
+            placement: 'fake',
+            counterPerHabitat: counterPerHabitat
+        };
+
+        prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
+            where: {
+                counterPerHabitat: counterPerHabitat,
+                habitatId: habitatId,
+            }
+        });
+
+        await expect(buildingZoneService.upgradeBuildingZone(counterPerHabitat, habitatId)).rejects.toThrow(BuildingZoneUserInputError);
     });
 });

@@ -85,4 +85,25 @@ export class BuildingZoneService {
             }
         });
     }
+
+    async upgradeBuildingZone(counterPerHabitat: number, habitatId: number, nextLevelUpgrade: number = 1) {
+        const singleBuildingZone = await this.getSingleBuildingZone(counterPerHabitat, habitatId);
+
+        if (!singleBuildingZone) {
+            throw new BuildingZoneUserInputError('Invalid building zone', { argumentName: ['counterPerHabitat', 'habitatId'] });
+        }
+
+        if (!singleBuildingZone.buildingId) {
+            throw new BuildingZoneUserInputError('Building zone is not connected to any building', { argumentName: ['counterPerHabitat', 'habitatId'] });
+        }
+
+        return this.prisma.buildingZone.update({
+            where: {
+                id: singleBuildingZone.id
+            },
+            data: {
+                level: singleBuildingZone.level + nextLevelUpgrade,
+            }
+        });
+    }
 }
