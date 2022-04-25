@@ -13,8 +13,9 @@ import { BuildingService } from "../building/BuildingService";
 import { HabitatService } from "../habitat/HabitatService";
 import { BuildingZone } from "./BuildingZone";
 import { BuildingZoneService } from "./BuildingZoneService";
-import { ConstructBuildingInput } from "./ConstructBuildingInput";
-import { GetSingleBuildingZoneArgs } from "./GetSingleBuildingZoneArgs";
+import { ConstructBuildingInput } from "./InputTypes/ConstructBuildingInput";
+import { GetSingleBuildingZoneArgs } from "./ArgsTypes/GetSingleBuildingZoneArgs";
+import { ChangeLevelOfBuildingZoneArgs } from "./ArgsTypes/ChangeLevelOfBuildingZoneArgs";
 
 @Service()
 @Resolver(of => BuildingZone)
@@ -54,11 +55,18 @@ export class BuildingZoneResolver {
         return this.buildingZoneService.constructBuildingOnBuildingZone(counterPerHabitat, habitatId, constructBuilding);
     }
 
-    @Mutation(returns => BuildingZone, { description: "Constructs a building on single building zone" })
+    @Mutation(returns => BuildingZone, { description: "Upgrades a building level on single building zone" })
     upgradeBuildingZone(
-        @Args() { habitatId, counterPerHabitat }: GetSingleBuildingZoneArgs
+        @Args() { habitatId, counterPerHabitat, numberOfLevelsToChange }: ChangeLevelOfBuildingZoneArgs
     ) {
-        return this.buildingZoneService.upgradeBuildingZone(counterPerHabitat, habitatId);
+        return this.buildingZoneService.upgradeBuildingZone(counterPerHabitat, habitatId, numberOfLevelsToChange);
+    }
+
+    @Mutation(returns => BuildingZone, { description: "Downgrades a building level on single building zone" })
+    downgradeBuildingZone(
+        @Args() { habitatId, counterPerHabitat, numberOfLevelsToChange }: ChangeLevelOfBuildingZoneArgs
+    ) {
+        return this.buildingZoneService.downgradeBuildingZone(counterPerHabitat, habitatId, numberOfLevelsToChange);
     }
 
     @FieldResolver()

@@ -3,7 +3,7 @@ import { Inject, Service } from "typedi";
 import { BuildingService } from "../building/BuildingService";
 import { BuildingZone } from "./BuildingZone";
 import { BuildingZoneUserInputError } from "./BuildingZoneUserInputError";
-import { ConstructBuildingInput } from "./ConstructBuildingInput";
+import { ConstructBuildingInput } from "./InputTypes/ConstructBuildingInput";
 
 @Service()
 export class BuildingZoneService {
