@@ -59,6 +59,16 @@ export class BuildingZoneService {
         })
     }
 
+    async destroyBuildingZone(counterPerHabitat: number, habitatId: number) {
+        const buildingZone = await this.getSingleBuildingZone(counterPerHabitat, habitatId);
+
+        return this.prisma.buildingZone.delete({
+            where: {
+                id: buildingZone?.id
+            }
+        });
+    }
+
     async constructBuildingOnBuildingZone(counterPerHabitat: number, habitatId: number, constructBuilding: ConstructBuildingInput) {
         const building = await this.buildingService.getBuildingById(constructBuilding.buildingId);
 

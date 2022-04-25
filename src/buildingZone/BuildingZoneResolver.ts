@@ -47,6 +47,13 @@ export class BuildingZoneResolver {
         return this.buildingZoneService.createNewBuildingZone(habitatId);
     }
 
+    @Mutation(returns => BuildingZone, { description: "Destroys selected building zone" })
+    destroyBuildingZone(
+        @Args() { habitatId, counterPerHabitat }: GetSingleBuildingZoneArgs
+    ) {
+        return this.buildingZoneService.destroyBuildingZone(counterPerHabitat, habitatId);
+    }
+
     @Mutation(returns => BuildingZone, { description: "Constructs a building on single building zone" })
     constructBuildingOnBuildingZone(
         @Args() { habitatId, counterPerHabitat }: GetSingleBuildingZoneArgs,

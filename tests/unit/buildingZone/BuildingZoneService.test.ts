@@ -614,4 +614,33 @@ describe('Tests of bulding zone service', () => {
 
         await expect(buildingZoneService.downgradeBuildingZone(counterPerHabitat, habitatId)).rejects.toThrow(BuildingZoneUserInputError);
     });
+
+    test('Should destroy one building zone when building zone exists', async () => {
+        const habitatId = 5;
+        const counterPerHabitat = 1;
+
+        const buildingZone = {
+            id: 5,
+            habitatId: habitatId,
+            buildingId: null,
+            level: 1,
+            placement: 'fake',
+            counterPerHabitat: counterPerHabitat
+        };
+
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
+            where: {
+                counterPerHabitat: counterPerHabitat,
+                habitatId: habitatId,
+            }
+        })).mockResolvedValue(buildingZone);
+
+        prismaMock.buildingZone.delete.calledWith(isEqual({
+            where: {
+                id: buildingZone.id,
+            }
+        })).mockResolvedValue(buildingZone);
+
+        await expect(buildingZoneService.destroyBuildingZone(counterPerHabitat, habitatId)).resolves.toBe(buildingZone);
+    });
 });
