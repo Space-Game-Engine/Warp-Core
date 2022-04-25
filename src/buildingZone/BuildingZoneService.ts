@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Inject, Service } from "typedi";
 import { BuildingService } from "../building/BuildingService";
+import { BuildingZone } from "./BuildingZone";
 import { BuildingZoneUserInputError } from "./BuildingZoneUserInputError";
 import { ConstructBuildingInput } from "./ConstructBuildingInput";
 
@@ -81,12 +82,12 @@ export class BuildingZoneService {
             },
             data: {
                 buildingId: building.id,
-                level: 1,
+                level: BuildingZone.MINIMAL_LEVEL_WITH_BUILDING,
             }
         });
     }
 
-    async upgradeBuildingZone(counterPerHabitat: number, habitatId: number, nextLevelUpgrade: number = 1) {
+    async upgradeBuildingZone(counterPerHabitat: number, habitatId: number, numberOfLevelsToUpgrade: number = 1) {
         const singleBuildingZone = await this.getSingleBuildingZone(counterPerHabitat, habitatId);
 
         if (!singleBuildingZone) {
@@ -97,12 +98,41 @@ export class BuildingZoneService {
             throw new BuildingZoneUserInputError('Building zone is not connected to any building', { argumentName: ['counterPerHabitat', 'habitatId'] });
         }
 
+        let newBuildingZoneLevel = singleBuildingZone.level + numberOfLevelsToUpgrade;
+
         return this.prisma.buildingZone.update({
             where: {
                 id: singleBuildingZone.id
             },
             data: {
-                level: singleBuildingZone.level + nextLevelUpgrade,
+                level: newBuildingZoneLevel,
+            }
+        });
+    }
+
+    async downgradeBuildingZone(counterPerHabitat: number, habitatId: number, numberOfLevelsToDowngrade: number = 1) {
+        const singleBuildingZone = await this.getSingleBuildingZone(counterPerHabitat, habitatId);
+
+        if (!singleBuildingZone) {
+            throw new BuildingZoneUserInputError('Invalid building zone', { argumentName: ['counterPerHabitat', 'habitatId'] });
+        }
+
+        if (!singleBuildingZone.buildingId) {
+            throw new BuildingZoneUserInputError('Building zone is not connected to any building', { argumentName: ['counterPerHabitat', 'habitatId'] });
+        }
+
+        let newBuildingZoneLevel = singleBuildingZone.level - numberOfLevelsToDowngrade;
+
+        if (newBuildingZoneLevel < BuildingZone.MINIMAL_LEVEL_WITH_BUILDING) {
+            newBuildingZoneLevel = BuildingZone.MINIMAL_LEVEL_WITH_BUILDING;
+        }
+
+        return this.prisma.buildingZone.update({
+            where: {
+                id: singleBuildingZone.id
+            },
+            data: {
+                level: newBuildingZoneLevel,
             }
         });
     }

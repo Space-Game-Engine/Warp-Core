@@ -1,8 +1,10 @@
+import "reflect-metadata";
 import { MockPrismaClient, createMockContext } from '../../PrismaMock';
 import { BuildingZoneService } from '../../../src/buildingZone/BuildingZoneService';
 import { mockDeep, DeepMockProxy } from 'jest-mock-extended'
 import { BuildingService } from '../../../src/building/BuildingService';
 import { BuildingZoneUserInputError } from '../../../src/buildingZone/BuildingZoneUserInputError';
+import { isEqual } from "../../isEqual";
 
 let prismaMock: MockPrismaClient;
 let buildingZoneService: BuildingZoneService;
@@ -37,12 +39,12 @@ describe('Tests of bulding zone service', () => {
             counterPerHabitat: counterPerHabitat
         };
 
-        prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
             where: {
                 counterPerHabitat: counterPerHabitat,
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZone);
 
         await expect(buildingZoneService.getSingleBuildingZone(counterPerHabitat, habitatId)).resolves.toBe(buildingZone);
     });
@@ -76,11 +78,11 @@ describe('Tests of bulding zone service', () => {
             },
         ];
 
-        prismaMock.buildingZone.findMany.mockResolvedValue(buildingZones).calledWith({
+        prismaMock.buildingZone.findMany.calledWith(isEqual({
             where: {
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZones);
 
         await expect(buildingZoneService.getAllBuildingZonesByHabitatId(habitatId)).resolves.toBe(buildingZones);
     });
@@ -89,11 +91,11 @@ describe('Tests of bulding zone service', () => {
         const habitatId = 5;
         const buildingZones = [];
 
-        prismaMock.buildingZone.findMany.mockResolvedValue(buildingZones).calledWith({
+        prismaMock.buildingZone.findMany.calledWith(isEqual({
             where: {
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZones);
 
         await expect(buildingZoneService.getMaxOfCounterPerHabitat(habitatId)).resolves.toBe(0);
     });
@@ -109,11 +111,11 @@ describe('Tests of bulding zone service', () => {
             counterPerHabitat: 1
         }];
 
-        prismaMock.buildingZone.findMany.mockResolvedValue(buildingZones).calledWith({
+        prismaMock.buildingZone.findMany.calledWith(isEqual({
             where: {
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZones);
 
         await expect(buildingZoneService.getMaxOfCounterPerHabitat(habitatId)).resolves.toBe(1);
     });
@@ -147,11 +149,11 @@ describe('Tests of bulding zone service', () => {
             },
         ];
 
-        prismaMock.buildingZone.findMany.mockResolvedValue(buildingZones).calledWith({
+        prismaMock.buildingZone.findMany.calledWith(isEqual({
             where: {
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZones);
 
         await expect(buildingZoneService.getMaxOfCounterPerHabitat(habitatId)).resolves.toBe(3);
     });
@@ -177,11 +179,11 @@ describe('Tests of bulding zone service', () => {
             },
         ];
 
-        prismaMock.buildingZone.findMany.mockResolvedValue(buildingZones).calledWith({
+        prismaMock.buildingZone.findMany.calledWith(isEqual({
             where: {
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZones);
 
         await expect(buildingZoneService.getMaxOfCounterPerHabitat(habitatId)).resolves.toBe(3);
     });
@@ -200,18 +202,18 @@ describe('Tests of bulding zone service', () => {
             counterPerHabitat: newHabitatCounter
         };
 
-        prismaMock.buildingZone.findMany.mockResolvedValue(existingBuildingZones).calledWith({
+        prismaMock.buildingZone.findMany.calledWith(isEqual({
             where: {
                 habitatId: habitatId
             }
-        });
+        })).mockResolvedValue(existingBuildingZones);
 
-        prismaMock.buildingZone.create.mockResolvedValue(newBuildingZone).calledWith({
+        prismaMock.buildingZone.create.calledWith(isEqual({
             data: {
                 counterPerHabitat: newHabitatCounter,
                 habitatId: habitatId
             }
-        });
+        })).mockResolvedValue(newBuildingZone);
 
         await expect(buildingZoneService.createNewBuildingZone(habitatId)).resolves.toBe(newBuildingZone);
     });
@@ -255,18 +257,18 @@ describe('Tests of bulding zone service', () => {
             counterPerHabitat: newHabitatCounter
         };
 
-        prismaMock.buildingZone.findMany.mockResolvedValue(existingBuildingZones).calledWith({
+        prismaMock.buildingZone.findMany.calledWith(isEqual({
             where: {
                 habitatId: habitatId
             }
-        });
+        })).mockResolvedValue(existingBuildingZones);
 
-        prismaMock.buildingZone.create.mockResolvedValue(newBuildingZone).calledWith({
+        prismaMock.buildingZone.create.calledWith(isEqual({
             data: {
                 counterPerHabitat: newHabitatCounter,
                 habitatId: habitatId
             }
-        });
+        })).mockResolvedValue(newBuildingZone);
 
         await expect(buildingZoneService.createNewBuildingZone(habitatId)).resolves.toBe(newBuildingZone);
     });
@@ -300,16 +302,16 @@ describe('Tests of bulding zone service', () => {
             counterPerHabitat: buildingZone.counterPerHabitat,
         };
 
-        prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
             where: {
                 counterPerHabitat: counterPerHabitat,
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZone);
 
-        buildingService.getBuildingById.mockResolvedValue(building).calledWith(buildingId);
+        buildingService.getBuildingById.calledWith(isEqual(buildingId)).mockResolvedValue(building);
 
-        prismaMock.buildingZone.update.mockResolvedValue(updatedBuildingZone).calledWith({
+        prismaMock.buildingZone.update.calledWith(isEqual({
             where: {
                 id: buildingZone.id,
             },
@@ -317,7 +319,7 @@ describe('Tests of bulding zone service', () => {
                 buildingId: building.id,
                 level: 1,
             }
-        });
+        })).mockResolvedValue(updatedBuildingZone);
 
         await expect(buildingZoneService.constructBuildingOnBuildingZone(counterPerHabitat, habitatId, { buildingId: buildingId })).resolves.toBe(updatedBuildingZone);
     });
@@ -338,14 +340,14 @@ describe('Tests of bulding zone service', () => {
 
         const building = null;
 
-        prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
             where: {
                 counterPerHabitat: counterPerHabitat,
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZone);
 
-        buildingService.getBuildingById.mockResolvedValue(building).calledWith(buildingId);
+        buildingService.getBuildingById.calledWith(isEqual(buildingId)).mockResolvedValue(building);
 
         await expect(buildingZoneService.constructBuildingOnBuildingZone(counterPerHabitat, habitatId, { buildingId: buildingId })).rejects.toThrow(BuildingZoneUserInputError);
     });
@@ -363,14 +365,14 @@ describe('Tests of bulding zone service', () => {
             role: 5
         };
 
-        prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
             where: {
                 counterPerHabitat: counterPerHabitat,
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZone);
 
-        buildingService.getBuildingById.mockResolvedValue(building).calledWith(buildingId);
+        buildingService.getBuildingById.calledWith(isEqual(buildingId)).mockResolvedValue(building);
 
         await expect(buildingZoneService.constructBuildingOnBuildingZone(counterPerHabitat, habitatId, { buildingId: buildingId })).rejects.toThrow(BuildingZoneUserInputError);
     });
@@ -395,14 +397,14 @@ describe('Tests of bulding zone service', () => {
             role: 5
         };
 
-        prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
             where: {
                 counterPerHabitat: counterPerHabitat,
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZone);
 
-        buildingService.getBuildingById.mockResolvedValue(building).calledWith(buildingId);
+        buildingService.getBuildingById.calledWith(isEqual(buildingId)).mockResolvedValue(building);
 
         await expect(buildingZoneService.constructBuildingOnBuildingZone(counterPerHabitat, habitatId, { buildingId: buildingId })).rejects.toThrow(BuildingZoneUserInputError);
     });
@@ -430,21 +432,21 @@ describe('Tests of bulding zone service', () => {
             counterPerHabitat: buildingZone.counterPerHabitat,
         };
 
-        prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
             where: {
                 counterPerHabitat: counterPerHabitat,
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZone);
 
-        prismaMock.buildingZone.update.mockResolvedValue(updatedBuildingZone).calledWith({
+        prismaMock.buildingZone.update.calledWith(isEqual({
             where: {
                 id: buildingZone.id,
             },
             data: {
                 level: buildingZone.level + 1,
             }
-        });
+        })).mockResolvedValue(updatedBuildingZone);
 
         await expect(buildingZoneService.upgradeBuildingZone(counterPerHabitat, habitatId)).resolves.toBe(updatedBuildingZone);
     });
@@ -455,12 +457,12 @@ describe('Tests of bulding zone service', () => {
 
         const buildingZone = null;
 
-        prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
             where: {
                 counterPerHabitat: counterPerHabitat,
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZone);
 
         await expect(buildingZoneService.upgradeBuildingZone(counterPerHabitat, habitatId)).rejects.toThrow(BuildingZoneUserInputError);
     });
@@ -479,13 +481,137 @@ describe('Tests of bulding zone service', () => {
             counterPerHabitat: counterPerHabitat
         };
 
-        prismaMock.buildingZone.findFirst.mockResolvedValue(buildingZone).calledWith({
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
             where: {
                 counterPerHabitat: counterPerHabitat,
                 habitatId: habitatId,
             }
-        });
+        })).mockResolvedValue(buildingZone);
 
         await expect(buildingZoneService.upgradeBuildingZone(counterPerHabitat, habitatId)).rejects.toThrow(BuildingZoneUserInputError);
+    });
+
+    test('Should downgrade level on building zone when building zone exists and is connected to building and existing building level is higer than 1', async () => {
+        const habitatId = 5;
+        const counterPerHabitat = 1;
+        const buildingId = 20;
+
+        const buildingZone = {
+            id: 5,
+            habitatId: habitatId,
+            buildingId: buildingId,
+            level: 3,
+            placement: 'fake',
+            counterPerHabitat: counterPerHabitat
+        };
+
+        const updatedBuildingZone = {
+            id: buildingZone.id,
+            habitatId: buildingZone.habitatId,
+            buildingId: buildingZone.id,
+            level: buildingZone.level - 1,
+            placement: buildingZone.placement,
+            counterPerHabitat: buildingZone.counterPerHabitat,
+        };
+
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
+            where: {
+                counterPerHabitat: counterPerHabitat,
+                habitatId: habitatId,
+            }
+        })).mockResolvedValue(buildingZone);
+
+        prismaMock.buildingZone.update.calledWith(isEqual({
+            where: {
+                id: buildingZone.id,
+            },
+            data: {
+                level: buildingZone.level - 1,
+            }
+        })).mockResolvedValue(updatedBuildingZone);
+
+        await expect(buildingZoneService.downgradeBuildingZone(counterPerHabitat, habitatId)).resolves.toBe(updatedBuildingZone);
+    });
+
+    test('Should not downgrade level on building zone when building zone exists and is connected to building and existing building level equals 1', async () => {
+        const habitatId = 5;
+        const counterPerHabitat = 1;
+        const buildingId = 20;
+
+        const buildingZone = {
+            id: 5,
+            habitatId: habitatId,
+            buildingId: buildingId,
+            level: 1,
+            placement: 'fake',
+            counterPerHabitat: counterPerHabitat
+        };
+
+        const updatedBuildingZone = {
+            id: buildingZone.id,
+            habitatId: buildingZone.habitatId,
+            buildingId: buildingZone.id,
+            level: buildingZone.level,
+            placement: buildingZone.placement,
+            counterPerHabitat: buildingZone.counterPerHabitat,
+        };
+
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
+            where: {
+                counterPerHabitat: counterPerHabitat,
+                habitatId: habitatId,
+            }
+        })).mockResolvedValue(buildingZone);
+
+        prismaMock.buildingZone.update.calledWith(isEqual({
+            where: {
+                id: buildingZone.id,
+            },
+            data: {
+                level: buildingZone.level,
+            }
+        })).mockResolvedValue(updatedBuildingZone);
+
+        await expect(buildingZoneService.downgradeBuildingZone(counterPerHabitat, habitatId)).resolves.toBe(updatedBuildingZone);
+    });
+
+    test('Should not downgrade level on building zone and throw exception when building zone not exists', async () => {
+        const habitatId = 5;
+        const counterPerHabitat = 1;
+
+        const buildingZone = null;
+
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
+            where: {
+                counterPerHabitat: counterPerHabitat,
+                habitatId: habitatId,
+            }
+        })).mockResolvedValue(buildingZone);
+
+        await expect(buildingZoneService.downgradeBuildingZone(counterPerHabitat, habitatId)).rejects.toThrow(BuildingZoneUserInputError);
+    });
+
+    test('Should not downgrade level on building zone and throw exception when building zone exists but is not connected to any building', async () => {
+        const habitatId = 5;
+        const counterPerHabitat = 1;
+        const buildingId = null;
+
+        const buildingZone = {
+            id: 5,
+            habitatId: habitatId,
+            buildingId: buildingId,
+            level: 1,
+            placement: 'fake',
+            counterPerHabitat: counterPerHabitat
+        };
+
+        prismaMock.buildingZone.findFirst.calledWith(isEqual({
+            where: {
+                counterPerHabitat: counterPerHabitat,
+                habitatId: habitatId,
+            }
+        })).mockResolvedValue(buildingZone);
+
+        await expect(buildingZoneService.downgradeBuildingZone(counterPerHabitat, habitatId)).rejects.toThrow(BuildingZoneUserInputError);
     });
 });
