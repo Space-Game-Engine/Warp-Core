@@ -1,5 +1,6 @@
 import { MockPrismaClient, createMockContext } from '../../PrismaMock';
 import { HabitatService } from "../../../src/habitat/HabitatService";
+import { isEqual } from "../../isEqual";
 
 let prismaMock: MockPrismaClient;
 let habitatService: HabitatService;
@@ -20,11 +21,11 @@ describe("Habitat service tests", () => {
             isMain: true,
         };
 
-        prismaMock.habitat.findFirst.mockResolvedValue(habitatObject).calledWith({
+        prismaMock.habitat.findFirst.calledWith(isEqual({
             where: {
                 id: habitatId
             }
-        });
+        })).mockResolvedValue(habitatObject);
 
         await expect(habitatService.getHabitatById(habitatId)).resolves.toEqual(habitatObject);
     });
@@ -39,11 +40,11 @@ describe("Habitat service tests", () => {
             isMain: true,
         }];
 
-        prismaMock.habitat.findMany.mockResolvedValue(habitatsArray).calledWith({
+        prismaMock.habitat.findMany.calledWith(isEqual({
             where: {
                 userId: userId
             }
-        });
+        })).mockResolvedValue(habitatsArray);
 
         await expect(habitatService.getHabitatsByUserId(userId)).resolves.toEqual(habitatsArray);
     });
@@ -62,9 +63,9 @@ describe("Habitat service tests", () => {
             isMain: newHabitatInput.isMain,
         };
 
-        prismaMock.habitat.create.mockResolvedValue(habitatObject).calledWith({
+        prismaMock.habitat.create.calledWith(isEqual({
             data: newHabitatInput
-        });
+        })).mockResolvedValue(habitatObject);
 
         await expect(habitatService.createNewHabitat(newHabitatInput)).resolves.toEqual(habitatObject);
     });

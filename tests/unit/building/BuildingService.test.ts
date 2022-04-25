@@ -1,5 +1,6 @@
 import { MockPrismaClient, createMockContext } from '../../PrismaMock';
 import { BuildingService } from "../../../src/building/BuildingService";
+import { isEqual } from "../../isEqual";
 
 let prismaMock: MockPrismaClient;
 let buildingService: BuildingService;
@@ -37,11 +38,11 @@ describe("Building service tests", () => {
             role: 5
         };
 
-        prismaMock.building.findFirst.mockResolvedValue(buildingObject).calledWith({
+        prismaMock.building.findFirst.calledWith(isEqual({
             where: {
                 id: buildingId
             }
-        });
+        })).mockResolvedValue(buildingObject);
 
         await expect(buildingService.getBuildingById(buildingId)).resolves.toEqual(buildingObject);
     });
@@ -60,9 +61,9 @@ describe("Building service tests", () => {
             role: buildingInput.role
         };
 
-        prismaMock.building.create.mockResolvedValue(buildingObject).calledWith({
+        prismaMock.building.create.calledWith(isEqual({
             data: buildingInput
-        });
+        })).mockResolvedValue(buildingObject);
 
         await expect(buildingService.createNewBuilding(buildingInput)).resolves.toEqual(buildingObject);
     });
@@ -81,12 +82,12 @@ describe("Building service tests", () => {
             role: buildingInput.role
         };
 
-        prismaMock.building.update.mockResolvedValue(buildingObject).calledWith({
+        prismaMock.building.update.calledWith(isEqual({
             where: {
                 id: buildingId
             },
             data: buildingInput
-        });
+        })).mockResolvedValue(buildingObject);
 
         await expect(buildingService.editBuilding(buildingId, buildingInput)).resolves.toEqual(buildingObject);
     });
