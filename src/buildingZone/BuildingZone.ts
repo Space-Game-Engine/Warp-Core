@@ -4,6 +4,12 @@ import { Habitat } from "../habitat/Habitat";
 
 @ObjectType({ description: "Single bulding zone, you can build here single building and level it up" })
 export class BuildingZone {
+
+    /**
+     * Minimal level with created building on that zone
+     */
+    static readonly MINIMAL_LEVEL_WITH_BUILDING = 1;
+
     // Real Id of building zone
     id: number;
 
