@@ -1,5 +1,5 @@
 import { ObjectType, Field, ID } from "type-graphql";
-import { BuildingZone } from "../buildingZone/BuildingZone";
+import { BuildingZone } from "../buildingZone/Models/BuildingZone";
 
 @ObjectType({ description: "Single habitat that belongs to user" })
 export class Habitat {

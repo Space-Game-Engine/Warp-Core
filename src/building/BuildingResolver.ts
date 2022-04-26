@@ -5,9 +5,9 @@ import {
     Mutation,
 } from "type-graphql";
 import { Service } from "typedi";
-import { Building } from "./Building";
+import { Building } from "./Models/Building";
 import { BuildingService } from "./BuildingService";
-import { BuildingInput } from "./BuildingInput";
+import { BuildingInput } from "./InputTypes/BuildingInput";
 
 @Service()
 @Resolver(Building)

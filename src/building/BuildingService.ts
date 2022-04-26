@@ -1,6 +1,6 @@
 import { Service, Inject } from "typedi";
 import { PrismaClient } from "@prisma/client";
-import { BuildingInput } from "./BuildingInput";
+import { BuildingInput } from "./InputTypes/BuildingInput";
 
 @Service()
 export class BuildingService {

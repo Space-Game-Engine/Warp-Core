@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Inject, Service } from "typedi";
 import { BuildingService } from "../building/BuildingService";
-import { BuildingZone } from "./BuildingZone";
+import { BuildingZone } from "./Models/BuildingZone";
 import { BuildingZoneUserInputError } from "./BuildingZoneUserInputError";
 import { ConstructBuildingInput } from "./InputTypes/ConstructBuildingInput";
 

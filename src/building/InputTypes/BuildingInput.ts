@@ -1,5 +1,5 @@
 import { InputType, Field } from "type-graphql";
-import { Building } from "./Building";
+import { Building } from "../Models/Building";
 
 @InputType({ description: "Create or edit building" })
 export class BuildingInput implements Partial<Building> {

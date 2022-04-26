@@ -1,5 +1,5 @@
 import { ArgsType, Field, Int } from "type-graphql";
-import { BuildingZone } from "../BuildingZone";
+import { BuildingZone } from "../Models/BuildingZone";
 import { GetSingleBuildingZoneArgs } from "./GetSingleBuildingZoneArgs";
 
 @ArgsType()

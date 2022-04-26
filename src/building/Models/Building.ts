@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from "type-graphql";
+import { BuildingDetailsAtCertainLevel } from "./BuildingDetailsAtCertainLevel";
 
 @ObjectType({ description: "Single bulding type, describes its role in game" })
 export class Building {
@@ -10,4 +11,7 @@ export class Building {
 
     @Field({ description: "What name that kind of building have" })
     name: string;
+
+    @Field(type => [BuildingDetailsAtCertainLevel], { description: "Details how to upgrade that building" })
+    buildingDetailsAtCertainLevel: BuildingDetailsAtCertainLevel[];
 }

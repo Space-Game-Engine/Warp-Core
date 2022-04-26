@@ -1,6 +1,6 @@
 import { ObjectType, Field, ID } from "type-graphql";
-import { Building } from "../building/Building";
-import { Habitat } from "../habitat/Habitat";
+import { Building } from "../../building/Models/Building";
+import { Habitat } from "../../habitat/Habitat";
 
 @ObjectType({ description: "Single bulding zone, you can build here single building and level it up" })
 export class BuildingZone {
