@@ -1,6 +1,6 @@
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -17,39 +17,40 @@ model Habitat {
 }
 
 model Building {
-  id            Int             @id @default(autoincrement())
-  name          String
-  role          Int
-  buildingZones BuildingZone[]
-  buildingCosts BuildingCosts[]
+  id                            Int                             @id @default(autoincrement())
+  name                          String
+  role                          Int
+  buildingZones                 BuildingZone[]
+  buildingDetailsAtCertainLevel BuildingDetailsAtCertainLevel[]
+}
+
+model BuildingDetailsAtCertainLevel {
+  id                            Int      @id @default(autoincrement())
+  building                      Building @relation(fields: [buildingId], references: [id])
+  buildingId                    Int
+  level                         Int
+  timeToUpdateBuildingInSeconds Int
+  requirements                  Json
 }
 
 model BuildingZone {
-  id                Int       @id @default(autoincrement())
-  habitat           Habitat   @relation(fields: [habitatId], references: [id])
-  habitatId         Int
-  building          Building? @relation(fields: [buildingId], references: [id])
-  buildingId        Int?
-  level             Int       @default(0)
-  placement         String?
-  counterPerHabitat Int
+  id                     Int       @id @default(autoincrement())
+  habitat                Habitat   @relation(fields: [habitatId], references: [id])
+  habitatId              Int
+  building               Building? @relation(fields: [buildingId], references: [id])
+  buildingId             Int?
+  level                  Int       @default(0)
+  placement              String?
+  counterPerHabitat      Int
+  startOfBuildingUpgrade DateTime
+  endOfBuildingUpgrade   DateTime
 }
 
 model Resource {
-  id        Int              @id @default(autoincrement())
-  name      String
-  type      Int
-  buildings BuildingCosts[]
-  habitats  ResourceAmount[]
-}
-
-model BuildingCosts {
-  building   Building @relation(fields: [buildingId], references: [id])
-  buildingId Int
-  resource   Resource @relation(fields: [resourceId], references: [id])
-  resourceId Int
-
-  @@id([buildingId, resourceId])
+  id       Int              @id @default(autoincrement())
+  name     String
+  type     Int
+  habitats ResourceAmount[]
 }
 
 model ResourceAmount {
