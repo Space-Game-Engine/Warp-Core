@@ -1,16 +1,17 @@
-import { PrismaClient } from "@prisma/client";
-import { Inject, Service } from "typedi";
-import { BuildingService } from "../building/BuildingService";
-import { BuildingZone } from "./Models/BuildingZone";
-import { BuildingZoneUserInputError } from "./BuildingZoneUserInputError";
-import { ConstructBuildingInput } from "./InputTypes/ConstructBuildingInput";
+import {PrismaClient} from "@prisma/client";
+import {Inject, Service} from "typedi";
+import {BuildingService} from "../building/BuildingService";
+import {BuildingZone} from "./Models/BuildingZone";
+import {BuildingZoneUserInputError} from "./BuildingZoneUserInputError";
+import {ConstructBuildingInput} from "./InputTypes/ConstructBuildingInput";
 
 @Service()
 export class BuildingZoneService {
     constructor(
         @Inject("PRISMA") private readonly prisma: PrismaClient,
         private readonly buildingService: BuildingService
-    ) { }
+    ) {
+    }
 
     countBuildingZonesOnHabitatByHabitatId(habitatId: number) {
         return this.prisma.buildingZone.count({
@@ -92,7 +93,7 @@ export class BuildingZoneService {
             },
             data: {
                 buildingId: building.id,
-                level: BuildingZone.MINIMAL_LEVEL_WITH_BUILDING,
+                level: BuildingZone.MINIMAL_BUILDING_LEVEL,
             }
         });
     }
@@ -124,17 +125,17 @@ export class BuildingZoneService {
         const singleBuildingZone = await this.getSingleBuildingZone(counterPerHabitat, habitatId);
 
         if (!singleBuildingZone) {
-            throw new BuildingZoneUserInputError('Invalid building zone', { argumentName: ['counterPerHabitat', 'habitatId'] });
+            throw new BuildingZoneUserInputError('Invalid building zone', {argumentName: ['counterPerHabitat', 'habitatId']});
         }
 
         if (!singleBuildingZone.buildingId) {
-            throw new BuildingZoneUserInputError('Building zone is not connected to any building', { argumentName: ['counterPerHabitat', 'habitatId'] });
+            throw new BuildingZoneUserInputError('Building zone is not connected to any building', {argumentName: ['counterPerHabitat', 'habitatId']});
         }
 
         let newBuildingZoneLevel = singleBuildingZone.level - numberOfLevelsToDowngrade;
 
-        if (newBuildingZoneLevel < BuildingZone.MINIMAL_LEVEL_WITH_BUILDING) {
-            newBuildingZoneLevel = BuildingZone.MINIMAL_LEVEL_WITH_BUILDING;
+        if (newBuildingZoneLevel < BuildingZone.MINIMAL_BUILDING_LEVEL) {
+            newBuildingZoneLevel = BuildingZone.MINIMAL_BUILDING_LEVEL;
         }
 
         return this.prisma.buildingZone.update({

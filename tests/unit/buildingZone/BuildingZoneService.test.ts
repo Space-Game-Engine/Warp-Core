@@ -1,10 +1,10 @@
 import "reflect-metadata";
-import { MockPrismaClient, createMockContext } from '../../PrismaMock';
-import { BuildingZoneService } from '../../../src/buildingZone/BuildingZoneService';
-import { mockDeep, DeepMockProxy } from 'jest-mock-extended'
-import { BuildingService } from '../../../src/building/BuildingService';
-import { BuildingZoneUserInputError } from '../../../src/buildingZone/BuildingZoneUserInputError';
-import { isEqual } from "../../isEqual";
+import {createMockContext, MockPrismaClient} from '../../PrismaMock';
+import {BuildingZoneService} from '../../../src/buildingZone/BuildingZoneService';
+import {DeepMockProxy, mockDeep} from 'jest-mock-extended'
+import {BuildingService} from '../../../src/building/BuildingService';
+import {BuildingZoneUserInputError} from '../../../src/buildingZone/BuildingZoneUserInputError';
+import {isEqual} from "../../isEqual";
 
 let prismaMock: MockPrismaClient;
 let buildingZoneService: BuildingZoneService;
@@ -16,12 +16,12 @@ beforeEach(() => {
     buildingZoneService = new BuildingZoneService(prismaMock, buildingService);
 });
 
-describe('Tests of bulding zone service', () => {
+describe('Tests of building zone service', () => {
     test('Count building zones on habitat', async () => {
         const habitatId = 5;
         const countedElements = 10;
 
-        prismaMock.buildingZone.count.mockResolvedValue(countedElements).calledWith({ where: { habitatId: habitatId } });
+        prismaMock.buildingZone.count.mockResolvedValue(countedElements).calledWith({where: {habitatId: habitatId}});
 
         await expect(buildingZoneService.countBuildingZonesOnHabitatByHabitatId(habitatId)).resolves.toBe(countedElements);
     });

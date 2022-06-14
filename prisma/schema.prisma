@@ -5,6 +5,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+//  output   = "./prisma/client"
 }
 
 model Habitat {
@@ -22,6 +23,7 @@ model Building {
   role                          Int
   buildingZones                 BuildingZone[]
   buildingDetailsAtCertainLevel BuildingDetailsAtCertainLevel[]
+  buildingQueue                 BuildingQueueElement[]
 }
 
 model BuildingDetailsAtCertainLevel {
@@ -42,8 +44,19 @@ model BuildingZone {
   level                  Int       @default(0)
   placement              String?
   counterPerHabitat      Int
-  startOfBuildingUpgrade DateTime
-  endOfBuildingUpgrade   DateTime
+  buildingQueue          BuildingQueueElement[]
+}
+
+model BuildingQueueElement {
+  id                Int       @id @default(autoincrement())
+  startLevel        Int
+  endLevel          Int
+  startTime         DateTime
+  endTime           DateTime
+  building          Building @relation(fields: [buildingId], references: [id])
+  buildingId        Int
+  buildingZone      BuildingZone @relation(fields: [buildingZoneId], references: [id])
+  buildingZoneId    Int
 }
 
 model Resource {

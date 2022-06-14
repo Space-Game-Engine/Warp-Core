@@ -1,12 +1,15 @@
-import { Service, Inject } from "typedi";
-import { Prisma, PrismaClient } from "@prisma/client";
-import { NewHabitatInput } from "./NewHabitatInput";
+import {Inject, Service} from "typedi";
+import {PrismaClient} from "@prisma/client";
+import {NewHabitatInput} from "./NewHabitatInput";
+import {BuildingZoneService} from "../buildingZone/BuildingZoneService";
 
 @Service()
 export class HabitatService {
     constructor(
-        @Inject("PRISMA") private readonly prisma: PrismaClient
-    ) { }
+        @Inject("PRISMA") private readonly prisma: PrismaClient,
+        private readonly buildingZoneService: BuildingZoneService
+    ) {
+    }
 
     getHabitatById(habitatId: number) {
         return this.prisma.habitat.findFirst({
@@ -24,9 +27,11 @@ export class HabitatService {
         });
     }
 
-    createNewHabitat(newHabitatData: NewHabitatInput) {
-        return this.prisma.habitat.create({
+    async createNewHabitat(newHabitatData: NewHabitatInput) {
+        const newHabitat = await this.prisma.habitat.create({
             data: newHabitatData
         });
+
+
     }
 }

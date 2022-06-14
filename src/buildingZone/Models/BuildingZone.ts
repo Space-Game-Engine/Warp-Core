@@ -1,14 +1,15 @@
-import { ObjectType, Field, ID } from "type-graphql";
-import { Building } from "../../building/Models/Building";
-import { Habitat } from "../../habitat/Habitat";
+import {Field, ObjectType} from "type-graphql";
+import {Building} from "../../building/Models/Building";
+import {Habitat} from "../../habitat/Habitat";
+import {BuildingQueueElement} from "../../buildingQueue/Models/BuildingQueueElement";
 
-@ObjectType({ description: "Single bulding zone, you can build here single building and level it up" })
+@ObjectType({description: "Single building zone, you can build here single building and level it up"})
 export class BuildingZone {
 
     /**
      * Minimal level with created building on that zone
      */
-    static readonly MINIMAL_LEVEL_WITH_BUILDING = 1;
+    static readonly MINIMAL_BUILDING_LEVEL = 1;
 
     // Real Id of building zone
     id: number;
@@ -21,14 +22,17 @@ export class BuildingZone {
 
     habitatId: number;
 
-    @Field(type => Building, { nullable: true, description: "What kind of building is placed here" })
+    @Field(type => Building, {nullable: true, description: "What kind of building is placed here"})
     building?: Building;
 
     buildingId: number;
 
-    @Field({ description: "What level is that" })
+    @Field({description: "What level is that"})
     level: number = 0;
 
-    @Field({ nullable: true, description: "Where is that building zone placed in our habitat" })
+    @Field({nullable: true, description: "Where is that building zone placed in our habitat"})
     placement?: string;
+
+    @Field(type => [BuildingQueueElement], {description: "List of all queues connected to that building zone"})
+    buildingQueue?: BuildingQueueElement[];
 }
