@@ -7,6 +7,7 @@ import {BuildingZoneService} from "../buildingZone/BuildingZoneService";
 export class HabitatService {
     constructor(
         @Inject("PRISMA") private readonly prisma: PrismaClient,
+        @Inject("CONFIG") private readonly config: any,
         private readonly buildingZoneService: BuildingZoneService
     ) {
     }
@@ -32,6 +33,10 @@ export class HabitatService {
             data: newHabitatData
         });
 
+        for (let buildingZoneCounter = 0; buildingZoneCounter < this.config.habitat.buildingZones.counterForNewHabitat; buildingZoneCounter++) {
+            await this.buildingZoneService.createNewBuildingZone(newHabitat.id);
+        }
 
+        return newHabitat;
     }
 }
