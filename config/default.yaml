@@ -1,0 +1,4 @@
+habitat:
+  buildingZones:
+    counterForNewHabitat: 10
+    isPossibleToCreateNewZones: true
