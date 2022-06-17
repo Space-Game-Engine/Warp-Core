@@ -1,14 +1,13 @@
 import {Inject, Service} from "typedi";
 import {PrismaClient} from "@prisma/client";
 import {NewHabitatInput} from "./NewHabitatInput";
-import {BuildingZoneService} from "../buildingZone/BuildingZoneService";
+import CoreEventEmitter from "../CoreEventEmitter";
 
 @Service()
 export class HabitatService {
     constructor(
         @Inject("PRISMA") private readonly prisma: PrismaClient,
-        @Inject("CONFIG") private readonly config: any,
-        private readonly buildingZoneService: BuildingZoneService
+        @Inject("CORE_EVENT_EMITTER") private readonly eventEmitter: CoreEventEmitter
     ) {
     }
 
@@ -33,9 +32,7 @@ export class HabitatService {
             data: newHabitatData
         });
 
-        for (let buildingZoneCounter = 0; buildingZoneCounter < this.config.habitat.buildingZones.counterForNewHabitat; buildingZoneCounter++) {
-            await this.buildingZoneService.createNewBuildingZone(newHabitat.id);
-        }
+        this.eventEmitter.emit('habitat.create_new', newHabitat);
 
         return newHabitat;
     }

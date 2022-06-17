@@ -1,17 +1,10 @@
-import {
-    Resolver,
-    Query,
-    Arg,
-    Mutation,
-    Root,
-    FieldResolver,
-} from "type-graphql";
-import { Service } from "typedi";
-import { BuildingZoneService } from "../buildingZone/BuildingZoneService";
+import {Arg, FieldResolver, Mutation, Query, Resolver, Root,} from "type-graphql";
+import {Service} from "typedi";
+import {BuildingZoneService} from "../buildingZone/BuildingZoneService";
 
-import { Habitat } from "./Habitat";
-import { HabitatService } from "./HabitatService";
-import { NewHabitatInput } from "./NewHabitatInput";
+import {Habitat} from "./Habitat";
+import {HabitatService} from "./HabitatService";
+import {NewHabitatInput} from "./NewHabitatInput";
 
 @Service()
 @Resolver(of => Habitat)
@@ -19,9 +12,10 @@ export class HabitatResolver {
     constructor(
         private readonly habitatService: HabitatService,
         private readonly buildingZoneService: BuildingZoneService,
-    ) { }
+    ) {
+    }
 
-    @Query(returns => Habitat, { nullable: true, description: "Get single habitat by its id" })
+    @Query(returns => Habitat, {nullable: true, description: "Get single habitat by its id"})
     habitat(
         @Arg("id") id: number
     ) {
