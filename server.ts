@@ -5,7 +5,6 @@ import {buildSchema} from "type-graphql";
 import {PrismaClient} from "@prisma/client";
 import {Container} from "typedi";
 import {ApolloContext} from "./src/ApolloContext";
-import {resolvers} from "./src/Resolvers";
 
 const config = require('config');
 
@@ -16,7 +15,7 @@ Container.set({id: "CONFIG", factory: () => config});
 async function bootstrap() {
     // build TypeGraphQL executable schema
     const schema = await buildSchema({
-        resolvers: resolvers,
+        resolvers: [__dirname + "/src/**/*Resolver.ts"],
         // automatically create `schema.gql` file with schema definition in current folder
         emitSchemaFile: path.resolve(__dirname, "schema.gql"),
         container: Container,
