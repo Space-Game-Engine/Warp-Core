@@ -1,12 +1,12 @@
-import { MockPrismaClient, createMockContext } from '../../PrismaMock';
-import { BuildingService } from "../../../src/building/BuildingService";
-import { isEqual } from "../../isEqual";
+import {createPrismaClientMock, MockPrismaClient} from '../../PrismaMock';
+import {BuildingService} from "../../../src/building/BuildingService";
+import {isEqual} from "../../isEqual";
 
 let prismaMock: MockPrismaClient;
 let buildingService: BuildingService;
 
 beforeEach(() => {
-    prismaMock = createMockContext();
+    prismaMock = createPrismaClientMock();
     buildingService = new BuildingService(prismaMock);
 });
 

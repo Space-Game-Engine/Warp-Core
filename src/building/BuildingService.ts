@@ -1,12 +1,13 @@
-import { Service, Inject } from "typedi";
-import { PrismaClient } from "@prisma/client";
-import { BuildingInput } from "./InputTypes/BuildingInput";
+import {Inject, Service} from "typedi";
+import {PrismaClient} from "@prisma/client";
+import {BuildingInput} from "./InputTypes/BuildingInput";
 
 @Service()
 export class BuildingService {
     constructor(
         @Inject("PRISMA") private readonly prisma: PrismaClient
-    ) { }
+    ) {
+    }
 
     async getBuildingById(buildingId: number) {
         return await this.prisma.building.findFirst({
