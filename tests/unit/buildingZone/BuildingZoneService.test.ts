@@ -1,19 +1,23 @@
 import "reflect-metadata";
-import {createMockContext, MockPrismaClient} from '../../PrismaMock';
+import {createPrismaClientMock, MockPrismaClient} from '../../PrismaMock';
 import {BuildingZoneService} from '../../../src/buildingZone/BuildingZoneService';
 import {DeepMockProxy, mockDeep} from 'jest-mock-extended'
 import {BuildingService} from '../../../src/building/BuildingService';
 import {BuildingZoneUserInputError} from '../../../src/buildingZone/BuildingZoneUserInputError';
 import {isEqual} from "../../isEqual";
+import {testConfig} from "../../TestConfig";
+import {Habitat} from "../../../src/habitat/Habitat";
 
 let prismaMock: MockPrismaClient;
 let buildingZoneService: BuildingZoneService;
-let buildingService: DeepMockProxy<BuildingService>
+let buildingService: DeepMockProxy<BuildingService>;
+let config;
 
 beforeEach(() => {
-    prismaMock = createMockContext();
+    prismaMock = createPrismaClientMock();
     buildingService = mockDeep<BuildingService>();
-    buildingZoneService = new BuildingZoneService(prismaMock, buildingService);
+    config = testConfig;
+    buildingZoneService = new BuildingZoneService(prismaMock, config, buildingService);
 });
 
 describe('Tests of building zone service', () => {
@@ -87,7 +91,7 @@ describe('Tests of building zone service', () => {
         await expect(buildingZoneService.getAllBuildingZonesByHabitatId(habitatId)).resolves.toBe(buildingZones);
     });
 
-    test('Should returm max building zone counter as zero when there is no building zones for that habitat', async () => {
+    test('Should return max building zone counter as zero when there is no building zones for that habitat', async () => {
         const habitatId = 5;
         const buildingZones = [];
 
@@ -100,7 +104,7 @@ describe('Tests of building zone service', () => {
         await expect(buildingZoneService.getMaxOfCounterPerHabitat(habitatId)).resolves.toBe(0);
     });
 
-    test('Should returm max building zone counter as one when there is one and first building zone for that habitat', async () => {
+    test('Should return max building zone counter as one when there is one and first building zone for that habitat', async () => {
         const habitatId = 5;
         const buildingZones = [{
             id: 3,
@@ -120,7 +124,7 @@ describe('Tests of building zone service', () => {
         await expect(buildingZoneService.getMaxOfCounterPerHabitat(habitatId)).resolves.toBe(1);
     });
 
-    test('Should returm max building zone counter as three when there are three buildings zones for that habitat, one after another', async () => {
+    test('Should return max building zone counter as three when there are three buildings zones for that habitat, one after another', async () => {
         const habitatId = 5;
         const buildingZones = [
             {
@@ -158,7 +162,7 @@ describe('Tests of building zone service', () => {
         await expect(buildingZoneService.getMaxOfCounterPerHabitat(habitatId)).resolves.toBe(3);
     });
 
-    test('Should returm max building zone counter as three when there are two buildings zones for that habitat without first one', async () => {
+    test('Should return max building zone counter as three when there are two buildings zones for that habitat without first one', async () => {
         const habitatId = 5;
         const buildingZones = [
             {
@@ -642,5 +646,22 @@ describe('Tests of building zone service', () => {
         })).mockResolvedValue(buildingZone);
 
         await expect(buildingZoneService.destroyBuildingZone(counterPerHabitat, habitatId)).resolves.toBe(buildingZone);
+    });
+
+    test("Create as many building zones as is described in config", async () => {
+        const habitatId = 5;
+        const existingBuildingZones = [];
+
+
+        prismaMock.buildingZone.findMany.calledWith(isEqual({
+            where: {
+                habitatId: habitatId
+            }
+        })).mockResolvedValue(existingBuildingZones);
+
+        await buildingZoneService.createBuildingZoneOnNewHabitatCreation({id: habitatId} as Habitat);
+
+        expect(prismaMock.buildingZone.create).toBeCalledTimes(config.buildingZones.counterForNewHabitat);
+        expect(prismaMock.buildingZone.create.mock.lastCall[0].data.habitatId).toBe(habitatId);
     });
 });

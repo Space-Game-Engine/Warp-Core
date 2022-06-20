@@ -4,11 +4,13 @@ import {BuildingService} from "../building/BuildingService";
 import {BuildingZone} from "./Models/BuildingZone";
 import {BuildingZoneUserInputError} from "./BuildingZoneUserInputError";
 import {ConstructBuildingInput} from "./InputTypes/ConstructBuildingInput";
+import {Habitat} from "../habitat/Habitat";
 
 @Service()
 export class BuildingZoneService {
     constructor(
         @Inject("PRISMA") private readonly prisma: PrismaClient,
+        @Inject("CONFIG") private readonly config: any,
         private readonly buildingService: BuildingService
     ) {
     }
@@ -146,5 +148,11 @@ export class BuildingZoneService {
                 level: newBuildingZoneLevel,
             }
         });
+    }
+
+    async createBuildingZoneOnNewHabitatCreation(newHabitat: Habitat) {
+        for (let buildingZoneCounter = 0; buildingZoneCounter < this.config.buildingZones.counterForNewHabitat; buildingZoneCounter++) {
+            await this.createNewBuildingZone(newHabitat.id);
+        }
     }
 }

@@ -12,10 +12,10 @@
             "node",
             "jest"
         ],
-        "strictNullChecks": true,
+        "strictNullChecks": true
     },
     "exclude": [
         "./tests/",
-        "./node_modules/",
-    ],
+        "./node_modules/"
+    ]
 }
