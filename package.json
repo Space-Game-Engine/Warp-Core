@@ -4,8 +4,8 @@
   "description": "It is the main game core that stores habitat with buildings and technologies.",
   "main": "server.ts",
   "scripts": {
-    "test": "jest",
-    "dev": "ts-node-dev --inspect --respawn --transpile-only server.ts",
+    "test": "NODE_ENV=test jest",
+    "dev": "NODE_ENV=development ts-node-dev --inspect --respawn --transpile-only server.ts",
     "prisma-update": "npx prisma migrate dev && npx prisma generate"
   },
   "repository": {
