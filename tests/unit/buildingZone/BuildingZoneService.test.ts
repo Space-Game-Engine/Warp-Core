@@ -6,7 +6,7 @@ import {BuildingService} from '../../../src/building/BuildingService';
 import {BuildingZoneUserInputError} from '../../../src/buildingZone/BuildingZoneUserInputError';
 import {isEqual} from "../../isEqual";
 import {testConfig} from "../../TestConfig";
-import {Habitat} from "../../../src/habitat/Habitat";
+import {Habitat} from "../../../src/habitat/Models/Habitat";
 
 let prismaMock: MockPrismaClient;
 let buildingZoneService: BuildingZoneService;

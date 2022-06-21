@@ -1,6 +1,6 @@
 import {Field, ObjectType} from "type-graphql";
 import {Building} from "../../building/Models/Building";
-import {Habitat} from "../../habitat/Habitat";
+import {Habitat} from "../../habitat/Models/Habitat";
 import {BuildingQueueElement} from "../../buildingQueue/Models/BuildingQueueElement";
 
 @ObjectType({description: "Single building zone, you can build here single building and level it up"})

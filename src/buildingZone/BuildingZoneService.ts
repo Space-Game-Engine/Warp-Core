@@ -4,7 +4,7 @@ import {BuildingService} from "../building/BuildingService";
 import {BuildingZone} from "./Models/BuildingZone";
 import {BuildingZoneUserInputError} from "./BuildingZoneUserInputError";
 import {ConstructBuildingInput} from "./InputTypes/ConstructBuildingInput";
-import {Habitat} from "../habitat/Habitat";
+import {Habitat} from "../habitat/Models/Habitat";
 
 @Service()
 export class BuildingZoneService {
@@ -49,6 +49,14 @@ export class BuildingZoneService {
             where: {
                 counterPerHabitat: counterPerHabitat,
                 habitatId: habitatId,
+            }
+        });
+    }
+
+    getSingleBuildingZoneById(buildingZoneId: number) {
+        return this.prisma.buildingZone.findUnique({
+            where: {
+                id: buildingZoneId
             }
         });
     }
