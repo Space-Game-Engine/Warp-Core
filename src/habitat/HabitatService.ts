@@ -1,6 +1,6 @@
 import {Inject, Service} from "typedi";
 import {PrismaClient} from "@prisma/client";
-import {NewHabitatInput} from "./NewHabitatInput";
+import {NewHabitatInput} from "./InputTypes/NewHabitatInput";
 import CoreEventEmitter from "../CoreEventEmitter";
 
 @Service()

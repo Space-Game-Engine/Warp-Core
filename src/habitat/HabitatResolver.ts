@@ -2,9 +2,9 @@ import {Arg, FieldResolver, Mutation, Query, Resolver, Root,} from "type-graphql
 import {Service} from "typedi";
 import {BuildingZoneService} from "../buildingZone/BuildingZoneService";
 
-import {Habitat} from "./Habitat";
+import {Habitat} from "./Models/Habitat";
 import {HabitatService} from "./HabitatService";
-import {NewHabitatInput} from "./NewHabitatInput";
+import {NewHabitatInput} from "./InputTypes/NewHabitatInput";
 
 @Service()
 @Resolver(of => Habitat)

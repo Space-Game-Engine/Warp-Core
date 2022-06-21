@@ -1,12 +1,12 @@
-import { ObjectType, Field, ID } from "type-graphql";
-import { BuildingZone } from "../buildingZone/Models/BuildingZone";
+import {Field, ID, ObjectType} from "type-graphql";
+import {BuildingZone} from "../../buildingZone/Models/BuildingZone";
 
-@ObjectType({ description: "Single habitat that belongs to user" })
+@ObjectType({description: "Single habitat that belongs to user"})
 export class Habitat {
     @Field(type => ID)
     id: number;
 
-    @Field({ description: "Custom name of the habitat" })
+    @Field({description: "Custom name of the habitat"})
     name: string;
 
     @Field()
