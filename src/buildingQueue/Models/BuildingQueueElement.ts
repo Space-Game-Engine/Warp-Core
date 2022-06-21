@@ -23,6 +23,10 @@ export class BuildingQueueElement {
     @Field(type => Building, {description: "Building connected to queue element"})
     building: Building;
 
+    buildingId: number;
+
     @Field(type => BuildingZone, {description: "Building zone connected to queue element"})
     buildingZone: BuildingZone;
+
+    buildingZoneId: number;
 }
