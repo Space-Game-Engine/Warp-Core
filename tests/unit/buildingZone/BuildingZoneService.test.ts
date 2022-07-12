@@ -1,7 +1,6 @@
-import "reflect-metadata";
 import {createPrismaClientMock, MockPrismaClient} from '../../PrismaMock';
 import {BuildingZoneService} from '../../../src/buildingZone/BuildingZoneService';
-import {DeepMockProxy, mockDeep} from 'jest-mock-extended'
+import {DeepMockProxy, mockDeep} from 'jest-mock-extended';
 import {BuildingService} from '../../../src/building/BuildingService';
 import {BuildingZoneUserInputError} from '../../../src/buildingZone/BuildingZoneUserInputError';
 import {isEqual} from "../../isEqual";

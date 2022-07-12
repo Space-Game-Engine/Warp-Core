@@ -32,7 +32,7 @@ export class HabitatResolver {
     }
 
     @Mutation(returns => Habitat, { description: "Create new habitat for single user" })
-    async addHabitat(
+    addHabitat(
         @Arg('newHabitatData') newHabitatData: NewHabitatInput
     ) {
         return this.habitatService.createNewHabitat(newHabitatData);
