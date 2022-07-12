@@ -1,1 +1,1 @@
-export const testConfig = require('config');
+export const testConfig = () => require('config');
