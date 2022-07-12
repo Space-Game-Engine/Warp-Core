@@ -1,4 +1,5 @@
 .vscode
+.idea
 db-schema.mwb.bak
 node_modules
 .env
