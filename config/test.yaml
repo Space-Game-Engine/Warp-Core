@@ -1,3 +1,4 @@
-buildingZones:
-  counterForNewHabitat: 5
-  isPossibleToCreateNewZones: true
+habitat:
+  buildingZones:
+    counterForNewHabitat: 5
+    isPossibleToCreateNewZones: true

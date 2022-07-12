@@ -159,7 +159,7 @@ export class BuildingZoneService {
     }
 
     async createBuildingZoneOnNewHabitatCreation(newHabitat: Habitat) {
-        for (let buildingZoneCounter = 0; buildingZoneCounter < this.config.buildingZones.counterForNewHabitat; buildingZoneCounter++) {
+        for (let buildingZoneCounter = 0; buildingZoneCounter < this.config.habitat.buildingZones.counterForNewHabitat; buildingZoneCounter++) {
             await this.createNewBuildingZone(newHabitat.id);
         }
     }

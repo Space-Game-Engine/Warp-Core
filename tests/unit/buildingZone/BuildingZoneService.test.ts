@@ -15,7 +15,7 @@ let config;
 beforeEach(() => {
     prismaMock = createPrismaClientMock();
     buildingService = mockDeep<BuildingService>();
-    config = testConfig;
+    config = testConfig();
     buildingZoneService = new BuildingZoneService(prismaMock, config, buildingService);
 });
 
@@ -660,7 +660,7 @@ describe('Tests of building zone service', () => {
 
         await buildingZoneService.createBuildingZoneOnNewHabitatCreation({id: habitatId} as Habitat);
 
-        expect(prismaMock.buildingZone.create).toBeCalledTimes(config.buildingZones.counterForNewHabitat);
+        expect(prismaMock.buildingZone.create).toBeCalledTimes(config.habitat.buildingZones.counterForNewHabitat);
         expect(prismaMock.buildingZone.create.mock.lastCall[0].data.habitatId).toBe(habitatId);
     });
 });
