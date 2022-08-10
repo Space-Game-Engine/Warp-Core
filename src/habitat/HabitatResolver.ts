@@ -5,7 +5,7 @@ import {BuildingZoneService} from "../buildingZone/BuildingZoneService";
 import {Habitat} from "./Models/Habitat";
 import {HabitatService} from "./HabitatService";
 import {NewHabitatInput} from "./InputTypes/NewHabitatInput";
-import {BuildingQueueService} from "../buildingQueue/BuildingQueueService";
+import { BuildingQueueFetchService } from "../buildingQueue/BuildingQueueFetchService";
 
 @Service()
 @Resolver(of => Habitat)
@@ -13,7 +13,7 @@ export class HabitatResolver {
     constructor(
         private readonly habitatService: HabitatService,
         private readonly buildingZoneService: BuildingZoneService,
-        private readonly buildingQueueService: BuildingQueueService,
+        private readonly buildingQueueFetch: BuildingQueueFetchService,
     ) {
     }
 
@@ -49,6 +49,6 @@ export class HabitatResolver {
     buildingQueue(
         @Root() habitat: Habitat
     ) {
-        return this.buildingQueueService.getBuildingQueueForHabitat(habitat.id);
+        return this.buildingQueueFetch.getCurrentBuildingQueueForHabitat(habitat.id);
     }
 }
