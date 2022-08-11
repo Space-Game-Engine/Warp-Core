@@ -1,6 +1,6 @@
-import {Inject, Service} from "typedi";
-import {PrismaClient} from "@prisma/client";
-import {BuildingInput} from "./InputTypes/BuildingInput";
+import { Inject, Service } from "typedi";
+import { PrismaClient } from "@prisma/client";
+import { BuildingInput } from "./InputTypes/BuildingInput";
 
 @Service()
 export class BuildingService {
@@ -13,6 +13,13 @@ export class BuildingService {
         return await this.prisma.building.findFirst({
             where: {
                 id: buildingId,
+            },
+            include: {
+                buildingDetailsAtCertainLevel: {
+                    orderBy: {
+                        level: "asc"
+                    }
+                },
             }
         });
     }
@@ -38,5 +45,33 @@ export class BuildingService {
         });
 
         return updatedBuilding;
+    }
+
+    async calculateTimeInSecondsToUpgradeBuilding(startLevel: number, endLevel: number, buildingId: number): Promise<number> {
+        const building = await this.getBuildingById(buildingId);
+
+        if (!building) {
+            throw new Error("Building does not exists");
+        }
+
+        let secondsToUpgrade = 0;
+
+        if (startLevel === endLevel) {
+            return secondsToUpgrade;
+        }
+
+        for (const buildingDetails of building.buildingDetailsAtCertainLevel) {
+            if (buildingDetails.level <= startLevel) {
+                continue;
+            }
+
+            if (buildingDetails.level > endLevel) {
+                break;
+            }
+
+            secondsToUpgrade += buildingDetails.timeToUpdateBuildingInSeconds;
+        }
+
+        return secondsToUpgrade;
     }
 }
