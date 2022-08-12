@@ -25,6 +25,7 @@ async function bootstrap() {
         container: Container,
     });
 
+    // Automatically launch all listeners
     const listenerFilesNames = findFileNamesFromGlob(__dirname + "/src/**/*Listener.ts");
     const listenerObjects: Array<EventListener> = [];
     for (const singleListenerFileName of listenerFilesNames) {
