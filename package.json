@@ -25,6 +25,7 @@
   "homepage": "https://gitlab.com/space-engine/warp-core#readme",
   "devDependencies": {
     "@types/jest": "^28.1.1",
+    "@types/luxon": "^3.0.0",
     "jest": "^28.1.1",
     "jest-mock-extended": "^2.0.6",
     "prisma": "^3.15.1",
@@ -40,6 +41,7 @@
     "config": "^3.3.7",
     "graphql": "^15.3.0",
     "js-yaml": "^4.1.0",
+    "luxon": "^3.0.1",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^1.1.1",
     "typedi": "^0.10.0"
