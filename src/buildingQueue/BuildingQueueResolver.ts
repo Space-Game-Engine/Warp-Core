@@ -20,21 +20,21 @@ export class BuildingQueueResolver {
     ) {
     }
 
-    @Query(returns => [BuildingQueueElement], {description: "Returns whole unfinished queue for habitat"})
+    @Query(returns => [BuildingQueueElement], { description: "Returns whole unfinished queue for habitat", name: "buildingQueue_getForHabitat" })
     buildingQueueForHabitat(
         @Arg('habitatId', type => Int) habitatId: number
     ) {
         return this.buildingQueueFetch.getCurrentBuildingQueueForHabitat(habitatId);
     }
 
-    @Query(returns => BuildingQueueElement, {description: "Returns single queue element", nullable: true})
+    @Query(returns => BuildingQueueElement, { description: "Returns single queue element", nullable: true, name: "buildingQueue_get" })
     buildingQueueElement(
         @Arg('queueElementId', type => Int) queueElementId: number
     ) {
         return this.buildingQueueFetch.getSingleBuildingQueueElementById(queueElementId);
     }
 
-    @Mutation(returns => BuildingQueueElement, {description: "Adds element to building queue"})
+    @Mutation(returns => BuildingQueueElement, { description: "Adds element to building queue", name: "buildingQueue_create" })
     addToQueue(
         @Arg("addToQueueElement") addToQueueElement: AddToQueueInput
     ) {

@@ -17,21 +17,21 @@ export class HabitatResolver {
     ) {
     }
 
-    @Query(returns => Habitat, {nullable: true, description: "Get single habitat by its id"})
+    @Query(returns => Habitat, { nullable: true, description: "Get single habitat by its id", name: "habitat_get" })
     habitat(
         @Arg("id", type => Int) id: number
     ) {
         return this.habitatService.getHabitatById(id);
     }
 
-    @Query(returns => [Habitat], { nullable: true, description: "Get all habitats for single user id" })
+    @Query(returns => [Habitat], { nullable: true, description: "Get all habitats for single user id", name: "habitat_getForUser" })
     userHabitats(
         @Arg("userId", type => Int) id: number
     ) {
         return this.habitatService.getHabitatsByUserId(id);
     }
 
-    @Mutation(returns => Habitat, { description: "Create new habitat for single user" })
+    @Mutation(returns => Habitat, { description: "Create new habitat for single user", name: "habitat_create" })
     addHabitat(
         @Arg('newHabitatData') newHabitatData: NewHabitatInput
     ) {
