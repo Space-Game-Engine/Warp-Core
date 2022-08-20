@@ -1,22 +1,14 @@
 import "reflect-metadata";
-import {ApolloServer} from "apollo-server";
+import { ApolloServer } from "apollo-server";
 import * as path from "path";
-import {buildSchema} from "type-graphql";
-import {PrismaClient} from "@prisma/client";
-import {Container} from "typedi";
-import {ApolloContext} from "./src/ApolloContext";
-import {findFileNamesFromGlob} from "type-graphql/dist/helpers/loadResolversFromGlob";
-import CoreEventEmitter from "./src/CoreEventEmitter";
-import {EventListener} from "./src/EventListener";
+import { buildSchema } from "type-graphql";
+import { ApolloContext } from "./src/ApolloContext";
+import { findFileNamesFromGlob } from "type-graphql/dist/helpers/loadResolversFromGlob";
+import { EventListener } from "./src/EventListener";
+import Container from "./src/PrepareDIContainer";
 
-const config = require('config');
 
-const prisma = new PrismaClient();
-Container.set({id: "PRISMA", factory: () => prisma});
-Container.set({id: "CONFIG", factory: () => config});
-Container.set({id: "CORE_EVENT_EMITTER", factory: () => new CoreEventEmitter()});
-
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
     // build TypeGraphQL executable schema
     const schema = await buildSchema({
         resolvers: [__dirname + "/src/**/*Resolver.ts"],

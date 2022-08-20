@@ -1,19 +1,19 @@
 import { validateSync } from "class-validator";
 import { plainToInstance } from "class-transformer";
-import { HabitatConfig } from "./model/HabitatConfig";
+import { CoreConfig } from "./model/CoreConfig";
 
 export class ConfigParser {
 
-    getConfig(): HabitatConfig {
+    getConfig(): CoreConfig {
         const config = require('config');
-        const habitatConfig = plainToInstance(HabitatConfig, config.habitat);
+        const coreConfig = plainToInstance(CoreConfig, config);
 
-        this.isConfigValid(habitatConfig);
+        this.isConfigValid(coreConfig);
 
-        return habitatConfig;
+        return coreConfig;
     }
 
-    private isConfigValid(config: HabitatConfig): boolean {
+    private isConfigValid(config: CoreConfig): boolean {
         const validationErrors = validateSync(config);
 
         if (validationErrors.length === 0) {
@@ -22,8 +22,5 @@ export class ConfigParser {
 
         console.error('Validation error', validationErrors);
         throw new Error("Validation error, see logs");
-
-
-        return false;
     }
 }

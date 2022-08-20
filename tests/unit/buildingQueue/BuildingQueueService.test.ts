@@ -6,13 +6,14 @@ import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { BuildingZoneService } from "../../../src/buildingZone/BuildingZoneService";
 import { BuildingService } from "../../../src/building/BuildingService";
 import { BuildingQueueFetchService } from "../../../src/buildingQueue/BuildingQueueFetchService";
+import { CoreConfig } from "../../../src/config/model/CoreConfig";
 
 let prismaMock: MockPrismaClient;
 let buildingQueueService: BuildingQueueService;
 let buildingZoneService: DeepMockProxy<BuildingZoneService>;
 let buildingService: DeepMockProxy<BuildingService>;
 let buildingQueueFetch: DeepMockProxy<BuildingQueueFetchService>;
-let config;
+let config: CoreConfig;
 
 beforeEach(() => {
     prismaMock = createPrismaClientMock();
@@ -45,11 +46,11 @@ describe("Building queue service tests", () => {
                 .calledWith(
                     isEqual(addToQueueElement.habitatId)
                 )
-                .mockResolvedValue(config.habitat.buildingQueue.counters.maxElements);
+                .mockResolvedValue(config.habitat.buildingQueue.maxElementsInQueue);
 
             await expect(buildingQueueService.addToQueue(addToQueueElement))
                 .rejects
-                .toThrow(`Max queue count (${config.habitat.buildingQueue.counters.maxElements}) has been reached`);
+                .toThrow(`Max queue count (${config.habitat.buildingQueue.maxElementsInQueue}) has been reached`);
         });
     });
 

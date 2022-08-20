@@ -6,13 +6,14 @@ import { QueueError } from "./QueueError";
 import { BuildingService } from "../building/BuildingService";
 import { BuildingQueueFetchService } from "./BuildingQueueFetchService";
 import { DateTime } from 'luxon';
+import { CoreConfig } from "../config/model/CoreConfig";
 
 @Service()
 export class BuildingQueueService {
 
     constructor(
         @Inject("PRISMA") private readonly prisma: PrismaClient,
-        @Inject("CONFIG") private readonly config: any,
+        @Inject("CONFIG") private readonly config: CoreConfig,
         private readonly buildingQueueFetch: BuildingQueueFetchService,
         private readonly buildingZoneService: BuildingZoneService,
         private readonly buildingService: BuildingService,
@@ -22,8 +23,8 @@ export class BuildingQueueService {
     async addToQueue(addToQueueElement: AddToQueueInput) {
         const queueCounter = await this.buildingQueueFetch.countActiveBuildingQueueElementsForHabitat(addToQueueElement.habitatId);
 
-        if (queueCounter >= this.config.habitat.buildingQueue.counters.maxElements) {
-            throw new QueueError(`Max queue count (${this.config.habitat.buildingQueue.counters.maxElements}) has been reached`);
+        if (queueCounter >= this.config.habitat.buildingQueue.maxElementsInQueue) {
+            throw new QueueError(`Max queue count (${this.config.habitat.buildingQueue.maxElementsInQueue}) has been reached`);
         }
         
         const draftQueueElement = await this.prepareDraftQueueElement(addToQueueElement);

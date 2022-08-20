@@ -3,5 +3,5 @@ habitat:
     counterForNewHabitat: 10
     isPossibleToCreateNewZones: true
   buildingQueue:
-    maxElements: 5
+    maxElementsInQueue: 5
     allowMultipleLevelUpdate: true
