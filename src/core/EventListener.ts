@@ -6,7 +6,7 @@ export abstract class EventListener {
     @Inject("CORE_EVENT_EMITTER")
     protected eventEmitter: CoreEventEmitter;
 
-    public abstract registerAllListeners();
+    public abstract registerListeners();
 
     protected registerNewListener(eventName: string, functionToCall: Function) {
         this.eventEmitter.on(eventName, functionToCall);

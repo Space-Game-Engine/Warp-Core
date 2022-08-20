@@ -6,17 +6,21 @@ import {BuildingZoneUserInputError} from '../../../src/buildingZone/BuildingZone
 import {isEqual} from "../../isEqual";
 import {testConfig} from "../../TestConfig";
 import {Habitat} from "../../../src/habitat/Models/Habitat";
+import { createEventEmitterMock, MockEventEmitter } from '../../EventEmitterMock';
+import { Building } from '@prisma/client';
 
 let prismaMock: MockPrismaClient;
 let buildingZoneService: BuildingZoneService;
 let buildingService: DeepMockProxy<BuildingService>;
+let eventMock: MockEventEmitter;
 let config;
 
 beforeEach(() => {
     prismaMock = createPrismaClientMock();
     buildingService = mockDeep<BuildingService>();
     config = testConfig();
-    buildingZoneService = new BuildingZoneService(prismaMock, config, buildingService);
+    eventMock = createEventEmitterMock();
+    buildingZoneService = new BuildingZoneService(prismaMock, config, eventMock, buildingService);
 });
 
 describe('Tests of building zone service', () => {
@@ -293,7 +297,8 @@ describe('Tests of building zone service', () => {
         const building = {
             id: buildingId,
             name: 'test',
-            role: 5
+            role: 5,
+            buildingDetailsAtCertainLevel: [],
         };
 
         const updatedBuildingZone = {
@@ -365,7 +370,8 @@ describe('Tests of building zone service', () => {
         const building = {
             id: buildingId,
             name: 'test',
-            role: 5
+            role: 5,
+            buildingDetailsAtCertainLevel: [],
         };
 
         prismaMock.buildingZone.findFirst.calledWith(isEqual({
@@ -397,7 +403,8 @@ describe('Tests of building zone service', () => {
         const building = {
             id: buildingId,
             name: 'test',
-            role: 5
+            role: 5,
+            buildingDetailsAtCertainLevel: [],
         };
 
         prismaMock.buildingZone.findFirst.calledWith(isEqual({
