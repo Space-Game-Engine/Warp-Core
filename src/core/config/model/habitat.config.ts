@@ -1,7 +1,7 @@
 import { Type } from "class-transformer";
 import { ValidateNested } from "class-validator";
-import { BuildingQueueConfig } from "./BuildingQueueConfig";
-import { BuildingZoneConfig } from "./BuildingZonesConfig";
+import { BuildingQueueConfig } from "./building-queue.config";
+import { BuildingZoneConfig } from "./building-zones.config";
 
 export class HabitatConfig {
 

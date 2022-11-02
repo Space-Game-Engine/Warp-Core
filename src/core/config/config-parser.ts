@@ -1,6 +1,6 @@
 import { validateSync } from "class-validator";
 import { plainToInstance } from "class-transformer";
-import { CoreConfig } from "./model/CoreConfig";
+import { CoreConfig } from "./model/core.config";
 
 class ConfigParser {
 

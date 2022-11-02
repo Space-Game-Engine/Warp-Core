@@ -1,3 +1,6 @@
+jwt:
+  secret: 'secret_code'
+  expiresIn: 3600
 habitat:
   buildingZones:
     counterForNewHabitat: 10
