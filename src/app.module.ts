@@ -8,8 +8,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HabitatModule } from './habitat/habitat.module';
 import { BuildingZoneModule } from './building-zone/building-zone.module';
 import { ConfigModule } from '@nestjs/config';
-import config from './core/config/ConfigParser';
+import config from './core/config/config-parser';
 import { BuildingQueueModule } from './building-queue/building-queue.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { BuildingQueueModule } from './building-queue/building-queue.module';
       isGlobal: true, // to get access to it in every component
       load: [config],
     }),
+    AuthModule,
   ],
 })
 export class AppModule {
