@@ -7,7 +7,6 @@ import { HabitatModule } from '../habitat/habitat.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { GqlAuthGuard } from './guard/gql-auth.guard';
-import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
 
