@@ -1,7 +1,8 @@
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
+import { Args, Int, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
+import { CurrentHabitat } from "../auth/decorator/get-current-habitat.decorator";
 import { BuildingService } from "../building/building.service";
 import { HabitatService } from "../habitat/habitat.service";
-import { GetSingleBuildingZoneArgs } from "./args-types/GetSingleBuildingZoneArgs";
+import { HabitatModel } from "../habitat/model/habitat.model";
 import { BuildingZoneService } from "./building-zone.service";
 import { BuildingZoneModel } from "./model/building-zone.model";
 
@@ -15,16 +16,17 @@ export class BuildingZoneResolver {
 
     @Query(returns => BuildingZoneModel, { nullable: true, description: "Returns single building zone", name: "buildingZone_get" })
     buildingZone(
-        @Args() { habitatId, counterPerHabitat }: GetSingleBuildingZoneArgs
+        @Args("counterPerHabitat", { type: () => Int }) counterPerHabitat: number,
+        @CurrentHabitat() habitat: HabitatModel
     ) {
-        return this.buildingZoneService.getSingleBuildingZone(counterPerHabitat, habitatId);
+        return this.buildingZoneService.getSingleBuildingZone(counterPerHabitat, habitat.id);
     }
 
     @Query(returns => [BuildingZoneModel], { nullable: true, description: "Returns all building zones for single habitat", name: "buildingZone_getAll" })
     allBuildingZones(
-        @Args("habitatId", { type: () => Int }) id: number
+        @CurrentHabitat() habitat: HabitatModel
     ) {
-        return this.buildingZoneService.getAllBuildingZonesByHabitatId(id);
+        return this.buildingZoneService.getAllBuildingZonesByHabitatId(habitat.id);
     }
 
     @ResolveField()

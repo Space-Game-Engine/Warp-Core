@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { IsBoolean, IsNumber } from "class-validator";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BuildingQueueElementModel } from "../../building-queue/model/building-queue-element.model";
 import { BuildingZoneModel } from "../../building-zone/model/building-zone.model";
 
 @ObjectType({ description: "Single habitat that belongs to user" })
@@ -28,6 +29,6 @@ export class HabitatModel {
     @Field(type => [BuildingZoneModel])
     buildingZones: BuildingZoneModel[];
 
-    // @Field(type => [BuildingQueueElement])
-    // buildingQueue: BuildingQueueElement[]
+    @Field(type => [BuildingQueueElementModel])
+    buildingQueue: BuildingQueueElementModel[]
 }

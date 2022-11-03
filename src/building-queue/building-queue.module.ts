@@ -19,6 +19,7 @@ import { BuildingQueueElementModel } from "./model/building-queue-element.model"
         ConfigModule,
     ],
     exports: [
+        BuildingQueueFetchService
     ]
 })
 export class BuildingQueueModule {
