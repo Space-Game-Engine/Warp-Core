@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { IsEnum, IsNumber, Length, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
+import { IsEnum, IsNumber, IsOptional, Length, ValidateNested } from "class-validator";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { BuildingDetailsAtCertainLevelModel } from "./building-details-at-certain-level.model";
 import { Role } from "./role.enum";
@@ -9,6 +10,7 @@ import { Role } from "./role.enum";
 export class BuildingModel {
     @Field(type => ID)
     @IsNumber()
+    @IsOptional()
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -18,12 +20,23 @@ export class BuildingModel {
     role: Role;
 
     @Field({ description: "What name that kind of building have" })
-    @Length(15, 255)
+    @Length(2, 255)
     @Column('varchar')
     name: string;
 
-    @Field(type => [BuildingDetailsAtCertainLevelModel], { description: "Details how to upgrade that building" })
+    @Field(
+        type => [BuildingDetailsAtCertainLevelModel],
+        {
+            description: "Details how to upgrade that building",
+        })
     @ValidateNested()
-    @OneToMany(() => BuildingDetailsAtCertainLevelModel, (details) => details.building )
+    @OneToMany(
+        () => BuildingDetailsAtCertainLevelModel,
+        (details) => details.building,
+        {
+            cascade: true
+        }
+    )
+    @Type(() => BuildingDetailsAtCertainLevelModel)
     buildingDetailsAtCertainLevel: BuildingDetailsAtCertainLevelModel[];
 }

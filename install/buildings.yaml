@@ -1,0 +1,45 @@
+buildings:
+  - role: resource
+    name: Coal Mine
+    buildingDetailsAtCertainLevel:
+      - level: 1
+        timeToUpdateBuildingInSeconds: 10
+      - level: 2
+        timeToUpdateBuildingInSeconds: 30
+      - level: 3
+        timeToUpdateBuildingInSeconds: 60
+      - level: 4
+        timeToUpdateBuildingInSeconds: 80
+  - role: resource
+    name: Cornflakes Mine
+    buildingDetailsAtCertainLevel:
+      - level: 1
+        timeToUpdateBuildingInSeconds: 10
+      - level: 2
+        timeToUpdateBuildingInSeconds: 30
+      - level: 3
+        timeToUpdateBuildingInSeconds: 60
+      - level: 4
+        timeToUpdateBuildingInSeconds: 80
+  - role: technology
+    name: University of Nothingness
+    buildingDetailsAtCertainLevel:
+      - level: 1
+        timeToUpdateBuildingInSeconds: 10
+      - level: 2
+        timeToUpdateBuildingInSeconds: 30
+      - level: 3
+        timeToUpdateBuildingInSeconds: 60
+      - level: 4
+        timeToUpdateBuildingInSeconds: 80
+  - role: unit
+    name: Train factory
+    buildingDetailsAtCertainLevel:
+      - level: 1
+        timeToUpdateBuildingInSeconds: 10
+      - level: 2
+        timeToUpdateBuildingInSeconds: 30
+      - level: 3
+        timeToUpdateBuildingInSeconds: 60
+      - level: 4
+        timeToUpdateBuildingInSeconds: 80
