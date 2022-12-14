@@ -10,9 +10,9 @@ export class AuthService {
         private jwtService: JwtService
     ) { }
 
-    async validateUserHabitat(userId: number, habitatId: number): Promise<HabitatModel|null> {
+    async validateUserHabitat(userId: number, habitatId: number): Promise<HabitatModel | null> {
         const habitats = await this.habitatService.getHabitatsByUserId(userId);
-        
+
         if (habitats.length == 0) {
             return null;
         }
@@ -32,5 +32,19 @@ export class AuthService {
         return {
             access_token: this.jwtService.sign(payload),
         };
+    }
+
+    async createHabitatForNewUser(userId: number): Promise<HabitatModel> {
+        const habitats = await this.habitatService.getHabitatsByUserId(userId);
+
+        if (habitats.length > 0) {
+            return habitats.find(Boolean);
+        }
+
+        return this.habitatService.createNewHabitat({
+            userId: userId,
+            isMain: true,
+            name: "New habitat"
+        });
     }
 }
