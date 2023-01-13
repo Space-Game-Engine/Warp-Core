@@ -1,5 +1,6 @@
 import { Args, Int, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { CurrentHabitat } from "../auth/decorator/get-current-habitat.decorator";
+import { BuildingQueueFetchService } from "../building-queue/building-queue-fetch.service";
 import { BuildingService } from "../building/building.service";
 import { HabitatService } from "../habitat/habitat.service";
 import { HabitatModel } from "../habitat/model/habitat.model";
@@ -12,6 +13,7 @@ export class BuildingZoneResolver {
         private readonly buildingZoneService: BuildingZoneService,
         private readonly habitatService: HabitatService,
         private readonly buildingService: BuildingService,
+        private readonly buildingQueueFetchService: BuildingQueueFetchService,
     ) { }
 
     @Query(returns => BuildingZoneModel, { nullable: true, description: "Returns single building zone", name: "buildingZone_get" })
@@ -45,5 +47,12 @@ export class BuildingZoneResolver {
         }
 
         return this.buildingService.getBuildingById(buildingZone.building.id);
+    }
+
+    @ResolveField()
+    buildingQueue(
+        @Parent() buildingZone: BuildingZoneModel
+    ) {
+        return this.buildingQueueFetchService.getCurrentBuildingQueueForBuildingZone(buildingZone);
     }
 }

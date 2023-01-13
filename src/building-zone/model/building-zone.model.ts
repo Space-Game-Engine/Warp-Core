@@ -1,6 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { IsNumber, Min, ValidateNested } from "class-validator";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BuildingQueueElementModel } from "../../building-queue/model/building-queue-element.model";
 import { BuildingModel } from "../../building/model/building.model";
 import { HabitatModel } from "../../habitat/model/habitat.model";
 
@@ -50,7 +51,7 @@ export class BuildingZoneModel {
     @Column('simple-json')
     placement?: string;
 
-    // @Field(type => [BuildingQueueElement], { description: "List of all queues connected to that building zone" })
-    // buildingQueue?: BuildingQueueElement[];
+    @Field(type => [BuildingQueueElementModel], { description: "List of all queues connected to that building zone" })
+    buildingQueue: BuildingQueueElementModel[];
 
 }
