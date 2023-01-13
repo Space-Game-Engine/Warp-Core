@@ -15,7 +15,7 @@ export class BuildingQueueFetchService {
                 buildingZone: {
                     habitatId: habitatId
                 },
-                endTime: MoreThanOrEqual(new Date()),
+                // endTime: MoreThanOrEqual(new Date()),
             }
         });
     }
@@ -23,8 +23,11 @@ export class BuildingQueueFetchService {
     getCurrentBuildingQueueForBuildingZone(buildingZone: BuildingZoneModel) {
         return this.buildingQueueRepository.find({
             where: {
-                buildingZone: buildingZone,
-                endTime: MoreThanOrEqual(new Date()),
+                buildingZone: {
+                    id: buildingZone.id,
+
+                },
+                // endTime: MoreThanOrEqual(new Date()),
             }
         });
     }
@@ -43,8 +46,8 @@ export class BuildingQueueFetchService {
                 buildingZone: {
                     habitatId: habitatId
                 },
-                endTime: MoreThanOrEqual(new Date()),
+                // endTime: MoreThanOrEqual(new Date()),
             }
-        })
+        });
     }
 }

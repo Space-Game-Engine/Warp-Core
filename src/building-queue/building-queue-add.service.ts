@@ -29,8 +29,8 @@ export class BuildingQueueAddService {
         }
 
         const draftQueueElement = await this.prepareDraftQueueElement(addToQueueElement);
-        
-        const queueElement = this.buildingQueueRepository.create(draftQueueElement);
+
+        const queueElement = await this.buildingQueueRepository.save(draftQueueElement);
 
         return queueElement;
     }
@@ -46,15 +46,21 @@ export class BuildingQueueAddService {
             throw new QueueError('Queue element is not valid');
         }
 
+        let building = buildingZone.building;
+
+        if (!building) {
+            building = await this.buildingService.getBuildingById(addToQueueElement.buildingId);
+        }
+
         const startTime = await this.prepareStartTimeForQueueElement(buildingZone!);
         const queueElement: BuildingQueueElementModel = {
-            building: buildingZone.building,
+            building: building,
             buildingZone: buildingZone,
             startTime: startTime,
             startLevel: buildingZone!.level,
             endLevel: addToQueueElement.endLevel,
             endTime: new Date(),
-            id: 0,
+            id: null,
         };
 
         queueElement.endTime = await this.prepareEndTimeForQueueElement(queueElement);

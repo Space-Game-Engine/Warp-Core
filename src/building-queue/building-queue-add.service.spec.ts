@@ -24,7 +24,7 @@ describe("Building queue service tests", () => {
     let buildingZoneService: jest.Mocked<BuildingZoneService>;
     let buildingService: jest.Mocked<BuildingService>;
     let configService: jest.Mocked<ConfigService>;
-    let createBuildingQueueElement: jest.SpyInstance;
+    let saveBuildingQueueElement: jest.SpyInstance;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -35,7 +35,7 @@ describe("Building queue service tests", () => {
                 {
                     provide: getRepositoryToken(BuildingQueueElementModel),
                     useValue: {
-                        create(arg) { },
+                        save(arg) { },
                     },
                 },
                 BuildingQueueFetchService,
@@ -55,7 +55,7 @@ describe("Building queue service tests", () => {
             getRepositoryToken(BuildingQueueElementModel)
         );
 
-        createBuildingQueueElement = jest.spyOn(buildingQueueRepository, 'create');
+        saveBuildingQueueElement = jest.spyOn(buildingQueueRepository, 'save');
     });
 
     describe("prepareDraftQueueElement", () => {
@@ -166,6 +166,7 @@ describe("Building queue service tests", () => {
                 habitatId: addToQueueElement.habitatId,
                 counterPerHabitat: addToQueueElement.buildingZoneId,
                 buildingId: addToQueueElement.buildingId,
+                buildingQueue: [],
                 building: {
                     id: addToQueueElement.buildingId,
                 } as BuildingModel
@@ -227,6 +228,7 @@ describe("Building queue service tests", () => {
                 habitatId: addToQueueElement.habitatId,
                 counterPerHabitat: addToQueueElement.buildingZoneId,
                 buildingId: addToQueueElement.buildingId,
+                buildingQueue: [],
                 building: {
                     id: addToQueueElement.buildingId,
                 } as BuildingModel
@@ -288,6 +290,7 @@ describe("Building queue service tests", () => {
                 habitatId: addToQueueElement.habitatId,
                 counterPerHabitat: addToQueueElement.buildingZoneId,
                 buildingId: addToQueueElement.buildingId,
+                buildingQueue: [],
                 building: {
                     id: addToQueueElement.buildingId,
                 } as BuildingModel
@@ -390,12 +393,13 @@ describe("Building queue service tests", () => {
                 buildingId: addToQueueElement.buildingId,
                 building: {
                     id: addToQueueElement.buildingId,
-                } as BuildingModel
+                } as BuildingModel,
+                buildingQueue: [],
             };
 
             const timeToBuild = 100;
 
-            createBuildingQueueElement.mockImplementation((arg: BuildingQueueElementModel) => arg);
+            saveBuildingQueueElement.mockImplementation((arg: BuildingQueueElementModel) => arg);
 
             when(buildingQueueFetchService
                 .countActiveBuildingQueueElementsForHabitat)
