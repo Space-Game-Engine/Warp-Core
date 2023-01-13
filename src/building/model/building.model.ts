@@ -34,7 +34,8 @@ export class BuildingModel {
         () => BuildingDetailsAtCertainLevelModel,
         (details) => details.building,
         {
-            cascade: true
+            cascade: true,
+            eager: true
         }
     )
     @Type(() => BuildingDetailsAtCertainLevelModel)

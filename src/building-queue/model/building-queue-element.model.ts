@@ -11,7 +11,7 @@ export class BuildingQueueElementModel {
     @Field(type => ID)
     @IsNumber()
     @PrimaryGeneratedColumn()
-    id: number;
+    id?: number;
 
     @Field({ description: "What was level on queue start?" })
     @IsNumber()
@@ -33,8 +33,13 @@ export class BuildingQueueElementModel {
     @Column('datetime')
     endTime: Date;
 
-    @Field(type => [BuildingModel], { description: "Building connected to queue element" })
-    @ManyToOne(() => BuildingModel)
+    @Field(type => BuildingModel, { description: "Building connected to queue element" })
+    @ManyToOne(() => BuildingModel,
+        {
+            cascade: true,
+            eager: true
+        }
+    )
     building: BuildingModel;
 
     @Field(type => BuildingZoneModel, { description: "Building zone connected to queue element" })
