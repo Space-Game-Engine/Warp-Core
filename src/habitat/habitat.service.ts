@@ -1,40 +1,34 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { Repository } from "typeorm";
 import { NewHabitatInput } from "./input/NewHabitatInput";
-import { HabitatModel } from "./model/habitat.model";
+import { HabitatModel } from "../database/model/habitat.model";
 import { HabitatCreatedEvent } from "./event/habitat-created.event";
 import { RegisterUserEvent } from "../auth/register/register-user.event";
+import { HabitatRepository } from "../database/repository/habitat.repository";
+import { PayloadDataService } from "../auth/payload-data.service";
 
 @Injectable()
 export class HabitatService {
     constructor(
-        @InjectRepository(HabitatModel)
-        private readonly habitatRepository: Repository<HabitatModel>,
+        private readonly habitatRepository: HabitatRepository,
+        private readonly payloadDataService: PayloadDataService,
         private readonly eventEmitter: EventEmitter2
     ) {
     }
 
-    getHabitatById(habitatId: number): Promise<HabitatModel|null> {
-        return this.habitatRepository.findOne({
-            where: {
-                id: habitatId
-            },
-            loadEagerRelations: false,
-        });
+    async getCurrentHabitat(): Promise<HabitatModel> {
+        const model = await this.payloadDataService.getModel();
+
+        return this.habitatRepository.getHabitatById(model.getAuthId());
     }
 
-    getHabitatsByUserId(userId: number): Promise<HabitatModel[]> {
-        return this.habitatRepository.find({
-            where: {
-                userId: userId
-            },
-            loadEagerRelations: false
-        });
+    async getHabitatsForLoggedIn(): Promise<HabitatModel[]> {
+        const userId = this.payloadDataService.getUserId();
+
+        return this.habitatRepository.getHabitatsByUserId(userId);
     }
 
-    async createNewHabitat(newHabitatData: NewHabitatInput): Promise<HabitatModel>  {
+    async createNewHabitat(newHabitatData: NewHabitatInput): Promise<HabitatModel> {
         const newHabitat = await this.habitatRepository.save(newHabitatData);
 
         await this.eventEmitter.emitAsync('habitat.create_new', new HabitatCreatedEvent(newHabitat));
@@ -44,7 +38,7 @@ export class HabitatService {
 
     @OnEvent('user.create_new')
     async createHabitatOnUserRegistration(payload: RegisterUserEvent) {
-        const currentHabitats = await this.getHabitatsByUserId(payload.getUserId());
+        const currentHabitats = await this.habitatRepository.getHabitatsByUserId(payload.getUserId());
 
         if (currentHabitats.length > 0) {
             payload.setHabitatId(currentHabitats.find(e => true).id);

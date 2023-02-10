@@ -3,7 +3,7 @@ import { CurrentHabitat } from "../auth/decorator/get-current-habitat.decorator"
 import { BuildingQueueFetchService } from "../building-queue/building-queue-fetch.service";
 import { BuildingZoneService } from "../building-zone/building-zone.service";
 import { HabitatService } from "./habitat.service";
-import { HabitatModel } from "./model/habitat.model";
+import { HabitatModel } from "../database/model/habitat.model";
 
 @Resolver(of => HabitatModel)
 export class HabitatResolver {
@@ -13,18 +13,14 @@ export class HabitatResolver {
         private readonly buildingQueueFetchService: BuildingQueueFetchService
     ) { }
 
-    @Query(returns => HabitatModel, { nullable: true, description: "Get single habitat by its id", name: "habitat_get" })
-    habitat(
-        @CurrentHabitat() habitat: HabitatModel
-    ) {
-        return this.habitatService.getHabitatById(habitat.id);
+    @Query(returns => HabitatModel, { nullable: true, description: "Get single habitat for logged in token", name: "habitat_get" })
+    habitat() {
+        return this.habitatService.getCurrentHabitat();
     }
 
-    @Query(returns => [HabitatModel], { nullable: true, description: "Get all habitats for single user id", name: "habitat_getForUser" })
-    userHabitats(
-        @CurrentHabitat() habitat: HabitatModel
-    ) {
-        return this.habitatService.getHabitatsByUserId(habitat.userId);
+    @Query(returns => [HabitatModel], { nullable: true, description: "Get all habitats for user logged in", name: "habitat_getForUser" })
+    userHabitats() {
+        return this.habitatService.getHabitatsForLoggedIn();
     }
 
     @ResolveField()

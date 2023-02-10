@@ -1,18 +1,22 @@
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
 import { RegisterUserEvent } from "../auth/register/register-user.event";
 import { HabitatService } from "./habitat.service";
 import { NewHabitatInput } from "./input/NewHabitatInput";
-import { HabitatModel } from "./model/habitat.model";
+import { HabitatModel } from "../database/model/habitat.model";
+import { HabitatRepository } from "../database/repository/habitat.repository";
+import { PayloadDataService } from "../auth/payload-data.service";
+import { when } from "jest-when";
+import { AuthModelInterface } from "../auth/interface/auth-model.interface";
+
+jest.mock("../auth/payload-data.service");
+jest.mock("../database/repository/habitat.repository");
 
 describe("Habitat service tests", () => {
     let habitatService: HabitatService;
     let eventEmitter: EventEmitter2;
-    let findOneHabitatSpy: jest.SpyInstance;
-    let findHabitatSpy: jest.SpyInstance;
-    let saveHabitatSpy: jest.SpyInstance;
+    let payloadDataService: jest.Mocked<PayloadDataService>;
+    let habitatRepository: jest.Mocked<HabitatRepository>;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -24,14 +28,8 @@ describe("Habitat service tests", () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 HabitatService,
-                {
-                    provide: getRepositoryToken(HabitatModel),
-                    useValue: {
-                        findOne() { },
-                        find() { },
-                        save() { },
-                    }
-                },
+                HabitatRepository,
+                PayloadDataService,
                 {
                     provide: EventEmitter2,
                     useValue: eventEmitter
@@ -40,60 +38,85 @@ describe("Habitat service tests", () => {
         }).compile();
 
         habitatService = module.get<HabitatService>(HabitatService);
-        let habitatRepository = module.get<Repository<HabitatModel>>(
-            getRepositoryToken(HabitatModel)
-        );
-
-        findOneHabitatSpy = jest.spyOn(habitatRepository, 'findOne');
-        findHabitatSpy = jest.spyOn(habitatRepository, 'find');
-        saveHabitatSpy = jest.spyOn(habitatRepository, 'save');
+        habitatRepository = module.get(HabitatRepository);
+        payloadDataService = module.get(PayloadDataService);
     });
 
-    describe("getHabitatById", () => {
-        it('should load single habitat by its id', async () => {
-            const habitatModel = {
-                id: 10,
-                name: 'test',
-                userId: 20,
-                isMain: true,
-                buildingZones: [],
-            } as HabitatModel;
+    describe("getHabitatsForLoggedIn", () => {
+        it("should return array of habitats when habitats for user id exists", async () => {
+            const userId = 5;
+            const habitatModels = [
+                {
+                    id: 10,
+                    name: "test",
+                    userId: userId,
+                    isMain: true,
+                    buildingZones: [],
+                },{
+                    id: 20,
+                    name: "test",
+                    userId: userId,
+                    isMain: false,
+                    buildingZones: [],
+                },
+            ] as HabitatModel[];
 
-            findOneHabitatSpy.mockResolvedValue(habitatModel);
+            payloadDataService.getUserId
+                .mockReturnValue(userId)
+            
+            when(habitatRepository.getHabitatsByUserId)
+                .expectCalledWith(userId)
+                .mockResolvedValueOnce(habitatModels);
 
-            const returnedHabitatModel = await habitatService.getHabitatById(habitatModel.id);
+            const returnedHabitats = await habitatService.getHabitatsForLoggedIn();
 
-            expect(returnedHabitatModel).toEqual(habitatModel);
-            expect(findOneHabitatSpy).toBeCalledTimes(1);
-            expect(findOneHabitatSpy).toBeCalledWith(expect.objectContaining({
-                where: {
-                    id: habitatModel.id
-                }
-            }));
+            expect(returnedHabitats).toEqual(habitatModels);
+        });
+
+        it("should return empty array of habitats when user don't have any habitats", async () => {
+            const userId = 5;
+            const habitatModels = [] as HabitatModel[];
+
+            payloadDataService.getUserId
+                .mockReturnValue(userId);
+
+            when(habitatRepository.getHabitatsByUserId)
+                .expectCalledWith(userId)
+                .mockResolvedValueOnce(habitatModels);
+
+            const returnedHabitats = await habitatService.getHabitatsForLoggedIn();
+
+            expect(returnedHabitats).toEqual(habitatModels);
         });
     });
 
-    describe("getHabitatsByUserId", () => {
-        it("should fetch all habitats for single user", async () => {
+    describe("getCurrentHabitat", () => {
+        it("should return a single habitat for currently logged in user", async () => {
+            const habitatId = 10;
+            const authModel = {
+                getAuthId() {
+                    return habitatId;
+                },
+            } as AuthModelInterface;
+
             const habitatModel = {
-                id: 10,
-                name: 'test',
-                userId: 20,
+                id: habitatId,
+                name: "test",
+                userId: 1,
                 isMain: true,
                 buildingZones: [],
             } as HabitatModel;
 
-            findHabitatSpy.mockResolvedValue([habitatModel]);
+            payloadDataService.getModel
+                .mockResolvedValueOnce(authModel);
 
-            const returnedHabitatModels = await habitatService.getHabitatsByUserId(habitatModel.userId);
+            when(habitatRepository.getHabitatById)
+                .expectCalledWith(habitatId)
+                .mockResolvedValueOnce(habitatModel);
 
-            expect(returnedHabitatModels).toEqual([habitatModel]);
-            expect(findHabitatSpy).toBeCalledTimes(1);
-            expect(findHabitatSpy).toBeCalledWith(expect.objectContaining({
-                where: {
-                    userId: habitatModel.userId
-                }
-            }));
+            const returnedHabitat = await habitatService.getCurrentHabitat();
+
+            expect(returnedHabitat).toEqual(habitatModel);
         });
     });
 
@@ -113,13 +136,13 @@ describe("Habitat service tests", () => {
                 buildingZones: [],
             } as HabitatModel;
 
-            saveHabitatSpy.mockResolvedValue(habitatModel);
+            when(habitatRepository.save)
+                .expectCalledWith(expect.objectContaining(newHabitatInput))
+                .mockResolvedValueOnce(habitatModel);
 
             const returnedHabitatModel = await habitatService.createNewHabitat(newHabitatInput);
 
             expect(returnedHabitatModel).toEqual(habitatModel);
-            expect(saveHabitatSpy).toBeCalledTimes(1);
-            expect(saveHabitatSpy).toBeCalledWith(expect.objectContaining(newHabitatInput));
             expect(eventEmitter.emitAsync).toBeCalledTimes(1);
             expect(eventEmitter.emitAsync).toBeCalledWith(
                 expect.stringMatching('habitat.create_new'),
@@ -140,18 +163,14 @@ describe("Habitat service tests", () => {
             } as HabitatModel;
             const payload = new RegisterUserEvent(userId);
 
-            findHabitatSpy.mockResolvedValue([]);
-            saveHabitatSpy.mockResolvedValue(habitatModel);
+            when(habitatRepository.getHabitatsByUserId)
+                .expectCalledWith(userId)
+                .mockResolvedValueOnce([]);
+
+            habitatRepository.save.mockResolvedValueOnce(habitatModel);
 
             await habitatService.createHabitatOnUserRegistration(payload);
 
-            expect(findHabitatSpy).toBeCalledTimes(1);
-            expect(findHabitatSpy).toBeCalledWith(expect.objectContaining({
-                where: {
-                    userId: userId
-                }
-            }));
-            expect(saveHabitatSpy).toBeCalledTimes(1);
             expect(eventEmitter.emitAsync).toBeCalledWith(
                 expect.stringMatching('habitat.create_new'),
                 expect.objectContaining({ habitat: habitatModel })
@@ -170,17 +189,12 @@ describe("Habitat service tests", () => {
             } as HabitatModel;
             const payload = new RegisterUserEvent(userId);
 
-            findHabitatSpy.mockResolvedValue([habitatModel]);
+            when(habitatRepository.getHabitatsByUserId)
+                .expectCalledWith(userId)
+                .mockResolvedValueOnce([habitatModel]);
 
             await habitatService.createHabitatOnUserRegistration(payload);
-
-            expect(findHabitatSpy).toBeCalledTimes(1);
-            expect(findHabitatSpy).toBeCalledWith(expect.objectContaining({
-                where: {
-                    userId: userId
-                }
-            }));
-            expect(saveHabitatSpy).toBeCalledTimes(0);
+            expect(habitatRepository.save).toBeCalledTimes(0);
             expect(eventEmitter.emitAsync).toBeCalledTimes(0);
             expect(payload.getHabitatId()).toBe(habitatModel.id);
         });

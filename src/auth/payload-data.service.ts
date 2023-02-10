@@ -1,7 +1,5 @@
 
 import { JwtService } from '@nestjs/jwt';
-import { HabitatService } from '../habitat/habitat.service';
-import { HabitatModel } from '../habitat/model/habitat.model';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { Inject, Injectable, Scope } from '@nestjs/common';

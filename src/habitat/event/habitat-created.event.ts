@@ -1,4 +1,4 @@
-import { HabitatModel } from "../model/habitat.model";
+import { HabitatModel } from "../../database/model/habitat.model";
 
 export class HabitatCreatedEvent {
     constructor(
