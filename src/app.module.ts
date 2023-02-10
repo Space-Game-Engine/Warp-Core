@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import config from './core/config/config-parser';
 import { BuildingQueueModule } from './building-queue/building-queue.module';
 import { AuthModule } from './auth/auth.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AuthModule } from './auth/auth.module';
       entities: AppModule.entities(),
       synchronize: true,
     }),
+    DatabaseModule,
     BuildingModule,
     HabitatModule,
     BuildingZoneModule,
@@ -40,8 +42,7 @@ export class AppModule {
 
   static entities() {
     return [
-      ...BuildingModule.entities(),
-      ...HabitatModule.entities(),
+      ...DatabaseModule.entities(),
       ...BuildingZoneModule.entities(),
       ...BuildingQueueModule.entities(),
     ];
