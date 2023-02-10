@@ -1,21 +1,19 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
 import { BuildingResolver } from "./building.resolver";
 import { BuildingService } from "./building.service";
-import { BuildingDetailsAtCertainLevelModel } from "./model/building-details-at-certain-level.model";
-import { BuildingModel } from "./model/building.model";
+import { DatabaseModule } from "../database/database.module";
+
 
 @Module({
-    providers: [BuildingService, BuildingResolver],
+    providers: [
+        BuildingService,
+        BuildingResolver
+    ],
     imports: [
-        TypeOrmModule.forFeature([BuildingModel]),
+        DatabaseModule,
     ],
     exports: [
         BuildingService,
     ]
 })
-export class BuildingModule {
-    static entities() {
-        return [BuildingModel, BuildingDetailsAtCertainLevelModel]
-    }
-}
+export class BuildingModule {}

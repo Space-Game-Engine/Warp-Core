@@ -1,14 +1,15 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { when } from "jest-when";
+import { Role } from "../database/enum/role.enum";
+import { BuildingModel } from "../database/model/building.model";
+import { BuildingRepository } from "../database/repository/building.repository";
 import { BuildingService } from "./building.service";
-import { BuildingModel } from "./model/building.model";
-import { Role } from "./model/role.enum";
+
+jest.mock("../database/repository/building.repository")
 
 describe("Building service test", () => {
     let buildingService: BuildingService;
-    let findOneBuildingSpy: jest.SpyInstance;
-    let findBuildingSpy: jest.SpyInstance;
+    let buildingRepository: jest.Mocked<BuildingRepository>;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -16,64 +17,12 @@ describe("Building service test", () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 BuildingService,
-                {
-                    provide: getRepositoryToken(BuildingModel),
-                    useValue: {
-                        findOne() {},
-                        find() {},
-                    }
-                }
+                BuildingRepository,
             ]
         }).compile();
-        
+
         buildingService = module.get<BuildingService>(BuildingService);
-        let buildingRepository = module.get<Repository<BuildingModel>>(
-            getRepositoryToken(BuildingModel)
-        );
-
-        findOneBuildingSpy = jest.spyOn(buildingRepository, 'findOne');
-        findBuildingSpy = jest.spyOn(buildingRepository, 'find');
-    });
-
-    describe("getBuildingById", () => {
-        it("should return single building by provided id", async () => {
-            const buildingModel = {
-                id: 10,
-                role: Role.RESOURCE_PRODUCTION,
-                name: 'Test building',
-                buildingDetailsAtCertainLevel: [],
-            } as BuildingModel;
-
-            findOneBuildingSpy.mockResolvedValue(buildingModel);
-
-            const returnedBuilding = await buildingService.getBuildingById(buildingModel.id);
-
-            expect(returnedBuilding).toEqual(buildingModel);
-            expect(findOneBuildingSpy).toBeCalledTimes(1);
-            expect(findOneBuildingSpy).toBeCalledWith(expect.objectContaining({
-                where: {
-                    id: buildingModel.id
-                },
-            }));
-        });
-    });
-
-    describe("getAllBuildings", () => {
-        it("should return multiple buildings", async () => {
-            const buildingModel = {
-                id: 10,
-                role: Role.RESOURCE_PRODUCTION,
-                name: 'Test building',
-                buildingDetailsAtCertainLevel: [],
-            } as BuildingModel;
-
-            findBuildingSpy.mockResolvedValue([buildingModel]);
-
-            const returnedBuilding = await buildingService.getAllBuildings();
-
-            expect(returnedBuilding).toEqual([buildingModel]);
-            expect(findBuildingSpy).toBeCalledTimes(1);
-        });
+        buildingRepository = module.get(BuildingRepository);
     });
 
     describe("calculateTimeInSecondsToUpgradeBuilding", () => {
@@ -83,7 +32,9 @@ describe("Building service test", () => {
             const endLevel = 2;
             const buildingModel = null;
 
-            findOneBuildingSpy.mockResolvedValue(buildingModel);
+            when(buildingRepository.getBuildingById)
+                .expectCalledWith(buildingId)
+                .mockResolvedValue(buildingModel);
 
             try {
                 await buildingService.calculateTimeInSecondsToUpgradeBuilding(startLevel, endLevel, buildingId);
@@ -103,7 +54,9 @@ describe("Building service test", () => {
                 buildingDetailsAtCertainLevel: [],
             } as BuildingModel;
 
-            findOneBuildingSpy.mockResolvedValue(buildingModel);
+            when(buildingRepository.getBuildingById)
+                .expectCalledWith(buildingId)
+                .mockResolvedValue(buildingModel);
 
             const calculatedTime = await buildingService.calculateTimeInSecondsToUpgradeBuilding(startLevel, endLevel, buildingId);
 
@@ -134,7 +87,9 @@ describe("Building service test", () => {
                 ]
             } as BuildingModel;
 
-            findOneBuildingSpy.mockResolvedValue(buildingModel);
+            when(buildingRepository.getBuildingById)
+                .expectCalledWith(buildingId)
+                .mockResolvedValue(buildingModel);
 
             const calculatedTime = await buildingService.calculateTimeInSecondsToUpgradeBuilding(startLevel, endLevel, buildingId);
 
@@ -165,7 +120,9 @@ describe("Building service test", () => {
                 ]
             } as BuildingModel;
 
-            findOneBuildingSpy.mockResolvedValue(buildingModel);
+            when(buildingRepository.getBuildingById)
+                .expectCalledWith(buildingId)
+                .mockResolvedValue(buildingModel);
 
             const calculatedTime = await buildingService.calculateTimeInSecondsToUpgradeBuilding(startLevel, endLevel, buildingId);
 
@@ -196,7 +153,9 @@ describe("Building service test", () => {
                 ]
             } as BuildingModel;
 
-            findOneBuildingSpy.mockResolvedValue(buildingModel);
+            when(buildingRepository.getBuildingById)
+                .expectCalledWith(buildingId)
+                .mockResolvedValue(buildingModel);
 
             const calculatedTime = await buildingService.calculateTimeInSecondsToUpgradeBuilding(startLevel, endLevel, buildingId);
 
