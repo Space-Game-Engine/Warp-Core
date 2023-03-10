@@ -162,4 +162,51 @@ describe("Building service test", () => {
             expect(calculatedTime).toEqual(111);
         });
     });
+
+    describe("getBuildingById", () => {
+        it("should return building by its id", async () => {
+            const buildingId = 1;
+            const buildingModelMock = {
+                id: buildingId,
+                role: Role.RESOURCE_PRODUCTION,
+                name: 'Test building',
+                buildingDetailsAtCertainLevel: []
+            } as BuildingModel;
+
+            when(buildingRepository.getBuildingById)
+                .expectCalledWith(buildingId)
+                .mockResolvedValue(buildingModelMock);
+            
+            const buildingModel = await buildingService.getBuildingById(buildingId);
+
+            expect(buildingModel).toEqual(buildingModelMock);
+        });
+    });
+
+    describe("getAllBuildings", () => {
+        it("should return multiple buildings", async () => {
+            const buildingModelsMock = [
+                {
+                    id: 1,
+                    role: Role.RESOURCE_PRODUCTION,
+                    name: 'Test building 1',
+                    buildingDetailsAtCertainLevel: []
+                },
+                {
+                    id: 2,
+                    role: Role.TECHNOLOGY_PRODUCTION,
+                    name: 'Test building 2',
+                    buildingDetailsAtCertainLevel: []
+                },
+            ] as BuildingModel[];
+
+            when(buildingRepository.getAllBuildings)
+                .expectCalledWith()
+                .mockResolvedValue(buildingModelsMock);
+            
+            const buildingModels = await buildingService.getAllBuildings();
+
+            expect(buildingModels).toEqual(buildingModelsMock);
+        });
+    });
 });

@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { BuildingModel } from "@warp-core/database/model/building.model";
 import { BuildingRepository } from "@warp-core/database/repository/building.repository";
 import { UserInputError } from "apollo-server-express";
 
@@ -7,6 +8,14 @@ export class BuildingService {
     constructor(
         private buildingRepository: BuildingRepository,
     ) {}
+
+    async getBuildingById(buildingId: number): Promise<BuildingModel> {
+        return this.buildingRepository.getBuildingById(buildingId);
+    }
+
+    async getAllBuildings(): Promise<BuildingModel[]> {
+        return this.buildingRepository.getAllBuildings();
+    }
 
     async calculateTimeInSecondsToUpgradeBuilding(startLevel: number, endLevel: number, buildingId: number): Promise<number> {
         const building = await this.buildingRepository.getBuildingById(buildingId);
