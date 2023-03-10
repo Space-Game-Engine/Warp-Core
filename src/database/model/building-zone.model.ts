@@ -1,9 +1,9 @@
 import { Field, ObjectType } from "@nestjs/graphql";
+import { BuildingQueueElementModel } from "@warp-core/building-queue/model/building-queue-element.model";
+import { BuildingModel } from "@warp-core/database/model/building.model";
+import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { IsNumber, Min, ValidateNested } from "class-validator";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { BuildingQueueElementModel } from "../../building-queue/model/building-queue-element.model";
-import { BuildingModel } from "../../building/model/building.model";
-import { HabitatModel } from "../../habitat/model/habitat.model";
 
 @ObjectType({ description: "Single building zone, you can build here single building and level it up" })
 @Entity({ name: "building-zone" })

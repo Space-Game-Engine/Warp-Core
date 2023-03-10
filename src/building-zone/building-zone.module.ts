@@ -1,12 +1,11 @@
 import { forwardRef, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { BuildingQueueModule } from "../building-queue/building-queue.module";
-import { BuildingModule } from "../building/building.module";
-import { HabitatModule } from "../habitat/habitat.module";
+import { BuildingQueueModule } from "@warp-core/building-queue/building-queue.module";
+import { BuildingModule } from "@warp-core/building/building.module";
+import { DatabaseModule } from "@warp-core/database/database.module";
+import { HabitatModule } from "@warp-core/habitat/habitat.module";
 import { BuildingZoneResolver } from "./building-zone.resolver";
 import { BuildingZoneService } from "./building-zone.service";
-import { BuildingZoneModel } from "./model/building-zone.model";
 
 @Module({
     providers: [
@@ -14,18 +13,14 @@ import { BuildingZoneModel } from "./model/building-zone.model";
         BuildingZoneResolver
     ],
     imports: [
-        TypeOrmModule.forFeature([BuildingZoneModel]),
+        DatabaseModule,
         ConfigModule,
         BuildingModule,
         forwardRef(() => BuildingQueueModule),
-        forwardRef(() => HabitatModule),
+        HabitatModule,
     ],
     exports: [
         BuildingZoneService,
     ]
 })
-export class BuildingZoneModule {
-    static entities() {
-        return [BuildingZoneModel]
-    }
-}
+export class BuildingZoneModule {}

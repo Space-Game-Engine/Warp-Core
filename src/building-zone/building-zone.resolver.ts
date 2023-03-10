@@ -1,11 +1,11 @@
 import { Args, Int, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
-import { CurrentHabitat } from "../auth/decorator/get-current-habitat.decorator";
-import { BuildingQueueFetchService } from "../building-queue/building-queue-fetch.service";
-import { BuildingService } from "../building/building.service";
-import { HabitatService } from "../habitat/habitat.service";
-import { HabitatModel } from "../habitat/model/habitat.model";
-import { BuildingZoneService } from "./building-zone.service";
-import { BuildingZoneModel } from "./model/building-zone.model";
+import { CurrentHabitat } from "@warp-core/auth/decorator/get-current-habitat.decorator";
+import { BuildingQueueFetchService } from "@warp-core/building-queue/building-queue-fetch.service";
+import { BuildingZoneService } from "@warp-core/building-zone/building-zone.service";
+import { BuildingService } from "@warp-core/building/building.service";
+import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
+import { HabitatModel } from "@warp-core/database/model/habitat.model";
+import { HabitatService } from "@warp-core/habitat/habitat.service";
 
 @Resolver(of => BuildingZoneModel)
 export class BuildingZoneResolver {

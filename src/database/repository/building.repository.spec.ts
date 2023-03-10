@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { Role } from "@warp-core/database/enum/role.enum";
+import { BuildingModel } from "@warp-core/database/model/building.model";
+import { BuildingRepository } from "@warp-core/database/repository/building.repository";
 import { DataSource } from "typeorm";
-import { Role } from "../enum/role.enum";
-import { BuildingModel } from "../model/building.model";
-import { BuildingRepository } from "./building.repository";
 
 describe("Building repository test", () => {
     let buildingRepository: BuildingRepository;
@@ -25,7 +25,6 @@ describe("Building repository test", () => {
         buildingRepository = module.get<BuildingRepository>(BuildingRepository);
         findOneBuildingSpy = jest.spyOn(buildingRepository, 'findOne');
         findBuildingSpy = jest.spyOn(buildingRepository, 'find');
-
     });
 
     test('building repository object should be defined', () => {

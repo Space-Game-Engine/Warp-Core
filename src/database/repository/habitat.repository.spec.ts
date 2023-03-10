@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { HabitatModel } from "@warp-core/database/model/habitat.model";
+import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
 import { DataSource } from "typeorm";
-import { HabitatModel } from "../model/habitat.model";
-import { HabitatRepository } from "./habitat.repository";
 
 describe("Habitat repository test", () => {
     let habitatRepository: HabitatRepository;

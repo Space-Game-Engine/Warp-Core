@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import { BuildingModel } from "@warp-core/database/model/building.model";
 import { DataSource, Repository } from "typeorm";
-import { BuildingModel } from "../model/building.model";
 
 @Injectable()
 export class BuildingRepository extends Repository<BuildingModel> {

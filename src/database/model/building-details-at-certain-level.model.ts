@@ -1,7 +1,7 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
+import { BuildingModel } from "@warp-core/database/model/building.model";
 import { IsNumber, Min } from "class-validator";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { BuildingModel } from "./building.model";
 
 @ObjectType({ description: "Details how to upgrade single building" })
 @Entity({ name: "building-details-at-certain-level" })
