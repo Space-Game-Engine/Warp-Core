@@ -1,6 +1,6 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { MoreThanOrEqual, Repository } from "typeorm";
-import { BuildingZoneModel } from "../building-zone/model/building-zone.model";
+import { BuildingZoneModel } from "../database/model/building-zone.model";
 import { BuildingQueueElementModel } from "./model/building-queue-element.model";
 
 export class BuildingQueueFetchService {

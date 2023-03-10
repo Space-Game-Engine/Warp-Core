@@ -1,8 +1,8 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
+import { BuildingModel } from "@warp-core/database/model/building.model";
 import { IsDate, IsNumber } from "class-validator";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { BuildingZoneModel } from "../../building-zone/model/building-zone.model";
-import { BuildingModel } from "../../building/model/building.model";
 
 @ObjectType({ description: "Defines one pending item in building queue" })
 @Entity({ name: "building-queue-element" })

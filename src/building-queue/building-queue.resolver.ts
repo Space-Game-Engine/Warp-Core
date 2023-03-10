@@ -4,6 +4,8 @@ import { AddToQueueInput } from "./input/add-to-queue.input";
 import { BuildingQueueAddService } from "./building-queue-add.service";
 import { BuildingService } from "../building/building.service";
 import { BuildingZoneService } from "../building-zone/building-zone.service";
+import { CurrentHabitat } from "../auth/decorator/get-current-habitat.decorator";
+import { HabitatModel } from "../database/model/habitat.model";
 
 @Resolver(of => BuildingQueueElementModel)
 export class BuildingQueueResolver {
@@ -16,8 +18,9 @@ export class BuildingQueueResolver {
     @Mutation(returns => BuildingQueueElementModel, { description: "Add to element queue", name: "buildingQueue_add" })
     addToQueue(
         @Args('addToQueue') addToQueue: AddToQueueInput,
+        @CurrentHabitat() habitat: HabitatModel
     ) {
-        return this.buildingQueueAddService.addToQueue(addToQueue);
+        return this.buildingQueueAddService.addToQueue(addToQueue, habitat);
     }
 
     @ResolveField()

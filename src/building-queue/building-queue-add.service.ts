@@ -2,13 +2,14 @@ import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { BuildingZoneService } from "../building-zone/building-zone.service";
-import { BuildingZoneModel } from "../building-zone/model/building-zone.model";
+import { BuildingZoneModel } from "../database/model/building-zone.model";
 import { BuildingService } from "../building/building.service";
 import { BuildingQueueFetchService } from "./building-queue-fetch.service";
 import { QueueError } from "./exception/queue.error";
 import { AddToQueueInput } from "./input/add-to-queue.input";
 import { BuildingQueueElementModel } from "./model/building-queue-element.model";
 import { DateTime } from "luxon";
+import { HabitatModel } from "../database/model/habitat.model";
 
 export class BuildingQueueAddService {
     constructor(
@@ -20,26 +21,26 @@ export class BuildingQueueAddService {
         private readonly configService: ConfigService,
     ) { }
 
-    async addToQueue(addToQueueElement: AddToQueueInput) {
-        const queueCounter = await this.buildingQueueFetch.countActiveBuildingQueueElementsForHabitat(addToQueueElement.habitatId);
+    async addToQueue(addToQueueElement: AddToQueueInput, userHabitat: HabitatModel) {
+        const queueCounter = await this.buildingQueueFetch.countActiveBuildingQueueElementsForHabitat(userHabitat.id);
         const maxElementsInQueue = this.configService.get<number>('habitat.buildingQueue.maxElementsInQueue');
 
         if (queueCounter >= maxElementsInQueue) {
             throw new QueueError(`Max queue count (${maxElementsInQueue}) has been reached`);
         }
 
-        const draftQueueElement = await this.prepareDraftQueueElement(addToQueueElement);
+        const draftQueueElement = await this.prepareDraftQueueElement(addToQueueElement, userHabitat);
 
         const queueElement = await this.buildingQueueRepository.save(draftQueueElement);
 
         return queueElement;
     }
 
-    async prepareDraftQueueElement(addToQueueElement: AddToQueueInput): Promise<BuildingQueueElementModel> {
+    async prepareDraftQueueElement(addToQueueElement: AddToQueueInput, userHabitat: HabitatModel): Promise<BuildingQueueElementModel> {
         const buildingZone = await this.buildingZoneService
             .getSingleBuildingZone(
-                addToQueueElement.buildingZoneId,
-                addToQueueElement.habitatId
+                addToQueueElement.counterPerHabitat,
+                userHabitat.id
             );
 
         if (await this.isAddToQueueValid(addToQueueElement, buildingZone) === false) {
@@ -80,7 +81,17 @@ export class BuildingQueueAddService {
             throw new QueueError("First queue for selected building zone must have desired building Id");
         }
 
-        if (this.configService.get<boolean>('habitat.buildingQueue.allowMultipleLevelUpdate') === false) {
+        if (addToQueueElement.startLevel >= addToQueueElement.endLevel) {
+            throw new QueueError("Start level cannot be larger than end level");
+        }
+
+        if (addToQueueElement.endLevel < buildingZone.level) {
+            throw new QueueError("End level cannot be smaller than current building level");
+        }
+
+        if (this.configService.get<boolean>('habitat.buildingQueue.allowMultipleLevelUpdate') === true) {
+            await this.isPossibleToQueueElementByMultipleLeveld(addToQueueElement, buildingZone);
+        } else {
             if (await this.isPossibleToQueueElementByOneLevel(addToQueueElement, buildingZone) === false) {
                 throw new QueueError("You can update building only one level at once");
             }
@@ -92,6 +103,21 @@ export class BuildingQueueAddService {
     private async isPossibleToQueueElementByOneLevel(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel): Promise<Boolean> {
         if (addToQueueElement.endLevel - 1 > buildingZone.level) {
             return false;
+        }
+
+        return true;
+    }
+
+    private async isPossibleToQueueElementByMultipleLeveld(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel): Promise<Boolean> {
+        const currentBuildingQueue = await this.buildingQueueFetch.getCurrentBuildingQueueForHabitat(buildingZone.habitatId);
+        const latestQueueElement = currentBuildingQueue.at(-1);
+
+        if (!latestQueueElement) {
+            return true;
+        }
+
+        if (latestQueueElement.endLevel >= addToQueueElement.endLevel) {
+            throw new QueueError("New queue element should have end level higher than last queue element");
         }
 
         return true;

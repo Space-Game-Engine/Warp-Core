@@ -3,43 +3,43 @@ buildings:
     name: Coal Mine
     buildingDetailsAtCertainLevel:
       - level: 1
-        timeToUpdateBuildingInSeconds: 10
+        timeToUpdateBuildingInSeconds: 1000
       - level: 2
-        timeToUpdateBuildingInSeconds: 30
+        timeToUpdateBuildingInSeconds: 3000
       - level: 3
-        timeToUpdateBuildingInSeconds: 60
+        timeToUpdateBuildingInSeconds: 6000
       - level: 4
-        timeToUpdateBuildingInSeconds: 80
+        timeToUpdateBuildingInSeconds: 8000
   - role: resource
     name: Cornflakes Mine
     buildingDetailsAtCertainLevel:
       - level: 1
-        timeToUpdateBuildingInSeconds: 10
+        timeToUpdateBuildingInSeconds: 1000
       - level: 2
-        timeToUpdateBuildingInSeconds: 30
+        timeToUpdateBuildingInSeconds: 3000
       - level: 3
-        timeToUpdateBuildingInSeconds: 60
+        timeToUpdateBuildingInSeconds: 6000
       - level: 4
-        timeToUpdateBuildingInSeconds: 80
+        timeToUpdateBuildingInSeconds: 8000
   - role: technology
     name: University of Nothingness
     buildingDetailsAtCertainLevel:
       - level: 1
-        timeToUpdateBuildingInSeconds: 10
+        timeToUpdateBuildingInSeconds: 1000
       - level: 2
-        timeToUpdateBuildingInSeconds: 30
+        timeToUpdateBuildingInSeconds: 3000
       - level: 3
-        timeToUpdateBuildingInSeconds: 60
+        timeToUpdateBuildingInSeconds: 6000
       - level: 4
-        timeToUpdateBuildingInSeconds: 80
+        timeToUpdateBuildingInSeconds: 8000
   - role: unit
     name: Train factory
     buildingDetailsAtCertainLevel:
       - level: 1
-        timeToUpdateBuildingInSeconds: 10
+        timeToUpdateBuildingInSeconds: 1000
       - level: 2
-        timeToUpdateBuildingInSeconds: 30
+        timeToUpdateBuildingInSeconds: 3000
       - level: 3
-        timeToUpdateBuildingInSeconds: 60
+        timeToUpdateBuildingInSeconds: 6000
       - level: 4
-        timeToUpdateBuildingInSeconds: 80
+        timeToUpdateBuildingInSeconds: 8000
