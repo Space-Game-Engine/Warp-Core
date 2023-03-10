@@ -1,10 +1,10 @@
 import { Module } from "@nestjs/common";
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { BuildingQueueModule } from "../building-queue/building-queue.module";
-import { BuildingZoneModule } from "../building-zone/building-zone.module";
-import { HabitatResolver } from "./habitat.resolver";
-import { HabitatService } from "./habitat.service";
-import { DatabaseModule } from "../database/database.module";
+import { BuildingQueueModule } from "@warp-core/building-queue/building-queue.module";
+import { BuildingZoneModule } from "@warp-core/building-zone/building-zone.module";
+import { DatabaseModule } from "@warp-core/database/database.module";
+import { HabitatResolver } from "@warp-core/habitat/habitat.resolver";
+import { HabitatService } from "@warp-core/habitat/habitat.service";
 
 @Module({
     providers: [

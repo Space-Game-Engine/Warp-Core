@@ -1,13 +1,10 @@
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { HabitatModel } from "../../../habitat/model/habitat.model";
-import { AuthModelInterface } from "../../interface/auth-model.interface";
+import { AuthModelInterface } from "@warp-core/auth/interface/auth-model.interface";
+import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
 import { ValidatorInterface } from "./validator.interface";
 
 export class HabitatValidatorService implements ValidatorInterface {
     constructor(
-        @InjectRepository(HabitatModel)
-        private readonly habitatRepository: Repository<HabitatModel>
+        private readonly habitatRepository: HabitatRepository
     ) {
     }
 

@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { Role } from "@warp-core/database/enum/role.enum";
+import { BuildingModel } from "@warp-core/database/model/building.model";
+import { BuildingRepository } from "@warp-core/database/repository/building.repository";
 import { when } from "jest-when";
-import { Role } from "../database/enum/role.enum";
-import { BuildingModel } from "../database/model/building.model";
-import { BuildingRepository } from "../database/repository/building.repository";
 import { BuildingService } from "./building.service";
 
 jest.mock("../database/repository/building.repository")

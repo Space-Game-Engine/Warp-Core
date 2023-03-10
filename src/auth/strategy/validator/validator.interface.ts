@@ -1,4 +1,4 @@
-import { AuthModelInterface } from "../../interface/auth-model.interface";
+import { AuthModelInterface } from "@warp-core/auth/interface/auth-model.interface";
 
 /**
  * Classes using that interface are able to validate user that is trying to login

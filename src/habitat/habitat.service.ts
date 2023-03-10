@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { NewHabitatInput } from "./input/NewHabitatInput";
-import { HabitatModel } from "../database/model/habitat.model";
-import { HabitatCreatedEvent } from "./event/habitat-created.event";
-import { RegisterUserEvent } from "../auth/register/register-user.event";
-import { HabitatRepository } from "../database/repository/habitat.repository";
-import { PayloadDataService } from "../auth/payload-data.service";
+import { PayloadDataService } from "@warp-core/auth/payload-data.service";
+import { RegisterUserEvent } from "@warp-core/auth/register/register-user.event";
+import { HabitatModel } from "@warp-core/database/model/habitat.model";
+import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
+import { HabitatCreatedEvent } from "@warp-core/habitat/event/habitat-created.event";
+import { NewHabitatInput } from "@warp-core/habitat/input/NewHabitatInput";
 
 @Injectable()
 export class HabitatService {

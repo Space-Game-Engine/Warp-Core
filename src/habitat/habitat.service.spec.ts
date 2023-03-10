@@ -1,13 +1,13 @@
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
-import { RegisterUserEvent } from "../auth/register/register-user.event";
 import { HabitatService } from "./habitat.service";
-import { NewHabitatInput } from "./input/NewHabitatInput";
-import { HabitatModel } from "../database/model/habitat.model";
-import { HabitatRepository } from "../database/repository/habitat.repository";
-import { PayloadDataService } from "../auth/payload-data.service";
 import { when } from "jest-when";
-import { AuthModelInterface } from "../auth/interface/auth-model.interface";
+import { PayloadDataService } from "@warp-core/auth/payload-data.service";
+import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
+import { HabitatModel } from "@warp-core/database/model/habitat.model";
+import { AuthModelInterface } from "@warp-core/auth/interface/auth-model.interface";
+import { NewHabitatInput } from "@warp-core/habitat/input/NewHabitatInput";
+import { RegisterUserEvent } from "@warp-core/auth/register/register-user.event";
 
 jest.mock("../auth/payload-data.service");
 jest.mock("../database/repository/habitat.repository");

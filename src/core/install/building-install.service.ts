@@ -1,8 +1,8 @@
 import { InjectRepository } from "@nestjs/typeorm";
+import { BuildingModel } from "@warp-core/database/model/building.model";
 import { plainToInstance } from "class-transformer";
 import { validateSync } from "class-validator";
 import { Repository } from "typeorm";
-import { BuildingModel } from "../../building/model/building.model";
 
 export class BuildingInstallService {
 

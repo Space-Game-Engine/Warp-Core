@@ -1,4 +1,4 @@
-import { LoginParameters } from "../login/login-parameters.model";
+import { LoginParameters } from "@warp-core/auth/login/login-parameters.model";
 
 export interface RegisterInterface {
 

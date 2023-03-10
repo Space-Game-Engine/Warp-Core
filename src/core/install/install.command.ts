@@ -1,4 +1,4 @@
-import { Command, Positional, Option } from 'nestjs-command';
+import { Command, Option } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
 import { BuildingInstallService } from './building-install.service';
 import { LoadConfigService } from './load-config.service';

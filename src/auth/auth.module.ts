@@ -3,16 +3,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { HabitatModel } from '../habitat/model/habitat.model';
-import { AuthController } from './auth.controller';
-import { GqlAuthGuard } from './guard/gql-auth.guard';
-import { LoginByHabitatService } from './login/login-by-habitat.service';
-import { PayloadDataService } from './payload-data.service';
-import { RegisterService } from './register/regiser.service';
-import { JwtStrategy } from './strategy/jwt.strategy';
-import { LocalStrategy } from './strategy/local.strategy';
-import { HabitatValidatorService } from './strategy/validator/habitat-validator.service';
+import { AuthController } from '@warp-core/auth/auth.controller';
+import { GqlAuthGuard } from '@warp-core/auth/guard/gql-auth.guard';
+import { LoginByHabitatService } from '@warp-core/auth/login/login-by-habitat.service';
+import { PayloadDataService } from '@warp-core/auth/payload-data.service';
+import { RegisterService } from '@warp-core/auth/register/regiser.service';
+import { JwtStrategy } from '@warp-core/auth/strategy/jwt.strategy';
+import { LocalStrategy } from '@warp-core/auth/strategy/local.strategy';
+import { HabitatValidatorService } from '@warp-core/auth/strategy/validator/habitat-validator.service';
+import { DatabaseModule } from '@warp-core/database/database.module';
 
 const jwtFactory = {
   useFactory: async (configService: ConfigService) => ({
@@ -50,7 +49,7 @@ const jwtFactory = {
     PassportModule,
     JwtModule.registerAsync(jwtFactory),
     ConfigModule,
-    TypeOrmModule.forFeature([HabitatModel]),
+    DatabaseModule,
   ],
   controllers: [
     AuthController

@@ -3,15 +3,15 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
-import { BuildingModule } from './building/building.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HabitatModule } from './habitat/habitat.module';
-import { BuildingZoneModule } from './building-zone/building-zone.module';
 import { ConfigModule } from '@nestjs/config';
-import config from './core/config/config-parser';
-import { BuildingQueueModule } from './building-queue/building-queue.module';
-import { AuthModule } from './auth/auth.module';
-import { DatabaseModule } from './database/database.module';
+import { DatabaseModule } from '@warp-core/database/database.module';
+import { BuildingModule } from '@warp-core/building/building.module';
+import { HabitatModule } from '@warp-core/habitat/habitat.module';
+import { BuildingZoneModule } from '@warp-core/building-zone/building-zone.module';
+import { BuildingQueueModule } from '@warp-core/building-queue/building-queue.module';
+import { AuthModule } from '@warp-core/auth/auth.module';
+import config from '@warp-core/core/config/config-parser';
 
 @Module({
   imports: [
@@ -43,7 +43,6 @@ export class AppModule {
   static entities() {
     return [
       ...DatabaseModule.entities(),
-      ...BuildingZoneModule.entities(),
       ...BuildingQueueModule.entities(),
     ];
   }

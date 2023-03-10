@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
+import { Role } from "@warp-core/database/enum/role.enum";
+import { BuildingModel } from "@warp-core/database/model/building.model";
 import { Repository } from "typeorm";
-import { BuildingModel } from "../../building/model/building.model";
-import { Role } from "../../building/model/role.enum";
 import { BuildingInstallService } from "./building-install.service";
 
 describe("BuildingInstallService", () => {

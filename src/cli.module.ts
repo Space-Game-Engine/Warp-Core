@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { AppModule } from '@warp-core/app.module';
+import { InstallModule } from '@warp-core/core/install/install.module';
 import { CommandModule } from 'nestjs-command';
-import { AppModule } from './app.module';
-import { InstallModule } from './core/install/install.module';
 
 @Module({
     imports: [
@@ -10,4 +10,4 @@ import { InstallModule } from './core/install/install.module';
         InstallModule,
     ]
 })
-export class CliModule { }
+export class ClIModule { }

@@ -4,8 +4,8 @@ import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { Inject, Injectable, Scope } from '@nestjs/common';
 import { ExtractJwt, JwtFromRequestFunction } from 'passport-jwt';
-import { PayloadInterface } from './interface/payload.interface';
-import { AuthModelInterface } from './interface/auth-model.interface';
+import { PayloadInterface } from '@warp-core/auth/interface/payload.interface';
+import { AuthModelInterface } from '@warp-core/auth/interface/auth-model.interface';
 
 @Injectable({ scope: Scope.REQUEST })
 export class PayloadDataService {

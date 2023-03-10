@@ -1,6 +1,6 @@
 import { Args, Int, Query, Resolver } from "@nestjs/graphql";
+import { BuildingModel } from "@warp-core/database/model/building.model";
 import { BuildingService } from "./building.service";
-import { BuildingModel } from "./model/building.model";
 
 @Resolver(of => BuildingModel)
 export class BuildingResolver {

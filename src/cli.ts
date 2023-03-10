@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
+import { ClIModule } from '@warp-core/cli.module';
 import { CommandModule, CommandService } from 'nestjs-command';
-import { CliModule } from './cli.module';
 
 
 async function bootstrap() {
-    const app = await NestFactory.createApplicationContext(CliModule, {
+    const app = await NestFactory.createApplicationContext(ClIModule, {
         logger: false
     });
 

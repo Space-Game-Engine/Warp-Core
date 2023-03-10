@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { LoginParameters } from "../login/login-parameters.model";
+import { LoginParameters } from "@warp-core/auth/login/login-parameters.model";
 import { RegisterUserEvent } from "./register-user.event";
 import { RegisterInterface } from "./register.interface";
 

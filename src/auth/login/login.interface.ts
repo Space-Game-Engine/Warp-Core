@@ -1,4 +1,4 @@
-import { AuthModelInterface } from "../interface/auth-model.interface";
+import { AuthModelInterface } from "@warp-core/auth/interface/auth-model.interface";
 import { AccessToken } from "./access-token.model";
 
 export interface LoginInterface {

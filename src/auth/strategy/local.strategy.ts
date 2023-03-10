@@ -1,8 +1,8 @@
 import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { ValidatorInterface } from './validator/validator.interface';
-import { AuthModelInterface } from '../interface/auth-model.interface';
+import { ValidatorInterface } from '@warp-core/auth/strategy/validator/validator.interface';
+import { AuthModelInterface } from '@warp-core/auth/interface/auth-model.interface';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {

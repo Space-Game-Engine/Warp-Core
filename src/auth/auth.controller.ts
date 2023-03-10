@@ -1,13 +1,13 @@
 import { Controller, Request, Post, UseGuards, Get, Param, Res, Inject, ParseIntPipe } from '@nestjs/common';
-import { Public } from './decorator/public-path.decorator';
-import { JwtAuthGuard } from './guard/jwt-auth.guard';
-import { LocalAuthGuard } from './guard/local-auth.guard';
 import { Response } from 'express';
 import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiQuery, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { LoginParameters } from './login/login-parameters.model';
-import { AccessToken } from './login/access-token.model';
-import { LoginInterface } from './login/login.interface';
-import { RegisterInterface } from './register/register.interface';
+import { LoginInterface } from '@warp-core/auth/login/login.interface';
+import { RegisterInterface } from '@warp-core/auth/register/register.interface';
+import { Public } from '@warp-core/auth/decorator/public-path.decorator';
+import { LoginParameters } from '@warp-core/auth/login/login-parameters.model';
+import { LocalAuthGuard } from '@warp-core/auth/guard/local-auth.guard';
+import { AccessToken } from '@warp-core/auth/login/access-token.model';
+import { JwtAuthGuard } from '@warp-core/auth/guard/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {

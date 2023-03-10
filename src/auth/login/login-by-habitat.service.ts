@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { HabitatModel } from "../../habitat/model/habitat.model";
-import { PayloadInterface } from "../interface/payload.interface";
+import { PayloadInterface } from "@warp-core/auth/interface/payload.interface";
+import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { AccessToken } from "./access-token.model";
 import { LoginInterface } from "./login.interface";
 
