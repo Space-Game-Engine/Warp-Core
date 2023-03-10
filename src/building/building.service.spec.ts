@@ -5,7 +5,7 @@ import { BuildingRepository } from "@warp-core/database/repository/building.repo
 import { when } from "jest-when";
 import { BuildingService } from "./building.service";
 
-jest.mock("../database/repository/building.repository")
+jest.mock("../database/repository/building.repository");
 
 describe("Building service test", () => {
     let buildingService: BuildingService;

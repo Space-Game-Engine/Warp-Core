@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { OnEvent } from "@nestjs/event-emitter";
+import { PayloadDataService } from "@warp-core/auth/payload-data.service";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
@@ -10,8 +11,21 @@ import { HabitatCreatedEvent } from "@warp-core/habitat/event/habitat-created.ev
 export class BuildingZoneService {
     constructor(
         private readonly buildingZoneRepository: BuildingZoneRepository,
+        private readonly payloadDataService: PayloadDataService,
         private readonly configService: ConfigService,
     ) {}
+
+    async getAllZonesForCurrentHabitat(): Promise<BuildingZoneModel[]> {
+        const habitat = await this.payloadDataService.getModel();
+
+        return this.buildingZoneRepository.getAllBuildingZonesByHabitatId(habitat.getAuthId());
+    }
+
+    async getSingleBuildingZone(counterPerHabitat: number): Promise<BuildingZoneModel| null> {
+        const habitat = await this.payloadDataService.getModel();
+
+        return this.buildingZoneRepository.getSingleBuildingZone(counterPerHabitat, habitat.getAuthId());
+    }
 
     async createNewBuildingZone(habitat: HabitatModel): Promise<BuildingZoneModel> {
         const maxCounterPerHabitat = await this.buildingZoneRepository.getMaxOfCounterPerHabitat(habitat.id);

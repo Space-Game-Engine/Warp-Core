@@ -1,62 +1,64 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { HabitatModel } from "../database/model/habitat.model";
+import { PayloadDataService } from "@warp-core/auth/payload-data.service";
+import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
+import { HabitatModel } from "@warp-core/database/model/habitat.model";
+import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
+import { when } from "jest-when";
 import { BuildingZoneService } from "./building-zone.service";
-import { BuildingZoneModel } from "../database/model/building-zone.model";
-/*
+
+jest.mock("../database/repository/building-zone.repository");
+jest.mock("../auth/payload-data.service");
+
 describe("Building Zone Service", () => {
     let buildingZoneService: BuildingZoneService;
-    let findBuildingZoneSpy: jest.SpyInstance;
-    let findOneBuildingZoneSpy: jest.SpyInstance;
-    let saveBuildingZoneSpy: jest.SpyInstance;
+    let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
+    let payloadDataService: jest.Mocked<PayloadDataService>;
+    let configService: ConfigService;
 
     beforeEach(async () => {
         jest.clearAllMocks();
 
+        configService = {
+            get: jest.fn()
+        } as any as ConfigService;
+
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 BuildingZoneService,
-                {
-                    provide: getRepositoryToken(BuildingZoneModel),
-                    useValue: {
-                        find() { },
-                        findOne() { },
-                        save() { },
-                    }
-                },
+                BuildingZoneRepository,
+                PayloadDataService,
                 {
                     provide: ConfigService,
-                    useValue: {
-                        get() { }
-                    }
+                    useValue: configService
                 }
             ]
-        })
-            .compile();
+        }).compile();
 
         buildingZoneService = module.get<BuildingZoneService>(BuildingZoneService);
 
-        let buildingZoneRepository = module.get<Repository<BuildingZoneModel>>(
-            getRepositoryToken(BuildingZoneModel)
-        );
-
-        findBuildingZoneSpy = jest.spyOn(buildingZoneRepository, 'find');
-        findOneBuildingZoneSpy = jest.spyOn(buildingZoneRepository, 'findOne');
-        saveBuildingZoneSpy = jest.spyOn(buildingZoneRepository, 'save');
+        buildingZoneRepository = module.get(BuildingZoneRepository);
+        payloadDataService = module.get(PayloadDataService);
     });
+
+    function getHabitatModelMock(habitatId: number): HabitatModel {
+        return {
+            id: habitatId,
+            getAuthId: () => habitatId
+        } as any as HabitatModel;
+    }
 
     describe("createNewBuildingZone", () => {
         it("should create first building zone with its counter set as 1", async () => {
             const habitatId = 5;
-            const alreadyCreatedBuildingZones = [] as BuildingZoneModel[];
 
-            findBuildingZoneSpy.mockResolvedValue(alreadyCreatedBuildingZones);
+            when(buildingZoneRepository.getMaxOfCounterPerHabitat)
+                .calledWith(habitatId)
+                .mockResolvedValue(0);
 
             await buildingZoneService.createNewBuildingZone({ id: habitatId } as HabitatModel);
 
-            expect(saveBuildingZoneSpy).toBeCalledWith(expect.objectContaining({
+            expect(buildingZoneRepository.save).toBeCalledWith(expect.objectContaining({
                 counterPerHabitat: 1,
                 habitat: { id: habitatId },
             }));
@@ -64,43 +66,68 @@ describe("Building Zone Service", () => {
 
         it("should create second building zone with its counter set as 2", async () => {
             const habitatId = 5;
-            const alreadyCreatedBuildingZones = [{
-                counterPerHabitat: 1,
-            }] as BuildingZoneModel[];
 
-            findBuildingZoneSpy.mockResolvedValue(alreadyCreatedBuildingZones);
+            when(buildingZoneRepository.getMaxOfCounterPerHabitat)
+                .calledWith(habitatId)
+                .mockResolvedValue(1);
 
             await buildingZoneService.createNewBuildingZone({ id: habitatId } as HabitatModel);
 
-            expect(saveBuildingZoneSpy).toBeCalledWith(expect.objectContaining({
+            expect(buildingZoneRepository.save).toBeCalledWith(expect.objectContaining({
                 counterPerHabitat: 2,
                 habitat: { id: habitatId },
             }));
         });
+    });
 
-        it("should create next building zone with its counter set as 5, but counter have gaps", async () => {
+    describe("getAllZonesForCurrentHabitat", () => {
+        it("should return array with buildings", async () => {
             const habitatId = 5;
-            const alreadyCreatedBuildingZones = [
+            const habitatModel = getHabitatModelMock(habitatId);
+            const buildingZones = [
                 {
+                    id: 1,
+                    level: 1,
                     counterPerHabitat: 1,
                 },
                 {
+                    id: 2,
+                    level: 0,
                     counterPerHabitat: 2,
-                },
-                {
-                    counterPerHabitat: 4,
                 },
             ] as BuildingZoneModel[];
 
-            findBuildingZoneSpy.mockResolvedValue(alreadyCreatedBuildingZones);
+            payloadDataService.getModel.mockResolvedValue(habitatModel);
+            when(buildingZoneRepository.getAllBuildingZonesByHabitatId)
+                .calledWith(habitatId)
+                .mockResolvedValue(buildingZones);
 
-            await buildingZoneService.createNewBuildingZone({ id: habitatId } as HabitatModel);
+            const buildingZonesFromService = await buildingZoneService.getAllZonesForCurrentHabitat();
 
-            expect(saveBuildingZoneSpy).toBeCalledWith(expect.objectContaining({
-                counterPerHabitat: 5,
-                habitat: { id: habitatId },
-            }));
+            expect(buildingZonesFromService).toEqual(buildingZones);
+        });
+    });
+
+    describe("getSingleBuildingZone", () => {
+        it("should return single building zone for provided counter", async () => {
+            const counterPerHabitat = 1;
+            const habitatId = 5;
+            const habitatModel = getHabitatModelMock(habitatId);
+            const buildingZone = 
+                {
+                    id: 1,
+                    level: 1,
+                    counterPerHabitat: counterPerHabitat,
+                } as BuildingZoneModel;
+
+            payloadDataService.getModel.mockResolvedValue(habitatModel);
+            when(buildingZoneRepository.getSingleBuildingZone)
+                .calledWith(counterPerHabitat, habitatId)
+                .mockResolvedValue(buildingZone);
+
+            const buildingZoneFromService = await buildingZoneService.getSingleBuildingZone(counterPerHabitat);
+
+            expect(buildingZoneFromService).toEqual(buildingZone);
         });
     });
 });
-*/
