@@ -43,7 +43,6 @@ export class AppModule {
   static entities() {
     return [
       ...DatabaseModule.entities(),
-      ...BuildingQueueModule.entities(),
     ];
   }
 }

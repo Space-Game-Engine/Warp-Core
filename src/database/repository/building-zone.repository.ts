@@ -9,7 +9,7 @@ export class BuildingZoneRepository extends Repository<BuildingZoneModel> {
         super(BuildingZoneModel, dataSource.createEntityManager());
     }
 
-    async getAllBuildingZonesByHabitatId(habitatId: number) {
+    async getAllBuildingZonesByHabitatId(habitatId: number): Promise<BuildingZoneModel[]> {
         const buildingZones = await this.find({
             where: {
                 habitat: {

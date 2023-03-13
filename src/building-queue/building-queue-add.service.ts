@@ -4,18 +4,18 @@ import { Repository } from "typeorm";
 import { BuildingZoneService } from "../building-zone/building-zone.service";
 import { BuildingZoneModel } from "../database/model/building-zone.model";
 import { BuildingService } from "../building/building.service";
-import { BuildingQueueFetchService } from "./building-queue-fetch.service";
+import { BuildingQueueRepository } from "../database/repository/building-queue.repository";
 import { QueueError } from "./exception/queue.error";
 import { AddToQueueInput } from "./input/add-to-queue.input";
-import { BuildingQueueElementModel } from "./model/building-queue-element.model";
 import { DateTime } from "luxon";
 import { HabitatModel } from "../database/model/habitat.model";
+import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 
 export class BuildingQueueAddService {
     constructor(
         @InjectRepository(BuildingQueueElementModel)
         private readonly buildingQueueRepository: Repository<BuildingQueueElementModel>,
-        private readonly buildingQueueFetch: BuildingQueueFetchService,
+        private readonly buildingQueueFetch: BuildingQueueRepository,
         private readonly buildingZoneService: BuildingZoneService,
         private readonly buildingService: BuildingService,
         private readonly configService: ConfigService,

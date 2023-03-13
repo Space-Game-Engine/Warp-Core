@@ -2,8 +2,8 @@ import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { IsBoolean, IsNumber } from "class-validator";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { AuthModelInterface } from "@warp-core/auth/interface/auth-model.interface";
-import { BuildingQueueElementModel } from "@warp-core/building-queue/model/building-queue-element.model";
 import { BuildingZoneModel } from "./building-zone.model";
+import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 
 @ObjectType({ description: "Single habitat that belongs to user" })
 @Entity({ name: "habitat" })

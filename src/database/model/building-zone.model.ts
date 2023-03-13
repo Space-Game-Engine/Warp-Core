@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { BuildingQueueElementModel } from "@warp-core/building-queue/model/building-queue-element.model";
+import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 import { BuildingModel } from "@warp-core/database/model/building.model";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { IsNumber, Min, ValidateNested } from "class-validator";

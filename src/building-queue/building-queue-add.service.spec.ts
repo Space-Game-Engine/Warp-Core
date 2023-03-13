@@ -1,7 +1,7 @@
-import { Test, TestingModule } from "@nestjs/testing";
+/*import { Test, TestingModule } from "@nestjs/testing";
 import { BuildingZoneService } from "../building-zone/building-zone.service";
 import { BuildingService } from "../building/building.service";
-import { BuildingQueueFetchService } from "./building-queue-fetch.service";
+import { BuildingQueueRepository } from "../database/repository/building-queue.repository";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { BuildingQueueElementModel } from "./model/building-queue-element.model";
 import { AddToQueueInput } from "./input/add-to-queue.input";
@@ -15,7 +15,7 @@ import { Repository } from "typeorm";
 jest.mock("./building-queue-fetch.service");
 jest.mock("../building-zone/building-zone.service");
 jest.mock("../building/building.service");
-jest.mock("@nestjs/config");
+jest.mock("@nestjs/config");*/
 /*
 describe("Building queue service tests", () => {
     let buildingQueueAddService: BuildingQueueAddService;

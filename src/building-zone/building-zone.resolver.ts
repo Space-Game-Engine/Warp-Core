@@ -1,5 +1,5 @@
 import { Args, Int, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
-import { BuildingQueueFetchService } from "@warp-core/building-queue/building-queue-fetch.service";
+import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue-fetch.service";
 import { BuildingZoneService } from "@warp-core/building-zone/building-zone.service";
 import { BuildingService } from "@warp-core/building/building.service";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
@@ -11,7 +11,7 @@ export class BuildingZoneResolver {
         private readonly buildingZoneService: BuildingZoneService,
         private readonly habitatService: HabitatService,
         private readonly buildingService: BuildingService,
-        private readonly buildingQueueFetchService: BuildingQueueFetchService,
+        private readonly buildingQueueFetchService: BuildingQueueRepository,
     ) { }
 
     @Query(returns => BuildingZoneModel, { nullable: true, description: "Returns single building zone", name: "buildingZone_get" })
