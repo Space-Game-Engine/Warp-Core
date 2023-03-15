@@ -3,7 +3,7 @@ import { Field, InputType, Int, PartialType } from "@nestjs/graphql";
 import { BuildingZoneExists } from "@warp-core/building-queue/input/validator/building-zone-exists.validator";
 import { IsBuildingIdProvided } from "@warp-core/building-queue/input/validator/is-building-id-provided.validator";
 import { IsBuildingIdValid } from "@warp-core/building-queue/input/validator/is-building-id-valid.validator";
-import { BuildingQueueElementModel } from "@warp-core/building-queue/model/building-queue-element.model";
+import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 
 @InputType({description: "Creates new element in queue"})
 export class AddToQueueInput extends PartialType(BuildingQueueElementModel)

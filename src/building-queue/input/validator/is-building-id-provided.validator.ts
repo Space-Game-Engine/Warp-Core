@@ -19,11 +19,9 @@ export class IsBuildingIdProvidedConstraint implements ValidatorConstraintInterf
         }
 
         const addToQueue = args.object as AddToQueueInput;
-        const currentHabitat = await this.payloadDataService.getModel() as HabitatModel;
 
         const buildingZone = await this.buildingZoneService.getSingleBuildingZone(
-            addToQueue.counterPerHabitat,
-            currentHabitat.id
+            addToQueue.counterPerHabitat
         );
 
         if (!buildingZone.buildingId) {

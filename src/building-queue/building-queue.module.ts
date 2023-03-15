@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { AuthModule } from "@warp-core/auth/auth.module";
+import { BuildingZoneModule } from "@warp-core/building-zone/building-zone.module";
 import { DatabaseModule } from "@warp-core/database/database.module";
-import { AuthModule } from "../auth/auth.module";
-import { BuildingZoneModule } from "../building-zone/building-zone.module";
 import { BuildingModule } from "../building/building.module";
 import { BuildingQueueAddService } from "./building-queue-add.service";
 import { BuildingQueueResolver } from "./building-queue.resolver";

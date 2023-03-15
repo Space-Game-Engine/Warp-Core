@@ -1,11 +1,9 @@
 import { Args, Mutation, Parent, ResolveField, Resolver } from "@nestjs/graphql";
-import { BuildingQueueElementModel } from "./model/building-queue-element.model";
-import { AddToQueueInput } from "./input/add-to-queue.input";
-import { BuildingQueueAddService } from "./building-queue-add.service";
-import { BuildingService } from "../building/building.service";
-import { BuildingZoneService } from "../building-zone/building-zone.service";
-import { CurrentHabitat } from "../auth/decorator/get-current-habitat.decorator";
-import { HabitatModel } from "../database/model/habitat.model";
+import { BuildingQueueAddService } from "@warp-core/building-queue/building-queue-add.service";
+import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
+import { BuildingZoneService } from "@warp-core/building-zone/building-zone.service";
+import { BuildingService } from "@warp-core/building/building.service";
+import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 
 @Resolver(of => BuildingQueueElementModel)
 export class BuildingQueueResolver {
@@ -17,10 +15,9 @@ export class BuildingQueueResolver {
 
     @Mutation(returns => BuildingQueueElementModel, { description: "Add to element queue", name: "buildingQueue_add" })
     addToQueue(
-        @Args('addToQueue') addToQueue: AddToQueueInput,
-        @CurrentHabitat() habitat: HabitatModel
+        @Args('addToQueue') addToQueue: AddToQueueInput
     ) {
-        return this.buildingQueueAddService.addToQueue(addToQueue, habitat);
+        return this.buildingQueueAddService.addToQueue(addToQueue);
     }
 
     @ResolveField()
@@ -34,6 +31,6 @@ export class BuildingQueueResolver {
     buildingZone(
         @Parent() buildingQueueElement: BuildingQueueElementModel
     ) {
-        return this.buildingZoneService.getSingleBuildingZoneById(buildingQueueElement.buildingZone.id);
+        return this.buildingZoneService.getSingleBuildingZone(buildingQueueElement.buildingZone.id);
     }
 }

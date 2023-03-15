@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { PayloadDataService } from "@warp-core/auth/payload-data.service";
 import { BuildingZoneService } from "@warp-core/building-zone/building-zone.service";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { registerDecorator, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 
 @ValidatorConstraint({ async: true })
@@ -13,11 +12,9 @@ export class BuildingZoneExistsConstraint implements ValidatorConstraintInterfac
     ) {}
 
     async validate(counterPerHabitat: number, args: ValidationArguments) {
-        const currentHabitat = await this.payloadDataService.getModel() as HabitatModel;
         const buildingZone = await this.buildingZoneService
             .getSingleBuildingZone(
-                counterPerHabitat,
-                currentHabitat.id
+                counterPerHabitat
             );
 
         if (!buildingZone) {

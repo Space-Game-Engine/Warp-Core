@@ -1,29 +1,30 @@
-/*import { Test, TestingModule } from "@nestjs/testing";
-import { BuildingZoneService } from "../building-zone/building-zone.service";
-import { BuildingService } from "../building/building.service";
-import { BuildingQueueRepository } from "../database/repository/building-queue.repository";
-import { getRepositoryToken } from "@nestjs/typeorm";
-import { BuildingQueueElementModel } from "./model/building-queue-element.model";
-import { AddToQueueInput } from "./input/add-to-queue.input";
-import { BuildingQueueAddService } from "./building-queue-add.service";
+import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { when } from 'jest-when';
-import { BuildingZoneModel } from "../database/model/building-zone.model";
-import { HabitatModel } from "../database/model/habitat.model";
-import { Repository } from "typeorm";
+import { BuildingQueueAddService } from "@warp-core/building-queue/building-queue-add.service";
+import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
+import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
+import { BuildingService } from "@warp-core/building/building.service";
+import { PayloadDataService } from "@warp-core/auth/payload-data.service";
+import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
+import { HabitatModel } from "@warp-core/database/model/habitat.model";
+import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
+import { BuildingModel } from "@warp-core/database/model/building.model";
+import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 
-jest.mock("./building-queue-fetch.service");
-jest.mock("../building-zone/building-zone.service");
+jest.mock("../database/repository/building-queue.repository");
+jest.mock("../database/repository/building-zone.repository");
 jest.mock("../building/building.service");
-jest.mock("@nestjs/config");*/
-/*
+jest.mock("@nestjs/config");
+jest.mock("../auth/payload-data.service");
+
 describe("Building queue service tests", () => {
     let buildingQueueAddService: BuildingQueueAddService;
-    let buildingQueueFetchService: jest.Mocked<BuildingQueueFetchService>;
-    let buildingZoneService: jest.Mocked<BuildingZoneService>;
+    let buildingQueueRepository: jest.Mocked<BuildingQueueRepository>;
+    let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
     let buildingService: jest.Mocked<BuildingService>;
+    let payloadDataService: jest.Mocked<PayloadDataService>;
     let configService: jest.Mocked<ConfigService>;
-    let saveBuildingQueueElement: jest.SpyInstance;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -31,107 +32,107 @@ describe("Building queue service tests", () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 BuildingQueueAddService,
-                {
-                    provide: getRepositoryToken(BuildingQueueElementModel),
-                    useValue: {
-                        save(arg) { },
-                    },
-                },
-                BuildingQueueFetchService,
-                BuildingZoneService,
+                BuildingQueueRepository,
+                BuildingZoneRepository,
                 BuildingService,
                 ConfigService,
+                PayloadDataService,
             ]
         }).compile();
 
         buildingQueueAddService = module.get<BuildingQueueAddService>(BuildingQueueAddService);
-        buildingQueueFetchService = module.get(BuildingQueueFetchService);
-        buildingZoneService = module.get(BuildingZoneService);
+        buildingQueueRepository = module.get(BuildingQueueRepository);
+        buildingZoneRepository = module.get(BuildingZoneRepository);
         buildingService = module.get(BuildingService);
         configService = module.get(ConfigService);
-
-        let buildingQueueRepository = module.get<Repository<BuildingQueueElementModel>>(
-            getRepositoryToken(BuildingQueueElementModel)
-        );
-
-        saveBuildingQueueElement = jest.spyOn(buildingQueueRepository, 'save');
+        payloadDataService = module.get(PayloadDataService);
     });
 
     describe("prepareDraftQueueElement", () => {
         it("should throw error when building zone not exists", async () => {
+            const habitat = {
+                id: 1
+            } as HabitatModel;
+
             const addToQueueElement: AddToQueueInput = {
-                habitatId: 1,
                 counterPerHabitat: 200,
                 buildingId: 1,
                 endLevel: 5,
             };
 
-            when(buildingZoneService
+            when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
                     addToQueueElement.counterPerHabitat,
-                    addToQueueElement.habitatId
+                    habitat.id
                 )
                 .mockResolvedValue(null);
 
-            await expect(buildingQueueAddService.prepareDraftQueueElement(addToQueueElement))
+            await expect(buildingQueueAddService.prepareDraftQueueElement(addToQueueElement, habitat))
                 .rejects
                 .toThrow("Selected building zone not exists");
 
-            expect(buildingZoneService.getSingleBuildingZone)
+            expect(buildingZoneRepository.getSingleBuildingZone)
                 .toHaveBeenCalledTimes(1);
         });
 
         it("should throw error when building id is not provided for first upgrade", async () => {
+            const habitat = {
+                id: 1
+            } as HabitatModel;
+
             const addToQueueElement: AddToQueueInput = {
-                habitatId: 1,
-                counterPerHabitat: 200,
-                endLevel: 5,
-            };
-
-            when(buildingZoneService
-                .getSingleBuildingZone)
-                .expectCalledWith(
-                    addToQueueElement.counterPerHabitat,
-                    addToQueueElement.habitatId
-                )
-                .mockResolvedValue({
-                    id: 1,
-                    buildingId: null,
-                    level: 0,
-                    placement: null,
-                    habitatId: addToQueueElement.habitatId,
-                    counterPerHabitat: addToQueueElement.counterPerHabitat
-                } as BuildingZoneModel);
-
-            await expect(buildingQueueAddService.prepareDraftQueueElement(addToQueueElement))
-                .rejects
-                .toThrow("First queue for selected building zone must have desired building Id");
-
-            expect(buildingZoneService.getSingleBuildingZone)
-                .toHaveBeenCalledTimes(1);
-        });
-
-        it("should throw error when trying to upgrade more than one level of single building zone and queue is empty and is forbidden to upgrade more than one level", async () => {
-            const addToQueueElement: AddToQueueInput = {
-                habitatId: 1,
                 counterPerHabitat: 200,
                 buildingId: 1,
                 endLevel: 5,
             };
 
-            when(buildingZoneService
+            when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
                     addToQueueElement.counterPerHabitat,
-                    addToQueueElement.habitatId
+                    habitat.id
                 )
                 .mockResolvedValue({
                     id: 1,
                     buildingId: null,
                     level: 0,
                     placement: null,
-                    habitatId: addToQueueElement.habitatId,
+                    habitatId: habitat.id,
+                    counterPerHabitat: addToQueueElement.counterPerHabitat
+                } as BuildingZoneModel);
+
+            await expect(buildingQueueAddService.prepareDraftQueueElement(addToQueueElement, habitat))
+                .rejects
+                .toThrow("First queue for selected building zone must have desired building Id");
+
+            expect(buildingZoneRepository.getSingleBuildingZone)
+                .toHaveBeenCalledTimes(1);
+        });
+
+        it("should throw error when trying to upgrade more than one level of single building zone and queue is empty and is forbidden to upgrade more than one level", async () => {
+            const habitat = {
+                id: 1
+            } as HabitatModel;
+
+            const addToQueueElement: AddToQueueInput = {
+                counterPerHabitat: 200,
+                buildingId: 1,
+                endLevel: 5,
+            };
+
+            when(buildingZoneRepository
+                .getSingleBuildingZone)
+                .expectCalledWith(
+                    addToQueueElement.counterPerHabitat,
+                    habitat.id
+                )
+                .mockResolvedValue({
+                    id: 1,
+                    buildingId: null,
+                    level: 0,
+                    placement: null,
+                    habitatId: habitat.id,
                     counterPerHabitat: addToQueueElement.counterPerHabitat
                 } as BuildingZoneModel);
 
@@ -139,22 +140,25 @@ describe("Building queue service tests", () => {
                 .expectCalledWith('habitat.buildingQueue.allowMultipleLevelUpdate' as never)
                 .mockReturnValue(false);
 
-            await expect(buildingQueueAddService.prepareDraftQueueElement(addToQueueElement))
+            await expect(buildingQueueAddService.prepareDraftQueueElement(addToQueueElement, habitat))
                 .rejects
                 .toThrow("You can update building only one level at once");
 
-            expect(buildingZoneService.getSingleBuildingZone)
+            expect(buildingZoneRepository.getSingleBuildingZone)
                 .toHaveBeenCalledTimes(1);
             expect(configService.get)
                 .toHaveBeenCalledTimes(1);
         });
 
         it("should prepare draft building queue element when trying to upgrade one level", async () => {
+            const habitat = {
+                id: 1
+            } as HabitatModel;
+
             const addToQueueElement: AddToQueueInput = {
-                habitatId: 1,
                 counterPerHabitat: 200,
                 buildingId: 1,
-                endLevel: 2,
+                endLevel: 5,
             };
 
             const buildingZone: BuildingZoneModel = {
@@ -162,7 +166,7 @@ describe("Building queue service tests", () => {
                 level: 1,
                 placement: null,
                 habitat: {} as HabitatModel,
-                habitatId: addToQueueElement.habitatId,
+                habitatId: habitat.id,
                 counterPerHabitat: addToQueueElement.counterPerHabitat,
                 buildingId: addToQueueElement.buildingId,
                 buildingQueue: [],
@@ -173,16 +177,16 @@ describe("Building queue service tests", () => {
 
             const timeToBuild = 100;
 
-            when(buildingQueueFetchService
+            when(buildingQueueRepository
                 .getCurrentBuildingQueueForHabitat)
-                .expectCalledWith(addToQueueElement.habitatId)
+                .expectCalledWith(habitat.id)
                 .mockResolvedValue([]);
 
-            when(buildingZoneService
+            when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
                     addToQueueElement.counterPerHabitat,
-                    addToQueueElement.habitatId
+                    habitat.id
                 )
                 .mockResolvedValue(buildingZone);
 
@@ -200,7 +204,7 @@ describe("Building queue service tests", () => {
                 .mockResolvedValue(timeToBuild);
 
             const newQueueElement = await buildingQueueAddService
-                .prepareDraftQueueElement(addToQueueElement);
+                .prepareDraftQueueElement(addToQueueElement, habitat);
 
             expect(newQueueElement.building).toEqual(buildingZone.building);
             expect(newQueueElement.buildingZone).toEqual(buildingZone);
@@ -212,8 +216,11 @@ describe("Building queue service tests", () => {
         });
 
         it("should prepare draft building queue element when trying to upgrade multiple levels", async () => {
+            const habitat = {
+                id: 1
+            } as HabitatModel;
+
             const addToQueueElement: AddToQueueInput = {
-                habitatId: 1,
                 counterPerHabitat: 200,
                 buildingId: 1,
                 endLevel: 5,
@@ -224,7 +231,7 @@ describe("Building queue service tests", () => {
                 level: 1,
                 placement: null,
                 habitat: {} as HabitatModel,
-                habitatId: addToQueueElement.habitatId,
+                habitatId: habitat.id,
                 counterPerHabitat: addToQueueElement.counterPerHabitat,
                 buildingId: addToQueueElement.buildingId,
                 buildingQueue: [],
@@ -235,16 +242,16 @@ describe("Building queue service tests", () => {
 
             const timeToBuild = 100;
 
-            when(buildingQueueFetchService
+            when(buildingQueueRepository
                 .getCurrentBuildingQueueForHabitat)
-                .expectCalledWith(addToQueueElement.habitatId)
+                .expectCalledWith(habitat.id)
                 .mockResolvedValue([]);
 
-            when(buildingZoneService
+            when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
                     addToQueueElement.counterPerHabitat,
-                    addToQueueElement.habitatId
+                    habitat.id
                 )
                 .mockResolvedValue(buildingZone);
 
@@ -262,7 +269,7 @@ describe("Building queue service tests", () => {
                 .mockResolvedValue(timeToBuild);
 
             const newQueueElement = await buildingQueueAddService
-                .prepareDraftQueueElement(addToQueueElement);
+                .prepareDraftQueueElement(addToQueueElement, habitat);
 
             expect(newQueueElement.building).toEqual(buildingZone.building);
             expect(newQueueElement.buildingZone).toEqual(buildingZone);
@@ -274,8 +281,11 @@ describe("Building queue service tests", () => {
         });
 
         it("should prepare draft building queue element when there is already element in building queue", async () => {
+            const habitat = {
+                id: 1
+            } as HabitatModel;
+
             const addToQueueElement: AddToQueueInput = {
-                habitatId: 1,
                 counterPerHabitat: 200,
                 buildingId: 1,
                 endLevel: 5,
@@ -286,7 +296,7 @@ describe("Building queue service tests", () => {
                 level: 1,
                 placement: null,
                 habitat: {} as HabitatModel,
-                habitatId: addToQueueElement.habitatId,
+                habitatId: habitat.id,
                 counterPerHabitat: addToQueueElement.counterPerHabitat,
                 buildingId: addToQueueElement.buildingId,
                 buildingQueue: [],
@@ -307,16 +317,16 @@ describe("Building queue service tests", () => {
 
             const timeToBuild = 100;
 
-            when(buildingQueueFetchService
+            when(buildingQueueRepository
                 .getCurrentBuildingQueueForHabitat)
-                .expectCalledWith(addToQueueElement.habitatId)
+                .expectCalledWith(habitat.id)
                 .mockResolvedValue([existingBuildingQueueElement]);
 
-            when(buildingZoneService
+            when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
                     addToQueueElement.counterPerHabitat,
-                    addToQueueElement.habitatId
+                    habitat.id
                 )
                 .mockResolvedValue(buildingZone);
 
@@ -334,7 +344,7 @@ describe("Building queue service tests", () => {
                 .mockResolvedValue(timeToBuild);
 
             const newQueueElement = await buildingQueueAddService
-                .prepareDraftQueueElement(addToQueueElement);
+                .prepareDraftQueueElement(addToQueueElement, habitat);
 
             expect(newQueueElement.building).toEqual(buildingZone.building);
             expect(newQueueElement.buildingZone).toEqual(buildingZone);
@@ -346,7 +356,7 @@ describe("Building queue service tests", () => {
             expect(newQueueElement.startTime.getTime()).toBeLessThan(newQueueElement.endTime.getTime());
         });
     });
-
+/*
     describe("addToQueue", () => {
         it("should throw exception when max queue elements has been reached", async () => {
             const addToQueueElement: AddToQueueInput = {
@@ -358,7 +368,7 @@ describe("Building queue service tests", () => {
 
             const maxElementsInQueue = 5;
 
-            when(buildingQueueFetchService
+            when(buildingQueueRepository
                 .countActiveBuildingQueueElementsForHabitat)
                 .expectCalledWith(addToQueueElement.habitatId)
                 .mockResolvedValue(maxElementsInQueue);
@@ -400,7 +410,7 @@ describe("Building queue service tests", () => {
 
             saveBuildingQueueElement.mockImplementation((arg: BuildingQueueElementModel) => arg);
 
-            when(buildingQueueFetchService
+            when(buildingQueueRepository
                 .countActiveBuildingQueueElementsForHabitat)
                 .expectCalledWith(addToQueueElement.habitatId)
                 .mockResolvedValue(0);
@@ -411,12 +421,12 @@ describe("Building queue service tests", () => {
                 .calledWith('habitat.buildingQueue.allowMultipleLevelUpdate' as never)
                 .mockReturnValue(true);
 
-            when(buildingQueueFetchService
+            when(buildingQueueRepository
                 .getCurrentBuildingQueueForHabitat)
                 .expectCalledWith(addToQueueElement.habitatId)
                 .mockResolvedValue([]);
 
-            when(buildingZoneService
+            when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
                     addToQueueElement.counterPerHabitat,
@@ -444,6 +454,5 @@ describe("Building queue service tests", () => {
             expect(newQueueElement.endTime).toBeInstanceOf(Date);
             expect(newQueueElement.startTime.getTime()).toBeLessThan(newQueueElement.endTime.getTime());
         });
-    });
+    });*/
 });
-*/

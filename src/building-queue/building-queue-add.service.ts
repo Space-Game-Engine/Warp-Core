@@ -1,28 +1,30 @@
 import { ConfigService } from "@nestjs/config";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { BuildingZoneService } from "../building-zone/building-zone.service";
-import { BuildingZoneModel } from "../database/model/building-zone.model";
-import { BuildingService } from "../building/building.service";
-import { BuildingQueueRepository } from "../database/repository/building-queue.repository";
 import { QueueError } from "./exception/queue.error";
 import { AddToQueueInput } from "./input/add-to-queue.input";
 import { DateTime } from "luxon";
-import { HabitatModel } from "../database/model/habitat.model";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
+import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
+import { BuildingService } from "@warp-core/building/building.service";
+import { HabitatModel } from "@warp-core/database/model/habitat.model";
+import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
+import { PayloadDataService } from "@warp-core/auth/payload-data.service";
+import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class BuildingQueueAddService {
     constructor(
-        @InjectRepository(BuildingQueueElementModel)
-        private readonly buildingQueueRepository: Repository<BuildingQueueElementModel>,
-        private readonly buildingQueueFetch: BuildingQueueRepository,
-        private readonly buildingZoneService: BuildingZoneService,
+        private readonly buildingQueueRepository: BuildingQueueRepository,
+        private readonly buildingZoneRepository: BuildingZoneRepository,
         private readonly buildingService: BuildingService,
+        private readonly payloadDataService: PayloadDataService,
         private readonly configService: ConfigService,
     ) { }
 
-    async addToQueue(addToQueueElement: AddToQueueInput, userHabitat: HabitatModel) {
-        const queueCounter = await this.buildingQueueFetch.countActiveBuildingQueueElementsForHabitat(userHabitat.id);
+    async addToQueue(addToQueueElement: AddToQueueInput) {
+        const userHabitat = await this.payloadDataService.getModel() as HabitatModel;
+
+        const queueCounter = await this.buildingQueueRepository.countActiveBuildingQueueElementsForHabitat(userHabitat.id);
         const maxElementsInQueue = this.configService.get<number>('habitat.buildingQueue.maxElementsInQueue');
 
         if (queueCounter >= maxElementsInQueue) {
@@ -37,7 +39,7 @@ export class BuildingQueueAddService {
     }
 
     async prepareDraftQueueElement(addToQueueElement: AddToQueueInput, userHabitat: HabitatModel): Promise<BuildingQueueElementModel> {
-        const buildingZone = await this.buildingZoneService
+        const buildingZone = await this.buildingZoneRepository
             .getSingleBuildingZone(
                 addToQueueElement.counterPerHabitat,
                 userHabitat.id
@@ -109,7 +111,7 @@ export class BuildingQueueAddService {
     }
 
     private async isPossibleToQueueElementByMultipleLeveld(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel): Promise<Boolean> {
-        const currentBuildingQueue = await this.buildingQueueFetch.getCurrentBuildingQueueForHabitat(buildingZone.habitatId);
+        const currentBuildingQueue = await this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(buildingZone.habitatId);
         const latestQueueElement = currentBuildingQueue.at(-1);
 
         if (!latestQueueElement) {
@@ -124,7 +126,7 @@ export class BuildingQueueAddService {
     }
 
     private async prepareStartTimeForQueueElement(buildingZone: BuildingZoneModel): Promise<Date> {
-        const currentBuildingQueue = await this.buildingQueueFetch.getCurrentBuildingQueueForHabitat(buildingZone.habitatId);
+        const currentBuildingQueue = await this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(buildingZone.habitatId);
 
         if (currentBuildingQueue.length === 0) {
             return new Date();
