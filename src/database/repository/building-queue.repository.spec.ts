@@ -27,6 +27,7 @@ describe("Building queue repository test", () => {
         buildingQueueRepository = module.get<BuildingQueueRepository>(BuildingQueueRepository);
         findOneBuildingQueueSpy = jest.spyOn(buildingQueueRepository, 'findOne');
         findBuildingQueueSpy = jest.spyOn(buildingQueueRepository, 'find');
+        countBuildingQueueSpy = jest.spyOn(buildingQueueRepository, 'count');
     });
 
     describe("getCurrentBuildingQueueForHabitat", () => {
@@ -112,6 +113,29 @@ describe("Building queue repository test", () => {
             const returnedBuildingZones = await buildingQueueRepository.getSingleBuildingQueueElementById(buildingQueueElementId);
 
             expect(returnedBuildingZones).toEqual(buildingQueueElement);
+        });
+    });
+
+    describe("countActiveBuildingQueueElementsForHabitat", () => {
+        it("should return all single queue element by its id", async () => {
+            const habitatId = 5;
+            const buildingQueueElements = 2;
+
+            when(countBuildingQueueSpy)
+                .calledWith(expect.objectContaining({
+                    where: {
+                        buildingZone: {
+                            habitatId: habitatId
+                        },
+                        // endTime: MoreThanOrEqual(new Date()),
+                    }
+                }))
+                .mockResolvedValue(buildingQueueElements);
+
+
+            const returnedBuildingZonesCount = await buildingQueueRepository.countActiveBuildingQueueElementsForHabitat(habitatId);
+
+            expect(returnedBuildingZonesCount).toEqual(buildingQueueElements);
         });
     });
 

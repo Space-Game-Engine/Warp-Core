@@ -1,5 +1,6 @@
 import { forwardRef, Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { AuthModule } from "@warp-core/auth/auth.module";
 import { BuildingQueueModule } from "@warp-core/building-queue/building-queue.module";
 import { BuildingModule } from "@warp-core/building/building.module";
 import { DatabaseModule } from "@warp-core/database/database.module";
@@ -17,7 +18,8 @@ import { BuildingZoneService } from "./building-zone.service";
         ConfigModule,
         BuildingModule,
         forwardRef(() => BuildingQueueModule),
-        HabitatModule,
+        forwardRef(() => HabitatModule),
+        AuthModule,
     ],
     exports: [
         BuildingZoneService,

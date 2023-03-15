@@ -4,6 +4,7 @@ import { BuildingDetailsAtCertainLevelModel } from "@warp-core/database/model/bu
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { BuildingModel } from "@warp-core/database/model/building.model";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
+import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
 import { BuildingRepository } from "@warp-core/database/repository/building.repository";
 import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
@@ -12,6 +13,7 @@ import { HabitatRepository } from "@warp-core/database/repository/habitat.reposi
     providers: [
         BuildingRepository,
         BuildingZoneRepository,
+        BuildingQueueRepository,
         HabitatRepository,
     ],
     imports: [
@@ -20,6 +22,7 @@ import { HabitatRepository } from "@warp-core/database/repository/habitat.reposi
     exports: [
         BuildingRepository,
         BuildingZoneRepository,
+        BuildingQueueRepository,
         HabitatRepository,
     ]
 })

@@ -1,7 +1,7 @@
 import { Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
-import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue-fetch.service";
 import { BuildingZoneService } from "@warp-core/building-zone/building-zone.service";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
+import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
 import { HabitatService } from "./habitat.service";
 
 @Resolver(of => HabitatModel)
@@ -9,7 +9,7 @@ export class HabitatResolver {
     constructor(
         private readonly habitatService: HabitatService,
         private readonly buildingZoneService: BuildingZoneService,
-        private readonly buildingQueueFetchService: BuildingQueueRepository
+        private readonly buildingQueueRepository: BuildingQueueRepository
     ) { }
 
     @Query(returns => HabitatModel, { nullable: true, description: "Get single habitat for logged in token", name: "habitat_get" })
@@ -33,6 +33,6 @@ export class HabitatResolver {
     buildingQueue(
         @Parent() habitat: HabitatModel
     ) {
-        return this.buildingQueueFetchService.getCurrentBuildingQueueForHabitat(habitat.id);
+        return this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(habitat.id);
     }
 }
