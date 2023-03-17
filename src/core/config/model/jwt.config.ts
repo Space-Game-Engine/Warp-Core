@@ -1,4 +1,4 @@
-import { IsInt, IsString, Min } from "class-validator";
+import { IsBoolean, IsInt, IsString, Min } from "class-validator";
 
 export class JwtConfig {
     @IsString()
@@ -7,4 +7,7 @@ export class JwtConfig {
     @IsInt()
     @Min(1)
     expiresIn: number;
+
+    @IsBoolean()
+    ignoreExpiration: boolean;
 }

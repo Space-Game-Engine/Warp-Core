@@ -7,7 +7,7 @@ import { BuildingQueueRepository } from "@warp-core/database/repository/building
 import { BuildingService } from "@warp-core/building/building.service";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
-import { PayloadDataService } from "@warp-core/auth/payload-data.service";
+import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { Injectable } from "@nestjs/common";
 

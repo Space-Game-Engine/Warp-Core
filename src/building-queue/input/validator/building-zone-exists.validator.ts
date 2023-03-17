@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PayloadDataService } from "@warp-core/auth/payload-data.service";
+import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
 import { BuildingZoneService } from "@warp-core/building-zone/building-zone.service";
 import { registerDecorator, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 

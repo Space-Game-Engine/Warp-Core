@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PayloadDataService } from "@warp-core/auth/payload-data.service";
+import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
 import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
 import { BuildingZoneService } from "@warp-core/building-zone/building-zone.service";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";

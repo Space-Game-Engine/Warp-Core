@@ -6,7 +6,8 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthController } from '@warp-core/auth/auth.controller';
 import { GqlAuthGuard } from '@warp-core/auth/guard/gql-auth.guard';
 import { LoginByHabitatService } from '@warp-core/auth/login/login-by-habitat.service';
-import { PayloadDataService } from '@warp-core/auth/payload-data.service';
+import { HabitatPayloadDataService } from '@warp-core/auth/payload/habitat-payload-data.service';
+import { PayloadDataService } from '@warp-core/auth/payload/payload-data.service';
 import { RegisterService } from '@warp-core/auth/register/regiser.service';
 import { JwtStrategy } from '@warp-core/auth/strategy/jwt.strategy';
 import { LocalStrategy } from '@warp-core/auth/strategy/local.strategy';
@@ -43,7 +44,10 @@ const jwtFactory = {
       provide: APP_GUARD,
       useClass: GqlAuthGuard,
     },
-    PayloadDataService,
+    {
+      provide: PayloadDataService,
+      useClass: HabitatPayloadDataService
+    },
   ],
   imports: [
     PassportModule,

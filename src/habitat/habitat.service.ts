@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { PayloadDataService } from "@warp-core/auth/payload-data.service";
+import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
 import { RegisterUserEvent } from "@warp-core/auth/register/register-user.event";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
