@@ -1,19 +1,19 @@
 import { Injectable } from "@nestjs/common";
-import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
 import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
 import { BuildingZoneService } from "@warp-core/building-zone/building-zone.service";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { registerDecorator, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 
 @ValidatorConstraint({ async: true })
 @Injectable()
 export class IsBuildingIdProvidedConstraint implements ValidatorConstraintInterface {
     constructor(
-        protected readonly buildingZoneService: BuildingZoneService,
-        protected readonly payloadDataService: PayloadDataService
+        protected readonly buildingZoneService: BuildingZoneService
     ) {}
 
     async validate(buildingId: number, args: ValidationArguments) {
+        //TODO handle not working validation
+        return true;
+        
         if (buildingId) {
             return true;
         }

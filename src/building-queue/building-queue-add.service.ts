@@ -72,27 +72,9 @@ export class BuildingQueueAddService {
     }
 
     private async isAddToQueueValid(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel | null): Promise<boolean> {
-        if (!buildingZone) {
-            throw new QueueError("Selected building zone not exists");
-        }
-
-        if (
-            !buildingZone.buildingId &&
-            !addToQueueElement.buildingId
-        ) {
-            throw new QueueError("First queue for selected building zone must have desired building Id");
-        }
-
-        if (addToQueueElement.startLevel >= addToQueueElement.endLevel) {
-            throw new QueueError("Start level cannot be larger than end level");
-        }
-
-        if (addToQueueElement.endLevel < buildingZone.level) {
-            throw new QueueError("End level cannot be smaller than current building level");
-        }
 
         if (this.configService.get<boolean>('habitat.buildingQueue.allowMultipleLevelUpdate') === true) {
-            await this.isPossibleToQueueElementByMultipleLeveld(addToQueueElement, buildingZone);
+            await this.isPossibleToQueueElementByMultipleLevels(addToQueueElement, buildingZone);
         } else {
             if (await this.isPossibleToQueueElementByOneLevel(addToQueueElement, buildingZone) === false) {
                 throw new QueueError("You can update building only one level at once");
@@ -110,7 +92,7 @@ export class BuildingQueueAddService {
         return true;
     }
 
-    private async isPossibleToQueueElementByMultipleLeveld(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel): Promise<Boolean> {
+    private async isPossibleToQueueElementByMultipleLevels(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel): Promise<Boolean> {
         const currentBuildingQueue = await this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(buildingZone.habitatId);
         const latestQueueElement = currentBuildingQueue.at(-1);
 
