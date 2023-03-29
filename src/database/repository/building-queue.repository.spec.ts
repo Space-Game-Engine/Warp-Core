@@ -3,7 +3,7 @@ import { BuildingQueueElementModel } from "@warp-core/database/model/building-qu
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
 import { when } from "jest-when";
-import { DataSource } from "typeorm";
+import { DataSource, MoreThanOrEqual } from "typeorm";
 
 describe("Building queue repository test", () => {
     let buildingQueueRepository: BuildingQueueRepository;
@@ -48,7 +48,7 @@ describe("Building queue repository test", () => {
                         buildingZone: {
                             habitatId: habitatId
                         },
-                        // endTime: MoreThanOrEqual(new Date()),
+                        endTime: expect.anything(),
                     }
                 }))
                 .mockResolvedValue(buildingQueueElements);
@@ -81,7 +81,7 @@ describe("Building queue repository test", () => {
                         buildingZone: {
                             id: buildingZone.id
                         },
-                        // endTime: MoreThanOrEqual(new Date()),
+                        endTime: expect.anything(),
                     }
                 }))
                 .mockResolvedValue(buildingQueueElements);
@@ -103,8 +103,7 @@ describe("Building queue repository test", () => {
             when(findOneBuildingQueueSpy)
                 .calledWith(expect.objectContaining({
                     where: {
-                        id: buildingQueueElementId,
-                        // endTime: MoreThanOrEqual(new Date()),
+                        id: buildingQueueElementId
                     }
                 }))
                 .mockResolvedValue(buildingQueueElement);
@@ -127,7 +126,7 @@ describe("Building queue repository test", () => {
                         buildingZone: {
                             habitatId: habitatId
                         },
-                        // endTime: MoreThanOrEqual(new Date()),
+                        endTime: expect.anything(),
                     }
                 }))
                 .mockResolvedValue(buildingQueueElements);
@@ -138,5 +137,4 @@ describe("Building queue repository test", () => {
             expect(returnedBuildingZonesCount).toEqual(buildingQueueElements);
         });
     });
-
 });

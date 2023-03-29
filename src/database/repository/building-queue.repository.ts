@@ -16,7 +16,7 @@ export class BuildingQueueRepository extends Repository<BuildingQueueElementMode
                 buildingZone: {
                     habitatId: habitatId
                 },
-                // endTime: MoreThanOrEqual(new Date()),
+                endTime: MoreThanOrEqual(new Date()),
             }
         });
     }
@@ -28,7 +28,7 @@ export class BuildingQueueRepository extends Repository<BuildingQueueElementMode
                     id: buildingZone.id,
 
                 },
-                // endTime: MoreThanOrEqual(new Date()),
+                endTime: MoreThanOrEqual(new Date()),
             }
         });
     }
@@ -47,7 +47,7 @@ export class BuildingQueueRepository extends Repository<BuildingQueueElementMode
                 buildingZone: {
                     habitatId: habitatId
                 },
-                // endTime: MoreThanOrEqual(new Date()),
+                endTime: MoreThanOrEqual(new Date()),
             }
         });
     }
