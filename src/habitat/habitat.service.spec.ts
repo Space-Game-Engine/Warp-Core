@@ -2,20 +2,20 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
 import { HabitatService } from "./habitat.service";
 import { when } from "jest-when";
-import { PayloadDataService } from "@warp-core/auth/payload-data.service";
 import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { AuthModelInterface } from "@warp-core/auth/interface/auth-model.interface";
 import { NewHabitatInput } from "@warp-core/habitat/input/NewHabitatInput";
 import { RegisterUserEvent } from "@warp-core/auth/register/register-user.event";
+import { PayloadDataServiceMock } from "@warp-core/auth/payload/__mocks__/payload-data.service";
+import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
 
-jest.mock("../auth/payload-data.service");
 jest.mock("../database/repository/habitat.repository");
 
 describe("Habitat service tests", () => {
     let habitatService: HabitatService;
     let eventEmitter: EventEmitter2;
-    let payloadDataService: jest.Mocked<PayloadDataService>;
+    let payloadDataService: PayloadDataServiceMock;
     let habitatRepository: jest.Mocked<HabitatRepository>;
 
     beforeEach(async () => {
@@ -29,7 +29,10 @@ describe("Habitat service tests", () => {
             providers: [
                 HabitatService,
                 HabitatRepository,
-                PayloadDataService,
+                {
+                    provide: PayloadDataService,
+                    useValue: new PayloadDataServiceMock()
+                },
                 {
                     provide: EventEmitter2,
                     useValue: eventEmitter

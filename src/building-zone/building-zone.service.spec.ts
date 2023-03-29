@@ -1,6 +1,7 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { PayloadDataService } from "@warp-core/auth/payload-data.service";
+import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
+import { PayloadDataServiceMock } from "@warp-core/auth/payload/__mocks__/payload-data.service";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
@@ -8,12 +9,11 @@ import { when } from "jest-when";
 import { BuildingZoneService } from "./building-zone.service";
 
 jest.mock("../database/repository/building-zone.repository");
-jest.mock("../auth/payload-data.service");
 
 describe("Building Zone Service", () => {
     let buildingZoneService: BuildingZoneService;
     let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
-    let payloadDataService: jest.Mocked<PayloadDataService>;
+    let payloadDataService: PayloadDataServiceMock;
     let configService: ConfigService;
 
     beforeEach(async () => {
@@ -27,7 +27,10 @@ describe("Building Zone Service", () => {
             providers: [
                 BuildingZoneService,
                 BuildingZoneRepository,
-                PayloadDataService,
+                {
+                    provide: PayloadDataService,
+                    useValue: new PayloadDataServiceMock()
+                },
                 {
                     provide: ConfigService,
                     useValue: configService
