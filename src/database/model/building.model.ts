@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Role } from "@warp-core/database/enum/role.enum";
+import { BuildingRole } from "@warp-core/database/enum/building-role.enum";
 import { BuildingDetailsAtCertainLevelModel } from "@warp-core/database/model/building-details-at-certain-level.model";
 import { Type } from "class-transformer";
 import { IsEnum, IsNumber, IsOptional, Length, ValidateNested } from "class-validator";
@@ -14,10 +14,10 @@ export class BuildingModel {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field(type => Role, { description: "Role says what that building do" })
-    @IsEnum(Role)
+    @Field(type => BuildingRole, { description: "Role says what that building do" })
+    @IsEnum(BuildingRole)
     @Column('varchar')
-    role: Role;
+    role: BuildingRole;
 
     @Field({ description: "What name that kind of building have" })
     @Length(2, 255)

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
-import { Role } from "@warp-core/database/enum/role.enum";
+import { BuildingRole } from "@warp-core/database/enum/building-role.enum";
 import { BuildingModel } from "@warp-core/database/model/building.model";
 import { Repository } from "typeorm";
 import { BuildingInstallService } from "./building-install.service";
@@ -48,7 +48,7 @@ describe("BuildingInstallService", () => {
 
         it("should add items from array to install", async () => {
             const buildingModel = {
-                role: Role.RESOURCE_PRODUCTION,
+                role: BuildingRole.RESOURCE_PRODUCTION,
                 name: "Production building",
                 buildingDetailsAtCertainLevel: []
             } as BuildingModel;

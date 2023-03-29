@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { Role } from "@warp-core/database/enum/role.enum";
+import { BuildingRole } from "@warp-core/database/enum/building-role.enum";
 import { BuildingModel } from "@warp-core/database/model/building.model";
 import { BuildingRepository } from "@warp-core/database/repository/building.repository";
 import { when } from "jest-when";
@@ -49,7 +49,7 @@ describe("Building service test", () => {
             const endLevel = startLevel;
             const buildingModel = {
                 id: buildingId,
-                role: Role.RESOURCE_PRODUCTION,
+                role: BuildingRole.RESOURCE_PRODUCTION,
                 name: 'Test building',
                 buildingDetailsAtCertainLevel: [],
             } as BuildingModel;
@@ -69,7 +69,7 @@ describe("Building service test", () => {
             const endLevel = 2;
             const buildingModel = {
                 id: buildingId,
-                role: Role.RESOURCE_PRODUCTION,
+                role: BuildingRole.RESOURCE_PRODUCTION,
                 name: 'Test building',
                 buildingDetailsAtCertainLevel: [
                     {
@@ -102,7 +102,7 @@ describe("Building service test", () => {
             const endLevel = 1;
             const buildingModel = {
                 id: buildingId,
-                role: Role.RESOURCE_PRODUCTION,
+                role: BuildingRole.RESOURCE_PRODUCTION,
                 name: 'Test building',
                 buildingDetailsAtCertainLevel: [
                     {
@@ -135,7 +135,7 @@ describe("Building service test", () => {
             const endLevel = 3;
             const buildingModel = {
                 id: buildingId,
-                role: Role.RESOURCE_PRODUCTION,
+                role: BuildingRole.RESOURCE_PRODUCTION,
                 name: 'Test building',
                 buildingDetailsAtCertainLevel: [
                     {
@@ -168,7 +168,7 @@ describe("Building service test", () => {
             const buildingId = 1;
             const buildingModelMock = {
                 id: buildingId,
-                role: Role.RESOURCE_PRODUCTION,
+                role: BuildingRole.RESOURCE_PRODUCTION,
                 name: 'Test building',
                 buildingDetailsAtCertainLevel: []
             } as BuildingModel;
@@ -188,13 +188,13 @@ describe("Building service test", () => {
             const buildingModelsMock = [
                 {
                     id: 1,
-                    role: Role.RESOURCE_PRODUCTION,
+                    role: BuildingRole.RESOURCE_PRODUCTION,
                     name: 'Test building 1',
                     buildingDetailsAtCertainLevel: []
                 },
                 {
                     id: 2,
-                    role: Role.TECHNOLOGY_PRODUCTION,
+                    role: BuildingRole.TECHNOLOGY_PRODUCTION,
                     name: 'Test building 2',
                     buildingDetailsAtCertainLevel: []
                 },

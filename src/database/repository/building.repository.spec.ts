@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { Role } from "@warp-core/database/enum/role.enum";
+import { BuildingRole } from "@warp-core/database/enum/building-role.enum";
 import { BuildingModel } from "@warp-core/database/model/building.model";
 import { BuildingRepository } from "@warp-core/database/repository/building.repository";
 import { DataSource } from "typeorm";
@@ -35,7 +35,7 @@ describe("Building repository test", () => {
         it("should return single building by provided id", async () => {
             const buildingModel = {
                 id: 10,
-                role: Role.RESOURCE_PRODUCTION,
+                role: BuildingRole.RESOURCE_PRODUCTION,
                 name: 'Test building',
                 buildingDetailsAtCertainLevel: [],
             } as BuildingModel;
@@ -58,7 +58,7 @@ describe("Building repository test", () => {
         it("should return multiple buildings", async () => {
             const buildingModel = {
                 id: 10,
-                role: Role.RESOURCE_PRODUCTION,
+                role: BuildingRole.RESOURCE_PRODUCTION,
                 name: 'Test building',
                 buildingDetailsAtCertainLevel: [],
             } as BuildingModel;
