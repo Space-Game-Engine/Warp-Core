@@ -77,7 +77,7 @@ export class BuildingQueueAddService {
             await this.isPossibleToQueueElementByMultipleLevels(addToQueueElement, buildingZone);
         } else {
             if (await this.isPossibleToQueueElementByOneLevel(addToQueueElement, buildingZone) === false) {
-                throw new QueueError("You can update building only one level at once");
+                throw new QueueError("You can only upgrade a building by one level at a time");
             }
         }
 
