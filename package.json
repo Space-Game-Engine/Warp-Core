@@ -2,9 +2,13 @@
   "name": "warp-core",
   "version": "0.0.1",
   "description": "",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "author": "Space Game Engine",
+  "private": false,
+  "license": "MIT",
+  "homepage": "https://github.com/Space-Game-Engine/Warp-Core",
+  "bugs": {
+    "url": "https://github.com/Space-Game-Engine/Warp-Core/issues"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
