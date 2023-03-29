@@ -1,17 +1,16 @@
+import { Injectable } from "@nestjs/common";
 import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
 import { BuildingZoneService } from "@warp-core/building-zone/building-zone.service";
 import { registerDecorator, ValidationArguments, ValidationOptions, ValidatorConstraintInterface } from "class-validator";
 
+@Injectable()
 export class EndLevelIsNotLowerThanBuildingZoneConstraint implements ValidatorConstraintInterface {
 
     constructor(
-        protected readonly buildingZoneService: BuildingZoneService,
+        private readonly buildingZoneService: BuildingZoneService,
     ) { }
 
-    async validate(endLevel: number, args: ValidationArguments) {
-        //TODO handle not working validation
-        return true;
-
+    async validate(endLevel: number, args: ValidationArguments){
         const addToQueue = args.object as AddToQueueInput;
 
         const buildingZone = await this.buildingZoneService.getSingleBuildingZone(
@@ -22,7 +21,7 @@ export class EndLevelIsNotLowerThanBuildingZoneConstraint implements ValidatorCo
             return false;
         }
 
-        if (endLevel < buildingZone.level) {
+        if (endLevel <= buildingZone.level) {
             return false;
         }
 

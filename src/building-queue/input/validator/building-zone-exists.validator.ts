@@ -4,15 +4,12 @@ import { registerDecorator, ValidationArguments, ValidationOptions, ValidatorCon
 
 @ValidatorConstraint({ async: true })
 @Injectable()
-export class BuildingZoneExistsConstraint implements ValidatorConstraintInterface {
+export class BuildingZoneExistsConstraint implements ValidatorConstraintInterface{
     constructor(
-        protected readonly buildingZoneService: BuildingZoneService
+        private readonly buildingZoneService: BuildingZoneService
     ) {}
 
     async validate(counterPerHabitat: number, args: ValidationArguments) {
-        //TODO handle not working validation
-        return true;
-
         const buildingZone = await this.buildingZoneService
             .getSingleBuildingZone(
                 counterPerHabitat

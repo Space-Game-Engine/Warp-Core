@@ -5,26 +5,26 @@ import { EndLevelIsNotLowerThanBuildingZone } from "@warp-core/building-queue/in
 import { IsBuildingIdProvided } from "@warp-core/building-queue/input/validator/is-building-id-provided.validator";
 import { IsBuildingIdValid } from "@warp-core/building-queue/input/validator/is-building-id-valid.validator";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
-import { IsNumber, ValidateIf } from "class-validator";
+import {  ValidateIf } from "class-validator";
 
 @InputType({description: "Creates new element in queue"})
 export class AddToQueueInput extends PartialType(BuildingQueueElementModel)
 {
     @Field(type => Int,{description: "Local Id of building zone", name: "buildingZoneId"})
-    @BuildingZoneExists()
+    // @BuildingZoneExists()
     counterPerHabitat: number;
 
     @Field(type => Int, {
         description: "Id of building type that will be constructed. If building is already placed, that field will be ignored"
     })
-    @IsBuildingIdProvided()
-    @IsBuildingIdValid()
+    // @IsBuildingIdProvided()
+    // @IsBuildingIdValid()
     buildingId?: number;
 
     @Field(type => Int, {description: "How much levels will be build"})
     @ValidateIf(addToQueue => addToQueue.startLevel >= addToQueue.endLevel, {
         message: "Start level cannot be larger than end level"
     })
-    @EndLevelIsNotLowerThanBuildingZone()
+    // @EndLevelIsNotLowerThanBuildingZone()
     endLevel: number;
 }

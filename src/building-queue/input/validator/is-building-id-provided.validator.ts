@@ -11,9 +11,6 @@ export class IsBuildingIdProvidedConstraint implements ValidatorConstraintInterf
     ) {}
 
     async validate(buildingId: number, args: ValidationArguments) {
-        //TODO handle not working validation
-        return true;
-        
         if (buildingId) {
             return true;
         }
