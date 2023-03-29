@@ -39,4 +39,4 @@ Warp Core and other parts of Space Game Engine are an MIT-licensed open source p
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+Warp Core is [MIT licensed](LICENSE).
