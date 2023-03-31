@@ -1,5 +1,5 @@
 <h1 align="center">
-    <img src="/docs/img/logo.svg" width=200 />
+    <img src="docs/img/logo.svg" width=200 />
     <br>
     SPACE GAME ENGINE - WARP CORE
 </h1>
@@ -10,7 +10,7 @@ This is a module of our easy-to-configure strategic game engine that is called "
 
 ## Installation
 
-*To be added in future*
+Detailed instruction can be found [here](/docs/install/installation.md).
 
 ## Running the app
 
@@ -41,4 +41,5 @@ $ npm run test
 
 Warp Core and other parts of Space Game Engine are an MIT-licensed open source project.
 
-Icons by [@Guapo](https://elements.envato.com/user/Guapoo/graphics)
+Icons by [@Guapo](https://elements.envato.com/user/Guapoo/graphics)  
+Build on [NestJS](https://nestjs.com/)
