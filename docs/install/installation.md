@@ -6,7 +6,7 @@
 
 ## Technical Requirements
 
-Before installing your own Warp Core instance, you must install [NodeJs](https://nodejs.org/en/download) in version 16. You can check your current Node version by using command.
+Before installing your own Warp Core instance, you must install [Node.js](https://nodejs.org/en/download) version 16. You can check your current Node.js version by using the following command:
 
 ```sh
 npm -v
@@ -14,30 +14,29 @@ npm -v
 
 ## Install required packages
 
-At first step, clone existing repository.
+For the first step, clone the existing repository:
 
 ```sh
 git clone https://github.com/Space-Game-Engine/Warp-Core.git
 ```
 
-When the cloning process is complete, go to `Warp Core` folder and install required packages.
+When the cloning process is complete, go to the `Warp Core` folder and install the required packages:
 
 ```sh
 npm install
 ```
 
-Wait until installation process is complete. Then you have to install database driver (if you want to stay with default SQLite, you can skip that point). Detailed instruction can be found at [TypeORM installation website](https://typeorm.io/#installation).
+Wait until the installation process is complete. Then, you have to install the database driver (if you want to stick with the default SQLite, you can skip this point). Detailed instructions can be found on the [TypeORM installation website](https://typeorm.io/#installation).
 
 ## Prepare local instance environment variables
 
-Go to `config` folder, copy `localhost.yaml.dist` file and save it as `localhost.yaml`. Then fill fields related to database or remove them completely to use local SQLite database.  
-Database type can be one of the following values: mysql, mariadb, postgres, cockroachdb, sqlite, mssql, sap, spanner, oracle, mongodb, cordova, react-native, expo, nativescript (depends on what driver you have installed).
+Go to the `config` folder, copy the `localhost.yaml.dist` file, and save it as `localhost.yaml`. Then, fill in the fields related to the database or remove them completely to use the local SQLite database. The database type can be one of the following values: mysql, mariadb, postgres, cockroachdb, sqlite, mssql, sap, spanner, oracle, mongodb, cordova, react-native, expo, or nativescript (depending on the driver you have installed).
 
-Then, go to `install` folder, copy all `*.template.yaml` files and save them without `template` part. That files contains all crucial parameters that are relevant to game experience. You can find more details on how to customize that files here: [Installation templates description](installation-templates-description.md).
+Next, go to the `install` folder, copy all `*.template.yaml` files, and save them without the `template` part. These files contain all crucial parameters that are relevant to the game experience. You can find more details on how to customize these files here: [Installation templates description](installation-templates-description.md).
 
 ## Load database and prepare for launch
 
-In that part we want to prepare our database and to upload all configured game parameters there. `Warp Core` have build in tool to install all required values. In root game folder (same place as `package.json` is placed) type in console
+In this part, we want to prepare our database and upload all configured game parameters there. `Warp Core` has a built-in tool to install all required values. In the root game folder (the same place where `package.json` is located), type the following command in the console:
 
 ```sh
 npm run install-game
@@ -45,11 +44,11 @@ npm run install-game
 
 ## Start game instance
 
-Now it is time to launch your `Warp Core` instance! You can do it in three ways
+Now it's time to launch your `Warp Core` instance! You can do it in three ways:
 
 ### Developer mode
 
-In that mode, every code change triggers restarting application.
+In this mode, every code change triggers the application to recompile and restart.
 
 ```sh
 npm run start:dev
@@ -57,7 +56,7 @@ npm run start:dev
 
 ### Compilation mode
 
-That mode compile whole project from Typescript and launch local sever instance
+In this mode, the entire project is compiled from Typescript, and a local server instance is launched.
 
 ```sh
 npm run start
@@ -65,7 +64,7 @@ npm run start
 
 ### Production mode
 
-That mode is the fastest way to use game. It compiles everything once and then you just launch ready to use code by node.
+In this mode, the game is ready to use quickly. Everything is compiled once, and then you can just launch the ready-to-use code using node.
 
 ```sh
 npm run build

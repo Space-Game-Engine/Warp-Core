@@ -6,7 +6,7 @@
 
 ## Description
 
-This is a module of our easy-to-configure strategic game engine that is called "Warp Core". The focus of this module is on managing a single habitat within the game. Using "Warp Core", you can manage your home world, build and upgrade buildings, develop new technologies, and create any units you want. With just this module, you can create a functional single-player game that is centered on creating and managing your local economy, allowing you to grow as a single entity. However, if you wish to expand the gameplay and engage in multiplayer mode, you'll need to wait for the release of the additional modules that are currently in development.
+This is a module of our easy-to-configure strategic game engine called "Warp Core". The focus of this module is on managing a single habitat within the game. With "Warp Core", you can manage your home world, build and upgrade buildings, develop new technologies, and create any units you want. Using just this module, you can create a functional single-player game centered on creating and managing your local economy, allowing you to grow as a single entity. However, if you wish to expand the gameplay and engage in multiplayer mode, you'll need to wait for the release of the additional modules that are currently in development.
 
 ## Installation
 
