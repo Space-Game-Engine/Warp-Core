@@ -9,3 +9,4 @@ dist/
 *.db-wal
 install/*
 !install/*.template.yaml
+config/localhost.yaml

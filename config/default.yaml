@@ -1,7 +1,15 @@
+database:
+  type: 'better-sqlite3'
+  host: ''
+  port: ''
+  username: ''
+  password: ''
+  database: 'mydb.db'
+  synchronize: true
 jwt:
   secret: 'secret_code'
   expiresIn: 3600
-  ignoreExpiration: true
+  ignoreExpiration: false
 habitat:
   buildingZones:
     counterForNewHabitat: 10

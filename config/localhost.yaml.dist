@@ -1,0 +1,12 @@
+database:
+  type: 'typeorm_database_type'
+  host: 'your_database_url'
+  port: 'your_database_port'
+  username: 'your_database_username'
+  password: 'your_database_password'
+  database: 'your_database_name'
+  synchronize: true
+jwt:
+  secret: 'secret_code'
+  expiresIn: 3600
+  ignoreExpiration: false
