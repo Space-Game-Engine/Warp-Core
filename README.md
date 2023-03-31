@@ -1,4 +1,8 @@
-# SPACE GAME ENGINE - WARP CORE
+<h1 align="center">
+    <img src="/docs/img/logo.svg" width=200 />
+    <br>
+    SPACE GAME ENGINE - WARP CORE
+</h1>
 
 ## Description
 
