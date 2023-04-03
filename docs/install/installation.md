@@ -27,6 +27,7 @@ npm install
 ```
 
 Wait until the installation process is complete. Then, you have to install the database driver (if you want to stick with the default SQLite, you can skip this point). Detailed instructions can be found on the [TypeORM installation website](https://typeorm.io/#installation).
+**AT THIS POINT YOU SHOULD INSTALL DATABASE DRIVER AS GLOBAL MODULE.** In the future, `Warp Core` will be separated Node.js module and additional packages will be installed locally.
 
 ## Prepare local instance environment variables
 
@@ -71,4 +72,8 @@ npm run build
 npm run start:prod
 ```
 
-*And that's all!* Happy gaming 🚀
+## Check if game is loading
+
+When everything is fine, and game have loaded correctly, you will see NestJS output in console. On the two bottom lines you will see URLs, one is for GraphQL interface, second will show you local documentation page. Go ahead and use them to check if everything loads as it should.
+
+*And that's all!* Happy gaming 🚀 and go to [First steps](/docs/first_steps.md) to see how to authenticate and create new user.
