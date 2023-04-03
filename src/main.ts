@@ -25,7 +25,10 @@ async function bootstrap() {
             url: appURL,
             description: 'Main application URL'
         })
-        .addTag('Installation', 'How to install own game instance?')
+        .addTag('Installation', 'How to install own game instance?', {
+            url: 'https://github.com/Space-Game-Engine/Warp-Core/blob/main/docs/install/installation.md',
+            description: 'GitHub installation instructions'
+        })
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup(localDocUrl, app, document);
