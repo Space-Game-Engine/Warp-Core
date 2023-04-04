@@ -20,7 +20,7 @@ async function bootstrap() {
     const config = new DocumentBuilder()
         .setTitle('Warp Core web game engine')
         .setDescription('Web game engine REST API points')
-        .setVersion('1.0')
+        .setVersion('Alpha 0.1')
         .addTag('GraphQL documentation', 'See all GraphQL functions on that application schema', {
             url: appURL,
             description: 'Main application URL'
