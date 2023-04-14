@@ -19,10 +19,10 @@ export class BuildingZoneModel {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field({ description: "Building zone id counted for single habitat", name: "zoneId" })
+    @Field({ description: "Building zone id counted for single habitat"})
     @IsNumber()
     @Column('int')
-    counterPerHabitat: number;
+    localBuildingZoneId: number;
 
     @Field(type => HabitatModel, { description: "Habitat connected to that building zone" })
     @ValidateNested()

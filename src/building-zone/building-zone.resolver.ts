@@ -16,9 +16,9 @@ export class BuildingZoneResolver {
 
     @Query(returns => BuildingZoneModel, { nullable: true, description: "Returns single building zone", name: "buildingZone_get" })
     buildingZone(
-        @Args("counterPerHabitat", { type: () => Int }) counterPerHabitat: number
+        @Args("localBuildingZoneId", { type: () => Int }) localBuildingZoneId: number
     ) {
-        return this.buildingZoneService.getSingleBuildingZone(counterPerHabitat);
+        return this.buildingZoneService.getSingleBuildingZone(localBuildingZoneId);
     }
 
     @Query(returns => [BuildingZoneModel], { nullable: true, description: "Returns all building zones for single habitat", name: "buildingZone_getAll" })

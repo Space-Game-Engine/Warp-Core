@@ -21,17 +21,17 @@ export class BuildingZoneService {
         return this.buildingZoneRepository.getAllBuildingZonesByHabitatId(habitat.getAuthId());
     }
 
-    async getSingleBuildingZone(counterPerHabitat: number): Promise<BuildingZoneModel| null> {
+    async getSingleBuildingZone(localBuildingZoneId: number): Promise<BuildingZoneModel| null> {
         const habitat = await this.payloadDataService.getModel();
 
-        return this.buildingZoneRepository.getSingleBuildingZone(counterPerHabitat, habitat.getAuthId());
+        return this.buildingZoneRepository.getSingleBuildingZone(localBuildingZoneId, habitat.getAuthId());
     }
 
     async createNewBuildingZone(habitat: HabitatModel): Promise<BuildingZoneModel> {
         const maxCounterPerHabitat = await this.buildingZoneRepository.getMaxOfCounterPerHabitat(habitat.id);
         
         const newBuildingZone = await this.buildingZoneRepository.save({
-            counterPerHabitat: maxCounterPerHabitat + 1,
+            localBuildingZoneId: maxCounterPerHabitat + 1,
             habitat: habitat,
             level: 0,
             placement: ''
