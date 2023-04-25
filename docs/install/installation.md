@@ -6,7 +6,7 @@
 
 ## Technical Requirements
 
-Before installing your own Warp Core instance, you must install [Node.js](https://nodejs.org/en/download) version 16. You can check your current Node.js version by using the following command:
+Before installing your own Warp Core instance, you must install [Node.js](https://nodejs.org/en/download) in any version you want. You can check your current Node.js version by using the following command:
 
 ```sh
 npm -v
