@@ -28,10 +28,10 @@ export class HabitatModel implements AuthModelInterface {
     isMain: boolean;
 
     @Field(type => [BuildingZoneModel])
-    buildingZones: BuildingZoneModel[];
+    buildingZones: BuildingZoneModel[] | Promise<BuildingZoneModel[]>;
 
     @Field(type => [BuildingQueueElementModel])
-    buildingQueue: BuildingQueueElementModel[];
+    buildingQueue: BuildingQueueElementModel[] | Promise<BuildingQueueElementModel[]>;
 
     getAuthId(): any {
         return this.id;

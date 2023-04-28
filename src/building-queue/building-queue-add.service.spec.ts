@@ -255,6 +255,7 @@ describe("Building queue service tests", () => {
                 endLevel: 4,
                 endTime: new Date(),
                 id: 0,
+                isConsumed: false
             };
 
             const timeToBuild = 100;
@@ -331,6 +332,7 @@ describe("Building queue service tests", () => {
                 endLevel: 8,
                 endTime: new Date(),
                 id: 0,
+                isConsumed: false
             };
 
             when(buildingQueueRepository

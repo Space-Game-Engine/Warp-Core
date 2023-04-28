@@ -12,7 +12,7 @@ export class BuildingDetailsAtCertainLevelModel {
 
     @Field(type => BuildingModel, { description: "Building connected to that details" })
     @ManyToOne(() => BuildingModel, (building) => building.buildingDetailsAtCertainLevel)
-    building: BuildingModel;
+    building: BuildingModel | Promise<BuildingModel>;
 
     @Field(type => Int, { description: "What level is described by this entry" })
     @IsNumber()

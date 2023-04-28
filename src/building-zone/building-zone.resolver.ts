@@ -34,14 +34,16 @@ export class BuildingZoneResolver {
     }
 
     @ResolveField()
-    building(
+    async building(
         @Parent() buildingZone: BuildingZoneModel
     ) {
-        if (!buildingZone.building) {
+        const building = await buildingZone.building;
+        if (!building) {
             return null;
         }
 
-        return this.buildingService.getBuildingById(buildingZone.building.id);
+
+        return this.buildingService.getBuildingById(building.id);
     }
 
     @ResolveField()

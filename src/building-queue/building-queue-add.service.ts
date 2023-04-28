@@ -10,6 +10,7 @@ import { BuildingZoneRepository } from "@warp-core/database/repository/building-
 import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { Injectable } from "@nestjs/common";
+import { BuildingModel } from "@warp-core/database/model/building.model";
 
 @Injectable()
 export class BuildingQueueAddService {
@@ -49,7 +50,7 @@ export class BuildingQueueAddService {
             throw new QueueError('Queue element is not valid');
         }
 
-        let building = buildingZone.building;
+        let building = await buildingZone.building;
 
         if (!building) {
             building = await this.buildingService.getBuildingById(addToQueueElement.buildingId);
@@ -57,16 +58,17 @@ export class BuildingQueueAddService {
 
         const startTime = await this.prepareStartTimeForQueueElement(buildingZone!);
         const queueElement: BuildingQueueElementModel = {
+            id: null,
             building: building,
             buildingZone: buildingZone,
             startTime: startTime,
             startLevel: buildingZone!.level,
             endLevel: addToQueueElement.endLevel,
             endTime: new Date(),
-            id: null,
+            isConsumed: false,
         };
 
-        queueElement.endTime = await this.prepareEndTimeForQueueElement(queueElement);
+        queueElement.endTime = await this.prepareEndTimeForQueueElement(queueElement, building);
 
         return queueElement;
     }
@@ -119,12 +121,12 @@ export class BuildingQueueAddService {
         return lastBuildingQueueElement.endTime;
     }
 
-    private async prepareEndTimeForQueueElement(queueElement: BuildingQueueElementModel): Promise<Date> {
+    private async prepareEndTimeForQueueElement(queueElement: BuildingQueueElementModel, building: BuildingModel): Promise<Date> {
         const startTime = DateTime.fromJSDate(queueElement.startTime);
         const upgradeTime = await this.buildingService.calculateTimeInSecondsToUpgradeBuilding(
             queueElement.startLevel,
             queueElement.endLevel,
-            queueElement.building.id
+            building.id
         );
         const endTime = startTime.plus({ second: upgradeTime }).toJSDate();
 

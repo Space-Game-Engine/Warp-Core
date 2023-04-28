@@ -30,7 +30,7 @@ export class BuildingService {
             return secondsToUpgrade;
         }
 
-        for (const buildingDetails of building.buildingDetailsAtCertainLevel) {
+        for (const buildingDetails of await building.buildingDetailsAtCertainLevel) {
             if (buildingDetails.level <= startLevel) {
                 continue;
             }

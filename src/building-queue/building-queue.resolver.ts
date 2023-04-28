@@ -1,4 +1,4 @@
-import { Args, Mutation, Parent, ResolveField, Resolver } from "@nestjs/graphql";
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { BuildingQueueAddService } from "@warp-core/building-queue/building-queue-add.service";
 import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
 import { AddToQueueValidator } from "@warp-core/building-queue/input/add-to-queue.validator";
@@ -22,16 +22,16 @@ export class BuildingQueueResolver {
     }
 
     @ResolveField()
-    building(
+    async building(
         @Parent() buildingQueueElement: BuildingQueueElementModel
     ) {
-        return this.buildingService.getBuildingById(buildingQueueElement.building.id);
+        return this.buildingService.getBuildingById((await buildingQueueElement.building).id);
     }
 
     @ResolveField()
-    buildingZone(
+    async buildingZone(
         @Parent() buildingQueueElement: BuildingQueueElementModel
     ) {
-        return this.buildingZoneService.getSingleBuildingZone(buildingQueueElement.buildingZone.id);
+        return this.buildingZoneService.getSingleBuildingZone((await buildingQueueElement.buildingZone).id);
     }
 }

@@ -28,7 +28,7 @@ export class BuildingZoneModel {
     @ValidateNested()
     @ManyToOne(() => HabitatModel, (habitat) => habitat.buildingZones)
     @JoinColumn({ name: 'habitatId' })
-    habitat: HabitatModel;
+    habitat: HabitatModel |  Promise<HabitatModel>;
 
     @Column({ name: 'habitatId' })
     habitatId: number;
@@ -36,7 +36,7 @@ export class BuildingZoneModel {
     @Field(type => BuildingModel, { nullable: true, description: "What kind of building is placed here" })
     @ManyToOne(() => BuildingModel)
     @JoinColumn({ name: 'buildingId' })
-    building?: BuildingModel;
+    building?: BuildingModel | Promise<BuildingModel>;
 
     @Column({ name: 'buildingId', nullable: true})
     buildingId?: number;
@@ -52,6 +52,6 @@ export class BuildingZoneModel {
     placement?: string;
 
     @Field(type => [BuildingQueueElementModel], { description: "List of all queues connected to that building zone" })
-    buildingQueue: BuildingQueueElementModel[];
+    buildingQueue: BuildingQueueElementModel[] | Promise<BuildingQueueElementModel[]>;
 
 }

@@ -33,11 +33,7 @@ export class BuildingModel {
     @OneToMany(
         () => BuildingDetailsAtCertainLevelModel,
         (details) => details.building,
-        {
-            cascade: true,
-            eager: true
-        }
     )
     @Type(() => BuildingDetailsAtCertainLevelModel)
-    buildingDetailsAtCertainLevel: BuildingDetailsAtCertainLevelModel[];
+    buildingDetailsAtCertainLevel: BuildingDetailsAtCertainLevelModel[] | Promise<BuildingDetailsAtCertainLevelModel[]>;
 }
