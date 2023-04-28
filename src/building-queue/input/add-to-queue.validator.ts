@@ -37,8 +37,9 @@ export class AddToQueueValidator extends CustomValidator<AddToQueueInput> {
     }
 
     private async getBuilding(addToQueue: AddToQueueInput, buildingZone: BuildingZoneModel): Promise<BuildingModel> {
-        if (buildingZone.building) {
-            return buildingZone.building;
+        const buildingFromBuildingZone = await buildingZone.building;
+        if (buildingFromBuildingZone) {
+            return buildingFromBuildingZone;
         }
 
         if (!addToQueue.buildingId) {

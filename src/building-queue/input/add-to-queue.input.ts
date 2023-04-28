@@ -14,7 +14,8 @@ export class AddToQueueInput
     @IsNumber()
     @IsPositive()
     @Field(type => Int, {
-        description: "Id of building type that will be constructed. If building is already placed, that field will be ignored"
+        description: "Id of building type that will be constructed. If building is already placed, that field will be ignored",
+        nullable: true,
     })
     buildingId?: number;
 

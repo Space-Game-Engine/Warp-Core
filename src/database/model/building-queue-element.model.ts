@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { BuildingModel } from "@warp-core/database/model/building.model";
 import { IsBoolean, IsDate, IsNumber } from "class-validator";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType({ description: "Defines one pending item in building queue" })
 @Entity({ name: "building-queue-element" })
@@ -37,21 +37,30 @@ export class BuildingQueueElementModel {
     @Column('boolean')
     isConsumed: boolean = false;
 
-    @Field(type => BuildingModel, { description: "Building connected to queue element" })
+    @Field(type => BuildingModel, { nullable: true, description: "Building connected to queue element" })
     @ManyToOne(
         () => BuildingModel,
         {
-            lazy: true
+            lazy: true,
         }
     )
-    building: BuildingModel | Promise<BuildingModel>;
+    @JoinColumn({ name: 'buildingId' })
+    building?: BuildingModel | Promise<BuildingModel>;
+
+    @Column({ nullable: true })
+    buildingId?: number;
 
     @Field(type => BuildingZoneModel, { description: "Building zone connected to queue element" })
     @ManyToOne(
         () => BuildingZoneModel,
+        (buildingZone) => buildingZone.buildingQueue,
         {
             lazy: true
         }
     )
-    buildingZone: BuildingZoneModel |  Promise<BuildingZoneModel>;
+    @JoinColumn({ name: 'buildingZoneId' })
+    buildingZone: BuildingZoneModel | Promise<BuildingZoneModel>;
+
+    @Column()
+    buildingZoneId?: number;
 }

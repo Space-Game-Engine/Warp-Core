@@ -59,8 +59,9 @@ export class BuildingQueueAddService {
         const startTime = await this.prepareStartTimeForQueueElement(buildingZone!);
         const queueElement: BuildingQueueElementModel = {
             id: null,
-            building: building,
+            buildingId:building.id,
             buildingZone: buildingZone,
+            buildingZoneId: buildingZone.id,
             startTime: startTime,
             startLevel: buildingZone!.level,
             endLevel: addToQueueElement.endLevel,
@@ -95,7 +96,7 @@ export class BuildingQueueAddService {
     }
 
     private async isPossibleToQueueElementByMultipleLevels(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel): Promise<Boolean> {
-        const currentBuildingQueue = await this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(buildingZone.habitatId);
+        const currentBuildingQueue = await this.buildingQueueRepository.getCurrentBuildingQueueForBuildingZone(buildingZone);
         const latestQueueElement = currentBuildingQueue.at(-1);
 
         if (!latestQueueElement) {
