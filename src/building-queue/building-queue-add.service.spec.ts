@@ -18,7 +18,7 @@ jest.mock("../database/repository/building-zone.repository");
 jest.mock("../building/building.service");
 jest.mock("@nestjs/config");
 
-describe("Building queue service tests", () => {
+describe("Building queue add service tests", () => {
     let buildingQueueAddService: BuildingQueueAddService;
     let buildingQueueRepository: jest.Mocked<BuildingQueueRepository>;
     let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;

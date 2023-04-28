@@ -19,6 +19,13 @@ export class BuildingQueueResolver {
         return this.buildingQueueAddService.addToQueue(addToQueue);
     }
 
+    @Query(returns => [BuildingQueueElementModel], { description: "Checks all items in queue, recalculate them and return current items from queue", name: "buildingQueue_getAll" })
+    async getQueueItems() {
+        await this.buildingQueueHandlerService.resolveQueue();
+
+        return this.buildingQueueHandlerService.getQueueItemsForHabitat();
+    }
+
     @ResolveField()
     building(
         @Parent() buildingQueueElement: BuildingQueueElementModel
