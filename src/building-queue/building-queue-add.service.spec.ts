@@ -124,6 +124,11 @@ describe("Building queue service tests", () => {
                 .expectCalledWith(habitat.id)
                 .mockResolvedValue([]);
 
+            when(buildingQueueRepository
+                .getCurrentBuildingQueueForBuildingZone)
+                .expectCalledWith(buildingZone)
+                .mockResolvedValue([]);
+
             when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
@@ -148,8 +153,8 @@ describe("Building queue service tests", () => {
             const newQueueElement = await buildingQueueAddService
                 .prepareDraftQueueElement(addToQueueElement, habitat);
 
-            expect(newQueueElement.building).toEqual(buildingZone.building);
-            expect(newQueueElement.buildingZone).toEqual(buildingZone);
+            expect(newQueueElement.buildingId).toEqual(buildingZone.buildingId);
+            expect(newQueueElement.buildingZoneId).toEqual(buildingZone.id);
             expect(newQueueElement.startLevel).toEqual(buildingZone.level);
             expect(newQueueElement.endLevel).toEqual(addToQueueElement.endLevel);
             expect(newQueueElement.startTime).toBeInstanceOf(Date);
@@ -189,6 +194,11 @@ describe("Building queue service tests", () => {
                 .expectCalledWith(habitat.id)
                 .mockResolvedValue([]);
 
+            when(buildingQueueRepository
+                .getCurrentBuildingQueueForBuildingZone)
+                .expectCalledWith(buildingZone)
+                .mockResolvedValue([]);
+
             when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
@@ -213,8 +223,8 @@ describe("Building queue service tests", () => {
             const newQueueElement = await buildingQueueAddService
                 .prepareDraftQueueElement(addToQueueElement, habitat);
 
-            expect(newQueueElement.building).toEqual(buildingZone.building);
-            expect(newQueueElement.buildingZone).toEqual(buildingZone);
+            expect(newQueueElement.buildingId).toEqual(buildingZone.buildingId);
+            expect(newQueueElement.buildingZoneId).toEqual(buildingZone.id);
             expect(newQueueElement.startLevel).toEqual(buildingZone.level);
             expect(newQueueElement.endLevel).toEqual(addToQueueElement.endLevel);
             expect(newQueueElement.startTime).toBeInstanceOf(Date);
@@ -263,7 +273,12 @@ describe("Building queue service tests", () => {
             when(buildingQueueRepository
                 .getCurrentBuildingQueueForHabitat)
                 .expectCalledWith(habitat.id)
-                .mockResolvedValue([existingBuildingQueueElement]);
+                .mockResolvedValue([]);
+
+            when(buildingQueueRepository
+                .getCurrentBuildingQueueForBuildingZone)
+                .expectCalledWith(buildingZone)
+                .mockResolvedValue([]);
 
             when(buildingZoneRepository
                 .getSingleBuildingZone)
@@ -289,13 +304,13 @@ describe("Building queue service tests", () => {
             const newQueueElement = await buildingQueueAddService
                 .prepareDraftQueueElement(addToQueueElement, habitat);
 
-            expect(newQueueElement.building).toEqual(buildingZone.building);
-            expect(newQueueElement.buildingZone).toEqual(buildingZone);
+            expect(newQueueElement.buildingId).toEqual(buildingZone.buildingId);
+            expect(newQueueElement.buildingZoneId).toEqual(buildingZone.id);
             expect(newQueueElement.startLevel).toEqual(buildingZone.level);
             expect(newQueueElement.endLevel).toEqual(addToQueueElement.endLevel);
             expect(newQueueElement.startTime).toBeInstanceOf(Date);
             expect(newQueueElement.endTime).toBeInstanceOf(Date);
-            expect(newQueueElement.startTime).toEqual(existingBuildingQueueElement.endTime);
+            expect(newQueueElement.startTime.toUTCString()).toEqual(existingBuildingQueueElement.endTime.toUTCString());
             expect(newQueueElement.startTime.getTime()).toBeLessThan(newQueueElement.endTime.getTime());
         });
 
@@ -340,6 +355,11 @@ describe("Building queue service tests", () => {
                 .expectCalledWith(habitat.id)
                 .mockResolvedValue([existingBuildingQueueElement]);
 
+            when(buildingQueueRepository
+                .getCurrentBuildingQueueForBuildingZone)
+                .expectCalledWith(buildingZone)
+                .mockResolvedValue([existingBuildingQueueElement]);
+
             when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
@@ -357,103 +377,4 @@ describe("Building queue service tests", () => {
                 .toThrow("New queue element should have end level higher than last queue element");
         });
     });
-/*
-    describe("addToQueue", () => {
-        it("should throw exception when max queue elements has been reached", async () => {
-            const addToQueueElement: AddToQueueInput = {
-                habitatId: 1,
-                localBuildingZoneId: 200,
-                buildingId: 1,
-                endLevel: 5,
-            };
-
-            const maxElementsInQueue = 5;
-
-            when(buildingQueueRepository
-                .countActiveBuildingQueueElementsForHabitat)
-                .expectCalledWith(addToQueueElement.habitatId)
-                .mockResolvedValue(maxElementsInQueue);
-
-            when(configService.get)
-                .expectCalledWith('habitat.buildingQueue.maxElementsInQueue' as never)
-                .mockReturnValue(maxElementsInQueue);
-
-            await expect(buildingQueueAddService.addToQueue(addToQueueElement))
-                .rejects
-                .toThrow("Max queue count (5) has been reached");
-        });
-
-        it("should add new queue element into queue", async () => {
-            const addToQueueElement: AddToQueueInput = {
-                habitatId: 1,
-                localBuildingZoneId: 200,
-                buildingId: 1,
-                endLevel: 5,
-            };
-
-            const maxElementsInQueue = 5;
-
-            const buildingZone: BuildingZoneModel = {
-                id: 1,
-                level: 1,
-                placement: null,
-                habitat: {} as HabitatModel,
-                habitatId: addToQueueElement.habitatId,
-                localBuildingZoneId: addToQueueElement.localBuildingZoneId,
-                buildingId: addToQueueElement.buildingId,
-                building: {
-                    id: addToQueueElement.buildingId,
-                } as BuildingModel,
-                buildingQueue: [],
-            };
-
-            const timeToBuild = 100;
-
-            saveBuildingQueueElement.mockImplementation((arg: BuildingQueueElementModel) => arg);
-
-            when(buildingQueueRepository
-                .countActiveBuildingQueueElementsForHabitat)
-                .expectCalledWith(addToQueueElement.habitatId)
-                .mockResolvedValue(0);
-
-            when(configService.get)
-                .calledWith('habitat.buildingQueue.maxElementsInQueue' as never)
-                .mockReturnValue(maxElementsInQueue)
-                .calledWith('habitat.buildingQueue.allowMultipleLevelUpdate' as never)
-                .mockReturnValue(true);
-
-            when(buildingQueueRepository
-                .getCurrentBuildingQueueForHabitat)
-                .expectCalledWith(addToQueueElement.habitatId)
-                .mockResolvedValue([]);
-
-            when(buildingZoneRepository
-                .getSingleBuildingZone)
-                .expectCalledWith(
-                    addToQueueElement.localBuildingZoneId,
-                    addToQueueElement.habitatId
-                )
-                .mockResolvedValue(buildingZone);
-
-            when(buildingService
-                .calculateTimeInSecondsToUpgradeBuilding)
-                .expectCalledWith(
-                    buildingZone.level,
-                    addToQueueElement.endLevel,
-                    addToQueueElement.buildingId,
-                )
-                .mockResolvedValue(timeToBuild);
-
-            const newQueueElement = await buildingQueueAddService
-                .addToQueue(addToQueueElement);
-
-            expect(newQueueElement.building).toEqual(buildingZone.building);
-            expect(newQueueElement.buildingZone).toEqual(buildingZone);
-            expect(newQueueElement.startLevel).toEqual(buildingZone.level);
-            expect(newQueueElement.endLevel).toEqual(addToQueueElement.endLevel);
-            expect(newQueueElement.startTime).toBeInstanceOf(Date);
-            expect(newQueueElement.endTime).toBeInstanceOf(Date);
-            expect(newQueueElement.startTime.getTime()).toBeLessThan(newQueueElement.endTime.getTime());
-        });
-    });*/
 });
