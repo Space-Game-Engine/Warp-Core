@@ -38,10 +38,20 @@ export class BuildingQueueElementModel {
     isConsumed: boolean = false;
 
     @Field(type => BuildingModel, { description: "Building connected to queue element" })
-    @ManyToOne(() => BuildingModel)
+    @ManyToOne(
+        () => BuildingModel,
+        {
+            lazy: true
+        }
+    )
     building: BuildingModel | Promise<BuildingModel>;
 
     @Field(type => BuildingZoneModel, { description: "Building zone connected to queue element" })
-    @ManyToOne(() => BuildingZoneModel)
+    @ManyToOne(
+        () => BuildingZoneModel,
+        {
+            lazy: true
+        }
+    )
     buildingZone: BuildingZoneModel |  Promise<BuildingZoneModel>;
 }

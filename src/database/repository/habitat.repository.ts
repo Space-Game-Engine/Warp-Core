@@ -13,7 +13,6 @@ export class HabitatRepository extends Repository<HabitatModel> {
             where: {
                 id: habitatId
             },
-            loadEagerRelations: false,
         });
     }
 
@@ -22,7 +21,6 @@ export class HabitatRepository extends Repository<HabitatModel> {
             where: {
                 userId: userId
             },
-            loadEagerRelations: false
         });
     }
 }

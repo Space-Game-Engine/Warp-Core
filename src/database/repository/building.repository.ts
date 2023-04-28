@@ -14,14 +14,11 @@ export class BuildingRepository extends Repository<BuildingModel> {
             where: {
                 id: buildingId
             },
-            loadEagerRelations: true
         });
     }
 
     getAllBuildings(): Promise<BuildingModel[]> {
-        return this.find({
-            loadEagerRelations: true
-        });
+        return this.find();
     }
 
 }

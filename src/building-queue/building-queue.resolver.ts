@@ -22,16 +22,16 @@ export class BuildingQueueResolver {
     }
 
     @ResolveField()
-    async building(
+    building(
         @Parent() buildingQueueElement: BuildingQueueElementModel
     ) {
-        return this.buildingService.getBuildingById((await buildingQueueElement.building).id);
+        buildingQueueElement.building;
     }
 
     @ResolveField()
-    async buildingZone(
+    buildingZone(
         @Parent() buildingQueueElement: BuildingQueueElementModel
     ) {
-        return this.buildingZoneService.getSingleBuildingZone((await buildingQueueElement.buildingZone).id);
+        buildingQueueElement.buildingZone;
     }
 }

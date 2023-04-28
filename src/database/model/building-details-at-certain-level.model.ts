@@ -11,7 +11,13 @@ export class BuildingDetailsAtCertainLevelModel {
     id: number;
 
     @Field(type => BuildingModel, { description: "Building connected to that details" })
-    @ManyToOne(() => BuildingModel, (building) => building.buildingDetailsAtCertainLevel)
+    @ManyToOne(
+        () => BuildingModel,
+        (building) => building.buildingDetailsAtCertainLevel,
+        {
+            lazy: true
+        }
+    )
     building: BuildingModel | Promise<BuildingModel>;
 
     @Field(type => Int, { description: "What level is described by this entry" })

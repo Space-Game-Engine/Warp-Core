@@ -33,6 +33,9 @@ export class BuildingModel {
     @OneToMany(
         () => BuildingDetailsAtCertainLevelModel,
         (details) => details.building,
+        {
+            lazy: true
+        }
     )
     @Type(() => BuildingDetailsAtCertainLevelModel)
     buildingDetailsAtCertainLevel: BuildingDetailsAtCertainLevelModel[] | Promise<BuildingDetailsAtCertainLevelModel[]>;

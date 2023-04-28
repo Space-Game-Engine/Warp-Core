@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { IsBoolean, IsNumber } from "class-validator";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { AuthModelInterface } from "@warp-core/auth/interface/auth-model.interface";
 import { BuildingZoneModel } from "./building-zone.model";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
@@ -28,9 +28,23 @@ export class HabitatModel implements AuthModelInterface {
     isMain: boolean;
 
     @Field(type => [BuildingZoneModel])
+    @OneToMany(
+        () => BuildingZoneModel,
+        (buildingZone) => buildingZone.habitat,
+        {
+            lazy: true
+        }
+    )
     buildingZones: BuildingZoneModel[] | Promise<BuildingZoneModel[]>;
 
     @Field(type => [BuildingQueueElementModel])
+    @OneToMany(
+        () => BuildingQueueElementModel,
+        async (queueElement) => (await queueElement.buildingZone).habitat,
+        {
+            lazy: true
+        }
+    )
     buildingQueue: BuildingQueueElementModel[] | Promise<BuildingQueueElementModel[]>;
 
     getAuthId(): any {
