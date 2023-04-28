@@ -58,7 +58,7 @@ describe("Building queue service tests", () => {
             } as HabitatModel;
 
             const addToQueueElement: AddToQueueInput = {
-                counterPerHabitat: 200,
+                localBuildingZoneId: 200,
                 buildingId: 1,
                 endLevel: 5,
             };
@@ -66,7 +66,7 @@ describe("Building queue service tests", () => {
             when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
-                    addToQueueElement.counterPerHabitat,
+                    addToQueueElement.localBuildingZoneId,
                     habitat.id
                 )
                 .mockResolvedValue({
@@ -75,7 +75,7 @@ describe("Building queue service tests", () => {
                     level: 0,
                     placement: null,
                     habitatId: habitat.id,
-                    counterPerHabitat: addToQueueElement.counterPerHabitat
+                    localBuildingZoneId: addToQueueElement.localBuildingZoneId
                 } as BuildingZoneModel);
 
             when(configService.get)
@@ -98,7 +98,7 @@ describe("Building queue service tests", () => {
             } as HabitatModel;
 
             const addToQueueElement: AddToQueueInput = {
-                counterPerHabitat: 200,
+                localBuildingZoneId: 200,
                 buildingId: 1,
                 endLevel: 2,
             };
@@ -109,7 +109,7 @@ describe("Building queue service tests", () => {
                 placement: null,
                 habitat: {} as HabitatModel,
                 habitatId: habitat.id,
-                counterPerHabitat: addToQueueElement.counterPerHabitat,
+                localBuildingZoneId: addToQueueElement.localBuildingZoneId,
                 buildingId: addToQueueElement.buildingId,
                 buildingQueue: [],
                 building: {
@@ -127,7 +127,7 @@ describe("Building queue service tests", () => {
             when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
-                    addToQueueElement.counterPerHabitat,
+                    addToQueueElement.localBuildingZoneId,
                     habitat.id
                 )
                 .mockResolvedValue(buildingZone);
@@ -163,7 +163,7 @@ describe("Building queue service tests", () => {
             } as HabitatModel;
 
             const addToQueueElement: AddToQueueInput = {
-                counterPerHabitat: 200,
+                localBuildingZoneId: 200,
                 buildingId: 1,
                 endLevel: 5,
             };
@@ -174,7 +174,7 @@ describe("Building queue service tests", () => {
                 placement: null,
                 habitat: {} as HabitatModel,
                 habitatId: habitat.id,
-                counterPerHabitat: addToQueueElement.counterPerHabitat,
+                localBuildingZoneId: addToQueueElement.localBuildingZoneId,
                 buildingId: addToQueueElement.buildingId,
                 buildingQueue: [],
                 building: {
@@ -192,7 +192,7 @@ describe("Building queue service tests", () => {
             when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
-                    addToQueueElement.counterPerHabitat,
+                    addToQueueElement.localBuildingZoneId,
                     habitat.id
                 )
                 .mockResolvedValue(buildingZone);
@@ -228,7 +228,7 @@ describe("Building queue service tests", () => {
             } as HabitatModel;
 
             const addToQueueElement: AddToQueueInput = {
-                counterPerHabitat: 200,
+                localBuildingZoneId: 200,
                 buildingId: 1,
                 endLevel: 5,
             };
@@ -239,7 +239,7 @@ describe("Building queue service tests", () => {
                 placement: null,
                 habitat: {} as HabitatModel,
                 habitatId: habitat.id,
-                counterPerHabitat: addToQueueElement.counterPerHabitat,
+                localBuildingZoneId: addToQueueElement.localBuildingZoneId,
                 buildingId: addToQueueElement.buildingId,
                 buildingQueue: [],
                 building: {
@@ -267,7 +267,7 @@ describe("Building queue service tests", () => {
             when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
-                    addToQueueElement.counterPerHabitat,
+                    addToQueueElement.localBuildingZoneId,
                     habitat.id
                 )
                 .mockResolvedValue(buildingZone);
@@ -304,7 +304,7 @@ describe("Building queue service tests", () => {
             } as HabitatModel;
 
             const addToQueueElement: AddToQueueInput = {
-                counterPerHabitat: 200,
+                localBuildingZoneId: 200,
                 buildingId: 1,
                 endLevel: 5,
             };
@@ -315,7 +315,7 @@ describe("Building queue service tests", () => {
                 placement: null,
                 habitat: {} as HabitatModel,
                 habitatId: habitat.id,
-                counterPerHabitat: addToQueueElement.counterPerHabitat,
+                localBuildingZoneId: addToQueueElement.localBuildingZoneId,
                 buildingId: addToQueueElement.buildingId,
                 buildingQueue: [],
                 building: {
@@ -341,7 +341,7 @@ describe("Building queue service tests", () => {
             when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
-                    addToQueueElement.counterPerHabitat,
+                    addToQueueElement.localBuildingZoneId,
                     habitat.id
                 )
                 .mockResolvedValue(buildingZone);
@@ -360,7 +360,7 @@ describe("Building queue service tests", () => {
         it("should throw exception when max queue elements has been reached", async () => {
             const addToQueueElement: AddToQueueInput = {
                 habitatId: 1,
-                counterPerHabitat: 200,
+                localBuildingZoneId: 200,
                 buildingId: 1,
                 endLevel: 5,
             };
@@ -384,7 +384,7 @@ describe("Building queue service tests", () => {
         it("should add new queue element into queue", async () => {
             const addToQueueElement: AddToQueueInput = {
                 habitatId: 1,
-                counterPerHabitat: 200,
+                localBuildingZoneId: 200,
                 buildingId: 1,
                 endLevel: 5,
             };
@@ -397,7 +397,7 @@ describe("Building queue service tests", () => {
                 placement: null,
                 habitat: {} as HabitatModel,
                 habitatId: addToQueueElement.habitatId,
-                counterPerHabitat: addToQueueElement.counterPerHabitat,
+                localBuildingZoneId: addToQueueElement.localBuildingZoneId,
                 buildingId: addToQueueElement.buildingId,
                 building: {
                     id: addToQueueElement.buildingId,
@@ -428,7 +428,7 @@ describe("Building queue service tests", () => {
             when(buildingZoneRepository
                 .getSingleBuildingZone)
                 .expectCalledWith(
-                    addToQueueElement.counterPerHabitat,
+                    addToQueueElement.localBuildingZoneId,
                     addToQueueElement.habitatId
                 )
                 .mockResolvedValue(buildingZone);

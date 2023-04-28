@@ -41,7 +41,7 @@ export class BuildingQueueAddService {
     async prepareDraftQueueElement(addToQueueElement: AddToQueueInput, userHabitat: HabitatModel): Promise<BuildingQueueElementModel> {
         const buildingZone = await this.buildingZoneRepository
             .getSingleBuildingZone(
-                addToQueueElement.counterPerHabitat,
+                addToQueueElement.localBuildingZoneId,
                 userHabitat.id
             );
 

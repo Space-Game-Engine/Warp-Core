@@ -62,7 +62,7 @@ describe("Building Zone Service", () => {
             await buildingZoneService.createNewBuildingZone({ id: habitatId } as HabitatModel);
 
             expect(buildingZoneRepository.save).toBeCalledWith(expect.objectContaining({
-                counterPerHabitat: 1,
+                localBuildingZoneId: 1,
                 habitat: { id: habitatId },
             }));
         });
@@ -77,7 +77,7 @@ describe("Building Zone Service", () => {
             await buildingZoneService.createNewBuildingZone({ id: habitatId } as HabitatModel);
 
             expect(buildingZoneRepository.save).toBeCalledWith(expect.objectContaining({
-                counterPerHabitat: 2,
+                localBuildingZoneId: 2,
                 habitat: { id: habitatId },
             }));
         });
@@ -91,12 +91,12 @@ describe("Building Zone Service", () => {
                 {
                     id: 1,
                     level: 1,
-                    counterPerHabitat: 1,
+                    localBuildingZoneId: 1,
                 },
                 {
                     id: 2,
                     level: 0,
-                    counterPerHabitat: 2,
+                    localBuildingZoneId: 2,
                 },
             ] as BuildingZoneModel[];
 
@@ -113,22 +113,22 @@ describe("Building Zone Service", () => {
 
     describe("getSingleBuildingZone", () => {
         it("should return single building zone for provided counter", async () => {
-            const counterPerHabitat = 1;
+            const localBuildingZoneId = 1;
             const habitatId = 5;
             const habitatModel = getHabitatModelMock(habitatId);
             const buildingZone = 
                 {
                     id: 1,
                     level: 1,
-                    counterPerHabitat: counterPerHabitat,
+                    localBuildingZoneId: localBuildingZoneId,
                 } as BuildingZoneModel;
 
             payloadDataService.getModel.mockResolvedValue(habitatModel);
             when(buildingZoneRepository.getSingleBuildingZone)
-                .calledWith(counterPerHabitat, habitatId)
+                .calledWith(localBuildingZoneId, habitatId)
                 .mockResolvedValue(buildingZone);
 
-            const buildingZoneFromService = await buildingZoneService.getSingleBuildingZone(counterPerHabitat);
+            const buildingZoneFromService = await buildingZoneService.getSingleBuildingZone(localBuildingZoneId);
 
             expect(buildingZoneFromService).toEqual(buildingZone);
         });

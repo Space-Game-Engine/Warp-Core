@@ -8,12 +8,7 @@ async function bootstrap() {
     const appURL = '/graphql';
     const localDocUrl = '/doc';
     const app = await NestFactory.create(AppModule);
-    app.useGlobalPipes(
-        new ValidationPipe({
-            whitelist: true,
-            transform: true,
-        }),
-    );
+    app.useGlobalPipes(new ValidationPipe());
 
     useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
