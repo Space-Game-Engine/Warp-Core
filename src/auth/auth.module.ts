@@ -7,7 +7,7 @@ import { AuthController } from '@warp-core/auth/auth.controller';
 import { GqlAuthGuard } from '@warp-core/auth/guard/gql-auth.guard';
 import { PayloadInterface } from '@warp-core/auth/interface/payload.interface';
 import { LoginByHabitatService } from '@warp-core/auth/login/login-by-habitat.service';
-import { HabitatClsModel } from '@warp-core/auth/payload/model/habitat.model';
+import { AuthorizedHabitatModel } from '@warp-core/auth/payload/model/habitat.model';
 import { RegisterService } from '@warp-core/auth/register/register.service';
 import { JwtStrategy } from '@warp-core/auth/strategy/jwt.strategy';
 import { LocalStrategy } from '@warp-core/auth/strategy/local.strategy';
@@ -59,13 +59,13 @@ const jwtFactory = {
             middleware: { mount: true, generateId: true },
         }),
         ClsModule.forFeatureAsync({
-            provide: HabitatClsModel,
+            provide: AuthorizedHabitatModel,
             imports: [DatabaseModule, JwtModule],
             inject: [CLS_REQ, HabitatRepository, JwtService],
             useFactory: async (req: Request, habitatRepository: HabitatRepository, jwtService: JwtService) => {
                 const extractJwt = ExtractJwt.fromAuthHeaderAsBearerToken();
                 const payload = jwtService.decode(extractJwt(req)) as PayloadInterface;
-                const habitat = await habitatRepository.getHabitatById(payload.localId);
+                const habitat = await habitatRepository.getHabitatById(payload.currentHabitatId);
                 return habitat;
             },
         })

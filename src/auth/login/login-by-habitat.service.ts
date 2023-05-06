@@ -3,7 +3,7 @@ import { JwtService } from "@nestjs/jwt";
 import { PayloadInterface } from "@warp-core/auth/interface/payload.interface";
 import { AccessToken } from "./access-token.model";
 import { LoginInterface } from "./login.interface";
-import { HabitatClsModel } from "@warp-core/auth/payload/model/habitat.model";
+import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
 
 @Injectable()
 export class LoginByHabitatService implements LoginInterface {
@@ -11,11 +11,11 @@ export class LoginByHabitatService implements LoginInterface {
         private jwtService: JwtService
     ) { }
 
-    async login(habitat: HabitatClsModel): Promise<AccessToken> {
+    async login(habitat: AuthorizedHabitatModel): Promise<AccessToken> {
         const payload = {
             dbModel: habitat,
             sub: habitat.userId,
-            localId: habitat.id,
+            currentHabitatId: habitat.id,
         } as PayloadInterface;
 
         return {

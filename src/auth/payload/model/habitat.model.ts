@@ -2,4 +2,4 @@ import { HabitatModel as DbHabitatModel } from "@warp-core/database/model/habita
 import { InjectableProxy } from "nestjs-cls";
 
 @InjectableProxy()
-export class HabitatClsModel extends DbHabitatModel {}
+export class AuthorizedHabitatModel extends DbHabitatModel {}

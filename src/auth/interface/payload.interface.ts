@@ -7,9 +7,9 @@ export interface PayloadInterface {
     sub: number;
 
     /**
-     * Additional Id parameter
+     * Additional Id parameter from currently selected habitat
      */
-    localId: number;
+    currentHabitatId: number;
 
     /**
      * Entity loaded from DB connected to currently logged in user
