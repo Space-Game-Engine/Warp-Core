@@ -1,4 +1,4 @@
-import { Args, Int, Query, Resolver } from "@nestjs/graphql";
+import { Args, Int, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { BuildingModel } from "@warp-core/database/model/building.model";
 import { BuildingService } from "./building.service";
 
@@ -18,5 +18,12 @@ export class BuildingResolver {
     @Query(returns => [BuildingModel], { nullable: true, description: "Returns all possible building types", name: "building_getAll" })
     allBuildings() {
         return this.buildingService.getAllBuildings();
+    }
+
+    @ResolveField()
+    buildingDetailsAtCertainLevel(
+        @Parent() building: BuildingModel
+    ) {
+        return building.buildingDetailsAtCertainLevel;
     }
 }

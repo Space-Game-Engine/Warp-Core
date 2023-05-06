@@ -1,16 +1,12 @@
 import { Args, Int, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { BuildingZoneService } from "@warp-core/building-zone/building-zone.service";
-import { BuildingService } from "@warp-core/building/building.service";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
-import { HabitatService } from "@warp-core/habitat/habitat.service";
 
 @Resolver(of => BuildingZoneModel)
 export class BuildingZoneResolver {
     constructor(
         private readonly buildingZoneService: BuildingZoneService,
-        private readonly habitatService: HabitatService,
-        private readonly buildingService: BuildingService,
         private readonly buildingQueueRepository: BuildingQueueRepository,
     ) { }
 
@@ -30,18 +26,14 @@ export class BuildingZoneResolver {
     habitat(
         @Parent() buildingZone: BuildingZoneModel
     ) {
-        return this.habitatService.getCurrentHabitat();
+        return buildingZone.habitat;
     }
 
     @ResolveField()
     building(
         @Parent() buildingZone: BuildingZoneModel
     ) {
-        if (!buildingZone.building) {
-            return null;
-        }
-
-        return this.buildingService.getBuildingById(buildingZone.building.id);
+        return buildingZone.building;
     }
 
     @ResolveField()

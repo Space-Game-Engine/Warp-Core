@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
+import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
 import { RegisterUserEvent } from "@warp-core/auth/register/register-user.event";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
@@ -11,21 +11,17 @@ import { NewHabitatInput } from "@warp-core/habitat/input/NewHabitatInput";
 export class HabitatService {
     constructor(
         private readonly habitatRepository: HabitatRepository,
-        private readonly payloadDataService: PayloadDataService,
+        private readonly habitatModel: AuthorizedHabitatModel,
         private readonly eventEmitter: EventEmitter2
     ) {
     }
 
     async getCurrentHabitat(): Promise<HabitatModel> {
-        const model = await this.payloadDataService.getModel();
-
-        return this.habitatRepository.getHabitatById(model.getAuthId());
+        return this.habitatModel;
     }
 
     async getHabitatsForLoggedIn(): Promise<HabitatModel[]> {
-        const userId = this.payloadDataService.getUserId();
-
-        return this.habitatRepository.getHabitatsByUserId(userId);
+        return this.habitatRepository.getHabitatsByUserId(this.habitatModel.userId);
     }
 
     async createNewHabitat(newHabitatData: NewHabitatInput): Promise<HabitatModel> {

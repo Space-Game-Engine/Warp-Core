@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
-import { DataSource, Repository } from "typeorm";
+import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
+import { DataSource } from "typeorm";
 
 @Injectable()
-export class HabitatRepository extends Repository<HabitatModel> {
+export class HabitatRepository extends AbstractRepository<HabitatModel> {
     constructor(private dataSource: DataSource) {
         super(HabitatModel, dataSource.createEntityManager());
     }
@@ -13,7 +14,6 @@ export class HabitatRepository extends Repository<HabitatModel> {
             where: {
                 id: habitatId
             },
-            loadEagerRelations: false,
         });
     }
 
@@ -22,7 +22,6 @@ export class HabitatRepository extends Repository<HabitatModel> {
             where: {
                 userId: userId
             },
-            loadEagerRelations: false
         });
     }
 }

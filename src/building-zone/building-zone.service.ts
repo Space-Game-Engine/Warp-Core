@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { OnEvent } from "@nestjs/event-emitter";
-import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
+import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
@@ -11,20 +11,17 @@ import { HabitatCreatedEvent } from "@warp-core/habitat/event/habitat-created.ev
 export class BuildingZoneService {
     constructor(
         private readonly buildingZoneRepository: BuildingZoneRepository,
-        private readonly payloadDataService: PayloadDataService,
+        private readonly habitatModel: AuthorizedHabitatModel,
         private readonly configService: ConfigService,
     ) {}
 
     async getAllZonesForCurrentHabitat(): Promise<BuildingZoneModel[]> {
-        const habitat = await this.payloadDataService.getModel();
-
-        return this.buildingZoneRepository.getAllBuildingZonesByHabitatId(habitat.getAuthId());
+        return this.habitatModel.buildingZones;
     }
 
     async getSingleBuildingZone(localBuildingZoneId: number): Promise<BuildingZoneModel| null> {
-        const habitat = await this.payloadDataService.getModel();
-
-        return this.buildingZoneRepository.getSingleBuildingZone(localBuildingZoneId, habitat.getAuthId());
+        return (await this.habitatModel.buildingZones)
+            .find(buildingZone => buildingZone.localBuildingZoneId === localBuildingZoneId) || null;
     }
 
     async createNewBuildingZone(habitat: HabitatModel): Promise<BuildingZoneModel> {

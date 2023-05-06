@@ -37,8 +37,9 @@ export class AddToQueueValidator extends CustomValidator<AddToQueueInput> {
     }
 
     private async getBuilding(addToQueue: AddToQueueInput, buildingZone: BuildingZoneModel): Promise<BuildingModel> {
-        if (buildingZone.building) {
-            return buildingZone.building;
+        const buildingFromBuildingZone = await buildingZone.building;
+        if (buildingFromBuildingZone) {
+            return buildingFromBuildingZone;
         }
 
         if (!addToQueue.buildingId) {
@@ -59,7 +60,7 @@ export class AddToQueueValidator extends CustomValidator<AddToQueueInput> {
             throw new BadRequestException('End level should not be lower than existing level.');
         }
 
-        const lastPossibleUpdate = building.buildingDetailsAtCertainLevel.at(-1);
+        const lastPossibleUpdate = (await building.buildingDetailsAtCertainLevel).at(-1);
 
         if (addToQueue.endLevel > lastPossibleUpdate.level) {
             throw new BadRequestException('You cannot update higher than it is possible. Check Building details.');
