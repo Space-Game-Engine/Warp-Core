@@ -5,12 +5,11 @@ import { DateTime } from "luxon";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
 import { BuildingService } from "@warp-core/building/building.service";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
-import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { Injectable } from "@nestjs/common";
 import { BuildingModel } from "@warp-core/database/model/building.model";
+import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
 
 @Injectable()
 export class BuildingQueueAddService {
@@ -18,32 +17,30 @@ export class BuildingQueueAddService {
         private readonly buildingQueueRepository: BuildingQueueRepository,
         private readonly buildingZoneRepository: BuildingZoneRepository,
         private readonly buildingService: BuildingService,
-        private readonly payloadDataService: PayloadDataService,
+        private readonly habitatModel: AuthorizedHabitatModel,
         private readonly configService: ConfigService,
     ) { }
 
     async addToQueue(addToQueueElement: AddToQueueInput) {
-        const userHabitat = await this.payloadDataService.getModel() as HabitatModel;
-
-        const queueCounter = await this.buildingQueueRepository.countActiveBuildingQueueElementsForHabitat(userHabitat.id);
+        const queueCounter = await this.buildingQueueRepository.countActiveBuildingQueueElementsForHabitat(this.habitatModel.id);
         const maxElementsInQueue = this.configService.get<number>('habitat.buildingQueue.maxElementsInQueue');
 
         if (queueCounter >= maxElementsInQueue) {
             throw new QueueError(`Max queue count (${maxElementsInQueue}) has been reached`);
         }
 
-        const draftQueueElement = await this.prepareDraftQueueElement(addToQueueElement, userHabitat);
+        const draftQueueElement = await this.prepareDraftQueueElement(addToQueueElement);
 
         const queueElement = await this.buildingQueueRepository.save(draftQueueElement);
 
         return queueElement;
     }
 
-    async prepareDraftQueueElement(addToQueueElement: AddToQueueInput, userHabitat: HabitatModel): Promise<BuildingQueueElementModel> {
+    async prepareDraftQueueElement(addToQueueElement: AddToQueueInput): Promise<BuildingQueueElementModel> {
         const buildingZone = await this.buildingZoneRepository
             .getSingleBuildingZone(
                 addToQueueElement.localBuildingZoneId,
-                userHabitat.id
+                this.habitatModel.id
             );
 
         if (await this.isAddToQueueValid(addToQueueElement, buildingZone) === false) {

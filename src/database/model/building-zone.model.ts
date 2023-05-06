@@ -71,5 +71,4 @@ export class BuildingZoneModel {
         }
     )
     buildingQueue: BuildingQueueElementModel[] | Promise<BuildingQueueElementModel[]>;
-
 }

@@ -1,23 +1,22 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { PayloadDataServiceMock } from "@warp-core/auth/payload/__mocks__/payload-data.service";
-import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
 import { BuildingQueueHandlerService } from "@warp-core/building-queue/building-queue-handler.service";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { BuildingModel } from "@warp-core/database/model/building.model";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
 import { when } from "jest-when";
+import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
 
 jest.mock("../database/repository/building-queue.repository");
 jest.mock("../database/repository/building-zone.repository");
+jest.mock("../auth/payload/model/habitat.model");
 
 describe("Building queue handler service test", () => {
     let buildingQueueHandlerService: BuildingQueueHandlerService;
     let buildingQueueRepository: jest.Mocked<BuildingQueueRepository>;
     let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
-    let payloadDataService: PayloadDataServiceMock;
+    let authorizedHabitatModel: AuthorizedHabitatModel;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -27,33 +26,27 @@ describe("Building queue handler service test", () => {
                 BuildingQueueHandlerService,
                 BuildingQueueRepository,
                 BuildingZoneRepository,
-                {
-                    provide: PayloadDataService,
-                    useValue: new PayloadDataServiceMock()
-                },
+                AuthorizedHabitatModel,
             ]
         }).compile();
 
         buildingQueueHandlerService = module.get<BuildingQueueHandlerService>(BuildingQueueHandlerService);
         buildingQueueRepository = module.get(BuildingQueueRepository);
         buildingZoneRepository = module.get(BuildingZoneRepository);
-        payloadDataService = module.get(PayloadDataService);
+        authorizedHabitatModel = module.get(AuthorizedHabitatModel);
     });
 
     describe("resolveQueue", () => {
         it("should not process any queue items as building queue repository not fetch any data", async () => {
-            const habitat = {
-                getAuthId: () => 1
-            } as HabitatModel;
+            const habitatId = 1;
 
-            when(payloadDataService.getModel)
-                .mockResolvedValue(habitat);
+            authorizedHabitatModel.id = habitatId;
             when(buildingQueueRepository.findBy)
                 .calledWith({
                     isConsumed: false,
                     endTime: expect.anything(),
                     buildingZone: {
-                        habitatId: habitat.getAuthId()
+                        habitatId: habitatId
                     }
                 }).mockResolvedValue([]);
             
@@ -64,9 +57,7 @@ describe("Building queue handler service test", () => {
         });
 
         it("should process queue item when single queue items exists and building zone don't have building id set", async () => {
-            const habitat = {
-                getAuthId: () => 1
-            } as HabitatModel;
+            const habitatId = 1;
 
             const building = {
                 id: 3
@@ -84,14 +75,13 @@ describe("Building queue handler service test", () => {
                 isConsumed: false,
             } as BuildingQueueElementModel;
 
-            when(payloadDataService.getModel)
-                .mockResolvedValue(habitat);
+            authorizedHabitatModel.id = habitatId;
             when(buildingQueueRepository.findBy)
                 .calledWith({
                     isConsumed: false,
                     endTime: expect.anything(),
                     buildingZone: {
-                        habitatId: habitat.getAuthId()
+                        habitatId: habitatId
                     }
                 }).mockResolvedValue([
                     queueElement
@@ -108,9 +98,7 @@ describe("Building queue handler service test", () => {
         });
 
         it("should process queue item when multiple queue items exists and building zone don't have building id set", async () => {
-            const habitat = {
-                getAuthId: () => 1
-            } as HabitatModel;
+            const habitatId = 1;
 
             const building = {
                 id: 3
@@ -142,14 +130,13 @@ describe("Building queue handler service test", () => {
                 isConsumed: false,
             } as BuildingQueueElementModel;
 
-            when(payloadDataService.getModel)
-                .mockResolvedValue(habitat);
+            authorizedHabitatModel.id = habitatId;
             when(buildingQueueRepository.findBy)
                 .calledWith({
                     isConsumed: false,
                     endTime: expect.anything(),
                     buildingZone: {
-                        habitatId: habitat.getAuthId()
+                        habitatId: habitatId
                     }
                 }).mockResolvedValue([
                     queueElement1,
@@ -170,9 +157,7 @@ describe("Building queue handler service test", () => {
         });
 
         it("should process queue item when single queue items exists and building zone have building id set", async () => {
-            const habitat = {
-                getAuthId: () => 1
-            } as HabitatModel;
+            const habitatId = 1;
 
             const building = {
                 id: 3
@@ -189,14 +174,13 @@ describe("Building queue handler service test", () => {
                 isConsumed: false,
             } as BuildingQueueElementModel;
 
-            when(payloadDataService.getModel)
-                .mockResolvedValue(habitat);
+            authorizedHabitatModel.id = habitatId;
             when(buildingQueueRepository.findBy)
                 .calledWith({
                     isConsumed: false,
                     endTime: expect.anything(),
                     buildingZone: {
-                        habitatId: habitat.getAuthId()
+                        habitatId: habitatId
                     }
                 }).mockResolvedValue([
                     queueElement

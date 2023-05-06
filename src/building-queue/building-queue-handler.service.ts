@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
+import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
 import { LessThanOrEqual } from "typeorm";
@@ -11,22 +10,19 @@ export class BuildingQueueHandlerService {
     constructor(
         private readonly buildingQueueRepository: BuildingQueueRepository,
         private readonly buildingZoneRepository: BuildingZoneRepository,
-        private readonly payloadDataService: PayloadDataService,
+        private readonly habitatModel: AuthorizedHabitatModel,
     ) { }
 
     async getQueueItemsForHabitat() {
-        const userHabitat = await this.payloadDataService.getModel() as HabitatModel;
-
-        return this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(userHabitat.getAuthId());
+        return this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(this.habitatModel.id);
     }
 
     async resolveQueue() {
-        const userHabitat = await this.payloadDataService.getModel() as HabitatModel;
         const notResolvedQueueItems = await this.buildingQueueRepository.findBy({
             isConsumed: false,
             endTime: LessThanOrEqual(new Date()),
             buildingZone: {
-                habitatId: userHabitat.getAuthId()
+                habitatId: this.habitatModel.id
             },
         });
 

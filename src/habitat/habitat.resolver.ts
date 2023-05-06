@@ -26,7 +26,7 @@ export class HabitatResolver {
     buildingZones(
         @Parent() habitat: HabitatModel
     ) {
-        return this.buildingZoneService.getAllZonesForCurrentHabitat();
+        return habitat.buildingZones;
     }
 
     @ResolveField()
