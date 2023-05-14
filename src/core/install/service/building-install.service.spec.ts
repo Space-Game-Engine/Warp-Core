@@ -1,13 +1,14 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
 import { BuildingRole } from "@warp-core/database/enum/building-role.enum";
 import { BuildingModel } from "@warp-core/database/model/building.model";
-import { Repository } from "typeorm";
 import { BuildingInstallService } from "./building-install.service";
+import { BuildingRepository } from "@warp-core/database/repository/building.repository";
+
+jest.mock("../../../database/repository/building.repository");
 
 describe("BuildingInstallService", () => {
     let buildingInstallService: BuildingInstallService;
-    let saveBuildingSpy: jest.SpyInstance;
+    let buildingRepository: jest.Mocked<BuildingRepository>;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -15,24 +16,12 @@ describe("BuildingInstallService", () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 BuildingInstallService,
-                {
-                    provide: getRepositoryToken(BuildingModel),
-                    useValue: {
-                        save() { },
-                    }
-                }
+                BuildingRepository,
             ]
         }).compile();
 
         buildingInstallService = module.get<BuildingInstallService>(BuildingInstallService);
-        let buildingRepository = module.get<Repository<BuildingModel>>(
-            getRepositoryToken(BuildingModel)
-        );
-
-        saveBuildingSpy = jest.spyOn(buildingRepository, 'save');
-
-
-        jest.spyOn(console, 'error').mockImplementation(() => { });
+        buildingRepository = module.get(BuildingRepository);
     });
 
     describe("install", () => {
@@ -50,13 +39,19 @@ describe("BuildingInstallService", () => {
             const buildingModel = {
                 role: BuildingRole.RESOURCE_PRODUCTION,
                 name: "Production building",
-                buildingDetailsAtCertainLevel: []
+                buildingDetailsAtCertainLevel: [
+                    {
+                        id: 1,
+                        level: 1,
+                        timeToUpdateBuildingInSeconds: 10
+                    }
+                ]
             } as BuildingModel;
             
             await buildingInstallService.install([buildingModel]);
 
-            expect(saveBuildingSpy).toBeCalledTimes(1);
-            expect(saveBuildingSpy).toBeCalledWith(buildingModel);
+            expect(buildingRepository.save).toBeCalledTimes(1);
+            expect(buildingRepository.save).toBeCalledWith(buildingModel);
         });
     });
 });

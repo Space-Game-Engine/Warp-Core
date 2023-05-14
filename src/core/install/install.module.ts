@@ -1,18 +1,19 @@
 import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { BuildingModel } from "@warp-core/database/model/building.model";
-import { BuildingInstallService } from "./building-install.service";
 import { InstallCommand } from "./install.command";
 import { LoadConfigService } from "./load-config.service";
+import { DatabaseModule } from "@warp-core/database/database.module";
+import { BuildingInstallService } from "@warp-core/core/install/service/building-install.service";
+import { ResourcesInstallService } from "@warp-core/core/install/service/resources-install.service";
 
 @Module({
     providers: [
         BuildingInstallService,
+        ResourcesInstallService,
         LoadConfigService,
         InstallCommand
     ],
     imports: [
-        TypeOrmModule.forFeature([BuildingModel]),
+        DatabaseModule,
     ]
 })
 export class InstallModule {}
