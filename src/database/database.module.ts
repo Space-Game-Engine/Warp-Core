@@ -11,6 +11,7 @@ import { ResourceModel } from "@warp-core/database/model/resource.model";
 import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
 import { BuildingRepository } from "@warp-core/database/repository/building.repository";
+import { HabitatResourceRepository } from "@warp-core/database/repository/habitat-resource.repository";
 import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
 import { ResourceRepository } from "@warp-core/database/repository/resource.repository";
 
@@ -20,6 +21,7 @@ import { ResourceRepository } from "@warp-core/database/repository/resource.repo
         BuildingZoneRepository,
         BuildingQueueRepository,
         HabitatRepository,
+        HabitatResourceRepository,
         ResourceRepository,
     ],
     imports: [
@@ -30,6 +32,7 @@ import { ResourceRepository } from "@warp-core/database/repository/resource.repo
         BuildingZoneRepository,
         BuildingQueueRepository,
         HabitatRepository,
+        HabitatResourceRepository,
         ResourceRepository,
     ]
 })
