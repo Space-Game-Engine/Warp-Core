@@ -4,17 +4,14 @@ import { BuildingModel } from "@warp-core/database/model/building.model";
 import { BuildingRepository } from "@warp-core/database/repository/building.repository";
 
 @Injectable()
-export class BuildingInstallService extends AbstractInstalatorService {
+export class BuildingInstallService extends AbstractInstalatorService(BuildingModel) {
     constructor(
         private buildingRepository: BuildingRepository,
     ) {
         super();
     }
-    protected getModelType() {
-        return BuildingModel;
-    }
 
-    protected async saveModel(modelToSave: object): Promise<void> {
+    protected async saveModel(modelToSave: BuildingModel): Promise<void> {
         await this.buildingRepository.save(modelToSave);
     }
 }
