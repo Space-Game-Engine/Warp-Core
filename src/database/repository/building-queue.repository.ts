@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
-import { DataSource, MoreThanOrEqual } from "typeorm";
+import { DataSource, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 
 @Injectable()
 export class BuildingQueueRepository extends AbstractRepository<BuildingQueueElementModel> {
@@ -50,6 +50,26 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
                 },
                 endTime: MoreThanOrEqual(new Date()),
             }
+        });
+    }
+
+    getUnresolvedQueueForHabitat(habitatId: number): Promise<BuildingQueueElementModel[]> {
+        return this.findBy({
+            isConsumed: false,
+            endTime: LessThanOrEqual(new Date()),
+            buildingZone: {
+                habitatId: habitatId
+            },
+        });
+    }
+
+    getUnresolvedQueueForSingleBuildingZone(buildingZoneId: number): Promise<BuildingQueueElementModel[]> {
+        return this.findBy({
+            isConsumed: false,
+            endTime: LessThanOrEqual(new Date()),
+            buildingZone: {
+                id: buildingZoneId
+            },
         });
     }
 }
