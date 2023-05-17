@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
+import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
-import { LessThanOrEqual } from "typeorm";
 
 @Injectable()
 export class BuildingQueueHandlerService {
@@ -18,15 +18,21 @@ export class BuildingQueueHandlerService {
     }
 
     async resolveQueue() {
-        const notResolvedQueueItems = await this.buildingQueueRepository.findBy({
-            isConsumed: false,
-            endTime: LessThanOrEqual(new Date()),
-            buildingZone: {
-                habitatId: this.habitatModel.id
-            },
-        });
+        const notResolvedQueueItems = await this.buildingQueueRepository
+            .getUnresolvedQueueForHabitat(this.habitatModel.id);
 
-        for (const singleQueueElement of notResolvedQueueItems) {
+        await this.processMultipleQueueElements(notResolvedQueueItems);
+    }
+
+    async resolveQueueForSingleBuildingZone(buildingZone: BuildingZoneModel) {
+        const notResolvedQueueItems = await this.buildingQueueRepository
+            .getUnresolvedQueueForSingleBuildingZone(buildingZone.id);
+
+        await this.processMultipleQueueElements(notResolvedQueueItems);
+    }
+
+    private async processMultipleQueueElements(queueElements: BuildingQueueElementModel[]) {
+        for (const singleQueueElement of queueElements) {
             await this.processQueueElement(singleQueueElement);
         }
     }

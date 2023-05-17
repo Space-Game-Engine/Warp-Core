@@ -41,14 +41,9 @@ describe("Building queue handler service test", () => {
             const habitatId = 1;
 
             authorizedHabitatModel.id = habitatId;
-            when(buildingQueueRepository.findBy)
-                .calledWith({
-                    isConsumed: false,
-                    endTime: expect.anything(),
-                    buildingZone: {
-                        habitatId: habitatId
-                    }
-                }).mockResolvedValue([]);
+            when(buildingQueueRepository.getUnresolvedQueueForHabitat)
+                .calledWith(habitatId)
+                .mockResolvedValue([]);
             
             await buildingQueueHandlerService.resolveQueue();
 
@@ -76,14 +71,9 @@ describe("Building queue handler service test", () => {
             } as BuildingQueueElementModel;
 
             authorizedHabitatModel.id = habitatId;
-            when(buildingQueueRepository.findBy)
-                .calledWith({
-                    isConsumed: false,
-                    endTime: expect.anything(),
-                    buildingZone: {
-                        habitatId: habitatId
-                    }
-                }).mockResolvedValue([
+            when(buildingQueueRepository.getUnresolvedQueueForHabitat)
+                .calledWith(habitatId)
+                .mockResolvedValue([
                     queueElement
                 ]);
 
@@ -131,14 +121,9 @@ describe("Building queue handler service test", () => {
             } as BuildingQueueElementModel;
 
             authorizedHabitatModel.id = habitatId;
-            when(buildingQueueRepository.findBy)
-                .calledWith({
-                    isConsumed: false,
-                    endTime: expect.anything(),
-                    buildingZone: {
-                        habitatId: habitatId
-                    }
-                }).mockResolvedValue([
+            when(buildingQueueRepository.getUnresolvedQueueForHabitat)
+                .calledWith(habitatId)
+                .mockResolvedValue([
                     queueElement1,
                     queueElement2,
                     queueElement3,
@@ -175,18 +160,66 @@ describe("Building queue handler service test", () => {
             } as BuildingQueueElementModel;
 
             authorizedHabitatModel.id = habitatId;
-            when(buildingQueueRepository.findBy)
-                .calledWith({
-                    isConsumed: false,
-                    endTime: expect.anything(),
-                    buildingZone: {
-                        habitatId: habitatId
-                    }
-                }).mockResolvedValue([
+            when(buildingQueueRepository.getUnresolvedQueueForHabitat)
+                .calledWith(habitatId)
+                .mockResolvedValue([
                     queueElement
                 ]);
 
             await buildingQueueHandlerService.resolveQueue();
+
+            expect(buildingQueueRepository.save).toBeCalledTimes(1);
+            expect(buildingZoneRepository.save).toBeCalledTimes(1);
+
+            expect(queueElement.isConsumed).toBe(true);
+            expect(buildingZone.level).toBe(queueElement.endLevel);
+            expect(buildingZone.buildingId).toBe(building.id);
+        });
+    });
+
+    describe("resolveQueueForSingleBuildingZone", () => {
+        it("should not process any queue items as building queue repository not fetch any data for single building zone", async () => {
+            const buildingZoneId = 1;
+
+            const buildingZone = {
+                id: buildingZoneId
+            } as BuildingZoneModel;
+
+            when(buildingQueueRepository.getUnresolvedQueueForSingleBuildingZone)
+                .calledWith(buildingZoneId)
+                .mockResolvedValue([]);
+
+            await buildingQueueHandlerService.resolveQueueForSingleBuildingZone(buildingZone);
+
+            expect(buildingQueueRepository.save).not.toBeCalled();
+            expect(buildingZoneRepository.save).not.toBeCalled();
+        });
+
+        it("should process queue item when single queue items exists and building zone don't have building id set", async () => {
+            const buildingZoneId = 1;
+
+            const building = {
+                id: 3
+            } as BuildingModel; 
+
+            const buildingZone = {
+                id: buildingZoneId
+            } as BuildingZoneModel;
+
+            const queueElement = {
+                buildingZone: buildingZone,
+                endLevel: 1,
+                building: building,
+                isConsumed: false,
+            } as BuildingQueueElementModel;
+
+            when(buildingQueueRepository.getUnresolvedQueueForSingleBuildingZone)
+                .calledWith(buildingZoneId)
+                .mockResolvedValue([
+                    queueElement
+                ]);
+
+            await buildingQueueHandlerService.resolveQueueForSingleBuildingZone(buildingZone);
 
             expect(buildingQueueRepository.save).toBeCalledTimes(1);
             expect(buildingZoneRepository.save).toBeCalledTimes(1);
