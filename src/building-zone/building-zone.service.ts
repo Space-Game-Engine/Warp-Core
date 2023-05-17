@@ -29,7 +29,7 @@ export class BuildingZoneService {
         
         const newBuildingZone = await this.buildingZoneRepository.save({
             localBuildingZoneId: maxCounterPerHabitat + 1,
-            habitat: habitat,
+            habitatId: habitat.id,
             level: 0,
             placement: ''
         });

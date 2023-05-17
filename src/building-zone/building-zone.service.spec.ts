@@ -53,7 +53,7 @@ describe("Building Zone Service", () => {
 
             expect(buildingZoneRepository.save).toBeCalledWith(expect.objectContaining({
                 localBuildingZoneId: 1,
-                habitat: { id: habitatId },
+                habitatId: habitatId,
             }));
         });
 
@@ -68,7 +68,7 @@ describe("Building Zone Service", () => {
 
             expect(buildingZoneRepository.save).toBeCalledWith(expect.objectContaining({
                 localBuildingZoneId: 2,
-                habitat: { id: habitatId },
+                habitatId: habitatId,
             }));
         });
     });
