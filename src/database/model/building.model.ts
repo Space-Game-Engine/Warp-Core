@@ -8,13 +8,13 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToMany, Prim
 @ObjectType({ description: "Single building type, describes its role in game" })
 @Entity({name: "building"})
 export class BuildingModel {
-    @Field(type => ID)
+    @Field(() => ID)
     @IsNumber()
     @IsOptional()
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field(type => BuildingRole, { description: "Role says what that building do" })
+    @Field(() => BuildingRole, { description: "Role says what that building do" })
     @IsEnum(BuildingRole)
     @Column('varchar')
     role: BuildingRole;
@@ -25,7 +25,7 @@ export class BuildingModel {
     name: string;
 
     @Field(
-        type => [BuildingDetailsAtCertainLevelModel],
+        () =>[BuildingDetailsAtCertainLevelModel],
         {
             description: "Details how to upgrade that building",
         })
@@ -43,14 +43,6 @@ export class BuildingModel {
     )
     @JoinColumn({ name: "buildingDetailsAtCertainLevelId"})
     @Type(() => BuildingDetailsAtCertainLevelModel)
-    @Transform(({ value }) => {
-        // If the value is a Promise, we want to await it
-        if (value instanceof Promise) {
-            return value.then((result) => result || []);
-        }
-        // Otherwise, the value is already an array
-        return value || [];
-    }, { toClassOnly: true })
     buildingDetailsAtCertainLevel: BuildingDetailsAtCertainLevelModel[] | Promise<BuildingDetailsAtCertainLevelModel[]>;
 
     @BeforeInsert()

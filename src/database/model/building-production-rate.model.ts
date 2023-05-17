@@ -12,7 +12,7 @@ export class BuildingProductionRateModel {
     @IsOptional()
     id: number;
 
-    @Field(type => BuildingDetailsAtCertainLevelModel, { description: "Details how to upgrade that building" })
+    @Field(() => BuildingDetailsAtCertainLevelModel, { description: "Details how to upgrade that building" })
     @ValidateNested()
     @ManyToOne(
         () => BuildingDetailsAtCertainLevelModel,
@@ -23,7 +23,7 @@ export class BuildingProductionRateModel {
     )
     buildingDetails: BuildingDetailsAtCertainLevelModel | Promise<BuildingDetailsAtCertainLevelModel>;
 
-    @Field(type => ResourceModel, { description: "Get connected resource details" })
+    @Field(() => ResourceModel, { description: "Get connected resource details" })
     @ManyToOne(
         () => ResourceModel,
         {

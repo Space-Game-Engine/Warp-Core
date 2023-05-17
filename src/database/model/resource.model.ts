@@ -7,7 +7,7 @@ import { Column, Entity, PrimaryColumn } from "typeorm";
 @Entity({name: "resource"})
 export class ResourceModel {
     @PrimaryColumn({ unique: true })
-    @Field(type => ID)
+    @Field(() => ID)
     @IsString()
     id: string;
 
@@ -16,10 +16,11 @@ export class ResourceModel {
     @Column('varchar')
     name: string;
 
-    @Field({ description: "What is base capacity for that resource"})
+    @Field({ description: "What is base capacity for that resource" })
+    @Column('int')
     baseMaxCapacity: number;
 
-    @Field(type => ResourceType, { description: "Type decides what kind of resource do we have here" })
+    @Field(() => ResourceType, { description: "Type decides what kind of resource do we have here" })
     @IsEnum(ResourceType)
     @Column('varchar')
     type: ResourceType;

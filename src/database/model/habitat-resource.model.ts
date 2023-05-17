@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Field, ObjectType } from "@nestjs/graphql";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { ResourceModel } from "@warp-core/database/model/resource.model";
 import { IsNumber, ValidateNested } from "class-validator";
@@ -8,10 +8,9 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDa
 @Entity({name: "habitat-resource"})
 export class HabitatResourceModel {
     @PrimaryGeneratedColumn()
-    @Field(type => ID)
     id: string;
 
-    @Field(type => HabitatModel, { description: "Habitat connected to that resource" })
+    @Field(() => HabitatModel, { description: "Habitat connected to that resource" })
     @ValidateNested()
     @ManyToOne(
         () => HabitatModel,
@@ -28,12 +27,12 @@ export class HabitatResourceModel {
 
     @Field({ description: "Current amount of the resources"})
     @IsNumber()
-    currentAmount: number;
+    currentAmount: number = 0;
     
     @UpdateDateColumn()
     lastCalculationTime: Date;
 
-    @Field(type => ResourceModel, { description: "Get connected resource details" })
+    @Field(() => ResourceModel, { description: "Get connected resource details" })
     @ValidateNested()
     @ManyToOne(
         () => ResourceModel,
