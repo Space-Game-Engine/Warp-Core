@@ -10,4 +10,18 @@ export class HabitatResourceCombined extends IntersectionType (
         'lastCalculationTime',
         'resource',
     ] as const),
-) {}
+) {
+    constructor(
+        public readonly resourceModelSource: ResourceModel,
+        public readonly habitatResourceModelSource: HabitatResourceModel
+    ) {
+        super();
+
+        this.baseMaxCapacity = resourceModelSource.baseMaxCapacity;
+        this.currentAmount = habitatResourceModelSource.currentAmount;
+        this.habitatId = habitatResourceModelSource.habitatId;
+        this.id = resourceModelSource.id;
+        this.name = resourceModelSource.name;
+        this.type = resourceModelSource.type;
+    }
+}

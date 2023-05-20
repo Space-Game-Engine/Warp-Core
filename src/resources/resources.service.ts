@@ -40,13 +40,7 @@ export class ResourcesService {
 
     private async prepareHabitatResourceMappedModel(singleHabitatResource: HabitatResourceModel): Promise<HabitatResourceCombined> {
         const resourceModel = await singleHabitatResource.resource;
-        const mappedResource = new HabitatResourceCombined();
-        mappedResource.baseMaxCapacity = resourceModel.baseMaxCapacity;
-        mappedResource.currentAmount = singleHabitatResource.currentAmount;
-        mappedResource.habitatId = singleHabitatResource.habitatId;
-        mappedResource.id = resourceModel.id;
-        mappedResource.name = resourceModel.name;
-        mappedResource.type = resourceModel.type;
+        const mappedResource = new HabitatResourceCombined(resourceModel, singleHabitatResource);
 
         return mappedResource;
     }
