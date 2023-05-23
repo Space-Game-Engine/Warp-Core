@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HabitatResourceModel } from '@warp-core/database/model/habitat-resource.model';
+import { ResourceCalculatorService } from '@warp-core/resources/resource-calculator.service';
 import { DataSource, EntitySubscriberInterface, EventSubscriber } from 'typeorm';
 
 @Injectable()
@@ -8,6 +9,7 @@ export class HabitatResourceRecalculateSubscriber implements EntitySubscriberInt
 
     constructor(
         private readonly dataSource: DataSource,
+        private readonly resourceCalculator: ResourceCalculatorService,
     ) {
         dataSource.subscribers.push(this);
     }
@@ -17,6 +19,7 @@ export class HabitatResourceRecalculateSubscriber implements EntitySubscriberInt
     }
 
     async afterLoad(entity: HabitatResourceModel) {
+        await this.resourceCalculator.calculateSingleResource(entity);
     }
 }
 

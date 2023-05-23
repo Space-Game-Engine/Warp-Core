@@ -37,7 +37,7 @@ export class HabitatResolver {
         return this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(habitat.id);
     }
 
-    @ResolveField(() => HabitatResourceCombined)
+    @ResolveField(() => [HabitatResourceCombined])
     resources(
         @Parent() habitat: HabitatModel
     ) {
