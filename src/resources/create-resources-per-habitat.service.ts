@@ -20,7 +20,7 @@ export class CreateResourcesPerHabitat {
 
         for (const singleResource of resourcesList) {
             const habitatResource = new HabitatResourceModel();
-            habitatResource.habitat = newHabitatEvent.getHabitat();
+            habitatResource.habitat = newHabitatEvent.habitat;
             habitatResource.resource = singleResource;
 
             habitatResourcesToSave.push(habitatResource);

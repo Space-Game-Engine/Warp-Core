@@ -41,7 +41,7 @@ export class BuildingZoneService {
     async createBuildingZoneOnNewHabitatCreation(payload: HabitatCreatedEvent) {
         const counterForNewHabitat = this.configService.get<number>('habitat.buildingZones.counterForNewHabitat');
         for (let buildingZoneCounter = 0; buildingZoneCounter < counterForNewHabitat; buildingZoneCounter++) {
-            await this.createNewBuildingZone(payload.getHabitat());
+            await this.createNewBuildingZone(payload.habitat);
         }
     }
 }
