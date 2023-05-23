@@ -8,8 +8,8 @@ import { BuildingZoneRepository } from "@warp-core/database/repository/building-
 import { when } from "jest-when";
 import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { QueueElementBeforeProcessing } from "@warp-core/building-queue/event/queue-element-before-processing.event";
-import { QueueElementAfterProcessing } from "@warp-core/building-queue/event/queue-element-after-processing.event";
+import { QueueElementBeforeProcessingEvent } from "@warp-core/building-queue/event/queue-element-before-processing.event";
+import { QueueElementAfterProcessingEvent } from "@warp-core/building-queue/event/queue-element-after-processing.event";
 
 jest.mock("../database/repository/building-queue.repository");
 jest.mock("../database/repository/building-zone.repository");
@@ -52,7 +52,7 @@ describe("Building queue handler service test", () => {
             expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
                 ++counter,
                 expect.stringMatching("building_queue.before_processing_element"),
-                expect.objectContaining<QueueElementBeforeProcessing>({
+                expect.objectContaining<QueueElementBeforeProcessingEvent>({
                     queueElement: singleQueueElement
                 })
             );
@@ -60,7 +60,7 @@ describe("Building queue handler service test", () => {
             expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
                 ++counter,
                 expect.stringMatching("building_queue.after_processing_element"),
-                expect.objectContaining<QueueElementAfterProcessing>({
+                expect.objectContaining<QueueElementAfterProcessingEvent>({
                     queueElement: singleQueueElement
                 })
             );
