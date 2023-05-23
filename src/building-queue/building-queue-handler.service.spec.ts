@@ -7,16 +7,21 @@ import { BuildingQueueRepository } from "@warp-core/database/repository/building
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
 import { when } from "jest-when";
 import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { QueueElementBeforeProcessing } from "@warp-core/building-queue/event/queue-element-before-processing.event";
+import { QueueElementAfterProcessing } from "@warp-core/building-queue/event/queue-element-after-processing.event";
 
 jest.mock("../database/repository/building-queue.repository");
 jest.mock("../database/repository/building-zone.repository");
 jest.mock("../auth/payload/model/habitat.model");
+jest.mock("@nestjs/event-emitter");
 
 describe("Building queue handler service test", () => {
     let buildingQueueHandlerService: BuildingQueueHandlerService;
     let buildingQueueRepository: jest.Mocked<BuildingQueueRepository>;
     let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
     let authorizedHabitatModel: AuthorizedHabitatModel;
+    let eventEmitter: jest.Mocked<EventEmitter2>;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -27,6 +32,7 @@ describe("Building queue handler service test", () => {
                 BuildingQueueRepository,
                 BuildingZoneRepository,
                 AuthorizedHabitatModel,
+                EventEmitter2,
             ]
         }).compile();
 
@@ -34,7 +40,34 @@ describe("Building queue handler service test", () => {
         buildingQueueRepository = module.get(BuildingQueueRepository);
         buildingZoneRepository = module.get(BuildingZoneRepository);
         authorizedHabitatModel = module.get(AuthorizedHabitatModel);
+        eventEmitter = module.get(EventEmitter2);
     });
+
+
+    function expectEventToBeCalled(queueElements: BuildingQueueElementModel[]) {
+        expect(eventEmitter.emitAsync).toBeCalledTimes(queueElements.length * 2);
+
+        let counter = 0;
+        for (const singleQueueElement of queueElements) {
+            expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
+                ++counter,
+                expect.stringMatching("building_queue.before_processing_element"),
+                expect.objectContaining<QueueElementBeforeProcessing>({
+                    queueElement: singleQueueElement
+                })
+            );
+            
+            expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
+                ++counter,
+                expect.stringMatching("building_queue.after_processing_element"),
+                expect.objectContaining<QueueElementAfterProcessing>({
+                    queueElement: singleQueueElement
+                })
+            );
+            
+        }
+
+    }
 
     describe("resolveQueue", () => {
         it("should not process any queue items as building queue repository not fetch any data", async () => {
@@ -49,6 +82,7 @@ describe("Building queue handler service test", () => {
 
             expect(buildingQueueRepository.save).not.toBeCalled();
             expect(buildingZoneRepository.save).not.toBeCalled();
+            expect(eventEmitter.emitAsync).not.toBeCalled();
         });
 
         it("should process queue item when single queue items exists and building zone don't have building id set", async () => {
@@ -85,6 +119,7 @@ describe("Building queue handler service test", () => {
             expect(queueElement.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
+            expectEventToBeCalled([queueElement]);
         });
 
         it("should process queue item when multiple queue items exists and building zone don't have building id set", async () => {
@@ -139,6 +174,11 @@ describe("Building queue handler service test", () => {
             expect(queueElement3.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement3.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
+            expectEventToBeCalled([
+                queueElement1,
+                queueElement2,
+                queueElement3,
+            ]);
         });
 
         it("should process queue item when single queue items exists and building zone have building id set", async () => {
@@ -174,6 +214,7 @@ describe("Building queue handler service test", () => {
             expect(queueElement.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
+            expectEventToBeCalled([queueElement]);
         });
     });
 
@@ -193,6 +234,7 @@ describe("Building queue handler service test", () => {
 
             expect(buildingQueueRepository.save).not.toBeCalled();
             expect(buildingZoneRepository.save).not.toBeCalled();
+            expect(eventEmitter.emitAsync).not.toBeCalled();
         });
 
         it("should process queue item when single queue items exists and building zone don't have building id set", async () => {
@@ -227,6 +269,7 @@ describe("Building queue handler service test", () => {
             expect(queueElement.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
+            expectEventToBeCalled([queueElement]);
         });
     });
 });
