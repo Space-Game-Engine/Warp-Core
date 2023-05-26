@@ -27,6 +27,10 @@ describe("Building zone repository test", () => {
         findBuildingZoneSpy = jest.spyOn(buildingZoneRepository, 'find');
     });
 
+    test('building zone repository object should be defined', () => {
+        expect(buildingZoneRepository).toBeDefined();
+    });
+
     describe("getAllBuildingZonesByHabitatId", () => {
         it("should load all building zones for single habitat id", async () => {
             const habitatId = 5;

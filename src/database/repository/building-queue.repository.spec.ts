@@ -29,6 +29,10 @@ describe("Building queue repository test", () => {
         countBuildingQueueSpy = jest.spyOn(buildingQueueRepository, 'count');
     });
 
+    test('building queue repository object should be defined', () => {
+        expect(buildingQueueRepository).toBeDefined();
+    });
+
     describe("getCurrentBuildingQueueForHabitat", () => {
         it("should load all elements for building queue from single habitat", async () => {
             const habitatId = 5;
