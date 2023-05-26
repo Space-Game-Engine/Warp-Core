@@ -3,8 +3,7 @@ import { AddToQueueInput } from '@warp-core/building-queue/input/add-to-queue.in
 import { BuildingZoneService } from '@warp-core/building-zone';
 import { BuildingService } from "@warp-core/building";
 import { CustomValidator } from '@warp-core/core';
-import { BuildingZoneModel } from '@warp-core/database/model/building-zone.model';
-import { BuildingModel } from '@warp-core/database/model/building.model';
+import { BuildingModel, BuildingZoneModel } from '@warp-core/database';
 
 @Injectable()
 export class AddToQueueValidator extends CustomValidator<AddToQueueInput> {

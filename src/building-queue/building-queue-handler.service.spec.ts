@@ -1,12 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
 import { BuildingQueueHandlerService } from "@warp-core/building-queue/building-queue-handler.service";
-import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
-import { BuildingModel } from "@warp-core/database/model/building.model";
-import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
-import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
+import { BuildingModel, BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneModel, BuildingZoneRepository } from "@warp-core/database";
 import { when } from "jest-when";
-import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
 
 jest.mock("../database/repository/building-queue.repository");
 jest.mock("../database/repository/building-zone.repository");

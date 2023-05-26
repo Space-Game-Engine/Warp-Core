@@ -1,7 +1,6 @@
 import { Args, Int, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
 import { BuildingZoneService } from "@warp-core/building-zone/building-zone.service";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
-import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
+import { BuildingQueueRepository, BuildingZoneModel } from "@warp-core/database";
 
 @Resolver(of => BuildingZoneModel)
 export class BuildingZoneResolver {

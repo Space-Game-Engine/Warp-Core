@@ -3,7 +3,7 @@ import { BuildingQueueAddService } from "@warp-core/building-queue/building-queu
 import { BuildingQueueHandlerService } from "@warp-core/building-queue/building-queue-handler.service";
 import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
 import { AddToQueueValidator } from "@warp-core/building-queue/input/add-to-queue.validator";
-import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
+import { BuildingQueueElementModel } from "@warp-core/database";
 
 @Resolver(of => BuildingQueueElementModel)
 export class BuildingQueueResolver {

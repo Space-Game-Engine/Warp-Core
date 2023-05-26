@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { BuildingModel } from "@warp-core/database/model/building.model";
-import { BuildingRepository } from "@warp-core/database/repository/building.repository";
+import { BuildingModel, BuildingRepository } from "@warp-core/database";
 import { UserInputError } from "apollo-server-express";
 
 @Injectable()

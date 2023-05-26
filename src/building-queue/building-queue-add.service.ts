@@ -2,14 +2,10 @@ import { ConfigService } from "@nestjs/config";
 import { QueueError } from "./exception/queue.error";
 import { AddToQueueInput } from "./input/add-to-queue.input";
 import { DateTime } from "luxon";
-import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
-import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
 import { BuildingService } from "@warp-core/building";
-import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { Injectable } from "@nestjs/common";
-import { BuildingModel } from "@warp-core/database/model/building.model";
-import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
+import { BuildingModel, BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneModel, BuildingZoneRepository } from "@warp-core/database";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
 
 @Injectable()
 export class BuildingQueueAddService {

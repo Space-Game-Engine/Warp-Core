@@ -5,7 +5,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DatabaseModule } from '@warp-core/database/database.module';
+import { DatabaseModule } from '@warp-core/database';
 import { BuildingModule } from '@warp-core/building';
 import { HabitatModule } from '@warp-core/habitat/habitat.module';
 import { BuildingZoneModule } from '@warp-core/building-zone';

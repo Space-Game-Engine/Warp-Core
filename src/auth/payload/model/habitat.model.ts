@@ -1,4 +1,4 @@
-import { HabitatModel as DbHabitatModel } from "@warp-core/database/model/habitat.model";
+import { HabitatModel as DbHabitatModel } from "@warp-core/database";
 import { InjectableProxy } from "nestjs-cls";
 
 @InjectableProxy()

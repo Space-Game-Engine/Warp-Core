@@ -1,4 +1,4 @@
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
+import { HabitatModel } from "@warp-core/database";
 
 export class HabitatCreatedEvent {
     constructor(

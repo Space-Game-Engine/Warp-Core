@@ -3,9 +3,8 @@ import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.in
 import { AddToQueueValidator } from "@warp-core/building-queue/input/add-to-queue.validator";
 import { BuildingZoneService } from "@warp-core/building-zone";
 import { BuildingService } from "@warp-core/building";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
-import { BuildingModel } from "@warp-core/database/model/building.model";
 import { when } from "jest-when";
+import { BuildingModel, BuildingZoneModel } from "@warp-core/database";
 
 jest.mock('@warp-core/building/building.service');
 jest.mock('@warp-core/building-zone/building-zone.service');
