@@ -4,7 +4,7 @@ import { AuthModule } from "@warp-core/auth";
 import { BuildingQueueModule } from "@warp-core/building-queue";
 import { BuildingModule } from "@warp-core/building";
 import { DatabaseModule } from "@warp-core/database";
-import { HabitatModule } from "@warp-core/habitat/habitat.module";
+import { HabitatModule } from "@warp-core/habitat";
 import { BuildingZoneResolver } from "./building-zone.resolver";
 import { BuildingZoneService } from "./building-zone.service";
 

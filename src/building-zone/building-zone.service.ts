@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { OnEvent } from "@nestjs/event-emitter";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
 import { BuildingZoneModel, BuildingZoneRepository, HabitatModel } from "@warp-core/database";
-import { HabitatCreatedEvent } from "@warp-core/habitat/event/habitat-created.event";
+import { HabitatCreatedEvent } from "@warp-core/habitat";
 
 @Injectable()
 export class BuildingZoneService {
