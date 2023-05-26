@@ -1,11 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { OnEvent } from "@nestjs/event-emitter";
-import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
-import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
-import { HabitatCreatedEvent } from "@warp-core/habitat/event/habitat-created.event";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
+import { BuildingZoneModel, BuildingZoneRepository, HabitatModel } from "@warp-core/database";
+import { HabitatCreatedEvent } from "@warp-core/habitat";
 
 @Injectable()
 export class BuildingZoneService {

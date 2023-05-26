@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "@warp-core/database/database.module";
+import { DatabaseModule } from "@warp-core/database";
 import { BuildingResolver } from "./building.resolver";
 import { BuildingService } from "./building.service";
 
