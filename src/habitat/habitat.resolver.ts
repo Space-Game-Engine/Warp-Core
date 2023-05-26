@@ -1,9 +1,7 @@
 import { Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
-import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
-import { HabitatService } from "./habitat.service";
 import { ResourcesService } from "@warp-core/resources/resources.service";
-import { HabitatResourceCombined } from "@warp-core/database/model/habitat-resource.mapped.model";
+import { HabitatService } from "./habitat.service";
+import { BuildingQueueRepository, HabitatModel, HabitatResourceCombined } from "@warp-core/database";
 
 @Resolver(of => HabitatModel)
 export class HabitatResolver {

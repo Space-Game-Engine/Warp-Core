@@ -1,14 +1,12 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
-import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
 import { when } from "jest-when";
 import { BuildingZoneService } from "./building-zone.service";
-import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
+import { BuildingZoneModel, BuildingZoneRepository, HabitatModel } from "@warp-core/database";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
 
-jest.mock("../database/repository/building-zone.repository");
-jest.mock("../auth/payload/model/habitat.model");
+jest.mock("@warp-core/database/repository/building-zone.repository");
+jest.mock("@warp-core/auth/payload/model/habitat.model");
 
 describe("Building Zone Service", () => {
     let buildingZoneService: BuildingZoneService;

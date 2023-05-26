@@ -1,5 +1,5 @@
 import { Args, Int, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
-import { BuildingModel } from "@warp-core/database/model/building.model";
+import { BuildingModel } from "@warp-core/database";
 import { BuildingService } from "./building.service";
 
 @Resolver(of => BuildingModel)

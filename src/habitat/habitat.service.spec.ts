@@ -1,11 +1,10 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { HabitatService } from "./habitat.service";
 import { when } from "jest-when";
-import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
-import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
+import { HabitatModel, HabitatRepository } from "@warp-core/database";
 
-jest.mock("../database/repository/habitat.repository");
+jest.mock(".@warp-core/database/repository/habitat.repository");
 jest.mock("../auth/payload/model/habitat.model");
 
 describe("Habitat service tests", () => {

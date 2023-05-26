@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BuildingQueueHandlerService } from '@warp-core/building-queue/building-queue-handler.service';
-import { BuildingZoneModel } from '@warp-core/database/model/building-zone.model';
+import { BuildingZoneModel } from '@warp-core/database';
 import { DataSource, EntitySubscriberInterface, EventSubscriber } from 'typeorm';
 
 @Injectable()
