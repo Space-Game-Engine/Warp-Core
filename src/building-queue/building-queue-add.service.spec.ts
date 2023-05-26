@@ -4,7 +4,7 @@ import { when } from 'jest-when';
 import { BuildingQueueAddService } from "@warp-core/building-queue/building-queue-add.service";
 import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
-import { BuildingService } from "@warp-core/building/building.service";
+import { BuildingService } from "@warp-core/building";
 import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";

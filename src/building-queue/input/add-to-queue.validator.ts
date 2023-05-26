@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { AddToQueueInput } from '@warp-core/building-queue/input/add-to-queue.input';
 import { BuildingZoneService } from '@warp-core/building-zone/building-zone.service';
-import { BuildingService } from '@warp-core/building/building.service';
+import { BuildingService } from "@warp-core/building";
 import { CustomValidator } from '@warp-core/core/validation/abstract-custom.validator';
 import { BuildingZoneModel } from '@warp-core/database/model/building-zone.model';
 import { BuildingModel } from '@warp-core/database/model/building.model';
