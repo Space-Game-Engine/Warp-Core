@@ -1,21 +1,24 @@
 import { Injectable } from "@nestjs/common";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
-import { HabitatModel, HabitatResourceCombined, HabitatResourceModel, HabitatResourceRepository, ResourceRepository } from "@warp-core/database";
+import { HabitatModel, HabitatResourceCombined, HabitatResourceModel, HabitatResourceRepository } from "@warp-core/database";
 
 @Injectable()
 export class ResourcesService {
 
     constructor(
-        private readonly resourceRepository: ResourceRepository,
         private readonly habitatResourceRepository: HabitatResourceRepository,
         private readonly habitatModel: AuthorizedHabitatModel,
     ) { }
 
-    async getSingleResourceById(id: string): Promise<HabitatResourceCombined> {
+    async getSingleResourceById(id: string): Promise<HabitatResourceCombined | null> {
         const habitatResource = await this.habitatResourceRepository.findOneBy({
             habitatId: this.habitatModel.id,
             resourceId: id,
         });
+
+        if (!habitatResource) {
+            return null;
+        }
 
         return this.prepareHabitatResourceMappedModel(habitatResource);
     }
