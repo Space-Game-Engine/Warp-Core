@@ -7,10 +7,10 @@ import { BuildingService } from "@warp-core/building";
 import { BuildingModel, BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneModel, BuildingZoneRepository, HabitatModel } from "@warp-core/database";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
 
-jest.mock("../database/repository/building-queue.repository");
-jest.mock("../database/repository/building-zone.repository");
-jest.mock("../auth/payload/model/habitat.model");
-jest.mock("../building/building.service");
+jest.mock("@warp-core/database/repository/building-queue.repository");
+jest.mock("@warp-core/database/repository/building-zone.repository");
+jest.mock("@warp-core/auth/payload/model/habitat.model");
+jest.mock("@warp-core/building/building.service");
 jest.mock("@nestjs/config");
 
 describe("Building queue add service tests", () => {

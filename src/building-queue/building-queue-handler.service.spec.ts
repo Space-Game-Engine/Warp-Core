@@ -7,9 +7,9 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { QueueElementBeforeProcessingEvent } from "@warp-core/building-queue/event/queue-element-before-processing.event";
 import { QueueElementAfterProcessingEvent } from "@warp-core/building-queue/event/queue-element-after-processing.event";
 
-jest.mock("../database/repository/building-queue.repository");
-jest.mock("../database/repository/building-zone.repository");
-jest.mock("../auth/payload/model/habitat.model");
+jest.mock("@warp-core/database/repository/building-queue.repository");
+jest.mock("@warp-core/database/repository/building-zone.repository");
+jest.mock("@warp-core/auth/payload/model/habitat.model");
 jest.mock("@nestjs/event-emitter");
 
 describe("Building queue handler service test", () => {

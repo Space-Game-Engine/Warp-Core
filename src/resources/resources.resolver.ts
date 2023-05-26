@@ -1,6 +1,6 @@
 import { Args, ID, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
-import { HabitatResourceCombined } from "@warp-core/database/model/habitat-resource.mapped.model";
-import { HabitatService } from "@warp-core/habitat/habitat.service";
+import { HabitatResourceCombined } from "@warp-core/database";
+import { HabitatService } from "@warp-core/habitat";
 import { ResourcesService } from "@warp-core/resources/resources.service";
 
 @Resolver(() => HabitatResourceCombined)

@@ -4,8 +4,8 @@ import { when } from "jest-when";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
 import { HabitatModel, HabitatRepository } from "@warp-core/database";
 
-jest.mock(".@warp-core/database/repository/habitat.repository");
-jest.mock("../auth/payload/model/habitat.model");
+jest.mock("@warp-core/database/repository/habitat.repository");
+jest.mock("@wrap-core/auth/payload/model/habitat.model");
 
 describe("Habitat service tests", () => {
     let habitatService: HabitatService;

@@ -14,7 +14,7 @@ import { AuthModule } from '@warp-core/auth';
 import config from '@warp-core/core/config/config-parser';
 import { validate } from '@warp-core/core/config/validate';
 import { DatabaseConfig } from '@warp-core/core/config/model/database.config';
-import { ResourcesModule } from '@warp-core/resources/resources.module';
+import { ResourcesModule } from '@warp-core/resources';
 
 @Module({
     imports: [

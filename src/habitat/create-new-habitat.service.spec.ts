@@ -1,14 +1,13 @@
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
 import { when } from "jest-when";
-import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { NewHabitatInput } from "@warp-core/habitat/input/NewHabitatInput";
-import { RegisterUserEvent } from "@warp-core/auth/register/register-user.event";
 import { CreateNewHabitatService } from "@warp-core/habitat/create-new-habitat.service";
+import { HabitatModel, HabitatRepository } from "@warp-core/database";
+import { RegisterUserEvent } from "@warp-core/auth";
 
-jest.mock("../database/repository/habitat.repository");
-jest.mock("../auth/payload/model/habitat.model");
+jest.mock("@warp-core/database/repository/habitat.repository");
+jest.mock("@warp-core/auth/payload/model/habitat.model");
 
 describe("Habitat service tests", () => {
     let createNewHabitatService: CreateNewHabitatService;

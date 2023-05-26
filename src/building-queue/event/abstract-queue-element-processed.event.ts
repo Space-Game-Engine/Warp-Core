@@ -1,4 +1,4 @@
-import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
+import { BuildingQueueElementModel } from "@warp-core/database";
 
 export abstract class QueueElementProcessedEvent {
     constructor(

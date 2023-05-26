@@ -1,10 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ResourcesInstallService } from "@warp-core/core/install/service/resources-install.service";
-import { ResourceType } from "@warp-core/database/enum/resource-type.enum";
-import { ResourceModel } from "@warp-core/database/model/resource.model";
-import { ResourceRepository } from "@warp-core/database/repository/resource.repository";
+import { ResourceModel, ResourceRepository, ResourceTypeEnum } from "@warp-core/database";
 
-jest.mock("../../../database/repository/resource.repository");
+jest.mock("@warp-core/database/repository/resource.repository");
 
 describe("ResourcesInstallService", () => {
     let resourcesInstallService: ResourcesInstallService;
@@ -40,7 +38,7 @@ describe("ResourcesInstallService", () => {
                 id: "resource",
                 name: "useful resource",
                 baseMaxCapacity: 100,
-                type: ResourceType.CONSTRUCTION_RESOURCE
+                type: ResourceTypeEnum.CONSTRUCTION_RESOURCE
             } as ResourceModel;
             
             await resourcesInstallService.install([resourceModel]);

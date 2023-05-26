@@ -1,5 +1,5 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
+import { BuildingZoneModel } from "@warp-core/database/model";
 import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
 import { when } from "jest-when";
 import { DataSource } from "typeorm";

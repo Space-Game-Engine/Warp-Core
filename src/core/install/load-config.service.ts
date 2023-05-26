@@ -1,5 +1,4 @@
-import { BuildingModel } from '@warp-core/database/model/building.model';
-import { ResourceModel } from '@warp-core/database/model/resource.model';
+import { BuildingModel, ResourceModel } from '@warp-core/database';
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
 

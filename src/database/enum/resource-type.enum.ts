@@ -1,12 +1,12 @@
 import { registerEnumType } from "@nestjs/graphql";
 
-export enum ResourceType {
+export enum ResourceTypeEnum {
     CONSTRUCTION_RESOURCE = "construction",
     ENERGY_RESOURCE = "energy",
     TECHNOLOGY_RESOURCE = "technology",
 }
 
-registerEnumType(ResourceType, {
+registerEnumType(ResourceTypeEnum, {
     name: "Resource_type",
     description: "What kind of resources are possible to create?",
     valuesMap: {

@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { AbstractInstalatorService } from "@warp-core/core/install/service/abstract-instalator.service";
-import { BuildingModel } from "@warp-core/database/model/building.model";
-import { BuildingRepository } from "@warp-core/database/repository/building.repository";
+import { BuildingModel, BuildingRepository } from "@warp-core/database";
 
 @Injectable()
 export class BuildingInstallService extends AbstractInstalatorService(BuildingModel) {

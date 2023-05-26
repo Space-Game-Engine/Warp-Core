@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { ResourceType } from "@warp-core/database/enum/resource-type.enum";
+import { ResourceTypeEnum } from "@warp-core/database/enum/resource-type.enum";
 import { IsEnum, IsString, Length } from "class-validator";
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
@@ -20,8 +20,8 @@ export class ResourceModel {
     @Column('int')
     baseMaxCapacity: number;
 
-    @Field(() => ResourceType, { description: "Type decides what kind of resource do we have here" })
-    @IsEnum(ResourceType)
+    @Field(() => ResourceTypeEnum, { description: "Type decides what kind of resource do we have here" })
+    @IsEnum(ResourceTypeEnum)
     @Column('varchar')
-    type: ResourceType;
+    type: ResourceTypeEnum;
 }

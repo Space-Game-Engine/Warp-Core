@@ -1,9 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
+import { BuildingQueueElementModel, BuildingZoneModel } from "@warp-core/database/model";
 import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
 import { when } from "jest-when";
-import { DataSource, MoreThanOrEqual } from "typeorm";
+import { DataSource } from "typeorm";
 
 describe("Building queue repository test", () => {
     let buildingQueueRepository: BuildingQueueRepository;

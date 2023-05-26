@@ -1,11 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
-import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
-import { QueueElementAfterProcessingEvent } from "@warp-core/building-queue/event/queue-element-after-processing.event";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
-import { HabitatResourceModel } from "@warp-core/database/model/habitat-resource.model";
-import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
-import { HabitatResourceRepository } from "@warp-core/database/repository/habitat-resource.repository";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
+import { QueueElementAfterProcessingEvent } from "@warp-core/building-queue";
+import { BuildingZoneModel, BuildingZoneRepository, HabitatResourceModel, HabitatResourceRepository } from "@warp-core/database";
 import { DateTime } from "luxon";
 
 @Injectable()

@@ -1,10 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { AuthorizedHabitatModel } from "@warp-core/auth/payload/model/habitat.model";
-import { HabitatResourceCombined } from "@warp-core/database/model/habitat-resource.mapped.model";
-import { HabitatResourceModel } from "@warp-core/database/model/habitat-resource.model";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
-import { HabitatResourceRepository } from "@warp-core/database/repository/habitat-resource.repository";
-import { ResourceRepository } from "@warp-core/database/repository/resource.repository";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
+import { HabitatModel, HabitatResourceCombined, HabitatResourceModel, HabitatResourceRepository, ResourceRepository } from "@warp-core/database";
 
 @Injectable()
 export class ResourcesService {

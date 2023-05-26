@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
+import { BuildingQueueElementModel, BuildingZoneModel } from "@warp-core/database/model";
 import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
 import { DataSource, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 

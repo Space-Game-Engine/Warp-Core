@@ -1,10 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { BuildingRole } from "@warp-core/database/enum/building-role.enum";
-import { BuildingModel } from "@warp-core/database/model/building.model";
 import { BuildingInstallService } from "./building-install.service";
-import { BuildingRepository } from "@warp-core/database/repository/building.repository";
+import { BuildingModel, BuildingRepository, BuildingRoleEnum } from "@warp-core/database";
 
-jest.mock("../../../database/repository/building.repository");
+jest.mock("@warp-core/database/repository/building.repository");
 
 describe("BuildingInstallService", () => {
     let buildingInstallService: BuildingInstallService;
@@ -37,7 +35,7 @@ describe("BuildingInstallService", () => {
 
         it("should add items from array to install", async () => {
             const buildingModel = {
-                role: BuildingRole.RESOURCE_PRODUCTION,
+                role: BuildingRoleEnum.RESOURCE_PRODUCTION,
                 name: "Production building",
                 buildingDetailsAtCertainLevel: [
                     {
