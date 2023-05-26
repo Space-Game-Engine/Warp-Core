@@ -8,7 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from '@warp-core/database/database.module';
 import { BuildingModule } from '@warp-core/building';
 import { HabitatModule } from '@warp-core/habitat/habitat.module';
-import { BuildingZoneModule } from '@warp-core/building-zone/building-zone.module';
+import { BuildingZoneModule } from '@warp-core/building-zone';
 import { BuildingQueueModule } from '@warp-core/building-queue';
 import { AuthModule } from '@warp-core/auth';
 import config from '@warp-core/core/config/config-parser';
