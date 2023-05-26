@@ -23,6 +23,9 @@ export class CreateResourcesPerHabitat {
 
             habitatResourcesToSave.push(habitatResource);
         }
-        this.habitatResourceRepository.save(habitatResourcesToSave);
+
+        if (habitatResourcesToSave.length > 0) {
+            await this.habitatResourceRepository.save(habitatResourcesToSave);
+        }
     }
 }
