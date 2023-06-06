@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { QueueElementAfterProcessingEvent } from "@warp-core/building-queue/event/queue-element-after-processing.event";
 import { QueueElementBeforeProcessingEvent } from "@warp-core/building-queue/event/queue-element-before-processing.event";
@@ -7,6 +7,8 @@ import { BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneModel, 
 
 @Injectable()
 export class BuildingQueueHandlerService {
+    private readonly logger = new Logger(BuildingQueueHandlerService.name);
+
     constructor(
         private readonly buildingQueueRepository: BuildingQueueRepository,
         private readonly buildingZoneRepository: BuildingZoneRepository,
@@ -19,39 +21,45 @@ export class BuildingQueueHandlerService {
     }
 
     async resolveQueue() {
+        this.logger.debug(`Resolving queue for habitat ${this.habitatModel.id}`);
         const notResolvedQueueItems = await this.buildingQueueRepository
             .getUnresolvedQueueForHabitat(this.habitatModel.id);
 
-        await this.processMultipleQueueElements(notResolvedQueueItems);
-    }
-
-    async resolveQueueForSingleBuildingZone(buildingZone: BuildingZoneModel) {
-        const notResolvedQueueItems = await this.buildingQueueRepository
-            .getUnresolvedQueueForSingleBuildingZone(buildingZone.id);
-
-        await this.processMultipleQueueElements(notResolvedQueueItems);
-    }
-
-    private async processMultipleQueueElements(queueElements: BuildingQueueElementModel[]) {
-        for (const singleQueueElement of queueElements) {
-            await this.processQueueElement(singleQueueElement);
+        for (const buildingZone of await this.habitatModel.buildingZones) {
+            await this.processMultipleQueueElements(notResolvedQueueItems, buildingZone);
         }
     }
 
-    private async processQueueElement(queueElement: BuildingQueueElementModel) {
-        const connectedBuildingZone = await queueElement.buildingZone;
+    async resolveQueueForSingleBuildingZone(buildingZone: BuildingZoneModel) {
+        this.logger.debug(`Resolving queue for building zone ${buildingZone.id}`);
+        const notResolvedQueueItems = await this.buildingQueueRepository
+            .getUnresolvedQueueForSingleBuildingZone(buildingZone.id);
 
-        connectedBuildingZone.level = queueElement.endLevel;
+        await this.processMultipleQueueElements(notResolvedQueueItems, buildingZone);
+    }
 
-        if (!connectedBuildingZone.buildingId) {
-            connectedBuildingZone.buildingId = (await queueElement.building).id;
+    private async processMultipleQueueElements(queueElements: BuildingQueueElementModel[], buildingZone: BuildingZoneModel) {
+        this.logger.debug(`${queueElements.length} queue elements to process`);
+        for (const singleQueueElement of queueElements) {
+            await this.processQueueElement(singleQueueElement, buildingZone);
+        }
+    }
+
+    private async processQueueElement(queueElement: BuildingQueueElementModel, buildingZoneToProcess: BuildingZoneModel) {
+        this.logger.debug(`Processing queue element for building zone with id ${buildingZoneToProcess.id}`);
+        buildingZoneToProcess.level = queueElement.endLevel;
+
+        if (!buildingZoneToProcess.buildingId) {
+            buildingZoneToProcess.buildingId = (await queueElement.building).id;
         }
 
         queueElement.isConsumed = true;
 
+        this.logger.debug(`Queue element processed/consumed for building zone with id ${queueElement.buildingZoneId}`);
+
         await this.eventEmitter.emitAsync('building_queue.before_processing_element', new QueueElementBeforeProcessingEvent(queueElement));
 
-        await this.buildingZoneRepository.save(connectedBuildingZone);
+        await this.buildingZoneRepository.save(buildingZoneToProcess);
         await this.buildingQueueRepository.save(queueElement);
 
         await this.eventEmitter.emitAsync('building_queue.after_processing_element', new QueueElementAfterProcessingEvent(queueElement));

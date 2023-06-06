@@ -31,7 +31,7 @@ import { ResourcesModule } from '@warp-core/resources';
                 const databaseConfiguration = configService.get<DatabaseConfig>('database');
 
                 databaseConfiguration.entities = AppModule.entities();
-                
+
                 return databaseConfiguration as TypeOrmModuleOptions;
             }
         }),
