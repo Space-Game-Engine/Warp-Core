@@ -33,7 +33,7 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
         });
     }
 
-    getSingleBuildingQueueElementById(queueElementId: number): Promise<BuildingQueueElementModel|null> {
+    getSingleBuildingQueueElementById(queueElementId: number): Promise<BuildingQueueElementModel | null> {
         return this.findOne({
             where: {
                 id: queueElementId
@@ -63,12 +63,12 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
     }
 
     getUnresolvedQueueForSingleBuildingZone(buildingZoneId: number): Promise<BuildingQueueElementModel[]> {
-        return this.findBy({
-            isConsumed: false,
-            endTime: LessThanOrEqual(new Date()),
-            buildingZone: {
-                id: buildingZoneId
-            },
-        });
+        const queryBuilder = this.createQueryBuilder('buildingQueue');
+        queryBuilder
+            .where('buildingQueue.isConsumed = false')
+            .andWhere('endTime <= :date', { date: new Date() })
+            .andWhere('buildingQueue.buildingZoneId = :buildingZoneId', { buildingZoneId: buildingZoneId })
+
+        return queryBuilder.getMany();
     }
 }

@@ -58,17 +58,24 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
         return maxCounterValue;
     }
 
-    async getBuildingZonesForOneResource(habitat: HabitatModel, resourceType: ResourceModel): Promise<BuildingZoneModel[]>  {
-        const queryBuilder = await this.createQueryBuilder("buildingZone");
+    getBuildingZonesForSingleResource(habitat: HabitatModel | number, resourceType: ResourceModel): Promise<BuildingZoneModel[]> {
+        let habitatId: number;
+
+        if (habitat instanceof HabitatModel) {
+            habitatId = habitat.id;
+        } else {
+            habitatId = habitat;
+        }
+
+        const queryBuilder = this.createQueryBuilder("buildingZone");
         FindOptionsUtils.joinEagerRelations(queryBuilder, "buildingZone", this.metadata);
         queryBuilder
             .select()
             .innerJoinAndSelect('buildingZone.building', 'building')
             .innerJoinAndSelect('building.buildingDetailsAtCertainLevel', 'details', 'buildingZone.level = details.level')
             .innerJoinAndSelect('details.productionRate', 'productionRate')
-            .where("buildingZone.habitatId = :habitatId", { habitatId : habitat.id})
-            .andWhere('productionRate.resourceId = :resourceId', { resourceId : resourceType.id})
-            .getMany();
+            .where("buildingZone.habitatId = :habitatId", { habitatId: habitatId })
+            .andWhere('productionRate.resourceId = :resourceId', { resourceId: resourceType.id });
 
         return queryBuilder.getMany();
     }
