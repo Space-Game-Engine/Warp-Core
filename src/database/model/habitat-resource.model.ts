@@ -27,6 +27,7 @@ export class HabitatResourceModel {
 
     @Field({ description: "Current amount of the resources"})
     @IsNumber()
+    @Column('int')
     currentAmount: number = 0;
     
     @UpdateDateColumn()
