@@ -1,13 +1,13 @@
 import { Args, ID, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
 import { HabitatResourceCombined } from "@warp-core/database";
-import { HabitatService } from "@warp-core/habitat";
 import { ResourcesService } from "@warp-core/resources/resources.service";
 
 @Resolver(() => HabitatResourceCombined)
 export class ResourcesResolver {
     constructor(
         private readonly resourcesService: ResourcesService,
-        private readonly habitatService: HabitatService
+        private readonly habitatModel: AuthorizedHabitatModel,
     ) { }
 
     @Query(() => HabitatResourceCombined, {description: "Returns single resource type defined in game", name: 'resource_get'})
@@ -26,6 +26,6 @@ export class ResourcesResolver {
     habitat(
         @Parent() resource: HabitatResourceCombined
     ) {
-        return this.habitatService.getHabitatById(resource.habitatId);
+        return this.habitatModel;
     }
 }

@@ -19,7 +19,6 @@ import { ResourcesService } from "@warp-core/resources/resources.service";
     imports: [
         DatabaseModule,
         AuthModule,
-        forwardRef(() => HabitatModule),
     ],
     exports: [
         ResourcesService,
