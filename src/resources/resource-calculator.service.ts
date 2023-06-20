@@ -1,21 +1,26 @@
-import { Injectable } from "@nestjs/common";
-import { OnEvent } from "@nestjs/event-emitter";
+import { Injectable, Logger } from "@nestjs/common";
+import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
 import { QueueElementProcessedEvent } from "@warp-core/building-queue";
 import { BuildingZoneModel, BuildingZoneRepository, HabitatResourceModel, HabitatResourceRepository } from "@warp-core/database";
+import { DisableAfterLoadEvent, EnableAfterLoadEvent } from "@warp-core/database/events";
 import { DateTime } from "luxon";
 
 @Injectable()
 export class ResourceCalculatorService {
+    private readonly logger = new Logger(ResourceCalculatorService.name);
 
     constructor(
         private readonly buildingZoneRepository: BuildingZoneRepository,
         private readonly habitatResourceRepository: HabitatResourceRepository,
         private readonly habitatModel: AuthorizedHabitatModel,
+        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async calculateSingleResource(habitatResource: HabitatResourceModel, calculationEndTime: Date = new Date()) {
         const resource = await habitatResource.resource;
+
+        this.logger.debug(`Calculate resource ${resource.id} for habitat ${this.habitatModel.id}`);
 
         const buildingZones = await this.buildingZoneRepository.getBuildingZonesForSingleResource(
             this.habitatModel,
@@ -25,20 +30,23 @@ export class ResourceCalculatorService {
         for (const singleBuildingZone of buildingZones) {
             await this.calculateResourceForBuildingZone(habitatResource, singleBuildingZone, calculationEndTime);
         }
+
+        this.logger.debug(`Resource ${resource.id} for habitat ${this.habitatModel.id} is calculated`);
     }
 
-    // @OnEvent('building_queue.after_processing_element')
-    @OnEvent('building_queue.before_processing_element')
+    @OnEvent('building_queue.after_processing_element')
     async calculateOnQueueUpdate(queueProcessingEvent: QueueElementProcessedEvent) {
         const buildingQueueElement = queueProcessingEvent.queueElement;
+
+        this.logger.debug(`Calculating resource on queue update for building zone ${buildingQueueElement.buildingZoneId}`);
         const habitatResources = await this.habitatResourceRepository.getHabitatResourceByBuildingAndLevel(
             await buildingQueueElement.building,
-            buildingQueueElement.endLevel
+            queueProcessingEvent.buildingZoneLevelBeforeUpdate
         );
 
         for (const singleHabitatResource of habitatResources) {
-            this.calculateSingleResource(singleHabitatResource, buildingQueueElement.endTime);
-            this.habitatResourceRepository.save(singleHabitatResource);
+            await this.calculateSingleResource(singleHabitatResource, buildingQueueElement.endTime);
+            await this.habitatResourceRepository.save(singleHabitatResource);
         }
     }
 

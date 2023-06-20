@@ -1,7 +1,7 @@
 {
   "name": "warp-core",
   "version": "0.0.1",
-  "description": "",
+  "description": "Backend service for online multiplayer game engine",
   "author": "Space Game Engine",
   "private": false,
   "license": "MIT",
@@ -114,5 +114,10 @@
     "moduleNameMapper": {
       "@warp-core/(.*)": "<rootDir>/$1"
     }
-  }
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": []
 }
