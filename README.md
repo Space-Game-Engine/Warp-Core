@@ -35,7 +35,7 @@ Warp Core and other parts of Space Game Engine are an MIT-licensed open source p
 ## Stay in touch
 
 - Author - [Krzysztof Węgrzyn](https://cristo256.eu)
-- Mastodon - [@ptyskju@social.yeswas.pl](https://social.yeswas.pl/@ptyskju)
+- Mastodon - [@ptyskju@mastodon.social](https://mastodon.social/@ptyskju)
 
 ## License
 
