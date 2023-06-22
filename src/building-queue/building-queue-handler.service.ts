@@ -59,11 +59,10 @@ export class BuildingQueueHandlerService {
 
         this.logger.debug(`Queue element processed/consumed for building zone with id ${queueElement.buildingZoneId}`);
 
-        await this.eventEmitter.emitAsync('building_queue.before_processing_element', new QueueElementBeforeProcessingEvent(
-            queueElement,
-            levelBeforeUpdate,
-            levelAfterUpdate
-        ));
+        await this.eventEmitter.emitAsync('building_queue.before_processing_element',
+            new QueueElementBeforeProcessingEvent(
+                queueElement
+            ));
 
         await this.buildingZoneRepository.update(buildingZoneToProcess.id, {
             buildingId: buildingZoneToProcess.buildingId,
@@ -73,10 +72,9 @@ export class BuildingQueueHandlerService {
             isConsumed: queueElement.isConsumed,
         });
 
-        await this.eventEmitter.emitAsync('building_queue.after_processing_element', new QueueElementAfterProcessingEvent(
-            queueElement,
-            levelBeforeUpdate,
-            levelAfterUpdate
-        ));
+        await this.eventEmitter.emitAsync('building_queue.after_processing_element',
+            new QueueElementAfterProcessingEvent(
+                queueElement,
+            ));
     }
 }

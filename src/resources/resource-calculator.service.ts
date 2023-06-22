@@ -1,9 +1,8 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { EventEmitter2, OnEvent } from "@nestjs/event-emitter";
+import { OnEvent } from "@nestjs/event-emitter";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
 import { QueueElementProcessedEvent } from "@warp-core/building-queue";
 import { BuildingZoneModel, BuildingZoneRepository, HabitatResourceModel, HabitatResourceRepository } from "@warp-core/database";
-import { DisableAfterLoadEvent, EnableAfterLoadEvent } from "@warp-core/database/events";
 import { DateTime } from "luxon";
 
 @Injectable()
@@ -14,7 +13,6 @@ export class ResourceCalculatorService {
         private readonly buildingZoneRepository: BuildingZoneRepository,
         private readonly habitatResourceRepository: HabitatResourceRepository,
         private readonly habitatModel: AuthorizedHabitatModel,
-        private readonly eventEmitter: EventEmitter2,
     ) {}
 
     async calculateSingleResource(habitatResource: HabitatResourceModel, calculationEndTime: Date = new Date()) {
@@ -41,7 +39,7 @@ export class ResourceCalculatorService {
         this.logger.debug(`Calculating resource on queue update for building zone ${buildingQueueElement.buildingZoneId}`);
         const habitatResources = await this.habitatResourceRepository.getHabitatResourceByBuildingAndLevel(
             await buildingQueueElement.building,
-            queueProcessingEvent.buildingZoneLevelBeforeUpdate
+            buildingQueueElement.startLevel
         );
 
         for (const singleHabitatResource of habitatResources) {
