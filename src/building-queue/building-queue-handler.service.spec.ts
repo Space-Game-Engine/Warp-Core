@@ -42,7 +42,7 @@ describe("Building queue handler service test", () => {
     });
 
 
-    async function expectEventToBeCalled(queueElements: BuildingQueueElementModel[]) {
+    function expectEventToBeCalled(queueElements: BuildingQueueElementModel[]) {
         expect(eventEmitter.emitAsync).toBeCalledTimes(queueElements.length * 2);
 
         let counter = 0;
@@ -118,7 +118,7 @@ describe("Building queue handler service test", () => {
             expect(queueElement.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
-            await expectEventToBeCalled([queueElement]);
+            expectEventToBeCalled([queueElement]);
         });
 
         it("should process queue item when multiple queue items exists and building zone don't have building id set", async () => {
@@ -174,7 +174,7 @@ describe("Building queue handler service test", () => {
             expect(queueElement3.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement3.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
-            await expectEventToBeCalled([
+            expectEventToBeCalled([
                 queueElement1,
                 queueElement2,
                 queueElement3,
@@ -215,7 +215,7 @@ describe("Building queue handler service test", () => {
             expect(queueElement.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
-            await expectEventToBeCalled([queueElement]);
+            expectEventToBeCalled([queueElement]);
         });
     });
 
@@ -270,7 +270,7 @@ describe("Building queue handler service test", () => {
             expect(queueElement.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
-            await expectEventToBeCalled([queueElement]);
+            expectEventToBeCalled([queueElement]);
         });
     });
 });
