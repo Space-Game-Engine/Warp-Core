@@ -6,7 +6,6 @@ database:
   password: ''
   database: 'mydb.db'
   synchronize: true
-  cache: true
 jwt:
   secret: 'secret_code'
   expiresIn: 3600
