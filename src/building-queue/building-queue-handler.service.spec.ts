@@ -37,10 +37,12 @@ describe("Building queue handler service test", () => {
         buildingZoneRepository = module.get(BuildingZoneRepository);
         authorizedHabitatModel = module.get(AuthorizedHabitatModel);
         eventEmitter = module.get(EventEmitter2);
+
+        authorizedHabitatModel.buildingZones = [];
     });
 
 
-    function expectEventToBeCalled(queueElements: BuildingQueueElementModel[]) {
+    async function expectEventToBeCalled(queueElements: BuildingQueueElementModel[]) {
         expect(eventEmitter.emitAsync).toBeCalledTimes(queueElements.length * 2);
 
         let counter = 0;
@@ -49,7 +51,7 @@ describe("Building queue handler service test", () => {
                 ++counter,
                 expect.stringMatching("building_queue.before_processing_element"),
                 expect.objectContaining<QueueElementBeforeProcessingEvent>({
-                    queueElement: singleQueueElement
+                    queueElement: singleQueueElement,
                 })
             );
             
@@ -57,7 +59,7 @@ describe("Building queue handler service test", () => {
                 ++counter,
                 expect.stringMatching("building_queue.after_processing_element"),
                 expect.objectContaining<QueueElementAfterProcessingEvent>({
-                    queueElement: singleQueueElement
+                    queueElement: singleQueueElement,
                 })
             );
             
@@ -76,8 +78,8 @@ describe("Building queue handler service test", () => {
             
             await buildingQueueHandlerService.resolveQueue();
 
-            expect(buildingQueueRepository.save).not.toBeCalled();
-            expect(buildingZoneRepository.save).not.toBeCalled();
+            expect(buildingQueueRepository.update).not.toBeCalled();
+            expect(buildingZoneRepository.update).not.toBeCalled();
             expect(eventEmitter.emitAsync).not.toBeCalled();
         });
 
@@ -101,6 +103,7 @@ describe("Building queue handler service test", () => {
             } as BuildingQueueElementModel;
 
             authorizedHabitatModel.id = habitatId;
+            (await authorizedHabitatModel.buildingZones).push(buildingZone);
             when(buildingQueueRepository.getUnresolvedQueueForHabitat)
                 .calledWith(habitatId)
                 .mockResolvedValue([
@@ -109,13 +112,13 @@ describe("Building queue handler service test", () => {
 
             await buildingQueueHandlerService.resolveQueue();
 
-            expect(buildingQueueRepository.save).toBeCalledTimes(1);
-            expect(buildingZoneRepository.save).toBeCalledTimes(1);
+            expect(buildingQueueRepository.update).toBeCalledTimes(1);
+            expect(buildingZoneRepository.update).toBeCalledTimes(1);
 
             expect(queueElement.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
-            expectEventToBeCalled([queueElement]);
+            await expectEventToBeCalled([queueElement]);
         });
 
         it("should process queue item when multiple queue items exists and building zone don't have building id set", async () => {
@@ -152,6 +155,7 @@ describe("Building queue handler service test", () => {
             } as BuildingQueueElementModel;
 
             authorizedHabitatModel.id = habitatId;
+            (await authorizedHabitatModel.buildingZones).push(buildingZone);
             when(buildingQueueRepository.getUnresolvedQueueForHabitat)
                 .calledWith(habitatId)
                 .mockResolvedValue([
@@ -162,15 +166,15 @@ describe("Building queue handler service test", () => {
 
             await buildingQueueHandlerService.resolveQueue();
 
-            expect(buildingQueueRepository.save).toBeCalledTimes(3);
-            expect(buildingZoneRepository.save).toBeCalledTimes(3);
+            expect(buildingQueueRepository.update).toBeCalledTimes(3);
+            expect(buildingZoneRepository.update).toBeCalledTimes(3);
 
             expect(queueElement1.isConsumed).toBe(true);
             expect(queueElement2.isConsumed).toBe(true);
             expect(queueElement3.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement3.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
-            expectEventToBeCalled([
+            await expectEventToBeCalled([
                 queueElement1,
                 queueElement2,
                 queueElement3,
@@ -196,6 +200,7 @@ describe("Building queue handler service test", () => {
             } as BuildingQueueElementModel;
 
             authorizedHabitatModel.id = habitatId;
+            (await authorizedHabitatModel.buildingZones).push(buildingZone);
             when(buildingQueueRepository.getUnresolvedQueueForHabitat)
                 .calledWith(habitatId)
                 .mockResolvedValue([
@@ -204,13 +209,13 @@ describe("Building queue handler service test", () => {
 
             await buildingQueueHandlerService.resolveQueue();
 
-            expect(buildingQueueRepository.save).toBeCalledTimes(1);
-            expect(buildingZoneRepository.save).toBeCalledTimes(1);
+            expect(buildingQueueRepository.update).toBeCalledTimes(1);
+            expect(buildingZoneRepository.update).toBeCalledTimes(1);
 
             expect(queueElement.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
-            expectEventToBeCalled([queueElement]);
+            await expectEventToBeCalled([queueElement]);
         });
     });
 
@@ -228,8 +233,8 @@ describe("Building queue handler service test", () => {
 
             await buildingQueueHandlerService.resolveQueueForSingleBuildingZone(buildingZone);
 
-            expect(buildingQueueRepository.save).not.toBeCalled();
-            expect(buildingZoneRepository.save).not.toBeCalled();
+            expect(buildingQueueRepository.update).not.toBeCalled();
+            expect(buildingZoneRepository.update).not.toBeCalled();
             expect(eventEmitter.emitAsync).not.toBeCalled();
         });
 
@@ -259,13 +264,13 @@ describe("Building queue handler service test", () => {
 
             await buildingQueueHandlerService.resolveQueueForSingleBuildingZone(buildingZone);
 
-            expect(buildingQueueRepository.save).toBeCalledTimes(1);
-            expect(buildingZoneRepository.save).toBeCalledTimes(1);
+            expect(buildingQueueRepository.update).toBeCalledTimes(1);
+            expect(buildingZoneRepository.update).toBeCalledTimes(1);
 
             expect(queueElement.isConsumed).toBe(true);
             expect(buildingZone.level).toBe(queueElement.endLevel);
             expect(buildingZone.buildingId).toBe(building.id);
-            expectEventToBeCalled([queueElement]);
+            await expectEventToBeCalled([queueElement]);
         });
     });
 });

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
-import { BuildingModel, BuildingZoneModel, BuildingZoneRepository, HabitatResourceModel, HabitatResourceRepository } from "@warp-core/database";
+import { BuildingZoneModel, BuildingZoneRepository, HabitatResourceModel, HabitatResourceRepository } from "@warp-core/database";
 import { ResourceCalculatorService } from "@warp-core/resources/resource-calculator.service";
 import { when } from "jest-when";
 import { DateTime } from "luxon";

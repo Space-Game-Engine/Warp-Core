@@ -59,7 +59,8 @@ describe("Create resources per habitat service tests", () => {
                         habitat: habitat,
                         resource: resourcesList[0]
                     })
-                ])
+                ]),
+                expect.objectContaining({reload: false})
             )
         });
 
@@ -98,7 +99,8 @@ describe("Create resources per habitat service tests", () => {
                         habitat: habitat,
                         resource: resourcesList[2]
                     }),
-                ])
+                ]),
+                expect.objectContaining({reload: false})
             )
         });
     });
