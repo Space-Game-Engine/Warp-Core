@@ -49,7 +49,7 @@ describe("Building queue handler service test", () => {
         for (const singleQueueElement of queueElements) {
             expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
                 ++counter,
-                expect.stringMatching("building_queue.before_processing_element"),
+                expect.stringMatching("building_queue.resolving.before_processing_element"),
                 expect.objectContaining<QueueElementBeforeProcessingEvent>({
                     queueElement: singleQueueElement,
                 })
@@ -57,7 +57,7 @@ describe("Building queue handler service test", () => {
             
             expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
                 ++counter,
-                expect.stringMatching("building_queue.after_processing_element"),
+                expect.stringMatching("building_queue.resolving.after_processing_element"),
                 expect.objectContaining<QueueElementAfterProcessingEvent>({
                     queueElement: singleQueueElement,
                 })
