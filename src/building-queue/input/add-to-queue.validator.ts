@@ -58,6 +58,9 @@ export class AddToQueueValidator extends CustomValidator<AddToQueueInput> {
         if (addToQueue.endLevel < buildingZone.level) {
             throw new BadRequestException('End level should not be lower than existing level.');
         }
+        if (addToQueue.endLevel === buildingZone.level) {
+            throw new BadRequestException('End level should not equal existing level.');
+        }
 
         const lastPossibleUpdate = (await building.buildingDetailsAtCertainLevel).at(-1);
 

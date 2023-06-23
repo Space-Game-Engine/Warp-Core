@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
+import { BuildingQueueElementModel, BuildingZoneModel } from "@warp-core/database/model";
 import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
-import { DataSource, MoreThanOrEqual } from "typeorm";
+import { DataSource, LessThanOrEqual, MoreThanOrEqual } from "typeorm";
 
 @Injectable()
 export class BuildingQueueRepository extends AbstractRepository<BuildingQueueElementModel> {
@@ -34,7 +33,7 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
         });
     }
 
-    getSingleBuildingQueueElementById(queueElementId: number): Promise<BuildingQueueElementModel|null> {
+    getSingleBuildingQueueElementById(queueElementId: number): Promise<BuildingQueueElementModel | null> {
         return this.findOne({
             where: {
                 id: queueElementId
@@ -51,5 +50,25 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
                 endTime: MoreThanOrEqual(new Date()),
             }
         });
+    }
+
+    getUnresolvedQueueForHabitat(habitatId: number): Promise<BuildingQueueElementModel[]> {
+        return this.findBy({
+            isConsumed: false,
+            endTime: LessThanOrEqual(new Date()),
+            buildingZone: {
+                habitatId: habitatId
+            },
+        });
+    }
+
+    getUnresolvedQueueForSingleBuildingZone(buildingZoneId: number): Promise<BuildingQueueElementModel[]> {
+        const queryBuilder = this.createQueryBuilder('buildingQueue');
+        queryBuilder
+            .where('buildingQueue.isConsumed = false')
+            .andWhere('endTime <= :date', { date: new Date() })
+            .andWhere('buildingQueue.buildingZoneId = :buildingZoneId', { buildingZoneId: buildingZoneId })
+
+        return queryBuilder.getMany();
     }
 }

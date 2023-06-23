@@ -64,6 +64,11 @@ const jwtFactory = {
             useFactory: async (req: Request, habitatRepository: HabitatRepository, jwtService: JwtService) => {
                 const extractJwt = ExtractJwt.fromAuthHeaderAsBearerToken();
                 const payload = jwtService.decode(extractJwt(req)) as PayloadInterface;
+
+                if (!payload) {
+                    return null;
+                }
+
                 const habitat = await habitatRepository.getHabitatById(payload.currentHabitatId);
                 return habitat;
             },

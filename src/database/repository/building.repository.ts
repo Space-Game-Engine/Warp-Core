@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { BuildingModel } from "@warp-core/database/model/building.model";
+import { BuildingModel } from "@warp-core/database/model";
 import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
 import { DataSource } from "typeorm";
 

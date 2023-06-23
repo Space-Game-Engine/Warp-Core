@@ -1,12 +1,14 @@
 import { Command, Option } from 'nestjs-command';
 import { Injectable } from '@nestjs/common';
-import { BuildingInstallService } from './building-install.service';
 import { LoadConfigService } from './load-config.service';
+import { BuildingInstallService } from '@warp-core/core/install/service/building-install.service';
+import { ResourcesInstallService } from '@warp-core/core/install/service/resources-install.service';
 
 @Injectable()
 export class InstallCommand {
     constructor(
         private readonly buildingInstall: BuildingInstallService,
+        private readonly resourceInstall: ResourcesInstallService,
         private readonly loadConfig: LoadConfigService
     ) { }
 
@@ -27,6 +29,7 @@ export class InstallCommand {
     ){
         const installationConfig = this.loadConfig.fetchConfig(directory);
 
-        await this.buildingInstall.install(installationConfig[0].buildings);
+        await this.resourceInstall.install(installationConfig.resources);
+        await this.buildingInstall.install(installationConfig.buildings);
     }
 }

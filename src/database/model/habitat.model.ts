@@ -4,11 +4,13 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { AuthModelInterface } from "@warp-core/auth/interface/auth-model.interface";
 import { BuildingZoneModel } from "./building-zone.model";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
+import { HabitatResourceModel } from "@warp-core/database/model/habitat-resource.model";
+import { HabitatResourceCombined } from "@warp-core/database/model/habitat-resource.mapped.model";
 
 @ObjectType({ description: "Single habitat that belongs to user" })
 @Entity({ name: "habitat" })
 export class HabitatModel implements AuthModelInterface {
-    @Field(type => ID)
+    @Field(() => ID)
     @IsNumber()
     @PrimaryGeneratedColumn()
     id: number;
@@ -27,7 +29,7 @@ export class HabitatModel implements AuthModelInterface {
     @Column('boolean')
     isMain: boolean;
 
-    @Field(type => [BuildingZoneModel])
+    @Field(() =>[BuildingZoneModel])
     @OneToMany(
         () => BuildingZoneModel,
         (buildingZone) => buildingZone.habitat,
@@ -37,7 +39,17 @@ export class HabitatModel implements AuthModelInterface {
     )
     buildingZones: BuildingZoneModel[] | Promise<BuildingZoneModel[]>;
 
-    @Field(type => [BuildingQueueElementModel])
+    @Field(() => [HabitatResourceCombined])
+    @OneToMany(
+        () => HabitatResourceModel,
+        (habitatResource) => habitatResource.habitat,
+        {
+            lazy: true
+        }
+    )
+    habitatResources: HabitatResourceModel[] | Promise<HabitatResourceModel[]>;
+
+    @Field(() =>[BuildingQueueElementModel])
     @OneToMany(
         () => BuildingQueueElementModel,
         async (queueElement) => (await queueElement.buildingZone).habitat,

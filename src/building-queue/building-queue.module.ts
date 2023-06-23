@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 import { AuthModule } from "@warp-core/auth";
 import { BuildingQueueAddService } from "@warp-core/building-queue/building-queue-add.service";
 import { BuildingQueueHandlerService } from "@warp-core/building-queue/building-queue-handler.service";
@@ -23,6 +24,7 @@ import { DatabaseModule } from "@warp-core/database";
         BuildingModule,
         DatabaseModule,
         ConfigModule,
+        EventEmitterModule,
         AuthModule,
     ],
     exports: [

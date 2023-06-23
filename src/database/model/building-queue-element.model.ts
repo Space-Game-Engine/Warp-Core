@@ -8,7 +8,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 @Entity({ name: "building-queue-element" })
 export class BuildingQueueElementModel {
 
-    @Field(type => ID)
+    @Field(() => ID)
     @IsNumber()
     @PrimaryGeneratedColumn()
     id?: number;
@@ -37,7 +37,7 @@ export class BuildingQueueElementModel {
     @Column('boolean')
     isConsumed: boolean = false;
 
-    @Field(type => BuildingModel, { nullable: true, description: "Building connected to queue element" })
+    @Field(() => BuildingModel, { nullable: true, description: "Building connected to queue element" })
     @ManyToOne(
         () => BuildingModel,
         {
@@ -50,7 +50,7 @@ export class BuildingQueueElementModel {
     @Column({ nullable: true })
     buildingId?: number;
 
-    @Field(type => BuildingZoneModel, { description: "Building zone connected to queue element" })
+    @Field(() => BuildingZoneModel, { description: "Building zone connected to queue element" })
     @ManyToOne(
         () => BuildingZoneModel,
         (buildingZone) => buildingZone.buildingQueue,

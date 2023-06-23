@@ -24,7 +24,7 @@ export class BuildingZoneModel {
     @Column('int')
     localBuildingZoneId: number;
 
-    @Field(type => HabitatModel, { description: "Habitat connected to that building zone" })
+    @Field(() => HabitatModel, { description: "Habitat connected to that building zone" })
     @ValidateNested()
     @ManyToOne(
         () => HabitatModel,
@@ -39,7 +39,7 @@ export class BuildingZoneModel {
     @Column({ name: 'habitatId' })
     habitatId: number;
 
-    @Field(type => BuildingModel, { nullable: true, description: "What kind of building is placed here" })
+    @Field(() => BuildingModel, { nullable: true, description: "What kind of building is placed here" })
     @ManyToOne(
         () => BuildingModel,
         {
@@ -62,7 +62,7 @@ export class BuildingZoneModel {
     @Column('simple-json')
     placement?: string;
 
-    @Field(type => [BuildingQueueElementModel], { description: "List of all queues connected to that building zone" })
+    @Field(() =>[BuildingQueueElementModel], { description: "List of all queues connected to that building zone" })
     @OneToMany(
         () => BuildingQueueElementModel,
         (buildingQueue) => buildingQueue.buildingZone,

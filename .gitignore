@@ -10,3 +10,4 @@ dist/
 install/*
 !install/*.template.yaml
 config/localhost.yaml
+mydb.db-journal
