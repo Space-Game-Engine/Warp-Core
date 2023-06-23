@@ -33,6 +33,8 @@ Wait until the installation process is complete. Then, you have to install the d
 
 Go to the `config` folder, copy the `localhost.yaml.dist` file, and save it as `localhost.yaml`. Then, fill in the fields related to the database or remove them completely to use the local SQLite database. The database type can be one of the following values: mysql, mariadb, postgres, cockroachdb, sqlite, mssql, sap, spanner, oracle, mongodb, cordova, react-native, expo, or nativescript (depending on the driver you have installed).
 
+**Important!** `localhost.yaml` file cannot be empty, `jwt` key with settings should be there anyway.
+
 Next, go to the `install` folder, copy all `*.template.yaml` files, and save them without the `template` part. These files contain all crucial parameters that are relevant to the game experience. You can find more details on how to customize these files here: [Installation templates description](installation-templates-description.md).
 
 ## Load database and prepare for launch
