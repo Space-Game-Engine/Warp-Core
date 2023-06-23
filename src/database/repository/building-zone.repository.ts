@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
+import { BuildingZoneModel, HabitatModel, ResourceModel } from "@warp-core/database/model";
 import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
-import { DataSource } from "typeorm";
+import { DataSource, FindOptionsUtils } from "typeorm";
 
 @Injectable()
 export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel> {
@@ -56,6 +56,28 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
         }
 
         return maxCounterValue;
+    }
+
+    getBuildingZonesForSingleResource(habitat: HabitatModel | number, resourceType: ResourceModel): Promise<BuildingZoneModel[]> {
+        let habitatId: number;
+
+        if (habitat instanceof HabitatModel) {
+            habitatId = habitat.id;
+        } else {
+            habitatId = habitat;
+        }
+
+        const queryBuilder = this.createQueryBuilder("buildingZone");
+        FindOptionsUtils.joinEagerRelations(queryBuilder, "buildingZone", this.metadata);
+        queryBuilder
+            .select()
+            .innerJoinAndSelect('buildingZone.building', 'building')
+            .innerJoinAndSelect('building.buildingDetailsAtCertainLevel', 'details', 'buildingZone.level = details.level')
+            .innerJoinAndSelect('details.productionRate', 'productionRate')
+            .where("buildingZone.habitatId = :habitatId", { habitatId: habitatId })
+            .andWhere('productionRate.resourceId = :resourceId', { resourceId: resourceType.id });
+
+        return queryBuilder.getMany();
     }
 
 }

@@ -1,7 +1,7 @@
 {
   "name": "warp-core",
   "version": "0.0.1",
-  "description": "",
+  "description": "Backend service for online multiplayer game engine",
   "author": "Space Game Engine",
   "private": false,
   "license": "MIT",
@@ -66,6 +66,7 @@
     "@types/jest": "29.5.0",
     "@types/jest-when": "^3.5.2",
     "@types/js-yaml": "^4.0.5",
+    "@types/luxon": "^3.3.0",
     "@types/node": "^18.15.11",
     "@types/passport-jwt": "^3.0.8",
     "@types/passport-local": "^1.0.35",
@@ -113,5 +114,10 @@
     "moduleNameMapper": {
       "@warp-core/(.*)": "<rootDir>/$1"
     }
-  }
+  },
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": []
 }

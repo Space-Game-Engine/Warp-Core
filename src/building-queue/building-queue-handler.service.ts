@@ -1,14 +1,19 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { QueueElementAfterProcessingEvent } from "@warp-core/building-queue/event/queue-element-after-processing.event";
+import { QueueElementBeforeProcessingEvent } from "@warp-core/building-queue/event/queue-element-before-processing.event";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
-import { BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneRepository } from "@warp-core/database";
-import { LessThanOrEqual } from "typeorm";
+import { BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneModel, BuildingZoneRepository } from "@warp-core/database";
 
 @Injectable()
 export class BuildingQueueHandlerService {
+    private readonly logger = new Logger(BuildingQueueHandlerService.name);
+
     constructor(
         private readonly buildingQueueRepository: BuildingQueueRepository,
         private readonly buildingZoneRepository: BuildingZoneRepository,
         private readonly habitatModel: AuthorizedHabitatModel,
+        private readonly eventEmitter: EventEmitter2
     ) { }
 
     async getQueueItemsForHabitat() {
@@ -16,31 +21,60 @@ export class BuildingQueueHandlerService {
     }
 
     async resolveQueue() {
-        const notResolvedQueueItems = await this.buildingQueueRepository.findBy({
-            isConsumed: false,
-            endTime: LessThanOrEqual(new Date()),
-            buildingZone: {
-                habitatId: this.habitatModel.id
-            },
-        });
+        this.logger.debug(`Resolving queue for habitat ${this.habitatModel.id}`);
+        const notResolvedQueueItems = await this.buildingQueueRepository
+            .getUnresolvedQueueForHabitat(this.habitatModel.id);
 
-        for (const singleQueueElement of notResolvedQueueItems) {
-            await this.processQueueElement(singleQueueElement);
+        for (const buildingZone of await this.habitatModel.buildingZones) {
+            await this.processMultipleQueueElements(notResolvedQueueItems, buildingZone);
         }
     }
 
-    private async processQueueElement(queueElement: BuildingQueueElementModel) {
-        const connectedBuildingZone = await queueElement.buildingZone;
+    async resolveQueueForSingleBuildingZone(buildingZone: BuildingZoneModel) {
+        this.logger.debug(`Resolving queue for building zone ${buildingZone.id}`);
+        const notResolvedQueueItems = await this.buildingQueueRepository
+            .getUnresolvedQueueForSingleBuildingZone(buildingZone.id);
 
-        connectedBuildingZone.level = queueElement.endLevel;
+        await this.processMultipleQueueElements(notResolvedQueueItems, buildingZone);
+    }
 
-        if (!connectedBuildingZone.buildingId) {
-            connectedBuildingZone.buildingId = (await queueElement.building).id;
+    private async processMultipleQueueElements(queueElements: BuildingQueueElementModel[], buildingZone: BuildingZoneModel) {
+        this.logger.debug(`${queueElements.length} queue elements to process`);
+        for (const singleQueueElement of queueElements) {
+            await this.processQueueElement(singleQueueElement, buildingZone);
+        }
+    }
+
+    private async processQueueElement(queueElement: BuildingQueueElementModel, buildingZoneToProcess: BuildingZoneModel) {
+        this.logger.debug(`Processing queue element for building zone with id ${buildingZoneToProcess.id}`);
+        const levelBeforeUpdate = buildingZoneToProcess.level;
+        const levelAfterUpdate = queueElement.endLevel;
+        buildingZoneToProcess.level = queueElement.endLevel;
+
+        if (!buildingZoneToProcess.buildingId) {
+            buildingZoneToProcess.buildingId = (await queueElement.building).id;
         }
 
         queueElement.isConsumed = true;
 
-        await this.buildingZoneRepository.save(connectedBuildingZone);
-        await this.buildingQueueRepository.save(queueElement);
+        this.logger.debug(`Queue element processed/consumed for building zone with id ${queueElement.buildingZoneId}`);
+
+        await this.eventEmitter.emitAsync('building_queue.before_processing_element',
+            new QueueElementBeforeProcessingEvent(
+                queueElement
+            ));
+
+        await this.buildingZoneRepository.update(buildingZoneToProcess.id, {
+            buildingId: buildingZoneToProcess.buildingId,
+            level: buildingZoneToProcess.level,
+        });
+        await this.buildingQueueRepository.update(queueElement.id, {
+            isConsumed: queueElement.isConsumed,
+        });
+
+        await this.eventEmitter.emitAsync('building_queue.after_processing_element',
+            new QueueElementAfterProcessingEvent(
+                queueElement,
+            ));
     }
 }

@@ -5,7 +5,7 @@ import { CommandModule, CommandService } from 'nestjs-command';
 
 async function bootstrap() {
     const app = await NestFactory.createApplicationContext(ClIModule, {
-        logger: false
+        logger: ['log', 'error', 'warn', 'debug', 'verbose']
     });
 
     try {

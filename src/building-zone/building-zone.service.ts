@@ -27,7 +27,7 @@ export class BuildingZoneService {
         
         const newBuildingZone = await this.buildingZoneRepository.save({
             localBuildingZoneId: maxCounterPerHabitat + 1,
-            habitat: habitat,
+            habitatId: habitat.id,
             level: 0,
             placement: ''
         });
@@ -39,7 +39,7 @@ export class BuildingZoneService {
     async createBuildingZoneOnNewHabitatCreation(payload: HabitatCreatedEvent) {
         const counterForNewHabitat = this.configService.get<number>('habitat.buildingZones.counterForNewHabitat');
         for (let buildingZoneCounter = 0; buildingZoneCounter < counterForNewHabitat; buildingZoneCounter++) {
-            await this.createNewBuildingZone(payload.getHabitat());
+            await this.createNewBuildingZone(payload.habitat);
         }
     }
 }

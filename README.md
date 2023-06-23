@@ -34,10 +34,14 @@ $ npm run start:prod
 $ npm run test
 ```
 
+## Support
+
+Warp Core and other parts of Space Game Engine are an MIT-licensed open source project.
+
 ## Stay in touch
 
-- Author - [Krzysztof Węgrzyn](http://cristo256.eu)
-- Mastodon - [@ptyskju@social.yeswas.pl](https://social.yeswas.pl/@ptyskju)
+- Author - [Krzysztof Węgrzyn](https://cristo256.eu)
+- Mastodon - [@ptyskju@mastodon.social](https://mastodon.social/@ptyskju)
 
 ## License
 

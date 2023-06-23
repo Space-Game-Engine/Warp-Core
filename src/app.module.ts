@@ -14,6 +14,7 @@ import { AuthModule } from '@warp-core/auth';
 import config from '@warp-core/core/config/config-parser';
 import { validate } from '@warp-core/core/config/validate';
 import { DatabaseConfig } from '@warp-core/core/config/model/database.config';
+import { ResourcesModule } from '@warp-core/resources';
 
 @Module({
     imports: [
@@ -30,7 +31,7 @@ import { DatabaseConfig } from '@warp-core/core/config/model/database.config';
                 const databaseConfiguration = configService.get<DatabaseConfig>('database');
 
                 databaseConfiguration.entities = AppModule.entities();
-                
+
                 return databaseConfiguration as TypeOrmModuleOptions;
             }
         }),
@@ -39,6 +40,7 @@ import { DatabaseConfig } from '@warp-core/core/config/model/database.config';
         HabitatModule,
         BuildingZoneModule,
         BuildingQueueModule,
+        ResourcesModule,
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
             autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
