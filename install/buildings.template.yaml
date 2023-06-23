@@ -4,12 +4,24 @@ buildings:
     buildingDetailsAtCertainLevel:
       - level: 1
         timeToUpdateBuildingInSeconds: 1000
+        productionRate:
+          - resourceId: coal
+            productionRate: 1
       - level: 2
         timeToUpdateBuildingInSeconds: 3000
+        productionRate:
+          - resourceId: coal
+            productionRate: 3
       - level: 3
         timeToUpdateBuildingInSeconds: 6000
+        productionRate:
+          - resourceId: coal
+            productionRate: 4
       - level: 4
         timeToUpdateBuildingInSeconds: 8000
+        productionRate:
+          - resourceId: coal
+            productionRate: 5
   - role: resource
     name: Cornflakes Mine
     buildingDetailsAtCertainLevel:
