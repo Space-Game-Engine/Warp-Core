@@ -2,14 +2,10 @@ import { ConfigService } from "@nestjs/config";
 import { QueueError } from "./exception/queue.error";
 import { AddToQueueInput } from "./input/add-to-queue.input";
 import { DateTime } from "luxon";
-import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
-import { BuildingQueueRepository } from "@warp-core/database/repository/building-queue.repository";
-import { BuildingService } from "@warp-core/building/building.service";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
-import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
-import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
+import { BuildingService } from "@warp-core/building";
 import { Injectable } from "@nestjs/common";
+import { BuildingModel, BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneModel, BuildingZoneRepository } from "@warp-core/database";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
 
 @Injectable()
 export class BuildingQueueAddService {
@@ -17,39 +13,37 @@ export class BuildingQueueAddService {
         private readonly buildingQueueRepository: BuildingQueueRepository,
         private readonly buildingZoneRepository: BuildingZoneRepository,
         private readonly buildingService: BuildingService,
-        private readonly payloadDataService: PayloadDataService,
+        private readonly habitatModel: AuthorizedHabitatModel,
         private readonly configService: ConfigService,
     ) { }
 
     async addToQueue(addToQueueElement: AddToQueueInput) {
-        const userHabitat = await this.payloadDataService.getModel() as HabitatModel;
-
-        const queueCounter = await this.buildingQueueRepository.countActiveBuildingQueueElementsForHabitat(userHabitat.id);
+        const queueCounter = await this.buildingQueueRepository.countActiveBuildingQueueElementsForHabitat(this.habitatModel.id);
         const maxElementsInQueue = this.configService.get<number>('habitat.buildingQueue.maxElementsInQueue');
 
         if (queueCounter >= maxElementsInQueue) {
             throw new QueueError(`Max queue count (${maxElementsInQueue}) has been reached`);
         }
 
-        const draftQueueElement = await this.prepareDraftQueueElement(addToQueueElement, userHabitat);
+        const draftQueueElement = await this.prepareDraftQueueElement(addToQueueElement);
 
         const queueElement = await this.buildingQueueRepository.save(draftQueueElement);
 
         return queueElement;
     }
 
-    async prepareDraftQueueElement(addToQueueElement: AddToQueueInput, userHabitat: HabitatModel): Promise<BuildingQueueElementModel> {
+    async prepareDraftQueueElement(addToQueueElement: AddToQueueInput): Promise<BuildingQueueElementModel> {
         const buildingZone = await this.buildingZoneRepository
             .getSingleBuildingZone(
-                addToQueueElement.counterPerHabitat,
-                userHabitat.id
+                addToQueueElement.localBuildingZoneId,
+                this.habitatModel.id
             );
 
         if (await this.isAddToQueueValid(addToQueueElement, buildingZone) === false) {
             throw new QueueError('Queue element is not valid');
         }
 
-        let building = buildingZone.building;
+        let building = await buildingZone.building;
 
         if (!building) {
             building = await this.buildingService.getBuildingById(addToQueueElement.buildingId);
@@ -57,16 +51,18 @@ export class BuildingQueueAddService {
 
         const startTime = await this.prepareStartTimeForQueueElement(buildingZone!);
         const queueElement: BuildingQueueElementModel = {
-            building: building,
+            id: null,
+            buildingId:building.id,
             buildingZone: buildingZone,
+            buildingZoneId: buildingZone.id,
             startTime: startTime,
             startLevel: buildingZone!.level,
             endLevel: addToQueueElement.endLevel,
             endTime: new Date(),
-            id: null,
+            isConsumed: false,
         };
 
-        queueElement.endTime = await this.prepareEndTimeForQueueElement(queueElement);
+        queueElement.endTime = await this.prepareEndTimeForQueueElement(queueElement, building);
 
         return queueElement;
     }
@@ -93,7 +89,7 @@ export class BuildingQueueAddService {
     }
 
     private async isPossibleToQueueElementByMultipleLevels(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel): Promise<Boolean> {
-        const currentBuildingQueue = await this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(buildingZone.habitatId);
+        const currentBuildingQueue = await this.buildingQueueRepository.getCurrentBuildingQueueForBuildingZone(buildingZone);
         const latestQueueElement = currentBuildingQueue.at(-1);
 
         if (!latestQueueElement) {
@@ -119,12 +115,12 @@ export class BuildingQueueAddService {
         return lastBuildingQueueElement.endTime;
     }
 
-    private async prepareEndTimeForQueueElement(queueElement: BuildingQueueElementModel): Promise<Date> {
+    private async prepareEndTimeForQueueElement(queueElement: BuildingQueueElementModel, building: BuildingModel): Promise<Date> {
         const startTime = DateTime.fromJSDate(queueElement.startTime);
         const upgradeTime = await this.buildingService.calculateTimeInSecondsToUpgradeBuilding(
             queueElement.startLevel,
             queueElement.endLevel,
-            queueElement.building.id
+            building.id
         );
         const endTime = startTime.plus({ second: upgradeTime }).toJSDate();
 

@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
-import { DataSource, Repository } from "typeorm";
+import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
+import { DataSource } from "typeorm";
 
 @Injectable()
-export class BuildingZoneRepository extends Repository<BuildingZoneModel> {
+export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel> {
 
     constructor(private dataSource: DataSource) {
         super(BuildingZoneModel, dataSource.createEntityManager());
@@ -21,10 +22,10 @@ export class BuildingZoneRepository extends Repository<BuildingZoneModel> {
         return buildingZones;
     }
 
-    async getSingleBuildingZone(counterPerHabitat: number, habitatId: number): Promise<BuildingZoneModel | null> {
+    async getSingleBuildingZone(localBuildingZoneId: number, habitatId: number): Promise<BuildingZoneModel | null> {
         const singleBuildingZone = await this.findOne({
             where: {
-                counterPerHabitat: counterPerHabitat,
+                localBuildingZoneId: localBuildingZoneId,
                 habitat: {
                     id: habitatId
                 }
@@ -34,10 +35,10 @@ export class BuildingZoneRepository extends Repository<BuildingZoneModel> {
         return singleBuildingZone;
     }
 
-    async getSingleBuildingZoneById(buildingZoneId: number): Promise<BuildingZoneModel | null> {
+    async getSingleBuildingZoneById(id: number): Promise<BuildingZoneModel | null> {
         const singleBuildingZone = await this.findOne({
             where: {
-                id: buildingZoneId
+                id: id
             }
         });
 
@@ -49,8 +50,8 @@ export class BuildingZoneRepository extends Repository<BuildingZoneModel> {
         let maxCounterValue = 0;
 
         for (const singleBuildingZone of allBuildingZones) {
-            if (singleBuildingZone.counterPerHabitat > maxCounterValue) {
-                maxCounterValue = singleBuildingZone.counterPerHabitat;
+            if (singleBuildingZone.localBuildingZoneId > maxCounterValue) {
+                maxCounterValue = singleBuildingZone.localBuildingZoneId;
             }
         }
 

@@ -1,19 +1,17 @@
 import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
-import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
-import { PayloadDataServiceMock } from "@warp-core/auth/payload/__mocks__/payload-data.service";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
-import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
 import { when } from "jest-when";
 import { BuildingZoneService } from "./building-zone.service";
+import { BuildingZoneModel, BuildingZoneRepository, HabitatModel } from "@warp-core/database";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
 
-jest.mock("../database/repository/building-zone.repository");
+jest.mock("@warp-core/database/repository/building-zone.repository");
+jest.mock("@warp-core/auth/payload/model/habitat.model");
 
 describe("Building Zone Service", () => {
     let buildingZoneService: BuildingZoneService;
     let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
-    let payloadDataService: PayloadDataServiceMock;
+    let authorizedHabitatModel: AuthorizedHabitatModel;
     let configService: ConfigService;
 
     beforeEach(async () => {
@@ -27,10 +25,7 @@ describe("Building Zone Service", () => {
             providers: [
                 BuildingZoneService,
                 BuildingZoneRepository,
-                {
-                    provide: PayloadDataService,
-                    useValue: new PayloadDataServiceMock()
-                },
+                AuthorizedHabitatModel,
                 {
                     provide: ConfigService,
                     useValue: configService
@@ -41,15 +36,8 @@ describe("Building Zone Service", () => {
         buildingZoneService = module.get<BuildingZoneService>(BuildingZoneService);
 
         buildingZoneRepository = module.get(BuildingZoneRepository);
-        payloadDataService = module.get(PayloadDataService);
+        authorizedHabitatModel = module.get(AuthorizedHabitatModel);
     });
-
-    function getHabitatModelMock(habitatId: number): HabitatModel {
-        return {
-            id: habitatId,
-            getAuthId: () => habitatId
-        } as any as HabitatModel;
-    }
 
     describe("createNewBuildingZone", () => {
         it("should create first building zone with its counter set as 1", async () => {
@@ -62,7 +50,7 @@ describe("Building Zone Service", () => {
             await buildingZoneService.createNewBuildingZone({ id: habitatId } as HabitatModel);
 
             expect(buildingZoneRepository.save).toBeCalledWith(expect.objectContaining({
-                counterPerHabitat: 1,
+                localBuildingZoneId: 1,
                 habitat: { id: habitatId },
             }));
         });
@@ -77,7 +65,7 @@ describe("Building Zone Service", () => {
             await buildingZoneService.createNewBuildingZone({ id: habitatId } as HabitatModel);
 
             expect(buildingZoneRepository.save).toBeCalledWith(expect.objectContaining({
-                counterPerHabitat: 2,
+                localBuildingZoneId: 2,
                 habitat: { id: habitatId },
             }));
         });
@@ -86,24 +74,21 @@ describe("Building Zone Service", () => {
     describe("getAllZonesForCurrentHabitat", () => {
         it("should return array with buildings", async () => {
             const habitatId = 5;
-            const habitatModel = getHabitatModelMock(habitatId);
             const buildingZones = [
                 {
                     id: 1,
                     level: 1,
-                    counterPerHabitat: 1,
+                    localBuildingZoneId: 1,
                 },
                 {
                     id: 2,
                     level: 0,
-                    counterPerHabitat: 2,
+                    localBuildingZoneId: 2,
                 },
             ] as BuildingZoneModel[];
 
-            payloadDataService.getModel.mockResolvedValue(habitatModel);
-            when(buildingZoneRepository.getAllBuildingZonesByHabitatId)
-                .calledWith(habitatId)
-                .mockResolvedValue(buildingZones);
+            authorizedHabitatModel.id = habitatId;
+            authorizedHabitatModel.buildingZones = buildingZones;
 
             const buildingZonesFromService = await buildingZoneService.getAllZonesForCurrentHabitat();
 
@@ -113,24 +98,41 @@ describe("Building Zone Service", () => {
 
     describe("getSingleBuildingZone", () => {
         it("should return single building zone for provided counter", async () => {
-            const counterPerHabitat = 1;
+            const localBuildingZoneId = 1;
             const habitatId = 5;
-            const habitatModel = getHabitatModelMock(habitatId);
             const buildingZone = 
                 {
                     id: 1,
                     level: 1,
-                    counterPerHabitat: counterPerHabitat,
+                    localBuildingZoneId: localBuildingZoneId,
                 } as BuildingZoneModel;
 
-            payloadDataService.getModel.mockResolvedValue(habitatModel);
-            when(buildingZoneRepository.getSingleBuildingZone)
-                .calledWith(counterPerHabitat, habitatId)
-                .mockResolvedValue(buildingZone);
 
-            const buildingZoneFromService = await buildingZoneService.getSingleBuildingZone(counterPerHabitat);
+            authorizedHabitatModel.id = habitatId;
+            authorizedHabitatModel.buildingZones = [buildingZone];
+
+            const buildingZoneFromService = await buildingZoneService.getSingleBuildingZone(localBuildingZoneId);
 
             expect(buildingZoneFromService).toEqual(buildingZone);
+        });
+
+        it("should return null when local building zone id does not exists", async () => {
+            const localBuildingZoneId = 10;
+            const habitatId = 5;
+            const buildingZone =
+                {
+                    id: 1,
+                    level: 1,
+                    localBuildingZoneId: 1,
+                } as BuildingZoneModel;
+
+
+            authorizedHabitatModel.id = habitatId;
+            authorizedHabitatModel.buildingZones = [buildingZone];
+
+            const buildingZoneFromService = await buildingZoneService.getSingleBuildingZone(localBuildingZoneId);
+
+            expect(buildingZoneFromService).toBeNull();
         });
     });
 });

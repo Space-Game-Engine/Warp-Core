@@ -1,10 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
-import { DataSource, MoreThanOrEqual, Repository } from "typeorm";
+import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
+import { DataSource, MoreThanOrEqual } from "typeorm";
 
 @Injectable()
-export class BuildingQueueRepository extends Repository<BuildingQueueElementModel> {
+export class BuildingQueueRepository extends AbstractRepository<BuildingQueueElementModel> {
 
     constructor(private dataSource: DataSource) {
         super(BuildingQueueElementModel, dataSource.createEntityManager());

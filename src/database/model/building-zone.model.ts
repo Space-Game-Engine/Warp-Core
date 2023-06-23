@@ -3,7 +3,7 @@ import { BuildingQueueElementModel } from "@warp-core/database/model/building-qu
 import { BuildingModel } from "@warp-core/database/model/building.model";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
 import { IsNumber, Min, ValidateNested } from "class-validator";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType({ description: "Single building zone, you can build here single building and level it up" })
 @Entity({ name: "building-zone" })
@@ -19,24 +19,35 @@ export class BuildingZoneModel {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Field({ description: "Building zone id counted for single habitat", name: "zoneId" })
+    @Field({ description: "Building zone id counted for single habitat"})
     @IsNumber()
     @Column('int')
-    counterPerHabitat: number;
+    localBuildingZoneId: number;
 
     @Field(type => HabitatModel, { description: "Habitat connected to that building zone" })
     @ValidateNested()
-    @ManyToOne(() => HabitatModel, (habitat) => habitat.buildingZones)
+    @ManyToOne(
+        () => HabitatModel,
+        (habitat) => habitat.buildingZones,
+        {
+            lazy: true,
+        }
+    )
     @JoinColumn({ name: 'habitatId' })
-    habitat: HabitatModel;
+    habitat: HabitatModel |  Promise<HabitatModel>;
 
     @Column({ name: 'habitatId' })
     habitatId: number;
 
     @Field(type => BuildingModel, { nullable: true, description: "What kind of building is placed here" })
-    @ManyToOne(() => BuildingModel)
+    @ManyToOne(
+        () => BuildingModel,
+        {
+            lazy: true,
+        }
+    )
     @JoinColumn({ name: 'buildingId' })
-    building?: BuildingModel;
+    building?: BuildingModel | Promise<BuildingModel>;
 
     @Column({ name: 'buildingId', nullable: true})
     buildingId?: number;
@@ -52,6 +63,12 @@ export class BuildingZoneModel {
     placement?: string;
 
     @Field(type => [BuildingQueueElementModel], { description: "List of all queues connected to that building zone" })
-    buildingQueue: BuildingQueueElementModel[];
-
+    @OneToMany(
+        () => BuildingQueueElementModel,
+        (buildingQueue) => buildingQueue.buildingZone,
+        {
+            lazy: true
+        }
+    )
+    buildingQueue: BuildingQueueElementModel[] | Promise<BuildingQueueElementModel[]>;
 }

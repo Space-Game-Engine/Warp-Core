@@ -34,10 +34,9 @@ export class BuildingModel {
         () => BuildingDetailsAtCertainLevelModel,
         (details) => details.building,
         {
-            cascade: true,
-            eager: true
+            lazy: true
         }
     )
     @Type(() => BuildingDetailsAtCertainLevelModel)
-    buildingDetailsAtCertainLevel: BuildingDetailsAtCertainLevelModel[];
+    buildingDetailsAtCertainLevel: BuildingDetailsAtCertainLevelModel[] | Promise<BuildingDetailsAtCertainLevelModel[]>;
 }

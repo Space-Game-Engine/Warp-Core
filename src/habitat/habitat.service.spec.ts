@@ -2,20 +2,18 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
 import { HabitatService } from "./habitat.service";
 import { when } from "jest-when";
-import { HabitatRepository } from "@warp-core/database/repository/habitat.repository";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
-import { AuthModelInterface } from "@warp-core/auth/interface/auth-model.interface";
 import { NewHabitatInput } from "@warp-core/habitat/input/NewHabitatInput";
 import { RegisterUserEvent } from "@warp-core/auth/register/register-user.event";
-import { PayloadDataServiceMock } from "@warp-core/auth/payload/__mocks__/payload-data.service";
-import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
+import { HabitatModel, HabitatRepository } from "@warp-core/database";
 
-jest.mock("../database/repository/habitat.repository");
+jest.mock(".@warp-core/database/repository/habitat.repository");
+jest.mock("../auth/payload/model/habitat.model");
 
 describe("Habitat service tests", () => {
     let habitatService: HabitatService;
     let eventEmitter: EventEmitter2;
-    let payloadDataService: PayloadDataServiceMock;
+    let authorizedHabitatModel: AuthorizedHabitatModel;
     let habitatRepository: jest.Mocked<HabitatRepository>;
 
     beforeEach(async () => {
@@ -29,10 +27,7 @@ describe("Habitat service tests", () => {
             providers: [
                 HabitatService,
                 HabitatRepository,
-                {
-                    provide: PayloadDataService,
-                    useValue: new PayloadDataServiceMock()
-                },
+                AuthorizedHabitatModel,
                 {
                     provide: EventEmitter2,
                     useValue: eventEmitter
@@ -42,7 +37,7 @@ describe("Habitat service tests", () => {
 
         habitatService = module.get<HabitatService>(HabitatService);
         habitatRepository = module.get(HabitatRepository);
-        payloadDataService = module.get(PayloadDataService);
+        authorizedHabitatModel = module.get(AuthorizedHabitatModel);
     });
 
     describe("getHabitatsForLoggedIn", () => {
@@ -55,7 +50,7 @@ describe("Habitat service tests", () => {
                     userId: userId,
                     isMain: true,
                     buildingZones: [],
-                },{
+                }, {
                     id: 20,
                     name: "test",
                     userId: userId,
@@ -64,9 +59,8 @@ describe("Habitat service tests", () => {
                 },
             ] as HabitatModel[];
 
-            payloadDataService.getUserId
-                .mockReturnValue(userId)
-            
+            authorizedHabitatModel.userId = userId;
+
             when(habitatRepository.getHabitatsByUserId)
                 .expectCalledWith(userId)
                 .mockResolvedValueOnce(habitatModels);
@@ -80,8 +74,7 @@ describe("Habitat service tests", () => {
             const userId = 5;
             const habitatModels = [] as HabitatModel[];
 
-            payloadDataService.getUserId
-                .mockReturnValue(userId);
+            authorizedHabitatModel.userId = userId;
 
             when(habitatRepository.getHabitatsByUserId)
                 .expectCalledWith(userId)
@@ -96,30 +89,11 @@ describe("Habitat service tests", () => {
     describe("getCurrentHabitat", () => {
         it("should return a single habitat for currently logged in user", async () => {
             const habitatId = 10;
-            const authModel = {
-                getAuthId() {
-                    return habitatId;
-                },
-            } as AuthModelInterface;
 
-            const habitatModel = {
-                id: habitatId,
-                name: "test",
-                userId: 1,
-                isMain: true,
-                buildingZones: [],
-            } as HabitatModel;
-
-            payloadDataService.getModel
-                .mockResolvedValueOnce(authModel);
-
-            when(habitatRepository.getHabitatById)
-                .expectCalledWith(habitatId)
-                .mockResolvedValueOnce(habitatModel);
+            authorizedHabitatModel.id = habitatId;
 
             const returnedHabitat = await habitatService.getCurrentHabitat();
-
-            expect(returnedHabitat).toEqual(habitatModel);
+            expect(returnedHabitat).toEqual(authorizedHabitatModel);
         });
     });
 

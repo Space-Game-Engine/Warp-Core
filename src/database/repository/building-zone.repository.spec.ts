@@ -33,12 +33,12 @@ describe("Building zone repository test", () => {
             const buildingZones = [
                 {
                     id: 10,
-                    counterPerHabitat: 1,
+                    localBuildingZoneId: 1,
                     level: 1
                 },
                 {
                     id: 11,
-                    counterPerHabitat: 2,
+                    localBuildingZoneId: 2,
                     level: 0
                 }
             ] as BuildingZoneModel[];
@@ -65,21 +65,21 @@ describe("Building zone repository test", () => {
             const habitatId = 5;
             const buildingZone = {
                 id: 10,
-                counterPerHabitat: 1,
+                localBuildingZoneId: 1,
                 level: 1
             } as BuildingZoneModel;
 
             findOneBuildingZoneSpy.mockResolvedValue(buildingZone);
 
             const returnedBuildingZone = await buildingZoneRepository.getSingleBuildingZone(
-                buildingZone.counterPerHabitat,
+                buildingZone.localBuildingZoneId,
                 habitatId
             );
 
             expect(returnedBuildingZone).toEqual(buildingZone);
             expect(findOneBuildingZoneSpy).toBeCalledWith(expect.objectContaining({
                 where: {
-                    counterPerHabitat: buildingZone.counterPerHabitat,
+                    localBuildingZoneId: buildingZone.localBuildingZoneId,
                     habitat: {
                         id: habitatId
                     }
@@ -92,7 +92,7 @@ describe("Building zone repository test", () => {
         it("should fetch single building zone for provided building zone id", async () => {
             const buildingZone = {
                 id: 10,
-                counterPerHabitat: 1,
+                localBuildingZoneId: 1,
                 level: 1
             } as BuildingZoneModel;
 

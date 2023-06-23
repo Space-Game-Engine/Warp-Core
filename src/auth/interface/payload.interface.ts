@@ -7,6 +7,11 @@ export interface PayloadInterface {
     sub: number;
 
     /**
+     * Additional Id parameter from currently selected habitat
+     */
+    currentHabitatId: number;
+
+    /**
      * Entity loaded from DB connected to currently logged in user
      */
     dbModel: AuthModelInterface;

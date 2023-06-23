@@ -1,37 +1,32 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { OnEvent } from "@nestjs/event-emitter";
-import { PayloadDataService } from "@warp-core/auth/payload/payload-data.service";
-import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
-import { HabitatModel } from "@warp-core/database/model/habitat.model";
-import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
-import { HabitatCreatedEvent } from "@warp-core/habitat/event/habitat-created.event";
+import { AuthorizedHabitatModel } from "@warp-core/auth";
+import { BuildingZoneModel, BuildingZoneRepository, HabitatModel } from "@warp-core/database";
+import { HabitatCreatedEvent } from "@warp-core/habitat";
 
 @Injectable()
 export class BuildingZoneService {
     constructor(
         private readonly buildingZoneRepository: BuildingZoneRepository,
-        private readonly payloadDataService: PayloadDataService,
+        private readonly habitatModel: AuthorizedHabitatModel,
         private readonly configService: ConfigService,
     ) {}
 
     async getAllZonesForCurrentHabitat(): Promise<BuildingZoneModel[]> {
-        const habitat = await this.payloadDataService.getModel();
-
-        return this.buildingZoneRepository.getAllBuildingZonesByHabitatId(habitat.getAuthId());
+        return this.habitatModel.buildingZones;
     }
 
-    async getSingleBuildingZone(counterPerHabitat: number): Promise<BuildingZoneModel| null> {
-        const habitat = await this.payloadDataService.getModel();
-
-        return this.buildingZoneRepository.getSingleBuildingZone(counterPerHabitat, habitat.getAuthId());
+    async getSingleBuildingZone(localBuildingZoneId: number): Promise<BuildingZoneModel| null> {
+        return (await this.habitatModel.buildingZones)
+            .find(buildingZone => buildingZone.localBuildingZoneId === localBuildingZoneId) || null;
     }
 
     async createNewBuildingZone(habitat: HabitatModel): Promise<BuildingZoneModel> {
         const maxCounterPerHabitat = await this.buildingZoneRepository.getMaxOfCounterPerHabitat(habitat.id);
         
         const newBuildingZone = await this.buildingZoneRepository.save({
-            counterPerHabitat: maxCounterPerHabitat + 1,
+            localBuildingZoneId: maxCounterPerHabitat + 1,
             habitat: habitat,
             level: 0,
             placement: ''
