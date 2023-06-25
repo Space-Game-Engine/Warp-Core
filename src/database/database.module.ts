@@ -1,6 +1,16 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { BuildingDetailsAtCertainLevelModel, BuildingModel, BuildingProductionRateModel, BuildingQueueElementModel, BuildingZoneModel, HabitatModel, HabitatResourceModel, ResourceModel } from "@warp-core/database/model";
+import {
+    BuildingDetailsAtCertainLevelModel,
+    BuildingModel,
+    BuildingProductionRateModel,
+    BuildingQueueElementModel,
+    BuildingRequirementsModel,
+    BuildingZoneModel,
+    HabitatModel,
+    HabitatResourceModel,
+    ResourceModel
+} from "@warp-core/database/model";
 import { BuildingQueueRepository, BuildingRepository, BuildingZoneRepository, HabitatRepository, HabitatResourceRepository, ResourceRepository } from "@warp-core/database/repository";
 
 @Module({
@@ -35,6 +45,7 @@ export class DatabaseModule {
             ResourceModel,
             HabitatResourceModel,
             BuildingProductionRateModel,
+            BuildingRequirementsModel,
         ]
     }
 }
