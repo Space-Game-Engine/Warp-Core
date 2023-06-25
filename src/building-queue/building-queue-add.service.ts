@@ -1,11 +1,22 @@
-import { ConfigService } from "@nestjs/config";
-import { QueueError } from "./exception/queue.error";
-import { AddToQueueInput } from "./input/add-to-queue.input";
-import { DateTime } from "luxon";
-import { BuildingService } from "@warp-core/building";
-import { Injectable } from "@nestjs/common";
-import { BuildingModel, BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneModel, BuildingZoneRepository } from "@warp-core/database";
-import { AuthorizedHabitatModel } from "@warp-core/auth";
+import {ConfigService} from "@nestjs/config";
+import {QueueError} from "./exception/queue.error";
+import {AddToQueueInput} from "./input/add-to-queue.input";
+import {DateTime} from "luxon";
+import {BuildingService} from "@warp-core/building";
+import {Injectable} from "@nestjs/common";
+import {
+    BuildingModel,
+    BuildingQueueElementModel,
+    BuildingQueueRepository,
+    BuildingZoneModel,
+    BuildingZoneRepository,
+    ResourceTypeEnum
+} from "@warp-core/database";
+import {AuthorizedHabitatModel} from "@warp-core/auth";
+import {EventEmitter2} from "@nestjs/event-emitter";
+import {QueueElementBeforeProcessingEvent} from "@warp-core/building-queue/event/queue-element-before-processing.event";
+import {QueueElementAfterProcessingEvent} from "@warp-core/building-queue/event/queue-element-after-processing.event";
+import {QueueElementCostModel} from "@warp-core/database/model/queue-element-cost.model";
 
 @Injectable()
 export class BuildingQueueAddService {
@@ -15,6 +26,7 @@ export class BuildingQueueAddService {
         private readonly buildingService: BuildingService,
         private readonly habitatModel: AuthorizedHabitatModel,
         private readonly configService: ConfigService,
+        private readonly eventEmitter: EventEmitter2
     ) { }
 
     async addToQueue(addToQueueElement: AddToQueueInput) {
@@ -27,7 +39,20 @@ export class BuildingQueueAddService {
 
         const draftQueueElement = await this.prepareDraftQueueElement(addToQueueElement);
 
-        const queueElement = await this.buildingQueueRepository.save(draftQueueElement);
+        await this.eventEmitter.emitAsync('building_queue.adding.before_processing_element',
+            new QueueElementBeforeProcessingEvent(
+                draftQueueElement
+            ));
+
+        let queueElement;
+        await this.buildingQueueRepository.transaction(async (entityManager) => {
+            queueElement = await entityManager.save(BuildingQueueElementModel, draftQueueElement);
+
+            await this.eventEmitter.emitAsync('building_queue.adding.after_processing_element',
+                new QueueElementAfterProcessingEvent(
+                    queueElement
+                ));
+        });
 
         return queueElement;
     }
@@ -49,17 +74,20 @@ export class BuildingQueueAddService {
             building = await this.buildingService.getBuildingById(addToQueueElement.buildingId);
         }
 
-        const startTime = await this.prepareStartTimeForQueueElement(buildingZone!);
+        const resourceCost = await this.calculateResourcesCosts(addToQueueElement, buildingZone, building);
+
+        const startTime = await this.prepareStartTimeForQueueElement(buildingZone);
         const queueElement: BuildingQueueElementModel = {
             id: null,
             buildingId:building.id,
             buildingZone: buildingZone,
             buildingZoneId: buildingZone.id,
             startTime: startTime,
-            startLevel: buildingZone!.level,
+            startLevel: buildingZone.level,
             endLevel: addToQueueElement.endLevel,
             endTime: new Date(),
             isConsumed: false,
+            costs: resourceCost
         };
 
         queueElement.endTime = await this.prepareEndTimeForQueueElement(queueElement, building);
@@ -125,5 +153,33 @@ export class BuildingQueueAddService {
         const endTime = startTime.plus({ second: upgradeTime }).toJSDate();
 
         return endTime;
+    }
+
+    private async calculateResourcesCosts(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel, building: BuildingModel): Promise<QueueElementCostModel[]> {
+        const queueCost: QueueElementCostModel[] = [];
+
+        const allBuildingDetails = await building.buildingDetailsAtCertainLevel;
+        const buildingDetailsForUpdate = allBuildingDetails.filter((buildingDetails) => {
+            return buildingDetails.level >= buildingZone.level && buildingDetails.level <=addToQueueElement.endLevel
+        });
+
+        for (const buildingDetailsForUpdateElement of buildingDetailsForUpdate) {
+            const buildingUpdateCosts = await buildingDetailsForUpdateElement.requirements;
+
+            for (const buildingUpdateCost of buildingUpdateCosts) {
+                const resource = await buildingUpdateCost.resource;
+
+                if (resource.type !== ResourceTypeEnum.CONSTRUCTION_RESOURCE) {
+                    continue;
+                }
+
+                queueCost.push({
+                    cost: buildingUpdateCost.cost,
+                    resource: resource
+                });
+            }
+        }
+
+        return queueCost;
     }
 }
