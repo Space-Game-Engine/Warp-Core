@@ -33,7 +33,7 @@ export class ResourceCalculatorService {
     }
 
     @OnEvent('building_queue.resolving.after_processing_element')
-    async calculateOnQueueUpdate(queueProcessingEvent: QueueElementProcessedEvent) {
+    async addResourcesOnQueueUpdate(queueProcessingEvent: QueueElementProcessedEvent) {
         const buildingQueueElement = queueProcessingEvent.queueElement;
 
         this.logger.debug(`Calculating resource on queue update for building zone ${buildingQueueElement.buildingZoneId}`);

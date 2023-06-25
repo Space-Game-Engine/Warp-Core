@@ -7,6 +7,8 @@ import { HabitatResourceRecalculateSubscriber } from "@warp-core/resources/habit
 import { ResourceCalculatorService } from "@warp-core/resources/resource-calculator.service";
 import { ResourcesResolver } from "@warp-core/resources/resources.resolver";
 import { ResourcesService } from "@warp-core/resources/resources.service";
+import {APP_FILTER} from "@nestjs/core";
+import {ResourceExtractorService} from "@warp-core/resources/resource-extractor.service";
 
 @Module({
     providers: [
@@ -14,6 +16,7 @@ import { ResourcesService } from "@warp-core/resources/resources.service";
         HabitatResourceRecalculateSubscriber,
         ResourcesService,
         ResourceCalculatorService,
+        ResourceExtractorService,
         ResourcesResolver,
     ],
     imports: [
