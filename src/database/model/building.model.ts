@@ -1,7 +1,7 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { BuildingRoleEnum } from "@warp-core/database/enum/building-role.enum";
 import { BuildingDetailsAtCertainLevelModel } from "@warp-core/database/model/building-details-at-certain-level.model";
-import { Transform, Type } from "class-transformer";
+import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { Type } from "class-transformer";
 import { ArrayNotEmpty, IsEnum, IsNumber, IsOptional, Length, ValidateNested, ValidatePromise } from "class-validator";
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 

@@ -1,8 +1,8 @@
-import { Field, InterfaceType } from "@nestjs/graphql";
 import { BuildingDetailsAtCertainLevelModel } from "@warp-core/database/model/building-details-at-certain-level.model";
 import { ResourceModel } from "@warp-core/database/model/resource.model";
+import { Field, InterfaceType } from "@nestjs/graphql";
 import { IsNumber, IsOptional, ValidateNested } from "class-validator";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @InterfaceType()
 export abstract class AbstractBuildingResourcesDetailsAtCertainLevel {

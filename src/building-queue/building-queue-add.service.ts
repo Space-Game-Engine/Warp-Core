@@ -1,6 +1,4 @@
 import {ConfigService} from "@nestjs/config";
-import {QueueError} from "./exception/queue.error";
-import {AddToQueueInput} from "./input/add-to-queue.input";
 import {DateTime} from "luxon";
 import {BuildingService} from "@warp-core/building";
 import {Injectable} from "@nestjs/common";
@@ -17,6 +15,8 @@ import {EventEmitter2} from "@nestjs/event-emitter";
 import {QueueElementBeforeProcessingEvent} from "@warp-core/building-queue/event/queue-element-before-processing.event";
 import {QueueElementAfterProcessingEvent} from "@warp-core/building-queue/event/queue-element-after-processing.event";
 import {QueueElementCostModel} from "@warp-core/database/model/queue-element-cost.model";
+import {AddToQueueInput} from "@warp-core/building-queue/input/add-to-queue.input";
+import {QueueError} from "@warp-core/building-queue/exception/queue.error";
 
 @Injectable()
 export class BuildingQueueAddService {

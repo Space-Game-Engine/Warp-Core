@@ -1,4 +1,4 @@
-import { HttpStatus, UnprocessableEntityException} from "@nestjs/common";
+import { UnprocessableEntityException} from "@nestjs/common";
 import {InsufficientResourceType} from "@warp-core/resources/exception/insufficient-resource.type";
 
 export class InsufficientResourcesException extends UnprocessableEntityException {

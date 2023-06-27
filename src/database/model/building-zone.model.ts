@@ -1,7 +1,7 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 import { BuildingModel } from "@warp-core/database/model/building.model";
 import { HabitatModel } from "@warp-core/database/model/habitat.model";
+import { Field, ObjectType } from "@nestjs/graphql";
 import { IsNumber, Min, ValidateNested } from "class-validator";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 

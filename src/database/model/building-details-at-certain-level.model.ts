@@ -1,6 +1,6 @@
-import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { BuildingProductionRateModel } from "@warp-core/database/model/building-production-rate.model";
 import { BuildingModel } from "@warp-core/database/model/building.model";
+import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { Type } from "class-transformer";
 import { IsNumber, IsOptional, Min, ValidateNested, ValidatePromise } from "class-validator";
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
