@@ -8,3 +8,4 @@ export * from "@warp-core/database/model/building-queue-element.model";
 export * from "@warp-core/database/model/habitat.model";
 export * from "@warp-core/database/model/habitat-resource.mapped.model";
 export * from "@warp-core/database/model/habitat-resource.model";
+export * from "@warp-core/database/model/queue-element-cost.model";

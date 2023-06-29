@@ -14,7 +14,7 @@ export class BuildingZoneModel {
      */
     static readonly MINIMAL_BUILDING_LEVEL = 1;
 
-    // Real Id of building zone
+    // Real ID of building zone
     @IsNumber()
     @PrimaryGeneratedColumn()
     id: number;
