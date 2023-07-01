@@ -1,7 +1,12 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
+import { BuildingModel,
+    BuildingQueueElementModel,
+    BuildingQueueRepository,
+    BuildingZoneModel,
+    BuildingZoneRepository
+} from "@warp-core/database";
 import { BuildingQueueHandlerService } from "@warp-core/building-queue/building-queue-handler.service";
-import { BuildingModel, BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneModel, BuildingZoneRepository } from "@warp-core/database";
 import { when } from "jest-when";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { QueueElementBeforeProcessingEvent } from "@warp-core/building-queue/event/queue-element-before-processing.event";

@@ -23,7 +23,10 @@ import { ResourcesModule } from '@warp-core/resources';
             validate: validate,
             load: [config],
         }),
-        EventEmitterModule.forRoot(),
+        EventEmitterModule.forRoot({
+            wildcard: true,
+            delimiter: '.',
+        }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],

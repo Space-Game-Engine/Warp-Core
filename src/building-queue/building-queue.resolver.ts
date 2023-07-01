@@ -2,7 +2,7 @@ import { Args, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/g
 import { BuildingQueueAddService } from "@warp-core/building-queue/building-queue-add.service";
 import { BuildingQueueHandlerService } from "@warp-core/building-queue/building-queue-handler.service";
 import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
-import { AddToQueueValidator } from "@warp-core/building-queue/input/add-to-queue.validator";
+import { AddToQueueValidator } from "@warp-core/building-queue/input/validator/add-to-queue.validator";
 import { BuildingQueueElementModel } from "@warp-core/database";
 
 @Resolver(of => BuildingQueueElementModel)

@@ -4,14 +4,24 @@ import { when } from 'jest-when';
 import { BuildingQueueAddService } from "@warp-core/building-queue/building-queue-add.service";
 import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
 import { BuildingService } from "@warp-core/building";
-import { BuildingModel, BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneModel, BuildingZoneRepository, HabitatModel } from "@warp-core/database";
+import {
+    BuildingModel,
+    BuildingQueueElementModel,
+    BuildingQueueRepository,
+    BuildingZoneModel,
+    BuildingZoneRepository,
+    HabitatModel,
+    QueueElementCostModel
+} from "@warp-core/database";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
+import {EventEmitter2} from "@nestjs/event-emitter";
 
 jest.mock("@warp-core/database/repository/building-queue.repository");
 jest.mock("@warp-core/database/repository/building-zone.repository");
 jest.mock("@warp-core/auth/payload/model/habitat.model");
 jest.mock("@warp-core/building/building.service");
 jest.mock("@nestjs/config");
+jest.mock("@nestjs/event-emitter");
 
 describe("Building queue add service tests", () => {
     let buildingQueueAddService: BuildingQueueAddService;
@@ -20,6 +30,7 @@ describe("Building queue add service tests", () => {
     let buildingService: jest.Mocked<BuildingService>;
     let habitatMock: jest.Mocked<AuthorizedHabitatModel>;
     let configService: jest.Mocked<ConfigService>;
+    let eventEmitter: jest.Mocked<EventEmitter2>;
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -31,7 +42,8 @@ describe("Building queue add service tests", () => {
                 BuildingZoneRepository,
                 BuildingService,
                 ConfigService,
-                AuthorizedHabitatModel
+                AuthorizedHabitatModel,
+                EventEmitter2,
             ]
         }).compile();
 
@@ -249,7 +261,8 @@ describe("Building queue add service tests", () => {
                 endLevel: 4,
                 endTime: new Date(),
                 id: 0,
-                isConsumed: false
+                isConsumed: false,
+                costs: []
             };
 
             const timeToBuild = 100;
@@ -329,7 +342,8 @@ describe("Building queue add service tests", () => {
                 endLevel: 8,
                 endTime: new Date(),
                 id: 0,
-                isConsumed: false
+                isConsumed: false,
+                costs: []
             };
 
             when(buildingQueueRepository

@@ -30,13 +30,6 @@ export class BuildingQueueAddService {
     ) { }
 
     async addToQueue(addToQueueElement: AddToQueueInput) {
-        const queueCounter = await this.buildingQueueRepository.countActiveBuildingQueueElementsForHabitat(this.habitatModel.id);
-        const maxElementsInQueue = this.configService.get<number>('habitat.buildingQueue.maxElementsInQueue');
-
-        if (queueCounter >= maxElementsInQueue) {
-            throw new QueueError(`Max queue count (${maxElementsInQueue}) has been reached`);
-        }
-
         const draftQueueElement = await this.prepareDraftQueueElement(addToQueueElement);
 
         await this.eventEmitter.emitAsync('building_queue.adding.before_processing_element',
@@ -44,7 +37,7 @@ export class BuildingQueueAddService {
                 draftQueueElement
             ));
 
-        let queueElement;
+        let queueElement: BuildingQueueElementModel;
         await this.buildingQueueRepository.transaction(async (entityManager) => {
             queueElement = await entityManager.save(BuildingQueueElementModel, draftQueueElement);
 
@@ -63,10 +56,6 @@ export class BuildingQueueAddService {
                 addToQueueElement.localBuildingZoneId,
                 this.habitatModel.id
             );
-
-        if (await this.isAddToQueueValid(addToQueueElement, buildingZone) === false) {
-            throw new QueueError('Queue element is not valid');
-        }
 
         let building = await buildingZone.building;
 
@@ -95,41 +84,7 @@ export class BuildingQueueAddService {
         return queueElement;
     }
 
-    private async isAddToQueueValid(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel | null): Promise<boolean> {
 
-        if (this.configService.get<boolean>('habitat.buildingQueue.allowMultipleLevelUpdate') === true) {
-            await this.isPossibleToQueueElementByMultipleLevels(addToQueueElement, buildingZone);
-        } else {
-            if (await this.isPossibleToQueueElementByOneLevel(addToQueueElement, buildingZone) === false) {
-                throw new QueueError("You can only upgrade a building by one level at a time");
-            }
-        }
-
-        return true;
-    }
-
-    private async isPossibleToQueueElementByOneLevel(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel): Promise<Boolean> {
-        if (addToQueueElement.endLevel - 1 > buildingZone.level) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private async isPossibleToQueueElementByMultipleLevels(addToQueueElement: AddToQueueInput, buildingZone: BuildingZoneModel): Promise<Boolean> {
-        const currentBuildingQueue = await this.buildingQueueRepository.getCurrentBuildingQueueForBuildingZone(buildingZone);
-        const latestQueueElement = currentBuildingQueue.at(-1);
-
-        if (!latestQueueElement) {
-            return true;
-        }
-
-        if (latestQueueElement.endLevel >= addToQueueElement.endLevel) {
-            throw new QueueError("New queue element should have end level higher than last queue element");
-        }
-
-        return true;
-    }
 
     private async prepareStartTimeForQueueElement(buildingZone: BuildingZoneModel): Promise<Date> {
         const currentBuildingQueue = await this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(buildingZone.habitatId);
