@@ -1,11 +1,10 @@
 import {AddToQueueInput} from "@warp-core/building-queue/input/add-to-queue.input";
 import {BuildingModel, BuildingZoneModel} from "@warp-core/database";
+import {QueueValidationErrorType} from "@warp-core/building-queue/exception/queue-validation-error.type";
 
 export class QueueInputValidationEvent {
 
-    public readonly queueErrors: {
-        [fieldName: string]: string[]
-    } = {};
+    public readonly queueErrors: QueueValidationErrorType = {};
 
     constructor(
         public readonly addToQueueInput: AddToQueueInput,
