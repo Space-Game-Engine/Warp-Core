@@ -15,6 +15,9 @@ import {
 } from "@warp-core/database";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
 import {EventEmitter2} from "@nestjs/event-emitter";
+import {
+    ResourcesCalculatorInterface
+} from "@warp-core/building-queue/add/calculate-resources/resources-calculator.interface";
 
 jest.mock("@warp-core/database/repository/building-queue.repository");
 jest.mock("@warp-core/database/repository/building-zone.repository");
@@ -31,9 +34,14 @@ describe("Building queue add service tests", () => {
     let habitatMock: jest.Mocked<AuthorizedHabitatModel>;
     let configService: jest.Mocked<ConfigService>;
     let eventEmitter: jest.Mocked<EventEmitter2>;
+    let resourcesCalculator: ResourcesCalculatorInterface;
 
     beforeEach(async () => {
         jest.clearAllMocks();
+
+        resourcesCalculator = {
+            calculateResourcesCosts: jest.fn()
+        }
 
         const module: TestingModule = await Test.createTestingModule({
             providers: [
@@ -44,6 +52,10 @@ describe("Building queue add service tests", () => {
                 ConfigService,
                 AuthorizedHabitatModel,
                 EventEmitter2,
+                {
+                    provide: 'QUEUE_ADD_CALCULATION',
+                    useValue: resourcesCalculator
+                },
             ]
         }).compile();
 
@@ -53,324 +65,182 @@ describe("Building queue add service tests", () => {
         buildingService = module.get(BuildingService);
         configService = module.get(ConfigService);
         habitatMock = module.get(AuthorizedHabitatModel);
+        eventEmitter = module.get(EventEmitter2);
+
     });
 
-    describe("prepareDraftQueueElement", () => {
-        it("should throw error when trying to upgrade more than one level of single building zone and queue is empty and is forbidden to upgrade more than one level", async () => {
-            habitatMock.id = 1;
-
-            const addToQueueElement: AddToQueueInput = {
-                localBuildingZoneId: 200,
-                buildingId: 1,
+    const testCases = [
+        {
+            name: "it is first queue element without building in building zone",
+            addToQueueInput: {
+                localBuildingZoneId: 1,
+                endLevel: 1,
+                buildingId: 1
+            },
+            buildingZone: {
+                id: 1,
+                level: 0,
+                building: null
+            },
+            building: {
+                id: 10,
+            },
+            resourcesCosts: [
+                {
+                    resource: {
+                        id: "wood"
+                    },
+                    cost: 5
+                }
+            ],
+            existingQueue: [],
+            buildingTime: 10,
+        },
+        {
+            name: "it is first queue element with building in building zone",
+            addToQueueInput: {
+                localBuildingZoneId: 1,
+                endLevel: 1,
+                buildingId: 1
+            },
+            buildingZone: {
+                id: 1,
+                level: 0,
+                building: {}
+            },
+            building: {
+                id: 10,
+            },
+            resourcesCosts: [
+                {
+                    resource: {
+                        id: "wood"
+                    },
+                    cost: 5
+                }
+            ],
+            existingQueue: [],
+            buildingTime: 10,
+        },
+        {
+            name: "it is next queue element with multiple level update",
+            addToQueueInput: {
+                localBuildingZoneId: 1,
                 endLevel: 5,
-            };
-
-            when(buildingZoneRepository
-                .getSingleBuildingZone)
-                .expectCalledWith(
-                    addToQueueElement.localBuildingZoneId,
-                    habitatMock.id
-                )
-                .mockResolvedValue({
-                    id: 1,
-                    buildingId: null,
-                    level: 0,
-                    placement: null,
-                    habitatId: habitatMock.id,
-                    localBuildingZoneId: addToQueueElement.localBuildingZoneId
-                } as BuildingZoneModel);
-
-            when(configService.get)
-                .expectCalledWith('habitat.buildingQueue.allowMultipleLevelUpdate' as never)
-                .mockReturnValue(false);
-
-            await expect(buildingQueueAddService.prepareDraftQueueElement(addToQueueElement))
-                .rejects
-                .toThrow("You can only upgrade a building by one level at a time");
-
-            expect(buildingZoneRepository.getSingleBuildingZone)
-                .toHaveBeenCalledTimes(1);
-            expect(configService.get)
-                .toHaveBeenCalledTimes(1);
-        });
-
-        it("should prepare draft building queue element when trying to upgrade one level", async () => {
-            habitatMock.id = 1;
-
-            const addToQueueElement: AddToQueueInput = {
-                localBuildingZoneId: 200,
-                buildingId: 1,
-                endLevel: 2,
-            };
-
-            const buildingZone: BuildingZoneModel = {
+                buildingId: 1
+            },
+            buildingZone: {
                 id: 1,
                 level: 1,
-                placement: null,
-                habitat: {} as HabitatModel,
-                habitatId: habitatMock.id,
-                localBuildingZoneId: addToQueueElement.localBuildingZoneId,
-                buildingId: addToQueueElement.buildingId,
-                buildingQueue: [],
-                building: {
-                    id: addToQueueElement.buildingId,
-                } as BuildingModel
-            };
+                building: {}
+            },
+            building: {
+                id: 10,
+            },
+            resourcesCosts: [
+                {
+                    resource: {
+                        id: "wood"
+                    },
+                    cost: 500
+                }
+            ],
+            existingQueue: [],
+            buildingTime: 100,
+        },
+        {
+            name: "it is next queue element with multiple level update and there is something in existing queue",
+            addToQueueInput: {
+                localBuildingZoneId: 1,
+                endLevel: 5,
+                buildingId: 1
+            },
+            buildingZone: {
+                id: 1,
+                level: 1,
+                building: {}
+            },
+            building: {
+                id: 10,
+            },
+            resourcesCosts: [
+                {
+                    resource: {
+                        id: "wood"
+                    },
+                    cost: 500
+                }
+            ],
+            existingQueue: [
+                {
+                    endTime: new Date(Date.now() + 10000)
+                }
+            ],
+            buildingTime: 100,
+        },
+    ];
 
-            const timeToBuild = 100;
+    describe.each(testCases)("prepareDraftQueueElement", (singleTestCase) => {
+        it(`should create draft queue element when ${singleTestCase.name}`, async () => {
+            habitatMock.id = 5;
 
-            when(buildingQueueRepository
-                .getCurrentBuildingQueueForHabitat)
-                .expectCalledWith(habitatMock.id)
-                .mockResolvedValue([]);
+            const addToQueueInput = singleTestCase.addToQueueInput as AddToQueueInput;
+            const buildingZone = singleTestCase.buildingZone as BuildingZoneModel;
+            buildingZone.habitatId = habitatMock.id;
 
-            when(buildingQueueRepository
-                .getCurrentBuildingQueueForBuildingZone)
-                .expectCalledWith(buildingZone)
-                .mockResolvedValue([]);
+            const building = singleTestCase.building as BuildingModel;
 
-            when(buildingZoneRepository
-                .getSingleBuildingZone)
+            if (buildingZone.building !== null) {
+                buildingZone.building = building;
+            }
+
+            const existingQueue = singleTestCase.existingQueue as BuildingQueueElementModel[];
+            const buildingTime = singleTestCase.buildingTime;
+            const resourcesCosts = singleTestCase.resourcesCosts as QueueElementCostModel[];
+
+            when(buildingZoneRepository.getSingleBuildingZone)
                 .expectCalledWith(
-                    addToQueueElement.localBuildingZoneId,
+                    addToQueueInput.localBuildingZoneId,
                     habitatMock.id
-                )
-                .mockResolvedValue(buildingZone);
+                ).mockResolvedValue(buildingZone);
 
-            when(configService.get)
-                .expectCalledWith('habitat.buildingQueue.allowMultipleLevelUpdate' as never)
-                .mockReturnValue(false);
-
-            when(buildingService
-                .calculateTimeInSecondsToUpgradeBuilding)
+            if (buildingZone.building === null) {
+                when(buildingService.getBuildingById)
+                    .expectCalledWith(
+                        addToQueueInput.buildingId
+                    ).mockResolvedValue(building);
+            } else {
+                expect(buildingService.getBuildingById)
+                    .toBeCalledTimes(0);
+            }
+            when(resourcesCalculator.calculateResourcesCosts)
+                .expectCalledWith(
+                    addToQueueInput,
+                    buildingZone,
+                    building
+                ).mockResolvedValue(resourcesCosts);
+            when(buildingQueueRepository.getCurrentBuildingQueueForHabitat)
+                .expectCalledWith(habitatMock.id)
+                .mockResolvedValue(existingQueue);
+            when(buildingService.calculateTimeInSecondsToUpgradeBuilding)
                 .expectCalledWith(
                     buildingZone.level,
-                    addToQueueElement.endLevel,
-                    addToQueueElement.buildingId,
-                )
-                .mockResolvedValue(timeToBuild);
+                    addToQueueInput.endLevel,
+                    building.id
+                ).mockResolvedValue(buildingTime);
 
-            const newQueueElement = await buildingQueueAddService
-                .prepareDraftQueueElement(addToQueueElement);
+            const queueDraft = await buildingQueueAddService.prepareDraftQueueElement(addToQueueInput);
 
-            expect(newQueueElement.buildingId).toEqual(buildingZone.buildingId);
-            expect(newQueueElement.buildingZoneId).toEqual(buildingZone.id);
-            expect(newQueueElement.startLevel).toEqual(buildingZone.level);
-            expect(newQueueElement.endLevel).toEqual(addToQueueElement.endLevel);
-            expect(newQueueElement.startTime).toBeInstanceOf(Date);
-            expect(newQueueElement.endTime).toBeInstanceOf(Date);
-            expect(newQueueElement.startTime.getTime()).toBeLessThan(newQueueElement.endTime.getTime());
-        });
-
-        it("should prepare draft building queue element when trying to upgrade multiple levels", async () => {
-            habitatMock.id = 1;
-
-            const addToQueueElement: AddToQueueInput = {
-                localBuildingZoneId: 200,
-                buildingId: 1,
-                endLevel: 5,
-            };
-
-            const buildingZone: BuildingZoneModel = {
-                id: 1,
-                level: 1,
-                placement: null,
-                habitat: {} as HabitatModel,
-                habitatId: habitatMock.id,
-                localBuildingZoneId: addToQueueElement.localBuildingZoneId,
-                buildingId: addToQueueElement.buildingId,
-                buildingQueue: [],
-                building: {
-                    id: addToQueueElement.buildingId,
-                } as BuildingModel
-            };
-
-            const timeToBuild = 100;
-
-            when(buildingQueueRepository
-                .getCurrentBuildingQueueForHabitat)
-                .expectCalledWith(habitatMock.id)
-                .mockResolvedValue([]);
-
-            when(buildingQueueRepository
-                .getCurrentBuildingQueueForBuildingZone)
-                .expectCalledWith(buildingZone)
-                .mockResolvedValue([]);
-
-            when(buildingZoneRepository
-                .getSingleBuildingZone)
-                .expectCalledWith(
-                    addToQueueElement.localBuildingZoneId,
-                    habitatMock.id
-                )
-                .mockResolvedValue(buildingZone);
-
-            when(configService.get)
-                .expectCalledWith('habitat.buildingQueue.allowMultipleLevelUpdate' as never)
-                .mockReturnValue(true);
-
-            when(buildingService
-                .calculateTimeInSecondsToUpgradeBuilding)
-                .expectCalledWith(
-                    buildingZone.level,
-                    addToQueueElement.endLevel,
-                    addToQueueElement.buildingId,
-                )
-                .mockResolvedValue(timeToBuild);
-
-            const newQueueElement = await buildingQueueAddService
-                .prepareDraftQueueElement(addToQueueElement);
-
-            expect(newQueueElement.buildingId).toEqual(buildingZone.buildingId);
-            expect(newQueueElement.buildingZoneId).toEqual(buildingZone.id);
-            expect(newQueueElement.startLevel).toEqual(buildingZone.level);
-            expect(newQueueElement.endLevel).toEqual(addToQueueElement.endLevel);
-            expect(newQueueElement.startTime).toBeInstanceOf(Date);
-            expect(newQueueElement.endTime).toBeInstanceOf(Date);
-            expect(newQueueElement.startTime.getTime()).toBeLessThan(newQueueElement.endTime.getTime());
-        });
-
-        it("should prepare draft building queue element when there is already element in building queue", async () => {
-            habitatMock.id = 1;
-
-            const addToQueueElement: AddToQueueInput = {
-                localBuildingZoneId: 200,
-                buildingId: 1,
-                endLevel: 5,
-            };
-
-            const buildingZone: BuildingZoneModel = {
-                id: 1,
-                level: 1,
-                placement: null,
-                habitat: {} as HabitatModel,
-                habitatId: habitatMock.id,
-                localBuildingZoneId: addToQueueElement.localBuildingZoneId,
-                buildingId: addToQueueElement.buildingId,
-                buildingQueue: [],
-                building: {
-                    id: addToQueueElement.buildingId,
-                } as BuildingModel
-            };
-
-            const existingBuildingQueueElement: BuildingQueueElementModel = {
-                building: buildingZone.building,
-                buildingZone: buildingZone,
-                startTime: new Date(),
-                startLevel: buildingZone!.level,
-                endLevel: 4,
-                endTime: new Date(),
-                id: 0,
-                isConsumed: false,
-                costs: []
-            };
-
-            const timeToBuild = 100;
-
-            when(buildingQueueRepository
-                .getCurrentBuildingQueueForHabitat)
-                .expectCalledWith(habitatMock.id)
-                .mockResolvedValue([]);
-
-            when(buildingQueueRepository
-                .getCurrentBuildingQueueForBuildingZone)
-                .expectCalledWith(buildingZone)
-                .mockResolvedValue([]);
-
-            when(buildingZoneRepository
-                .getSingleBuildingZone)
-                .expectCalledWith(
-                    addToQueueElement.localBuildingZoneId,
-                    habitatMock.id
-                )
-                .mockResolvedValue(buildingZone);
-
-            when(configService.get)
-                .expectCalledWith('habitat.buildingQueue.allowMultipleLevelUpdate' as never)
-                .mockReturnValue(true);
-
-            when(buildingService
-                .calculateTimeInSecondsToUpgradeBuilding)
-                .expectCalledWith(
-                    buildingZone.level,
-                    addToQueueElement.endLevel,
-                    addToQueueElement.buildingId,
-                )
-                .mockResolvedValue(timeToBuild);
-
-            const newQueueElement = await buildingQueueAddService
-                .prepareDraftQueueElement(addToQueueElement);
-
-            expect(newQueueElement.buildingId).toEqual(buildingZone.buildingId);
-            expect(newQueueElement.buildingZoneId).toEqual(buildingZone.id);
-            expect(newQueueElement.startLevel).toEqual(buildingZone.level);
-            expect(newQueueElement.endLevel).toEqual(addToQueueElement.endLevel);
-            expect(newQueueElement.startTime).toBeInstanceOf(Date);
-            expect(newQueueElement.endTime).toBeInstanceOf(Date);
-            expect(newQueueElement.startTime.toUTCString()).toEqual(existingBuildingQueueElement.endTime.toUTCString());
-            expect(newQueueElement.startTime.getTime()).toBeLessThan(newQueueElement.endTime.getTime());
-        });
-
-        it("should throw error during preparing draft building queue element when there is already element in building queue but it has higher level than new one", async () => {
-            habitatMock.id = 1;
-
-            const addToQueueElement: AddToQueueInput = {
-                localBuildingZoneId: 200,
-                buildingId: 1,
-                endLevel: 5,
-            };
-
-            const buildingZone: BuildingZoneModel = {
-                id: 1,
-                level: 1,
-                placement: null,
-                habitat: {} as HabitatModel,
-                habitatId: habitatMock.id,
-                localBuildingZoneId: addToQueueElement.localBuildingZoneId,
-                buildingId: addToQueueElement.buildingId,
-                buildingQueue: [],
-                building: {
-                    id: addToQueueElement.buildingId,
-                } as BuildingModel
-            };
-
-            const existingBuildingQueueElement: BuildingQueueElementModel = {
-                building: buildingZone.building,
-                buildingZone: buildingZone,
-                startTime: new Date(),
-                startLevel: buildingZone!.level,
-                endLevel: 8,
-                endTime: new Date(),
-                id: 0,
-                isConsumed: false,
-                costs: []
-            };
-
-            when(buildingQueueRepository
-                .getCurrentBuildingQueueForHabitat)
-                .expectCalledWith(habitatMock.id)
-                .mockResolvedValue([existingBuildingQueueElement]);
-
-            when(buildingQueueRepository
-                .getCurrentBuildingQueueForBuildingZone)
-                .expectCalledWith(buildingZone)
-                .mockResolvedValue([existingBuildingQueueElement]);
-
-            when(buildingZoneRepository
-                .getSingleBuildingZone)
-                .expectCalledWith(
-                    addToQueueElement.localBuildingZoneId,
-                    habitatMock.id
-                )
-                .mockResolvedValue(buildingZone);
-
-            when(configService.get)
-                .expectCalledWith('habitat.buildingQueue.allowMultipleLevelUpdate' as never)
-                .mockReturnValue(true);
-
-            await expect(buildingQueueAddService.prepareDraftQueueElement(addToQueueElement))
-                .rejects
-                .toThrow("New queue element should have end level higher than last queue element");
+            expect(queueDraft.id).toBeNull();
+            expect(queueDraft.buildingId).toEqual(building.id);
+            expect(queueDraft.buildingZone).toEqual(buildingZone);
+            expect(queueDraft.buildingZoneId).toEqual(buildingZone.id);
+            expect(queueDraft.startTime).toBeInstanceOf(Date);
+            expect(queueDraft.startLevel).toEqual(buildingZone.level);
+            expect(queueDraft.endLevel).toEqual(addToQueueInput.endLevel);
+            expect(queueDraft.endTime.getTime()).toEqual(queueDraft.startTime.getTime() + buildingTime * 1000);
+            expect(queueDraft.isConsumed).toEqual(false);
+            expect(queueDraft.costs).toEqual(resourcesCosts);
         });
     });
 });
