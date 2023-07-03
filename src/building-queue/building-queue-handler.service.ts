@@ -47,8 +47,6 @@ export class BuildingQueueHandlerService {
 
     private async processQueueElement(queueElement: BuildingQueueElementModel, buildingZoneToProcess: BuildingZoneModel) {
         this.logger.debug(`Processing queue element for building zone with id ${buildingZoneToProcess.id}`);
-        const levelBeforeUpdate = buildingZoneToProcess.level;
-        const levelAfterUpdate = queueElement.endLevel;
         buildingZoneToProcess.level = queueElement.endLevel;
 
         if (!buildingZoneToProcess.buildingId) {
