@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { ConfigService } from "@nestjs/config";
 import { when } from 'jest-when';
-import { BuildingQueueAddService } from "@warp-core/building-queue/building-queue-add.service";
+import { BuildingQueueAddService } from "@warp-core/building-queue/add/building-queue-add.service";
 import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
 import { BuildingService } from "@warp-core/building";
 import {

@@ -1,5 +1,5 @@
 import { Args, Mutation, Parent, Query, ResolveField, Resolver } from "@nestjs/graphql";
-import { BuildingQueueAddService } from "@warp-core/building-queue/building-queue-add.service";
+import { BuildingQueueAddService } from "@warp-core/building-queue/add/building-queue-add.service";
 import { BuildingQueueHandlerService } from "@warp-core/building-queue/building-queue-handler.service";
 import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
 import { AddToQueueValidator } from "@warp-core/building-queue/input/validator/add-to-queue.validator";
