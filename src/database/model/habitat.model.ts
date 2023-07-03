@@ -1,11 +1,11 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { IsBoolean, IsNumber } from "class-validator";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { AuthModelInterface } from "@warp-core/auth/interface/auth-model.interface";
-import { BuildingZoneModel } from "./building-zone.model";
+import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { BuildingQueueElementModel } from "@warp-core/database/model/building-queue-element.model";
 import { HabitatResourceModel } from "@warp-core/database/model/habitat-resource.model";
 import { HabitatResourceCombined } from "@warp-core/database/model/habitat-resource.mapped.model";
+import { Field, ID, ObjectType } from "@nestjs/graphql";
+import { IsBoolean, IsNumber } from "class-validator";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType({ description: "Single habitat that belongs to user" })
 @Entity({ name: "habitat" })

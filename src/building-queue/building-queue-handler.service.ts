@@ -47,8 +47,6 @@ export class BuildingQueueHandlerService {
 
     private async processQueueElement(queueElement: BuildingQueueElementModel, buildingZoneToProcess: BuildingZoneModel) {
         this.logger.debug(`Processing queue element for building zone with id ${buildingZoneToProcess.id}`);
-        const levelBeforeUpdate = buildingZoneToProcess.level;
-        const levelAfterUpdate = queueElement.endLevel;
         buildingZoneToProcess.level = queueElement.endLevel;
 
         if (!buildingZoneToProcess.buildingId) {
@@ -59,7 +57,7 @@ export class BuildingQueueHandlerService {
 
         this.logger.debug(`Queue element processed/consumed for building zone with id ${queueElement.buildingZoneId}`);
 
-        await this.eventEmitter.emitAsync('building_queue.before_processing_element',
+        await this.eventEmitter.emitAsync('building_queue.resolving.before_processing_element',
             new QueueElementBeforeProcessingEvent(
                 queueElement
             ));
@@ -72,7 +70,7 @@ export class BuildingQueueHandlerService {
             isConsumed: queueElement.isConsumed,
         });
 
-        await this.eventEmitter.emitAsync('building_queue.after_processing_element',
+        await this.eventEmitter.emitAsync('building_queue.resolving.after_processing_element',
             new QueueElementAfterProcessingEvent(
                 queueElement,
             ));

@@ -1,6 +1,7 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { BuildingZoneModel } from "@warp-core/database/model/building-zone.model";
 import { BuildingModel } from "@warp-core/database/model/building.model";
+import {QueueElementCostModel} from "@warp-core/database/model/queue-element-cost.model";
+import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { IsBoolean, IsDate, IsNumber } from "class-validator";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -63,4 +64,8 @@ export class BuildingQueueElementModel {
 
     @Column()
     buildingZoneId?: number;
+
+    @Field(() => [QueueElementCostModel], {description: 'How much does that queue element cost?'})
+    @Column('simple-json')
+    costs: QueueElementCostModel[];
 }

@@ -6,13 +6,13 @@ import { IsNumber } from "class-validator";
 import { Column, Entity } from "typeorm";
 
 @ObjectType({
-    description: "Defines what kind of resources will be produced by that building",
+    description: "Defines what resources are needed to build that building",
     implements: () => [AbstractBuildingResourcesDetailsAtCertainLevel]
 })
-@Entity({ name: "building-production-rate" })
-export class BuildingProductionRateModel extends AbstractBuildingResourcesDetailsAtCertainLevel {
-    @Field({description: "Current level production rate"})
+@Entity({ name: "building-requirements" })
+export class BuildingRequirementsModel extends AbstractBuildingResourcesDetailsAtCertainLevel {
+    @Field({description: "Current level cost"})
     @IsNumber()
     @Column()
-    productionRate: number;
+    cost: number;
 }

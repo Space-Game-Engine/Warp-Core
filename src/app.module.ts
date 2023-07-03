@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {Module, UnprocessableEntityException} from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -15,6 +15,7 @@ import config from '@warp-core/core/config/config-parser';
 import { validate } from '@warp-core/core/config/validate';
 import { DatabaseConfig } from '@warp-core/core/config/model/database.config';
 import { ResourcesModule } from '@warp-core/resources';
+import {GraphQLError, GraphQLFormattedError} from "graphql/error";
 
 @Module({
     imports: [
@@ -23,7 +24,10 @@ import { ResourcesModule } from '@warp-core/resources';
             validate: validate,
             load: [config],
         }),
-        EventEmitterModule.forRoot(),
+        EventEmitterModule.forRoot({
+            wildcard: true,
+            delimiter: '.',
+        }),
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -44,6 +48,15 @@ import { ResourcesModule } from '@warp-core/resources';
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
             autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+            formatError: (graphQLError: GraphQLError, error: any) => {
+                if (error.originalError instanceof UnprocessableEntityException) {
+                    return {
+                        message: error.message,
+                        validationError: error.originalError.validationError
+                    }
+                }
+                return graphQLError;
+            },
         }),
         AuthModule,
     ],

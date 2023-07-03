@@ -1,7 +1,12 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
+import { BuildingModel,
+    BuildingQueueElementModel,
+    BuildingQueueRepository,
+    BuildingZoneModel,
+    BuildingZoneRepository
+} from "@warp-core/database";
 import { BuildingQueueHandlerService } from "@warp-core/building-queue/building-queue-handler.service";
-import { BuildingModel, BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneModel, BuildingZoneRepository } from "@warp-core/database";
 import { when } from "jest-when";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { QueueElementBeforeProcessingEvent } from "@warp-core/building-queue/event/queue-element-before-processing.event";
@@ -49,7 +54,7 @@ describe("Building queue handler service test", () => {
         for (const singleQueueElement of queueElements) {
             expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
                 ++counter,
-                expect.stringMatching("building_queue.before_processing_element"),
+                expect.stringMatching("building_queue.resolving.before_processing_element"),
                 expect.objectContaining<QueueElementBeforeProcessingEvent>({
                     queueElement: singleQueueElement,
                 })
@@ -57,7 +62,7 @@ describe("Building queue handler service test", () => {
             
             expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
                 ++counter,
-                expect.stringMatching("building_queue.after_processing_element"),
+                expect.stringMatching("building_queue.resolving.after_processing_element"),
                 expect.objectContaining<QueueElementAfterProcessingEvent>({
                     queueElement: singleQueueElement,
                 })

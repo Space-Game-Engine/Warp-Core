@@ -1,5 +1,5 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { ResourceTypeEnum } from "@warp-core/database/enum/resource-type.enum";
+import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { IsEnum, IsString, Length } from "class-validator";
 import { Column, Entity, PrimaryColumn } from "typeorm";
 

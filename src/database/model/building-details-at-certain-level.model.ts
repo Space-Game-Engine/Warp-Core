@@ -1,9 +1,13 @@
-import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { BuildingProductionRateModel } from "@warp-core/database/model/building-production-rate.model";
 import { BuildingModel } from "@warp-core/database/model/building.model";
+import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { Type } from "class-transformer";
 import { IsNumber, IsOptional, Min, ValidateNested, ValidatePromise } from "class-validator";
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+    AbstractBuildingResourcesDetailsAtCertainLevel
+} from "@warp-core/database/model/building-resources-details-at-certain-level.abstract-model";
+import {BuildingRequirementsModel} from "@warp-core/database";
 
 @ObjectType({ description: "Details how to upgrade single building" })
 @Entity({ name: "building-details-at-certain-level" })
@@ -55,11 +59,30 @@ export class BuildingDetailsAtCertainLevelModel {
         }
     )
     @Type(() => BuildingProductionRateModel)
-    productionRate?: BuildingProductionRateModel[] | Promise<BuildingProductionRateModel[]> | null;
+    productionRate?: BuildingProductionRateModel[] | Promise<BuildingProductionRateModel[]> | null
 
-    // @Field({description: "What should you do to make an upgrade"})
-    // @Column("simple-json")
-    // requirements: object;
+    @Field(
+        () =>[BuildingRequirementsModel],
+        {
+            description: "Requirements to upgrade for specified level. Nothing comes for free.",
+            nullable: true,
+        }
+    )
+    @ValidateNested()
+    @ValidatePromise()
+    @IsOptional()
+    @OneToMany(
+        () => BuildingRequirementsModel,
+        (requirement) => requirement.buildingDetails,
+        {
+            lazy: true,
+            nullable: true,
+            persistence: false,
+            cascade: true,
+        }
+    )
+    @Type(() => BuildingRequirementsModel)
+    requirements?: BuildingRequirementsModel[] | Promise<BuildingRequirementsModel[]> | null;
 
     @BeforeInsert()
     @BeforeUpdate()
@@ -68,6 +91,13 @@ export class BuildingDetailsAtCertainLevelModel {
         for (const productionRate of productionRates) {
             if (!(await productionRate.buildingDetails)) {
                 productionRate.buildingDetails = this;
+            }
+        }
+
+        const requirements = await this.requirements;
+        for (const requirement of requirements) {
+            if (!(await requirement.buildingDetails)) {
+                requirement.buildingDetails = this;
             }
         }
     }

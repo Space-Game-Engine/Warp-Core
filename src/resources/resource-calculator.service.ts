@@ -32,8 +32,8 @@ export class ResourceCalculatorService {
         this.logger.debug(`Resource ${resource.id} for habitat ${this.habitatModel.id} is calculated`);
     }
 
-    @OnEvent('building_queue.after_processing_element')
-    async calculateOnQueueUpdate(queueProcessingEvent: QueueElementProcessedEvent) {
+    @OnEvent('building_queue.resolving.after_processing_element')
+    async addResourcesOnQueueUpdate(queueProcessingEvent: QueueElementProcessedEvent) {
         const buildingQueueElement = queueProcessingEvent.queueElement;
 
         this.logger.debug(`Calculating resource on queue update for building zone ${buildingQueueElement.buildingZoneId}`);

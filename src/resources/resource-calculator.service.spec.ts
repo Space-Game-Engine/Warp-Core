@@ -321,7 +321,7 @@ describe("Resources calculator service test", () => {
                     await habitatResource.resource
                 ).mockResolvedValue([buildingZone]);
 
-            await resourcesCalculator.calculateOnQueueUpdate({queueElement: queueElement});
+            await resourcesCalculator.addResourcesOnQueueUpdate({queueElement: queueElement});
 
             expect(habitatResource.currentAmount).toEqual(20);
             expect(habitatResourceRepository.save).toBeCalledTimes(1);
@@ -402,7 +402,7 @@ describe("Resources calculator service test", () => {
                     await habitatResource2.resource
                 ).mockResolvedValue([buildingZoneForSteel]);
 
-            await resourcesCalculator.calculateOnQueueUpdate({queueElement: queueElement});
+            await resourcesCalculator.addResourcesOnQueueUpdate({queueElement: queueElement});
 
             expect(habitatResource1.currentAmount).toEqual(20);
             expect(habitatResource2.currentAmount).toEqual(10);
