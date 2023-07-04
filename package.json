@@ -112,6 +112,7 @@
       "<rootDir>"
     ],
     "moduleNameMapper": {
+      "@warp-core/test/(.*)": "<rootDir>../test/$1",
       "@warp-core/(.*)": "<rootDir>/$1"
     }
   },
