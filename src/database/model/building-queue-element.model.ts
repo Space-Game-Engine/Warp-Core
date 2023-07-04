@@ -4,10 +4,11 @@ import {QueueElementCostModel} from "@warp-core/database/model/queue-element-cos
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { IsBoolean, IsDate, IsNumber } from "class-validator";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {DraftModelInterface} from "@warp-core/core/utils";
 
 @ObjectType({ description: "Defines one pending item in building queue" })
 @Entity({ name: "building-queue-element" })
-export class BuildingQueueElementModel {
+export class BuildingQueueElementModel implements DraftModelInterface{
 
     @Field(() => ID)
     @IsNumber()
