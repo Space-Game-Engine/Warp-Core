@@ -36,7 +36,7 @@ export class HabitatResolver {
     }
 
     @ResolveField(() => [HabitatResourceCombined])
-    resources(
+    habitatResources(
         @Parent() habitat: HabitatModel
     ) {
         return this.resourcesService.getAllResourcesForHabitat(habitat);
