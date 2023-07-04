@@ -52,7 +52,7 @@ import {GraphQLError, GraphQLFormattedError} from "graphql/error";
                 if (error.originalError instanceof UnprocessableEntityException) {
                     return {
                         message: error.message,
-                        validationError: error.originalError.validationError
+                        validationError: error.originalError.response.message
                     }
                 }
                 return graphQLError;
