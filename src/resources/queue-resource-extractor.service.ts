@@ -8,14 +8,14 @@ import {InsufficientResourceType} from "@warp-core/resources/exception/insuffici
 import {InsufficientResourcesException} from "@warp-core/resources/exception/Insufficient-resources.exception";
 
 @Injectable()
-export class ResourceExtractorService {
+export class QueueResourceExtractorService {
     constructor(
         private readonly habitatModel: AuthorizedHabitatModel,
         private readonly habitatResourceRepository: HabitatResourceRepository,
     ) {}
 
     @OnEvent('building_queue.adding.after_processing_element')
-    async useResourcesOnQueueUpdate(queueProcessingEvent: QueueElementProcessedEvent) {
+    async useResourcesOnQueueUpdate(queueProcessingEvent: QueueElementProcessedEvent, transactionId: string) {
         const queueElement = queueProcessingEvent.queueElement;
         const requiredResources = await this.getRequiredResourcesFromHabitat(queueElement.costs);
         const errors = this.validateResources(queueElement.costs, requiredResources);
@@ -24,7 +24,7 @@ export class ResourceExtractorService {
             throw new InsufficientResourcesException(errors);
         }
 
-        await this.extractResources(queueElement.costs, requiredResources);
+        await this.extractResources(queueElement.costs, requiredResources, transactionId);
     }
 
     private async getRequiredResourcesFromHabitat(queueCost: QueueElementCostModel[]): Promise<HabitatResourceModel[]> {
@@ -61,7 +61,8 @@ export class ResourceExtractorService {
         return errors;
     }
 
-    private async extractResources(queueCost: QueueElementCostModel[], requiredResources: HabitatResourceModel[]) {
+    private async extractResources(queueCost: QueueElementCostModel[], requiredResources: HabitatResourceModel[], transactionId: string) {
+        const entityManager = this.habitatResourceRepository.getSharedTransaction(transactionId);
         for (const singleRequiredResource of requiredResources) {
             const queueCostPerResource = queueCost.find(
                 (cost) => cost.resource.id === singleRequiredResource.resourceId
@@ -69,7 +70,7 @@ export class ResourceExtractorService {
 
             singleRequiredResource.currentAmount -= queueCostPerResource.cost;
 
-            await this.habitatResourceRepository.update(singleRequiredResource.id, {
+            await entityManager.update<HabitatResourceModel>(HabitatResourceModel, singleRequiredResource.id, {
                 currentAmount: singleRequiredResource.currentAmount
             });
         }

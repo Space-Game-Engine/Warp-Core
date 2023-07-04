@@ -5,30 +5,37 @@ import {
 } from "@warp-core/database";
 import {AuthorizedHabitatModel} from "@warp-core/auth";
 import {Test, TestingModule} from "@nestjs/testing";
-import {ResourceExtractorService} from "@warp-core/resources/resource-extractor.service";
+import {QueueResourceExtractorService} from "@warp-core/resources/queue-resource-extractor.service";
 import {QueueElementProcessedEvent} from "@warp-core/building-queue";
 import {when} from "jest-when";
 import {InsufficientResourcesException} from "@warp-core/resources/exception/Insufficient-resources.exception";
 import {InsufficientResourceType} from "@warp-core/resources/exception/insufficient-resource.type";
+import {prepareRepositoryMock} from "@warp-core/test/database/repository/prepare-repository-mock";
 
 jest.mock("@warp-core/database/repository/habitat-resource.repository");
 
 describe("Resource extraction service", () => {
-    let resourceExtractorService: ResourceExtractorService;
+    let resourceExtractorService: QueueResourceExtractorService;
     let habitatResourceRepository: jest.Mocked<HabitatResourceRepository>;
     let authorizedHabitatModel: jest.Mocked<AuthorizedHabitatModel>;
+
+    const transactionId = '12345';
+
+    beforeAll(() => {
+        prepareRepositoryMock(HabitatResourceRepository);
+    });
 
     beforeEach(async () => {
         jest.clearAllMocks();
         const module: TestingModule = await Test.createTestingModule({
             providers: [
-                ResourceExtractorService,
+                QueueResourceExtractorService,
                 HabitatResourceRepository,
                 AuthorizedHabitatModel,
             ]
         }).compile();
 
-        resourceExtractorService = module.get<ResourceExtractorService>(ResourceExtractorService);
+        resourceExtractorService = module.get<QueueResourceExtractorService>(QueueResourceExtractorService);
         habitatResourceRepository = module.get(HabitatResourceRepository);
         authorizedHabitatModel = module.get(AuthorizedHabitatModel);
     });
@@ -65,8 +72,10 @@ describe("Resource extraction service", () => {
                 )
                 .mockResolvedValue(habitatResources);
 
-            await expect(resourceExtractorService.useResourcesOnQueueUpdate({queueElement: {costs: costs}} as QueueElementProcessedEvent))
+            await expect(resourceExtractorService.useResourcesOnQueueUpdate({queueElement: {costs: costs}} as QueueElementProcessedEvent, transactionId))
                 .rejects.toThrowError('Requested resources from queue does not equal resources from habitat');
+
+            expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(0);
         });
 
         const insufficientResources = [
@@ -188,7 +197,7 @@ describe("Resource extraction service", () => {
                     .mockResolvedValue(habitatResources);
 
                 try {
-                    await resourceExtractorService.useResourcesOnQueueUpdate({queueElement: {costs: costs}} as QueueElementProcessedEvent);
+                    await resourceExtractorService.useResourcesOnQueueUpdate({queueElement: {costs: costs}} as QueueElementProcessedEvent, transactionId);
                 } catch (e) {
                     expect(e).toBeInstanceOf(InsufficientResourcesException);
                     expect(e.insufficientResources).toHaveLength(singleCase.exceptionCalculationResults.length);
@@ -253,12 +262,13 @@ describe("Resource extraction service", () => {
                 )
                 .mockResolvedValue(habitatResources);
 
-            await resourceExtractorService.useResourcesOnQueueUpdate({queueElement: {costs: costs}} as QueueElementProcessedEvent);
+            await resourceExtractorService.useResourcesOnQueueUpdate({queueElement: {costs: costs}} as QueueElementProcessedEvent, transactionId);
 
             expect(habitatResources[0].currentAmount).toEqual(0);
             expect(habitatResources[1].currentAmount).toEqual(0);
 
-            expect(habitatResourceRepository.update).toBeCalledTimes(2);
+            expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(1);
+            expect(habitatResourceRepository.getSharedTransaction(transactionId).update).toBeCalledTimes(2);
         });
     });
 });
