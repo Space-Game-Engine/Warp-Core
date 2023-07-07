@@ -16,6 +16,7 @@ import { validate } from '@warp-core/core/config/validate';
 import { DatabaseConfig } from '@warp-core/core/config/model/database.config';
 import { ResourcesModule } from '@warp-core/resources';
 import {GraphQLError, GraphQLFormattedError} from "graphql/error";
+import {parseValidationErrorMessageResponse} from "@warp-core/core/validation/parse-validation-error-message-response";
 
 @Module({
     imports: [
@@ -48,15 +49,7 @@ import {GraphQLError, GraphQLFormattedError} from "graphql/error";
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
             autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-            formatError: (graphQLError: GraphQLError, error: any) => {
-                if (error.originalError instanceof UnprocessableEntityException) {
-                    return {
-                        message: error.message,
-                        validationError: error.originalError.response.message
-                    }
-                }
-                return graphQLError;
-            },
+            formatError: parseValidationErrorMessageResponse,
         }),
         AuthModule,
     ],
