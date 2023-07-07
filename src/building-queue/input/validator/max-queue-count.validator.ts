@@ -15,7 +15,7 @@ export class MaxQueueCountValidator {
     ) {
     }
 
-    @OnEvent('building_queue.validating.add_to_queue', {async: true})
+    @OnEvent('building_queue.validating.add_to_queue')
     async validate(queueValidationEvent: QueueInputValidationEvent) {
         const queueCounter = await this.buildingQueueRepository.countActiveBuildingQueueElementsForHabitat(this.habitatModel.id);
         const maxElementsInQueue = this.configService.get<number>('habitat.buildingQueue.maxElementsInQueue');

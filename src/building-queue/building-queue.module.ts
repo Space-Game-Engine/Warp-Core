@@ -14,14 +14,22 @@ import {EndLevelValidator} from "@warp-core/building-queue/input/validator/end-l
 import {ConfigurationValidator} from "@warp-core/building-queue/input/validator/configuration.validator";
 import {MaxQueueCountValidator} from "@warp-core/building-queue/input/validator/max-queue-count.validator";
 import {SimpleCalculationService} from "@warp-core/building-queue/add/calculate-resources/simple-calculation.service";
+import {BuildingQueueDraftService} from "@warp-core/building-queue/add/building-queue-draft.service";
+import {
+    PrepareSingleBuildingQueueElementService
+} from "@warp-core/building-queue/add/prepare-single-building-queue-element.service";
+import {DraftQueueElementValidator} from "@warp-core/building-queue/input/validator/draft-queue-element.validator";
 
 @Module({
     providers: [
         BuildingQueueAddService,
+        BuildingQueueDraftService,
         BuildingQueueHandlerService,
+        PrepareSingleBuildingQueueElementService,
         BuildingQueueResolver,
         BuildingZoneUpdateByQueueSubscriber,
         AddToQueueValidator,
+        DraftQueueElementValidator,
         EndLevelValidator,
         ConfigurationValidator,
         MaxQueueCountValidator,

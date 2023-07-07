@@ -18,7 +18,8 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@warp-core/*": ["src/*"]
+      "@warp-core/*": ["src/*"],
+      "@warp-core/test/*": ["test/*"]
     }
   },
   "include": [

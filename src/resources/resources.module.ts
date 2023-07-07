@@ -6,7 +6,7 @@ import { HabitatResourceRecalculateSubscriber } from "@warp-core/resources/habit
 import { ResourceCalculatorService } from "@warp-core/resources/resource-calculator.service";
 import { ResourcesResolver } from "@warp-core/resources/resources.resolver";
 import { ResourcesService } from "@warp-core/resources/resources.service";
-import {ResourceExtractorService} from "@warp-core/resources/resource-extractor.service";
+import {QueueResourceExtractorService} from "@warp-core/resources/queue-resource-extractor.service";
 
 @Module({
     providers: [
@@ -14,7 +14,7 @@ import {ResourceExtractorService} from "@warp-core/resources/resource-extractor.
         HabitatResourceRecalculateSubscriber,
         ResourcesService,
         ResourceCalculatorService,
-        ResourceExtractorService,
+        QueueResourceExtractorService,
         ResourcesResolver,
     ],
     imports: [

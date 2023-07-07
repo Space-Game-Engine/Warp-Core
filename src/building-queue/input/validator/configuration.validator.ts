@@ -5,7 +5,7 @@ import {ConfigService} from "@nestjs/config";
 import {AddToQueueInput} from "@warp-core/building-queue/input/add-to-queue.input";
 import {BuildingQueueRepository, BuildingZoneModel} from "@warp-core/database";
 
-// @Injectable()
+@Injectable()
 export class ConfigurationValidator {
     constructor(
         private readonly buildingQueueRepository: BuildingQueueRepository,
@@ -13,7 +13,8 @@ export class ConfigurationValidator {
     ) {
     }
 
-    // @OnEvent('building_queue.validating.add_to_queue', {async: true})
+    @OnEvent('building_queue.validating.add_to_queue')
+    @OnEvent('building_queue.validating.draft_queue_element')
     async validate(queueValidationEvent: QueueInputValidationEvent) {
         const addToQueueElement = queueValidationEvent.addToQueueInput;
         const buildingZone = queueValidationEvent.buildingZone;

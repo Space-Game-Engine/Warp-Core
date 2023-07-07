@@ -4,19 +4,31 @@ import { BuildingQueueHandlerService } from "@warp-core/building-queue/building-
 import { AddToQueueInput } from "@warp-core/building-queue/input/add-to-queue.input";
 import { AddToQueueValidator } from "@warp-core/building-queue/input/validator/add-to-queue.validator";
 import { BuildingQueueElementModel } from "@warp-core/database";
+import {DraftModelInterface} from "@warp-core/core/utils/model";
+import {ResourceConsumerResolverInterface} from "@warp-core/core/utils";
+import {BuildingQueueDraftService} from "@warp-core/building-queue/add/building-queue-draft.service";
+import {DraftQueueElementValidator} from "@warp-core/building-queue/input/validator/draft-queue-element.validator";
 
 @Resolver(of => BuildingQueueElementModel)
-export class BuildingQueueResolver {
+export class BuildingQueueResolver implements ResourceConsumerResolverInterface {
     constructor(
         private readonly buildingQueueAddService: BuildingQueueAddService,
+        private readonly buildingQueueDraftService: BuildingQueueDraftService,
         private readonly buildingQueueHandlerService: BuildingQueueHandlerService
     ) {}
 
-    @Mutation(returns => BuildingQueueElementModel, { description: "Add to element queue", name: "buildingQueue_add" })
-    addToQueue(
+    @Mutation(returns => BuildingQueueElementModel, { description: "Add to element queue and consume related resources", name: "buildingQueue_add" })
+    processAndConsumeResources(
         @Args('addToQueue', AddToQueueValidator) addToQueue: AddToQueueInput
     ) {
-        return this.buildingQueueAddService.addToQueue(addToQueue);
+        return this.buildingQueueAddService.processAndConsumeResources(addToQueue);
+    }
+
+    @Mutation(returns => BuildingQueueElementModel, { description: "Prepare a draft of a queue element", name: "buildingQueue_getDraft" })
+    getDraft(
+        @Args('addToQueue', DraftQueueElementValidator) addToQueue: AddToQueueInput
+    ): Promise<DraftModelInterface> {
+        return this.buildingQueueDraftService.getDraft(addToQueue);
     }
 
     @Query(returns => [BuildingQueueElementModel], { description: "Checks all items in queue, recalculate them and return current items from queue", name: "buildingQueue_getAll" })
