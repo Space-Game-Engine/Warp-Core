@@ -4,9 +4,8 @@ import {
 } from "@warp-core/building-queue/input/validator/abstract-new-queue-element.validator";
 
 @Injectable()
-export class AddToQueueValidator extends AbstractNewQueueElementValidator {
-
+export class DraftQueueElementValidator extends AbstractNewQueueElementValidator {
     protected getEventName(): string {
-        return 'building_queue.validating.add_to_queue';
+        return 'building_queue.validating.draft_queue_element';
     };
 }

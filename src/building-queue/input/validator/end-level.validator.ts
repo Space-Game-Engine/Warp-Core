@@ -7,7 +7,8 @@ export class EndLevelValidator {
     constructor() {
     }
 
-    @OnEvent('building_queue.validating.add_to_queue', {async: true})
+    @OnEvent('building_queue.validating.add_to_queue')
+    @OnEvent('building_queue.validating.draft_queue_element')
     async validate(queueValidationEvent: QueueInputValidationEvent) {
         const addToQueue = queueValidationEvent.addToQueueInput;
         const buildingZone = queueValidationEvent.buildingZone;
