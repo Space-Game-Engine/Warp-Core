@@ -7,6 +7,7 @@ import { BuildingQueueElementModel } from "@warp-core/database";
 import {DraftModelInterface} from "@warp-core/core/utils/model";
 import {ResourceConsumerResolverInterface} from "@warp-core/core/utils";
 import {BuildingQueueDraftService} from "@warp-core/building-queue/add/building-queue-draft.service";
+import {DraftQueueElementValidator} from "@warp-core/building-queue/input/validator/draft-queue-element.validator";
 
 @Resolver(of => BuildingQueueElementModel)
 export class BuildingQueueResolver implements ResourceConsumerResolverInterface {
@@ -25,7 +26,7 @@ export class BuildingQueueResolver implements ResourceConsumerResolverInterface 
 
     @Mutation(returns => BuildingQueueElementModel, { description: "Prepare a draft of a queue element", name: "buildingQueue_getDraft" })
     getDraft(
-        @Args('addToQueue', AddToQueueValidator) addToQueue: AddToQueueInput
+        @Args('addToQueue', DraftQueueElementValidator) addToQueue: AddToQueueInput
     ): Promise<DraftModelInterface> {
         return this.buildingQueueDraftService.getDraft(addToQueue);
     }
