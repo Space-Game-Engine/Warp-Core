@@ -1,17 +1,13 @@
 resources:
   - id: wood
     name: Spruce wood
-    baseMaxCapacity: 100
     type: construction
   - id: stone_granite
     name: Granite
-    baseMaxCapacity: 100
     type: construction
   - id: stone_sandstone
     name: Sandstone
-    baseMaxCapacity: 100
     type: construction
   - id: coal
     name: Mine coal
-    baseMaxCapacity: 10
     type: energy

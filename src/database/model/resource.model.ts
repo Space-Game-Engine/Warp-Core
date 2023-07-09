@@ -16,10 +16,6 @@ export class ResourceModel {
     @Column('varchar')
     name: string;
 
-    @Field({ description: "What is base capacity for that resource" })
-    @Column('int')
-    baseMaxCapacity: number;
-
     @Field(() => ResourceTypeEnum, { description: "Type decides what kind of resource do we have here" })
     @IsEnum(ResourceTypeEnum)
     @Column('varchar')
