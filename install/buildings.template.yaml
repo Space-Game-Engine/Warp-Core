@@ -6,11 +6,13 @@ buildings:
         timeToUpdateBuildingInSeconds: 10
         warehouse:
           - warehouseType: by_resource_type
+            resourceType: construction
             amount: 100
       - level: 2
         timeToUpdateBuildingInSeconds: 30
         warehouse:
           - warehouseType: by_resource_type
+            resourceType: construction
             amount: 200
         requirements:
           - resourceId: wood
