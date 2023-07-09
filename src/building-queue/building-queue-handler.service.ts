@@ -26,7 +26,9 @@ export class BuildingQueueHandlerService {
             .getUnresolvedQueueForHabitat(this.habitatModel.id);
 
         for (const buildingZone of await this.habitatModel.buildingZones) {
-            await this.processMultipleQueueElements(notResolvedQueueItems, buildingZone);
+            await this.processMultipleQueueElements(notResolvedQueueItems.filter(
+                queueItem => queueItem.buildingZoneId === buildingZone.id
+            ), buildingZone);
         }
     }
 
