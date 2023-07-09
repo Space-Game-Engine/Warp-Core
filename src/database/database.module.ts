@@ -9,7 +9,7 @@ import {
     BuildingZoneModel,
     HabitatModel,
     HabitatResourceModel,
-    ResourceModel
+    ResourceModel, WarehouseDetailsModel
 } from "@warp-core/database/model";
 import {
     BuildingQueueRepository,
@@ -53,6 +53,7 @@ export class DatabaseModule {
             HabitatResourceModel,
             BuildingProductionRateModel,
             BuildingRequirementsModel,
+            WarehouseDetailsModel,
         ]
     }
 }

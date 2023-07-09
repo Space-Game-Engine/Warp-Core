@@ -4,6 +4,7 @@ export enum BuildingRoleEnum {
     RESOURCE_PRODUCTION = "resource",
     TECHNOLOGY_PRODUCTION = "technology",
     UNIT_PRODUCTION = "unit",
+    WAREHOUSE_ONLY = "warehouse",
 }
 
 registerEnumType(BuildingRoleEnum, {
@@ -18,6 +19,9 @@ registerEnumType(BuildingRoleEnum, {
         },
         UNIT_PRODUCTION: {
             description: "Recruit units for your army",
+        },
+        WAREHOUSE_ONLY: {
+            description: "That building only stores some resources, don't have any other role.",
         },
     },
 });

@@ -4,10 +4,7 @@ import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { Type } from "class-transformer";
 import { IsNumber, IsOptional, Min, ValidateNested, ValidatePromise } from "class-validator";
 import { BeforeInsert, BeforeUpdate, Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import {
-    AbstractBuildingResourcesDetailsAtCertainLevel
-} from "@warp-core/database/model/building-resources-details-at-certain-level.abstract-model";
-import {BuildingRequirementsModel} from "@warp-core/database";
+import {BuildingRequirementsModel, WarehouseDetailsModel} from "@warp-core/database";
 
 @ObjectType({ description: "Details how to upgrade single building" })
 @Entity({ name: "building-details-at-certain-level" })
@@ -59,7 +56,7 @@ export class BuildingDetailsAtCertainLevelModel {
         }
     )
     @Type(() => BuildingProductionRateModel)
-    productionRate?: BuildingProductionRateModel[] | Promise<BuildingProductionRateModel[]> | null
+    productionRate?: BuildingProductionRateModel[] | Promise<BuildingProductionRateModel[]> | null;
 
     @Field(
         () =>[BuildingRequirementsModel],
@@ -84,6 +81,29 @@ export class BuildingDetailsAtCertainLevelModel {
     @Type(() => BuildingRequirementsModel)
     requirements?: BuildingRequirementsModel[] | Promise<BuildingRequirementsModel[]> | null;
 
+    @Field(
+        () =>[WarehouseDetailsModel],
+        {
+            description: "Resources stored by this level of building",
+            nullable: true,
+        }
+    )
+    @ValidateNested()
+    @ValidatePromise()
+    @IsOptional()
+    @OneToMany(
+        () => WarehouseDetailsModel,
+        (requirement) => requirement.buildingDetails,
+        {
+            lazy: true,
+            nullable: true,
+            persistence: false,
+            cascade: true,
+        }
+    )
+    @Type(() => WarehouseDetailsModel)
+    warehouse?: WarehouseDetailsModel[] | Promise<WarehouseDetailsModel[]> | null;
+
     @BeforeInsert()
     @BeforeUpdate()
     async setOneToManyRelations() {
@@ -98,6 +118,13 @@ export class BuildingDetailsAtCertainLevelModel {
         for (const requirement of requirements) {
             if (!(await requirement.buildingDetails)) {
                 requirement.buildingDetails = this;
+            }
+        }
+
+        const warehouse = await this.warehouse;
+        for (const singleWarehouseDetail of warehouse) {
+            if (!(await singleWarehouseDetail.buildingDetails)) {
+                singleWarehouseDetail.buildingDetails = this;
             }
         }
     }
