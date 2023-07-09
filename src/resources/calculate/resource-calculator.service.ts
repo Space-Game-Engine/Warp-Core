@@ -22,7 +22,7 @@ export class ResourceCalculatorService {
 
         this.logger.debug(`Calculate resource ${resource.id} for habitat ${this.habitatModel.id}`);
 
-        const buildingZones = await this.buildingZoneRepository.getBuildingZonesForSingleResource(
+        const buildingZones = await this.buildingZoneRepository.getBuildingZoneProducersForSingleResource(
             this.habitatModel,
             resource
         );

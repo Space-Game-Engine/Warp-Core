@@ -60,7 +60,7 @@ describe("Resources calculator service test", () => {
 
             authorizedHabitatModel.id = 5;
 
-            when(buildingZoneRepository.getBuildingZonesForSingleResource)
+            when(buildingZoneRepository.getBuildingZoneProducersForSingleResource)
                 .expectCalledWith(
                     authorizedHabitatModel,
                     await habitatResource.resource
@@ -97,7 +97,7 @@ describe("Resources calculator service test", () => {
 
                 authorizedHabitatModel.id = 5;
 
-                when(buildingZoneRepository.getBuildingZonesForSingleResource)
+                when(buildingZoneRepository.getBuildingZoneProducersForSingleResource)
                     .expectCalledWith(
                         authorizedHabitatModel,
                         await habitatResource.resource
@@ -140,7 +140,7 @@ describe("Resources calculator service test", () => {
                     .calledWith(habitatResource.resource as ResourceModel)
                     .mockResolvedValue(buildingZoneResource.warehouseLimit);
 
-                when(buildingZoneRepository.getBuildingZonesForSingleResource)
+                when(buildingZoneRepository.getBuildingZoneProducersForSingleResource)
                     .expectCalledWith(
                         authorizedHabitatModel,
                         await habitatResource.resource
@@ -182,7 +182,7 @@ describe("Resources calculator service test", () => {
 
                 authorizedHabitatModel.id = 5;
 
-                when(buildingZoneRepository.getBuildingZonesForSingleResource)
+                when(buildingZoneRepository.getBuildingZoneProducersForSingleResource)
                     .expectCalledWith(
                         authorizedHabitatModel,
                         await habitatResource.resource
@@ -237,7 +237,7 @@ describe("Resources calculator service test", () => {
                 )
                 .mockResolvedValue([habitatResource]);
 
-            when(buildingZoneRepository.getBuildingZonesForSingleResource)
+            when(buildingZoneRepository.getBuildingZoneProducersForSingleResource)
                 .expectCalledWith(
                     authorizedHabitatModel,
                     await habitatResource.resource
@@ -314,7 +314,7 @@ describe("Resources calculator service test", () => {
                 )
                 .mockResolvedValue([habitatResource1, habitatResource2]);
 
-            when(buildingZoneRepository.getBuildingZonesForSingleResource)
+            when(buildingZoneRepository.getBuildingZoneProducersForSingleResource)
                 .calledWith(
                     authorizedHabitatModel,
                     await habitatResource1.resource

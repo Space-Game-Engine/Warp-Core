@@ -58,7 +58,7 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
         return maxCounterValue;
     }
 
-    getBuildingZonesForSingleResource(habitat: HabitatModel | number, resourceType: ResourceModel): Promise<BuildingZoneModel[]> {
+    getBuildingZoneProducersForSingleResource(habitat: HabitatModel | number, resourceType: ResourceModel): Promise<BuildingZoneModel[]> {
         let habitatId: number;
 
         if (habitat instanceof HabitatModel) {
