@@ -27,7 +27,7 @@ export class WarehouseDetailsModel extends AbstractDetailsAtCertainLevelModel {
     @JoinColumn({ name: 'resourceId' })
     resource?: ResourceModel | Promise<ResourceModel> | null;
 
-    @Column({ name: 'resourceId' })
+    @Column({ name: 'resourceId', nullable: true })
     @ValidateIf((details: WarehouseDetailsModel) => details.warehouseType === WarehouseTypeEnum.ONE_KIND_OF_RESOURCE)
     @IsNotEmpty()
     resourceId?: string | null;

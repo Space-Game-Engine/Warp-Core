@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { BuildingZoneModel, HabitatModel, ResourceModel } from "@warp-core/database/model";
+import {BuildingZoneModel, HabitatModel, ResourceModel, WarehouseDetailsModel} from "@warp-core/database/model";
 import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
 import { DataSource, FindOptionsUtils } from "typeorm";
 
@@ -78,6 +78,16 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
             .andWhere('productionRate.resourceId = :resourceId', { resourceId: resourceType.id });
 
         return queryBuilder.getMany();
+    }
+
+    async getWarehouseForResourceAndHabitat(resource: ResourceModel, habitatId: number): Promise<WarehouseDetailsModel[]> {
+        const buildingZonesForHabitat = await this.getAllBuildingZonesByHabitatId(habitatId);
+        const warehouses = (await Promise.all(buildingZonesForHabitat
+            .filter(async singleBuildingZone => await singleBuildingZone.hasWarehouse())
+            .map(async singleBuildingZone => await (await singleBuildingZone.getBuildingLevelDetails()).warehouse)
+        )).flat();
+
+        return warehouses.filter(singleWarehouse => singleWarehouse.isWarehouseLinkedToResource(resource));
     }
 
 }
