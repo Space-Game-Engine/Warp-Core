@@ -4,6 +4,7 @@ import { AuthorizedHabitatModel } from "@warp-core/auth";
 import { QueueElementProcessedEvent } from "@warp-core/building-queue";
 import { BuildingZoneModel, BuildingZoneRepository, HabitatResourceModel, HabitatResourceRepository } from "@warp-core/database";
 import { DateTime } from "luxon";
+import {CalculateResourceStorageService} from "@warp-core/resources/calculate/warehouse-storage/calculate-resource-storage.service";
 
 @Injectable()
 export class ResourceCalculatorService {
@@ -12,6 +13,7 @@ export class ResourceCalculatorService {
     constructor(
         private readonly buildingZoneRepository: BuildingZoneRepository,
         private readonly habitatResourceRepository: HabitatResourceRepository,
+        private readonly calculateResourceStorage: CalculateResourceStorageService,
         private readonly habitatModel: AuthorizedHabitatModel,
     ) {}
 
@@ -54,7 +56,9 @@ export class ResourceCalculatorService {
         const lastCalculationTime = DateTime.fromJSDate(habitatResource.lastCalculationTime);
         const timeUntilNowInSeconds = lastCalculationTime.diff(DateTime.fromJSDate(calculationEndTime)).as('seconds');
 
-        const currentAmount = lastlyCalculatedAmount + (productionRate * Math.abs(timeUntilNowInSeconds));
+        const calculatedAmount = lastlyCalculatedAmount + (productionRate * Math.abs(timeUntilNowInSeconds));
+        const currentMaxStorage = await this.calculateResourceStorage.calculateStorage(await habitatResource.resource);
+        const currentAmount = (calculatedAmount > currentMaxStorage) ? currentMaxStorage : calculatedAmount;
 
         habitatResource.currentAmount = Math.round(currentAmount);
     }

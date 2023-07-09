@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HabitatResourceModel } from '@warp-core/database';
-import { ResourceCalculatorService } from '@warp-core/resources/resource-calculator.service';
+import { ResourceCalculatorService } from '@warp-core/resources/calculate/resource-calculator.service';
 import { DataSource, EntitySubscriberInterface, EventSubscriber } from 'typeorm';
 
 @Injectable()
