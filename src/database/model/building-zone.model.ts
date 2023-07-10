@@ -75,27 +75,38 @@ export class BuildingZoneModel {
 
     currentLevelBuildingDetails: BuildingDetailsAtCertainLevelModel = null;
 
-    async getBuildingLevelDetails(): Promise<BuildingDetailsAtCertainLevelModel> {
+    async getBuildingLevelDetails(): Promise<BuildingDetailsAtCertainLevelModel | null> {
         if (this.currentLevelBuildingDetails !== null) {
             return this.currentLevelBuildingDetails;
         }
 
         const building = await this.building;
 
-        this.currentLevelBuildingDetails = (await building.buildingDetailsAtCertainLevel).find((details) => {
-            return details.level === this.level
-        });
+        if (!building) {
+            return null;
+        }
+
+        this.currentLevelBuildingDetails = (await building.buildingDetailsAtCertainLevel)
+            .find(details => details.level === this.level);
 
         return this.currentLevelBuildingDetails;
     }
 
     async hasWarehouse(): Promise<boolean> {
         const building = await this.building;
+        if (!building) {
+            return false;
+        }
+
         if (building.role === BuildingRoleEnum.WAREHOUSE_ONLY) {
             return true;
         }
 
         const buildingDetails = await this.getBuildingLevelDetails();
+
+        if (!buildingDetails) {
+            return false;
+        }
 
         if ((await buildingDetails.warehouse).length > 0) {
             return true;
