@@ -7,7 +7,7 @@ import {BuildingQueueHandlerService} from "@warp-core/building-queue/building-qu
 import {BuildingQueueResolver} from "@warp-core/building-queue/building-queue.resolver";
 import {BuildingZoneUpdateByQueueSubscriber} from "@warp-core/building-queue/building-zone-update-by-queue.subscriber";
 import {AddToQueueValidator} from "@warp-core/building-queue/input/validator/add-to-queue.validator";
-import {BuildingZoneModule} from "@warp-core/building-zone";
+import {BuildingZoneModule} from "@warp-core/building-zone/building-zone.module";
 import {BuildingModule} from "@warp-core/building";
 import {DatabaseModule} from "@warp-core/database";
 import {EndLevelValidator} from "@warp-core/building-queue/input/validator/end-level.validator";
