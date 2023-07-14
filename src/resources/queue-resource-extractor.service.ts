@@ -71,7 +71,8 @@ export class QueueResourceExtractorService {
             singleRequiredResource.currentAmount -= queueCostPerResource.cost;
 
             await entityManager.update<HabitatResourceModel>(HabitatResourceModel, singleRequiredResource.id, {
-                currentAmount: singleRequiredResource.currentAmount
+                currentAmount: singleRequiredResource.currentAmount,
+                lastCalculationTime: new Date(),
             });
         }
     }
