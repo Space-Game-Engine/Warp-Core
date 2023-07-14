@@ -1,4 +1,4 @@
-import {Module, UnprocessableEntityException} from '@nestjs/common';
+import {Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
