@@ -1,6 +1,6 @@
 import {CustomValidator} from "@warp-core/core";
 import {AddToQueueInput} from "@warp-core/building-queue/input/add-to-queue.input";
-import {BuildingZoneService} from "@warp-core/building-zone";
+import {BuildingZoneService} from "@warp-core/building-zone/building-zone.service";
 import {BuildingService} from "@warp-core/building";
 import {EventEmitter2} from "@nestjs/event-emitter";
 import {QueueInputValidationEvent} from "@warp-core/building-queue/event/queue-input-validation.event";

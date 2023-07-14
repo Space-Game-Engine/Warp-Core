@@ -2,7 +2,7 @@ import {when} from "jest-when";
 import {Test, TestingModule} from "@nestjs/testing";
 import {AddToQueueInput} from "@warp-core/building-queue/input/add-to-queue.input";
 import {AddToQueueValidator} from "@warp-core/building-queue/input/validator/add-to-queue.validator";
-import {BuildingZoneService} from "@warp-core/building-zone";
+import {BuildingZoneService} from "@warp-core/building-zone/building-zone.service";
 import {BuildingService} from "@warp-core/building";
 import {BuildingModel, BuildingZoneModel} from "@warp-core/database";
 import {QueueInputValidationEvent} from "@warp-core/building-queue/event/queue-input-validation.event";
