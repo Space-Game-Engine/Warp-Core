@@ -83,8 +83,13 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
     async getWarehouseForResourceAndHabitat(resource: ResourceModel, habitatId: number): Promise<WarehouseDetailsModel[]> {
         const buildingZonesForHabitat = await this.getAllBuildingZonesByHabitatId(habitatId);
         const warehouses = (await Promise.all(buildingZonesForHabitat
-            .filter(async singleBuildingZone => await singleBuildingZone.hasWarehouse())
-            .map(async singleBuildingZone => await (await singleBuildingZone.getBuildingLevelDetails()).warehouse)
+            .map(async singleBuildingZone => {
+                if (await singleBuildingZone.hasWarehouse() === false) {
+                    return [];
+                }
+                const buildingLevelDetails = await singleBuildingZone.getBuildingLevelDetails();
+                return buildingLevelDetails.warehouse
+            })
         )).flat();
 
         return warehouses.filter(singleWarehouse => singleWarehouse.isWarehouseLinkedToResource(resource));
