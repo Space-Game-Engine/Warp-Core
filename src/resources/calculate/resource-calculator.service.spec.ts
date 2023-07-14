@@ -14,6 +14,7 @@ import {CalculateResourceStorageService} from "@warp-core/resources/calculate/wa
 import {default as singleBuildingZonesAndOneResourceCases} from "@warp-core/resources/datasets/calculate/single-building-zone-and-single-resource";
 import {default as singleBuildingZonesAndOneResourceCasesWithWarehouseLimit} from "@warp-core/resources/datasets/calculate/single-building-zone-and-single-resource-with-warehouse-limit";
 import {default as multipleBuildingZonesAndSingleResourceCases} from "@warp-core/resources/datasets/calculate/multiple-building-zones-and-single-resource";
+import {prepareRepositoryMock} from "@warp-core/test/database/repository/prepare-repository-mock";
 
 jest.mock("@warp-core/database/repository/habitat-resource.repository");
 jest.mock("@warp-core/database/repository/building-zone.repository");
@@ -25,6 +26,10 @@ describe("Resources calculator service test", () => {
     let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
     let calculateResourceStorage: jest.Mocked<CalculateResourceStorageService>;
     let authorizedHabitatModel: jest.Mocked<AuthorizedHabitatModel>;
+
+    beforeAll(() => {
+        prepareRepositoryMock(HabitatResourceRepository);
+    });
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -197,7 +202,9 @@ describe("Resources calculator service test", () => {
 
     describe("calculateOnQueueUpdate", () => {
         it("should update resource on queue update for building zone with single resource", async () => {
+            const transactionId = "abc";
             const secondsToCalculate = 10;
+            const lastCalculationTime = DateTime.now().minus({second: secondsToCalculate}).toJSDate();
             const queueElement = {
                 startLevel: 1,
                 endLevel: 2,
@@ -209,7 +216,7 @@ describe("Resources calculator service test", () => {
             const habitatResource = {
                 id: "1",
                 currentAmount: 10,
-                lastCalculationTime: DateTime.now().minus({second: secondsToCalculate}).toJSDate(),
+                lastCalculationTime: lastCalculationTime,
                 resource: {
                     id: "wood"
                 }
@@ -233,7 +240,8 @@ describe("Resources calculator service test", () => {
             when(habitatResourceRepository.getHabitatResourceByBuildingAndLevel)
                 .expectCalledWith(
                     await queueElement.building,
-                    queueElement.startLevel
+                    queueElement.startLevel,
+                    authorizedHabitatModel.id
                 )
                 .mockResolvedValue([habitatResource]);
 
@@ -243,14 +251,21 @@ describe("Resources calculator service test", () => {
                     await habitatResource.resource
                 ).mockResolvedValue([buildingZone]);
 
-            await resourcesCalculator.addResourcesOnQueueUpdate({queueElement: queueElement});
+            await resourcesCalculator.addResourcesOnQueueUpdate({queueElement: queueElement}, transactionId);
 
             expect(habitatResource.currentAmount).toEqual(20);
-            expect(habitatResourceRepository.save).toBeCalledTimes(1);
+            expect(habitatResource.lastCalculationTime.getTime()).toBeGreaterThan(lastCalculationTime.getTime());
+
+            expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(1);
+            expect(habitatResourceRepository.getSharedTransaction).toBeCalledWith(transactionId);
+            const entityManager = habitatResourceRepository.getSharedTransaction(transactionId);
+            expect(entityManager.save).toBeCalledTimes(1);
         });
 
         it("should update resource on queue update for building zone with multiple resources", async () => {
+            const transactionId = "abc";
             const secondsToCalculate = 10;
+            const lastCalculationTime = DateTime.now().minus({second: secondsToCalculate}).toJSDate();
             const queueElement = {
                 startLevel: 1,
                 endLevel: 2,
@@ -262,7 +277,7 @@ describe("Resources calculator service test", () => {
             const habitatResource1 = {
                 id: "1",
                 currentAmount: 10,
-                lastCalculationTime: DateTime.now().minus({second: secondsToCalculate}).toJSDate(),
+                lastCalculationTime: lastCalculationTime,
                 resource: {
                     id: "wood"
                 }
@@ -271,7 +286,7 @@ describe("Resources calculator service test", () => {
             const habitatResource2 = {
                 id: "1",
                 currentAmount: 5,
-                lastCalculationTime: DateTime.now().minus({second: secondsToCalculate}).toJSDate(),
+                lastCalculationTime: lastCalculationTime,
                 resource: {
                     id: "steel"
                 }
@@ -310,7 +325,8 @@ describe("Resources calculator service test", () => {
             when(habitatResourceRepository.getHabitatResourceByBuildingAndLevel)
                 .expectCalledWith(
                     await queueElement.building,
-                    queueElement.startLevel
+                    queueElement.startLevel,
+                    authorizedHabitatModel.id
                 )
                 .mockResolvedValue([habitatResource1, habitatResource2]);
 
@@ -324,11 +340,17 @@ describe("Resources calculator service test", () => {
                     await habitatResource2.resource
                 ).mockResolvedValue([buildingZoneForSteel]);
 
-            await resourcesCalculator.addResourcesOnQueueUpdate({queueElement: queueElement});
+            await resourcesCalculator.addResourcesOnQueueUpdate({queueElement: queueElement}, transactionId);
 
             expect(habitatResource1.currentAmount).toEqual(20);
             expect(habitatResource2.currentAmount).toEqual(10);
-            expect(habitatResourceRepository.save).toBeCalledTimes(2);
+            expect(habitatResource1.lastCalculationTime.getTime()).toBeGreaterThan(lastCalculationTime.getTime());
+            expect(habitatResource2.lastCalculationTime.getTime()).toBeGreaterThan(lastCalculationTime.getTime());
+
+            expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(1);
+            expect(habitatResourceRepository.getSharedTransaction).toBeCalledWith(transactionId);
+            const entityManager = habitatResourceRepository.getSharedTransaction(transactionId);
+            expect(entityManager.save).toBeCalledTimes(1);
         });
     });
 });
