@@ -1,9 +1,14 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { EventEmitter2 } from "@nestjs/event-emitter";
-import { QueueElementAfterProcessingEvent } from "@warp-core/building-queue/event/queue-element-after-processing.event";
-import { QueueElementBeforeProcessingEvent } from "@warp-core/building-queue/event/queue-element-before-processing.event";
-import { AuthorizedHabitatModel } from "@warp-core/auth";
-import { BuildingQueueElementModel, BuildingQueueRepository, BuildingZoneModel, BuildingZoneRepository } from "@warp-core/database";
+import {Injectable, Logger} from "@nestjs/common";
+import {EventEmitter2} from "@nestjs/event-emitter";
+import {QueueElementAfterProcessingEvent} from "@warp-core/building-queue/event/queue-element-after-processing.event";
+import {QueueElementBeforeProcessingEvent} from "@warp-core/building-queue/event/queue-element-before-processing.event";
+import {AuthorizedHabitatModel} from "@warp-core/auth";
+import {
+    BuildingQueueElementModel,
+    BuildingQueueRepository,
+    BuildingZoneModel,
+    BuildingZoneRepository
+} from "@warp-core/database";
 
 @Injectable()
 export class BuildingQueueHandlerService {
@@ -14,7 +19,8 @@ export class BuildingQueueHandlerService {
         private readonly buildingZoneRepository: BuildingZoneRepository,
         private readonly habitatModel: AuthorizedHabitatModel,
         private readonly eventEmitter: EventEmitter2
-    ) { }
+    ) {
+    }
 
     async getQueueItemsForHabitat() {
         return this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(this.habitatModel.id);
@@ -59,22 +65,31 @@ export class BuildingQueueHandlerService {
 
         this.logger.debug(`Queue element processed/consumed for building zone with id ${queueElement.buildingZoneId}`);
 
-        await this.eventEmitter.emitAsync('building_queue.resolving.before_processing_element',
-            new QueueElementBeforeProcessingEvent(
-                queueElement
-            ));
+        const [transactionId, entityManager] = await this.buildingQueueRepository.createSharedTransaction();
+        try {
+            await this.eventEmitter.emitAsync('building_queue.resolving.before_processing_element',
+                new QueueElementBeforeProcessingEvent(
+                    queueElement
+                ), transactionId);
 
-        await this.buildingZoneRepository.update(buildingZoneToProcess.id, {
-            buildingId: buildingZoneToProcess.buildingId,
-            level: buildingZoneToProcess.level,
-        });
-        await this.buildingQueueRepository.update(queueElement.id, {
-            isConsumed: queueElement.isConsumed,
-        });
+            await entityManager.update(BuildingZoneModel, buildingZoneToProcess.id, {
+                buildingId: buildingZoneToProcess.buildingId,
+                level: buildingZoneToProcess.level,
+            });
+            await entityManager.update(BuildingQueueElementModel, queueElement.id, {
+                isConsumed: queueElement.isConsumed,
+            });
 
-        await this.eventEmitter.emitAsync('building_queue.resolving.after_processing_element',
-            new QueueElementAfterProcessingEvent(
-                queueElement,
-            ));
+            await this.eventEmitter.emitAsync('building_queue.resolving.after_processing_element',
+                new QueueElementAfterProcessingEvent(
+                    queueElement,
+                ), transactionId);
+
+            await this.buildingQueueRepository.commitSharedTransaction(transactionId);
+        } catch (e) {
+            await this.buildingQueueRepository.rollbackSharedTransaction(transactionId);
+            throw e;
+        }
+
     }
 }

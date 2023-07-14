@@ -1,16 +1,21 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { AuthorizedHabitatModel } from "@warp-core/auth";
-import { BuildingModel,
+import {Test, TestingModule} from "@nestjs/testing";
+import {AuthorizedHabitatModel} from "@warp-core/auth";
+import {
+    BuildingModel,
     BuildingQueueElementModel,
     BuildingQueueRepository,
     BuildingZoneModel,
     BuildingZoneRepository
 } from "@warp-core/database";
-import { BuildingQueueHandlerService } from "@warp-core/building-queue/building-queue-handler.service";
-import { when } from "jest-when";
-import { EventEmitter2 } from "@nestjs/event-emitter";
-import { QueueElementBeforeProcessingEvent } from "@warp-core/building-queue/event/queue-element-before-processing.event";
-import { QueueElementAfterProcessingEvent } from "@warp-core/building-queue/event/queue-element-after-processing.event";
+import {
+    default as queueItemsElements
+} from "@warp-core/building-queue/datasets/building-queue-handler-resolve-queue-data";
+import {BuildingQueueHandlerService} from "@warp-core/building-queue/building-queue-handler.service";
+import {when} from "jest-when";
+import {EventEmitter2} from "@nestjs/event-emitter";
+import {QueueElementBeforeProcessingEvent} from "@warp-core/building-queue/event/queue-element-before-processing.event";
+import {QueueElementAfterProcessingEvent} from "@warp-core/building-queue/event/queue-element-after-processing.event";
+import {prepareRepositoryMock} from "@warp-core/test/database/repository/prepare-repository-mock";
 
 jest.mock("@warp-core/database/repository/building-queue.repository");
 jest.mock("@warp-core/database/repository/building-zone.repository");
@@ -23,6 +28,11 @@ describe("Building queue handler service test", () => {
     let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
     let authorizedHabitatModel: AuthorizedHabitatModel;
     let eventEmitter: jest.Mocked<EventEmitter2>;
+
+
+    beforeAll(() => {
+        prepareRepositoryMock(BuildingQueueRepository);
+    });
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -57,19 +67,19 @@ describe("Building queue handler service test", () => {
                 expect.stringMatching("building_queue.resolving.before_processing_element"),
                 expect.objectContaining<QueueElementBeforeProcessingEvent>({
                     queueElement: singleQueueElement,
-                })
+                }),
+                expect.anything()
             );
-            
+
             expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
                 ++counter,
                 expect.stringMatching("building_queue.resolving.after_processing_element"),
                 expect.objectContaining<QueueElementAfterProcessingEvent>({
                     queueElement: singleQueueElement,
-                })
+                }),
+                expect.anything()
             );
-            
         }
-
     }
 
     describe("resolveQueue", () => {
@@ -80,202 +90,99 @@ describe("Building queue handler service test", () => {
             when(buildingQueueRepository.getUnresolvedQueueForHabitat)
                 .calledWith(habitatId)
                 .mockResolvedValue([]);
-            
+
             await buildingQueueHandlerService.resolveQueue();
 
-            expect(buildingQueueRepository.update).not.toBeCalled();
-            expect(buildingZoneRepository.update).not.toBeCalled();
+            const entityManager = buildingQueueRepository.getSharedTransaction('123');
+
+            expectEventToBeCalled([]);
+            expect(entityManager.update).not.toBeCalled();
             expect(eventEmitter.emitAsync).not.toBeCalled();
         });
 
-        it("should process queue item when single queue items exists and building zone don't have building id set", async () => {
-            const habitatId = 1;
+        describe.each(queueItemsElements)("Consume queue elements", (singleQueueTest) => {
+            function mapQueueElement(singleQueueElement, building, buildingZone) {
+                let buildingZoneForQueueElement;
 
-            const building = {
-                id: 3
-            } as BuildingModel;
+                if (singleQueueElement.buildingZoneId && buildingZone.id != singleQueueElement.buildingZoneId) {
+                    buildingZoneForQueueElement = {id: singleQueueElement.buildingZoneId} as BuildingZoneModel;
+                } else {
+                    buildingZoneForQueueElement = buildingZone;
+                }
 
-            const buildingZone = {
-                level: 0,
-                buildingId: null
-            } as BuildingZoneModel;
+                return {
+                    id: singleQueueElement.id,
+                    buildingZone: buildingZoneForQueueElement,
+                    buildingZoneId: buildingZoneForQueueElement.id,
+                    endLevel: singleQueueElement.endLevel,
+                    building: building,
+                    buildingId: building.id,
+                    isConsumed: false
+                } as BuildingQueueElementModel;
+            }
 
-            const queueElement = {
-                buildingZone: buildingZone,
-                endLevel: 1,
-                building: building,
-                isConsumed: false,
-            } as BuildingQueueElementModel;
+            it(`should process ${singleQueueTest.queueItemsToBeConsumed.length} queue items when ${singleQueueTest.name}`, async () => {
+                const habitatId = 1;
 
-            authorizedHabitatModel.id = habitatId;
-            (await authorizedHabitatModel.buildingZones).push(buildingZone);
-            when(buildingQueueRepository.getUnresolvedQueueForHabitat)
-                .calledWith(habitatId)
-                .mockResolvedValue([
-                    queueElement
-                ]);
+                const building = {
+                    id: singleQueueTest.buildingFromQueue.id
+                } as BuildingModel;
 
-            await buildingQueueHandlerService.resolveQueue();
+                const buildingZone = {
+                    id: singleQueueTest.buildingZoneFromQueue.id,
+                    level: singleQueueTest.buildingZoneFromQueue.level,
+                    buildingId: singleQueueTest.buildingZoneFromQueue.buildingId === null ? null : building.id
+                } as BuildingZoneModel;
 
-            expect(buildingQueueRepository.update).toBeCalledTimes(1);
-            expect(buildingZoneRepository.update).toBeCalledTimes(1);
+                const queueElementsToBeConsumed = singleQueueTest.queueItemsToBeConsumed
+                    .map((queueElement) => {
+                        return mapQueueElement(queueElement, building, buildingZone);
+                    });
+                const queueElementsToNotBeConsumed = singleQueueTest.queueItemsToNotBeConsumed
+                    .map((queueElement) => {
+                        return mapQueueElement(queueElement, building, buildingZone);
+                    });
 
-            expect(queueElement.isConsumed).toBe(true);
-            expect(buildingZone.level).toBe(queueElement.endLevel);
-            expect(buildingZone.buildingId).toBe(building.id);
-            expectEventToBeCalled([queueElement]);
-        });
+                authorizedHabitatModel.id = habitatId;
+                (await authorizedHabitatModel.buildingZones).push(buildingZone);
+                when(buildingQueueRepository.getUnresolvedQueueForHabitat)
+                    .calledWith(habitatId)
+                    .mockResolvedValue([
+                        ...queueElementsToBeConsumed,
+                        ...queueElementsToNotBeConsumed
+                    ]);
 
-        it("should process queue item when multiple queue items exists and building zone don't have building id set", async () => {
-            const habitatId = 1;
+                await buildingQueueHandlerService.resolveQueue();
 
-            const building = {
-                id: 3
-            } as BuildingModel;
+                const entityManager = buildingQueueRepository.getSharedTransaction('123');
 
-            const buildingZone = {
-                level: 0,
-                buildingId: null
-            } as BuildingZoneModel;
+                expect(entityManager.update).toBeCalledTimes(queueElementsToBeConsumed.length * 2);
+                let entityManagerUpdateCallCounter = 0;
+                for (const singleQueueElement of queueElementsToBeConsumed) {
+                    expect(entityManager.update).nthCalledWith(
+                        ++entityManagerUpdateCallCounter,
+                        BuildingZoneModel,
+                        buildingZone.id,
+                        {
+                            buildingId: buildingZone.buildingId,
+                            level: singleQueueElement.endLevel,
+                        }
+                    );
+                    expect(entityManager.update).nthCalledWith(
+                        ++entityManagerUpdateCallCounter,
+                        BuildingQueueElementModel,
+                        singleQueueElement.id,
+                        {isConsumed: true}
+                    );
+                }
+                expectEventToBeCalled(queueElementsToBeConsumed);
 
-            const queueElement1 = {
-                buildingZone: buildingZone,
-                endLevel: 1,
-                building: building,
-                isConsumed: false,
-            } as BuildingQueueElementModel;
+                if (queueElementsToBeConsumed.length > 0) {
+                    expect(buildingZone.level).toBe(queueElementsToBeConsumed.pop().endLevel);
+                }
+                expect(buildingZone.buildingId).toBe(building.id);
 
-            const queueElement2 = {
-                buildingZone: buildingZone,
-                endLevel: 2,
-                building: building,
-                isConsumed: false,
-            } as BuildingQueueElementModel;
-
-            const queueElement3 = {
-                buildingZone: buildingZone,
-                endLevel: 3,
-                building: building,
-                isConsumed: false,
-            } as BuildingQueueElementModel;
-
-            authorizedHabitatModel.id = habitatId;
-            (await authorizedHabitatModel.buildingZones).push(buildingZone);
-            when(buildingQueueRepository.getUnresolvedQueueForHabitat)
-                .calledWith(habitatId)
-                .mockResolvedValue([
-                    queueElement1,
-                    queueElement2,
-                    queueElement3,
-                ]);
-
-            await buildingQueueHandlerService.resolveQueue();
-
-            expect(buildingQueueRepository.update).toBeCalledTimes(3);
-            expect(buildingZoneRepository.update).toBeCalledTimes(3);
-
-            expect(queueElement1.isConsumed).toBe(true);
-            expect(queueElement2.isConsumed).toBe(true);
-            expect(queueElement3.isConsumed).toBe(true);
-            expect(buildingZone.level).toBe(queueElement3.endLevel);
-            expect(buildingZone.buildingId).toBe(building.id);
-            expectEventToBeCalled([
-                queueElement1,
-                queueElement2,
-                queueElement3,
-            ]);
-        });
-
-        it("should process queue item when single queue items exists and building zone have building id set", async () => {
-            const habitatId = 1;
-
-            const building = {
-                id: 3
-            } as BuildingModel;
-
-            const buildingZone = {
-                level: 0,
-                buildingId: building.id
-            } as BuildingZoneModel;
-
-            const queueElement = {
-                buildingZone: buildingZone,
-                endLevel: 1,
-                isConsumed: false,
-            } as BuildingQueueElementModel;
-
-            authorizedHabitatModel.id = habitatId;
-            (await authorizedHabitatModel.buildingZones).push(buildingZone);
-            when(buildingQueueRepository.getUnresolvedQueueForHabitat)
-                .calledWith(habitatId)
-                .mockResolvedValue([
-                    queueElement
-                ]);
-
-            await buildingQueueHandlerService.resolveQueue();
-
-            expect(buildingQueueRepository.update).toBeCalledTimes(1);
-            expect(buildingZoneRepository.update).toBeCalledTimes(1);
-
-            expect(queueElement.isConsumed).toBe(true);
-            expect(buildingZone.level).toBe(queueElement.endLevel);
-            expect(buildingZone.buildingId).toBe(building.id);
-            expectEventToBeCalled([queueElement]);
-        });
-    });
-
-    describe("resolveQueueForSingleBuildingZone", () => {
-        it("should not process any queue items as building queue repository not fetch any data for single building zone", async () => {
-            const buildingZoneId = 1;
-
-            const buildingZone = {
-                id: buildingZoneId
-            } as BuildingZoneModel;
-
-            when(buildingQueueRepository.getUnresolvedQueueForSingleBuildingZone)
-                .calledWith(buildingZoneId)
-                .mockResolvedValue([]);
-
-            await buildingQueueHandlerService.resolveQueueForSingleBuildingZone(buildingZone);
-
-            expect(buildingQueueRepository.update).not.toBeCalled();
-            expect(buildingZoneRepository.update).not.toBeCalled();
-            expect(eventEmitter.emitAsync).not.toBeCalled();
-        });
-
-        it("should process queue item when single queue items exists and building zone don't have building id set", async () => {
-            const buildingZoneId = 1;
-
-            const building = {
-                id: 3
-            } as BuildingModel; 
-
-            const buildingZone = {
-                id: buildingZoneId
-            } as BuildingZoneModel;
-
-            const queueElement = {
-                buildingZone: buildingZone,
-                endLevel: 1,
-                building: building,
-                isConsumed: false,
-            } as BuildingQueueElementModel;
-
-            when(buildingQueueRepository.getUnresolvedQueueForSingleBuildingZone)
-                .calledWith(buildingZoneId)
-                .mockResolvedValue([
-                    queueElement
-                ]);
-
-            await buildingQueueHandlerService.resolveQueueForSingleBuildingZone(buildingZone);
-
-            expect(buildingQueueRepository.update).toBeCalledTimes(1);
-            expect(buildingZoneRepository.update).toBeCalledTimes(1);
-
-            expect(queueElement.isConsumed).toBe(true);
-            expect(buildingZone.level).toBe(queueElement.endLevel);
-            expect(buildingZone.buildingId).toBe(building.id);
-            expectEventToBeCalled([queueElement]);
+            });
         });
     });
 });
