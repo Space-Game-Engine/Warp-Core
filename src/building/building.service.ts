@@ -8,7 +8,7 @@ export class BuildingService {
         private buildingRepository: BuildingRepository,
     ) {}
 
-    async getBuildingById(buildingId: number): Promise<BuildingModel> {
+    async getBuildingById(buildingId: string): Promise<BuildingModel> {
         return this.buildingRepository.getBuildingById(buildingId);
     }
 
@@ -16,7 +16,7 @@ export class BuildingService {
         return this.buildingRepository.getAllBuildings();
     }
 
-    async calculateTimeInSecondsToUpgradeBuilding(startLevel: number, endLevel: number, buildingId: number): Promise<number> {
+    async calculateTimeInSecondsToUpgradeBuilding(startLevel: number, endLevel: number, buildingId: string): Promise<number> {
         const building = await this.buildingRepository.getBuildingById(buildingId);
 
         if (!building) {

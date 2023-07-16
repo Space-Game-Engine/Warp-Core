@@ -10,7 +10,7 @@ export class BuildingRepository extends AbstractRepository<BuildingModel> {
         super(BuildingModel, dataSource.createEntityManager());
     }
 
-    getBuildingById(buildingId: number): Promise<BuildingModel | null> {
+    getBuildingById(buildingId: string): Promise<BuildingModel | null> {
         return this.findOne({
             where: {
                 id: buildingId
@@ -22,7 +22,7 @@ export class BuildingRepository extends AbstractRepository<BuildingModel> {
         return this.find();
     }
 
-    async getProductionRateForProvidedLevel(buildingId: number, buildingLevel: number): Promise<BuildingProductionRateModel[]> {
+    async getProductionRateForProvidedLevel(buildingId: string, buildingLevel: number): Promise<BuildingProductionRateModel[]> {
         const buildingModel = await this.getBuildingById(buildingId);
         const detailsAtSelectedLevel = (await buildingModel.buildingDetailsAtCertainLevel)
             .find((buildingDetails) => buildingDetails.level === buildingLevel);

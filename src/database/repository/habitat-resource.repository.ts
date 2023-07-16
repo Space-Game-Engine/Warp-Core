@@ -14,8 +14,8 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
         super(HabitatResourceModel, dataSource.createEntityManager());
     }
 
-    async getHabitatResourceByBuildingAndLevel(building: BuildingModel | number, level: number, habitatId: number): Promise<HabitatResourceModel[]> {
-        let buildingId: number;
+    async getHabitatResourceByBuildingAndLevel(building: BuildingModel | string, level: number, habitatId: number): Promise<HabitatResourceModel[]> {
+        let buildingId: string;
 
         if (building instanceof BuildingModel) {
             buildingId = building.id;

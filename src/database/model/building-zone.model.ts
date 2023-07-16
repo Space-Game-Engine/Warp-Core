@@ -51,7 +51,7 @@ export class BuildingZoneModel {
     building?: BuildingModel | Promise<BuildingModel>;
 
     @Column({name: 'buildingId', nullable: true})
-    buildingId?: number;
+    buildingId?: string;
 
     @Field({description: "What level is that"})
     @IsNumber()

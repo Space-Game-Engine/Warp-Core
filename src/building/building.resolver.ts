@@ -10,7 +10,7 @@ export class BuildingResolver {
 
     @Query(returns => BuildingModel, { nullable: true, description: "Returns single building type", name: "building_get" })
     building(
-        @Args('id', { type: () => Int }) id: number
+        @Args('id', { type: () => Int }) id: string
     ) {
         return this.buildingService.getBuildingById(id);
     }
