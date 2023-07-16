@@ -1,5 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { BuildingModel, BuildingProductionRateModel, HabitatResourceModel } from "@warp-core/database/model";
+import {
+    BuildingModel,
+    BuildingProductionRateModel,
+    HabitatResourceModel,
+    ResourceModel
+} from "@warp-core/database/model";
 import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
 import { DataSource, In } from "typeorm";
 
@@ -9,7 +14,7 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
         super(HabitatResourceModel, dataSource.createEntityManager());
     }
 
-    async getHabitatResourceByBuildingAndLevel(building: BuildingModel | number, level: number): Promise<HabitatResourceModel[]> {
+    async getHabitatResourceByBuildingAndLevel(building: BuildingModel | number, level: number, habitatId: number): Promise<HabitatResourceModel[]> {
         let buildingId: number;
 
         if (building instanceof BuildingModel) {
@@ -25,7 +30,8 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
             .innerJoin(BuildingProductionRateModel, 'productionRate', 'habitatResource.resourceId = productionRate.resourceId')
             .innerJoin('productionRate.buildingDetails', 'buildingDetails')
             .where('buildingDetails.buildingId = :buildingId', { buildingId: buildingId })
-            .andWhere('buildingDetails.level = :level', { level: level });
+            .andWhere('buildingDetails.level = :level', { level: level })
+            .andWhere('habitatResource.habitatId = :habitatId', {habitatId: habitatId});
 
         return queryBuilder.getMany();
     }
@@ -35,5 +41,15 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
             resourceId: In(resourcesIds),
             habitatId: habitatId
         })
+    }
+
+    async updateLastCalculationDateForManyResources(resourceIds: string[], habitatId: number, lastCalculationTime: Date, transactionId: string|null = null) {
+        const entityManager = transactionId === null ? this.manager : this.getSharedTransaction(transactionId);
+
+        entityManager.createQueryBuilder()
+            .update(HabitatResourceModel)
+            .set({lastCalculationTime: lastCalculationTime})
+            .where('resourceId in :resourceIds', {resourceIds: resourceIds})
+            .andWhere("habitatId = :habitatId", {habitatId: habitatId});
     }
 }

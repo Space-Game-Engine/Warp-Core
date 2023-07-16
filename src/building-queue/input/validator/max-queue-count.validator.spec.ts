@@ -1,6 +1,3 @@
-import {BuildingService} from "@warp-core/building";
-import {BuildingZoneService} from "@warp-core/building-zone";
-import {AddToQueueValidator} from "@warp-core/building-queue/input/validator/add-to-queue.validator";
 import {Test, TestingModule} from "@nestjs/testing";
 import {BuildingModel, BuildingQueueRepository, BuildingZoneModel} from "@warp-core/database";
 import {AuthorizedHabitatModel} from "@warp-core/auth";

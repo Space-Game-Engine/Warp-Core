@@ -1,6 +1,6 @@
 import {
     AbstractBuildingResourcesDetailsAtCertainLevel
-} from "@warp-core/database/model/building-resources-details-at-certain-level.abstract-model";
+} from "@warp-core/database/model/abstracts/building-resources-details-at-certain-level.abstract-model";
 import { Field, ObjectType } from "@nestjs/graphql";
 import { IsNumber } from "class-validator";
 import { Column, Entity } from "typeorm";

@@ -4,6 +4,7 @@ import { AuthorizedHabitatModel } from "@warp-core/auth";
 import { QueueElementProcessedEvent } from "@warp-core/building-queue";
 import { BuildingZoneModel, BuildingZoneRepository, HabitatResourceModel, HabitatResourceRepository } from "@warp-core/database";
 import { DateTime } from "luxon";
+import {CalculateResourceStorageService} from "@warp-core/resources/calculate/warehouse-storage/calculate-resource-storage.service";
 
 @Injectable()
 export class ResourceCalculatorService {
@@ -12,6 +13,7 @@ export class ResourceCalculatorService {
     constructor(
         private readonly buildingZoneRepository: BuildingZoneRepository,
         private readonly habitatResourceRepository: HabitatResourceRepository,
+        private readonly calculateResourceStorage: CalculateResourceStorageService,
         private readonly habitatModel: AuthorizedHabitatModel,
     ) {}
 
@@ -20,7 +22,7 @@ export class ResourceCalculatorService {
 
         this.logger.debug(`Calculate resource ${resource.id} for habitat ${this.habitatModel.id}`);
 
-        const buildingZones = await this.buildingZoneRepository.getBuildingZonesForSingleResource(
+        const buildingZones = await this.buildingZoneRepository.getBuildingZoneProducersForSingleResource(
             this.habitatModel,
             resource
         );
@@ -33,28 +35,34 @@ export class ResourceCalculatorService {
     }
 
     @OnEvent('building_queue.resolving.after_processing_element')
-    async addResourcesOnQueueUpdate(queueProcessingEvent: QueueElementProcessedEvent) {
+    async addResourcesOnQueueUpdate(queueProcessingEvent: QueueElementProcessedEvent, transactionId: string) {
         const buildingQueueElement = queueProcessingEvent.queueElement;
 
         this.logger.debug(`Calculating resource on queue update for building zone ${buildingQueueElement.buildingZoneId}`);
         const habitatResources = await this.habitatResourceRepository.getHabitatResourceByBuildingAndLevel(
             await buildingQueueElement.building,
-            buildingQueueElement.startLevel
+            buildingQueueElement.startLevel,
+            this.habitatModel.id,
         );
 
         for (const singleHabitatResource of habitatResources) {
             await this.calculateSingleResource(singleHabitatResource, buildingQueueElement.endTime);
-            await this.habitatResourceRepository.save(singleHabitatResource);
+            singleHabitatResource.lastCalculationTime = new Date();
         }
+
+        const entityManager = this.habitatResourceRepository.getSharedTransaction(transactionId);
+        await entityManager.save(habitatResources);
     }
 
     private async calculateResourceForBuildingZone(habitatResource: HabitatResourceModel, buildingZone: BuildingZoneModel, calculationEndTime: Date) {
         const productionRate = await this.getProductionRateForSingleBuildingZone(buildingZone);
         const lastlyCalculatedAmount = habitatResource.currentAmount;
-        const lastCalculationTime = DateTime.fromJSDate(habitatResource.lastCalculationTime);
+        const lastCalculationTime = DateTime.fromJSDate(habitatResource.lastCalculationTime ?? new Date());
         const timeUntilNowInSeconds = lastCalculationTime.diff(DateTime.fromJSDate(calculationEndTime)).as('seconds');
 
-        const currentAmount = lastlyCalculatedAmount + (productionRate * Math.abs(timeUntilNowInSeconds));
+        const calculatedAmount = lastlyCalculatedAmount + (productionRate * Math.abs(timeUntilNowInSeconds));
+        const currentMaxStorage = await this.calculateResourceStorage.calculateStorage(await habitatResource.resource);
+        const currentAmount = (calculatedAmount > currentMaxStorage) ? currentMaxStorage : calculatedAmount;
 
         habitatResource.currentAmount = Math.round(currentAmount);
     }

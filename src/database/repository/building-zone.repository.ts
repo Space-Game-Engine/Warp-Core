@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { BuildingZoneModel, HabitatModel, ResourceModel } from "@warp-core/database/model";
+import {BuildingZoneModel, HabitatModel, ResourceModel, WarehouseDetailsModel} from "@warp-core/database/model";
 import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
 import { DataSource, FindOptionsUtils } from "typeorm";
 
@@ -58,7 +58,7 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
         return maxCounterValue;
     }
 
-    getBuildingZonesForSingleResource(habitat: HabitatModel | number, resourceType: ResourceModel): Promise<BuildingZoneModel[]> {
+    getBuildingZoneProducersForSingleResource(habitat: HabitatModel | number, resourceType: ResourceModel): Promise<BuildingZoneModel[]> {
         let habitatId: number;
 
         if (habitat instanceof HabitatModel) {
@@ -78,6 +78,21 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
             .andWhere('productionRate.resourceId = :resourceId', { resourceId: resourceType.id });
 
         return queryBuilder.getMany();
+    }
+
+    async getWarehouseForResourceAndHabitat(resource: ResourceModel, habitatId: number): Promise<WarehouseDetailsModel[]> {
+        const buildingZonesForHabitat = await this.getAllBuildingZonesByHabitatId(habitatId);
+        const warehouses = (await Promise.all(buildingZonesForHabitat
+            .map(async singleBuildingZone => {
+                if (await singleBuildingZone.hasWarehouse() === false) {
+                    return [];
+                }
+                const buildingLevelDetails = await singleBuildingZone.getBuildingLevelDetails();
+                return buildingLevelDetails.warehouse
+            })
+        )).flat();
+
+        return warehouses.filter(singleWarehouse => singleWarehouse.isWarehouseLinkedToResource(resource));
     }
 
 }

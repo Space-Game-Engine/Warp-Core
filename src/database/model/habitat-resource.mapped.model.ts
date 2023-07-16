@@ -17,7 +17,6 @@ export class HabitatResourceCombined extends IntersectionType (
     ) {
         super();
 
-        this.baseMaxCapacity = resourceModelSource.baseMaxCapacity;
         this.currentAmount = habitatResourceModelSource.currentAmount;
         this.habitatId = habitatResourceModelSource.habitatId;
         this.id = resourceModelSource.id;

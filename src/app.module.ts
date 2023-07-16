@@ -1,4 +1,4 @@
-import {Module, UnprocessableEntityException} from '@nestjs/common';
+import {Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -8,14 +8,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from '@warp-core/database';
 import { BuildingModule } from '@warp-core/building';
 import { HabitatModule } from '@warp-core/habitat';
-import { BuildingZoneModule } from '@warp-core/building-zone';
+import { BuildingZoneModule } from '@warp-core/building-zone/building-zone.module';
 import { BuildingQueueModule } from '@warp-core/building-queue';
 import { AuthModule } from '@warp-core/auth';
 import config from '@warp-core/core/config/config-parser';
 import { validate } from '@warp-core/core/config/validate';
 import { DatabaseConfig } from '@warp-core/core/config/model/database.config';
 import { ResourcesModule } from '@warp-core/resources';
-import {GraphQLError, GraphQLFormattedError} from "graphql/error";
 import {parseValidationErrorMessageResponse} from "@warp-core/core/validation/parse-validation-error-message-response";
 
 @Module({
