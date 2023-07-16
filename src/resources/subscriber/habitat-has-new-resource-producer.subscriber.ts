@@ -2,9 +2,9 @@ import {Injectable, Logger} from "@nestjs/common";
 import {QueueElementProcessedEvent} from "@warp-core/building-queue";
 import {OnEvent} from "@nestjs/event-emitter";
 import {
+    BuildingProductionRateModel,
     BuildingQueueElementModel,
-    BuildingZoneRepository,
-    HabitatResourceModel,
+    BuildingRepository,
     HabitatResourceRepository
 } from "@warp-core/database";
 import {AuthorizedHabitatModel} from "@warp-core/auth";
@@ -14,7 +14,7 @@ export class HabitatHasNewResourceProducerSubscriber {
     private readonly logger = new Logger(HabitatHasNewResourceProducerSubscriber.name);
 
     constructor(
-        private readonly buildingZoneRepository: BuildingZoneRepository,
+        private readonly buildingRepository: BuildingRepository,
         private readonly habitatResourceRepository: HabitatResourceRepository,
         private readonly habitatModel: AuthorizedHabitatModel,
     ) {}
@@ -23,40 +23,31 @@ export class HabitatHasNewResourceProducerSubscriber {
     async updateLastCalculationDateOnHabitatResource(queueProcessingEvent: QueueElementProcessedEvent, transactionId: string) {
         const queueElement = queueProcessingEvent.queueElement;
 
-        this.logger.debug("Checking habitat resources");
+        this.logger.debug("Checking building production resources");
 
-        const habitatResources = await this.getProducedResourcesListForQueueElement(queueElement);
+        const buildingProduction = await this.getProducedResourcesListForQueueElement(queueElement);
 
-        if (habitatResources.length === 0) {
-            this.logger.debug("No habitat resource to update");
+        if (buildingProduction.length === 0) {
+            this.logger.debug("Queued building does not produce anything");
             return;
         }
 
-        this.logger.debug(`Got ${habitatResources.length} habitat resources to update`);
+        this.logger.debug("Updating last calculation date if needed");
 
-        const entityManager = this.habitatResourceRepository.getSharedTransaction(transactionId);
-
-        for (const singleHabitatResource of habitatResources) {
-            singleHabitatResource.lastCalculationTime = new Date();
-
-            await entityManager.update(HabitatResourceModel, singleHabitatResource.id, {
-                lastCalculationTime: singleHabitatResource.lastCalculationTime,
-            });
-        }
-
-        this.logger.debug("Last calculation times from habitat resources updated");
-    }
-
-    private async getProducedResourcesListForQueueElement(queueElement: BuildingQueueElementModel): Promise<HabitatResourceModel[]> {
-        const building = await queueElement.building;
-
-        const habitatResourceModels = await this.habitatResourceRepository.getHabitatResourceByBuildingAndLevel(
-            building,
-            queueElement.endLevel,
-            this.habitatModel.id
+        await this.habitatResourceRepository.updateLastCalculationDateForManyResources(
+            buildingProduction.map((singleBuildingProduction) => singleBuildingProduction.resourceId),
+            this.habitatModel.id,
+            queueElement.endTime,
+            transactionId
         );
 
-        return habitatResourceModels
-            .filter((habitatResource) => habitatResource.lastCalculationTime === null);
+        this.logger.debug("Last calculation time from habitat resources updated");
+    }
+
+    private getProducedResourcesListForQueueElement(queueElement: BuildingQueueElementModel): Promise<BuildingProductionRateModel[]> {
+       return this.buildingRepository.getProductionRateForProvidedLevel(
+           queueElement.buildingId,
+           queueElement.endLevel
+       );
     }
 }
