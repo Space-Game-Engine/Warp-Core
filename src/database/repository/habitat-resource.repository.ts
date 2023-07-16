@@ -2,8 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
     BuildingModel,
     BuildingProductionRateModel,
-    HabitatResourceModel,
-    ResourceModel
+    HabitatResourceModel
 } from "@warp-core/database/model";
 import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
 import { DataSource, In } from "typeorm";

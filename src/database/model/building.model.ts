@@ -5,8 +5,6 @@ import { Type } from "class-transformer";
 import {
     ArrayNotEmpty,
     IsEnum,
-    IsNumber,
-    IsOptional,
     IsString,
     Length,
     ValidateNested,
