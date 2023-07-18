@@ -17,7 +17,6 @@ import { DatabaseConfig } from '@warp-core/core/config/model/database.config';
 import { ResourcesModule } from '@warp-core/resources';
 import {parseValidationErrorMessageResponse} from "@warp-core/core/validation/parse-validation-error-message-response";
 import {ClsModule} from "nestjs-cls";
-import {HabitatConfig} from "@warp-core/core/config/model/habitat.config";
 import {CoreConfigModule} from "@warp-core/core/config/core-config.module";
 
 @Module({

@@ -4,13 +4,14 @@ import { OnEvent } from "@nestjs/event-emitter";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
 import { BuildingZoneModel, BuildingZoneRepository, HabitatModel } from "@warp-core/database";
 import { HabitatCreatedEvent } from "@warp-core/habitat";
+import {RuntimeConfig} from "@warp-core/core/config/runtime.config";
 
 @Injectable()
 export class BuildingZoneService {
     constructor(
         private readonly buildingZoneRepository: BuildingZoneRepository,
         private readonly habitatModel: AuthorizedHabitatModel,
-        private readonly configService: ConfigService,
+        private readonly runtimeConfig: RuntimeConfig,
     ) {}
 
     async getAllZonesForCurrentHabitat(): Promise<BuildingZoneModel[]> {
@@ -35,9 +36,9 @@ export class BuildingZoneService {
         return newBuildingZone;
     }
 
-    @OnEvent('habitat.create_new')
+    @OnEvent('habitat.created.after_save')
     async createBuildingZoneOnNewHabitatCreation(payload: HabitatCreatedEvent) {
-        const counterForNewHabitat = this.configService.get<number>('habitat.buildingZones.counterForNewHabitat');
+        const counterForNewHabitat = this.runtimeConfig.habitat.buildingZones.counterForNewHabitat;
         for (let buildingZoneCounter = 0; buildingZoneCounter < counterForNewHabitat; buildingZoneCounter++) {
             await this.createNewBuildingZone(payload.habitat);
         }

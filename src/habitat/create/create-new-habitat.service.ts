@@ -31,12 +31,14 @@ export class CreateNewHabitatService {
         });
 
         payload.setHabitatId(newHabitat.id);
+
+        await this.eventEmitter.emitAsync('habitat.created.after_registration', new HabitatCreatedEvent(newHabitat));
     }
 
     async createNewHabitat(newHabitatData: NewHabitatInput): Promise<HabitatModel> {
         const newHabitat = await this.habitatRepository.save(newHabitatData);
 
-        await this.eventEmitter.emitAsync('habitat.create_new', new HabitatCreatedEvent(newHabitat));
+        await this.eventEmitter.emitAsync('habitat.created.after_save', new HabitatCreatedEvent(newHabitat));
 
         return newHabitat;
     }

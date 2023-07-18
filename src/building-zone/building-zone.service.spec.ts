@@ -1,9 +1,10 @@
-import { ConfigService } from "@nestjs/config";
 import { Test, TestingModule } from "@nestjs/testing";
 import { when } from "jest-when";
 import { BuildingZoneService } from "./building-zone.service";
 import { BuildingZoneModel, BuildingZoneRepository, HabitatModel } from "@warp-core/database";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
+import {RuntimeConfig} from "@warp-core/core/config/runtime.config";
+import {coreConfigMock} from "@warp-core/test/core-config-mock";
 
 jest.mock("@warp-core/database/repository/building-zone.repository");
 jest.mock("@warp-core/auth/payload/model/habitat.model");
@@ -12,31 +13,25 @@ describe("Building Zone Service", () => {
     let buildingZoneService: BuildingZoneService;
     let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
     let authorizedHabitatModel: AuthorizedHabitatModel;
-    let configService: ConfigService;
+    let runtimeConfig: jest.Mocked<RuntimeConfig>;
 
     beforeEach(async () => {
         jest.clearAllMocks();
-
-        configService = {
-            get: jest.fn()
-        } as any as ConfigService;
 
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 BuildingZoneService,
                 BuildingZoneRepository,
                 AuthorizedHabitatModel,
-                {
-                    provide: ConfigService,
-                    useValue: configService
-                }
-            ]
+                coreConfigMock,
+            ],
         }).compile();
 
         buildingZoneService = module.get<BuildingZoneService>(BuildingZoneService);
 
         buildingZoneRepository = module.get(BuildingZoneRepository);
         authorizedHabitatModel = module.get(AuthorizedHabitatModel);
+        runtimeConfig = module.get(RuntimeConfig);
     });
 
     describe("createNewBuildingZone", () => {

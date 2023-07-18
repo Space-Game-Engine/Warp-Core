@@ -11,7 +11,7 @@ export class CreateResourcesPerHabitat {
         private readonly habitatResourceRepository: HabitatResourceRepository,
     ) { }
 
-    @OnEvent('habitat.create_new')
+    @OnEvent('habitat.created.after_save')
     async createResourcesPerHabitat(newHabitatEvent: HabitatCreatedEvent): Promise<void> {
         const resourcesList = await this.resourceRepository.find();
         const habitatResourcesToSave = [];

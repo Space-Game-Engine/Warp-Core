@@ -2,7 +2,7 @@ import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
 import { when } from "jest-when";
 import { NewHabitatInput } from "@warp-core/habitat/input/NewHabitatInput";
-import { CreateNewHabitatService } from "@warp-core/habitat/create-new-habitat.service";
+import { CreateNewHabitatService } from "@warp-core/habitat/create/create-new-habitat.service";
 import { HabitatModel, HabitatRepository } from "@warp-core/database";
 import { RegisterUserEvent } from "@warp-core/auth";
 
@@ -61,7 +61,7 @@ describe("Habitat service tests", () => {
             expect(returnedHabitatModel).toEqual(habitatModel);
             expect(eventEmitter.emitAsync).toBeCalledTimes(1);
             expect(eventEmitter.emitAsync).toBeCalledWith(
-                expect.stringMatching('habitat.create_new'),
+                expect.stringMatching('habitat.created.after_save'),
                 expect.objectContaining({ habitat: habitatModel })
             );
         });
@@ -88,7 +88,7 @@ describe("Habitat service tests", () => {
             await createNewHabitatService.createHabitatOnUserRegistration(payload);
 
             expect(eventEmitter.emitAsync).toBeCalledWith(
-                expect.stringMatching('habitat.create_new'),
+                expect.stringMatching('habitat.created.after_save'),
                 expect.objectContaining({ habitat: habitatModel })
             );
             expect(payload.getHabitatId()).toBe(habitatModel.id);

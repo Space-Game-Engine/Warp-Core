@@ -5,11 +5,17 @@ import {HabitatBuildingsConfig} from "@warp-core/core/config/model/habitat-build
 
 export class OnStartConfig {
 
+    /**
+     * What kind of resources are available on game start?
+     */
     @Type(() => HabitatResourcesConfig)
     @ValidateNested()
     @IsOptional()
     resources: HabitatResourcesConfig[];
 
+    /**
+     * What kind of buildings are build at the beginning of the game?
+     */
     @Type(() => HabitatBuildingsConfig)
     @ValidateNested()
     @IsOptional()

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { HabitatModel, HabitatResourceModel, HabitatResourceRepository, ResourceModel, ResourceRepository } from "@warp-core/database";
 import { HabitatCreatedEvent } from "@warp-core/habitat";
-import { CreateResourcesPerHabitat } from "@warp-core/resources/create-resources-per-habitat.service";
+import { CreateResourcesPerHabitat } from "@warp-core/resources/subscriber/create-resources-per-habitat.subscriber";
 
 jest.mock("@warp-core/database/repository/habitat-resource.repository");
 jest.mock("@warp-core/database/repository/resource.repository");

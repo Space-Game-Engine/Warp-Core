@@ -1,20 +1,22 @@
 import {Test, TestingModule} from "@nestjs/testing";
 import {BuildingModel, BuildingQueueRepository, BuildingZoneModel} from "@warp-core/database";
 import {AuthorizedHabitatModel} from "@warp-core/auth";
-import {ConfigService} from "@nestjs/config";
 import {MaxQueueCountValidator} from "@warp-core/building-queue/input/validator/max-queue-count.validator";
 import {when} from "jest-when";
 import {QueueInputValidationEvent} from "@warp-core/building-queue/event/queue-input-validation.event";
 import {AddToQueueInput} from "@warp-core/building-queue/input/add-to-queue.input";
+import {RuntimeConfig} from "@warp-core/core/config/runtime.config";
+import {coreConfigMock} from "@warp-core/test/core-config-mock";
 
 jest.mock("@warp-core/database/repository/building-queue.repository");
 jest.mock("@warp-core/auth/payload/model/habitat.model");
+jest.mock("@warp-core/core/config/runtime.config");
 jest.mock("@nestjs/config");
 
 describe("max queue elements count validator", () => {
     let buildingQueueRepository: jest.Mocked<BuildingQueueRepository>;
     let habitatMock: jest.Mocked<AuthorizedHabitatModel>;
-    let configService: jest.Mocked<ConfigService>;
+    let runtimeConfig: jest.Mocked<RuntimeConfig>;
     let maxQueueCountValidator: MaxQueueCountValidator;
 
     beforeEach(async () => {
@@ -24,12 +26,12 @@ describe("max queue elements count validator", () => {
             providers: [
                 BuildingQueueRepository,
                 AuthorizedHabitatModel,
-                ConfigService,
-                MaxQueueCountValidator
+                MaxQueueCountValidator,
+                coreConfigMock,
             ]
         }).compile();
         buildingQueueRepository = module.get(BuildingQueueRepository);
-        configService = module.get(ConfigService);
+        runtimeConfig = module.get(RuntimeConfig);
         habitatMock = module.get(AuthorizedHabitatModel);
         maxQueueCountValidator = module.get(MaxQueueCountValidator);
     });
@@ -48,9 +50,7 @@ describe("max queue elements count validator", () => {
                 .calledWith(habitatMock.id)
                 .mockResolvedValue(maxQueueElements);
 
-            when(configService.get)
-                .expectCalledWith('habitat.buildingQueue.maxElementsInQueue' as never)
-                .mockReturnValue(maxQueueElements);
+            runtimeConfig.habitat.buildingQueue.maxElementsInQueue = maxQueueElements;
 
             await maxQueueCountValidator.validate(queueValidationEvent);
 
@@ -73,9 +73,7 @@ describe("max queue elements count validator", () => {
                 .calledWith(habitatMock.id)
                 .mockResolvedValue(3);
 
-            when(configService.get)
-                .expectCalledWith('habitat.buildingQueue.maxElementsInQueue' as never)
-                .mockReturnValue(maxQueueElements);
+            runtimeConfig.habitat.buildingQueue.maxElementsInQueue = maxQueueElements;
 
             await maxQueueCountValidator.validate(queueValidationEvent);
 

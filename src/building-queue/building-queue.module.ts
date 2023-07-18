@@ -1,5 +1,4 @@
 import {Module} from "@nestjs/common";
-import {ConfigModule} from "@nestjs/config";
 import {EventEmitterModule} from "@nestjs/event-emitter";
 import {AuthModule} from "@warp-core/auth";
 import {BuildingQueueAddService} from "@warp-core/building-queue/add/building-queue-add.service";
@@ -19,6 +18,7 @@ import {
     PrepareSingleBuildingQueueElementService
 } from "@warp-core/building-queue/add/prepare-single-building-queue-element.service";
 import {DraftQueueElementValidator} from "@warp-core/building-queue/input/validator/draft-queue-element.validator";
+import {CoreConfigModule} from "@warp-core/core/config/core-config.module";
 
 @Module({
     providers: [
@@ -42,7 +42,7 @@ import {DraftQueueElementValidator} from "@warp-core/building-queue/input/valida
         BuildingZoneModule,
         BuildingModule,
         DatabaseModule,
-        ConfigModule,
+        CoreConfigModule,
         EventEmitterModule,
         AuthModule,
     ],

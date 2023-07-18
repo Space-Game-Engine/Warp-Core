@@ -6,14 +6,24 @@ import {OnStartConfig} from "@warp-core/core/config/model/on-start.config";
 
 export class HabitatConfig {
 
+    /**
+     * Configuration related to building zones on
+     * user habitat
+     */
     @Type(() => BuildingZoneConfig)
     @ValidateNested()
     buildingZones: BuildingZoneConfig;
 
+    /**
+     * Configuration related to building queue
+     */
     @Type(() => BuildingQueueConfig)
     @ValidateNested()
     buildingQueue: BuildingQueueConfig;
 
+    /**
+     * What should game do when user create its first habitat
+     */
     @Type(() => OnStartConfig)
     @ValidateNested()
     @IsOptional()
