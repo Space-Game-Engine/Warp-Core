@@ -53,10 +53,6 @@ const jwtFactory = {
         JwtModule.registerAsync(jwtFactory),
         ConfigModule,
         DatabaseModule,
-        ClsModule.forRoot({
-            global: true,
-            middleware: { mount: true, generateId: true },
-        }),
         ClsModule.forFeatureAsync({
             provide: AuthorizedHabitatModel,
             imports: [DatabaseModule, JwtModule],
