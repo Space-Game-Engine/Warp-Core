@@ -49,7 +49,7 @@ describe("Add last calculation date for new resource producers", () => {
             authorizedHabitatModel.id = 5;
             const queueElement = {
                 endLevel: 5,
-                buildingId: 1
+                buildingId: "test"
             } as BuildingQueueElementModel;
 
             const productionRateModels = [] as BuildingProductionRateModel[];
@@ -75,7 +75,7 @@ describe("Add last calculation date for new resource producers", () => {
             authorizedHabitatModel.id = 5;
             const queueElement = {
                 endLevel: 5,
-                buildingId: 1
+                buildingId: "test"
             } as BuildingQueueElementModel;
 
             const productionRateModels = [

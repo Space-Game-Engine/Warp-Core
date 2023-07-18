@@ -25,7 +25,7 @@ describe("Building service test", () => {
 
     describe("calculateTimeInSecondsToUpgradeBuilding", () => {
         it("should throw exception when building for provided id not exists", async () => {
-            const buildingId = 1;
+            const buildingId = "test";
             const startLevel = 1;
             const endLevel = 2;
             const buildingModel = null;
@@ -42,7 +42,7 @@ describe("Building service test", () => {
         });
 
         it("should return zero when start and end level equals", async () => {
-            const buildingId = 1;
+            const buildingId = "test";
             const startLevel = 1;
             const endLevel = startLevel;
             const buildingModel = {
@@ -62,7 +62,7 @@ describe("Building service test", () => {
         });
 
         it("should calculate time for level 2 upgrade starting from level 1", async () => {
-            const buildingId = 1;
+            const buildingId = "test";
             const startLevel = 1;
             const endLevel = 2;
             const buildingModel = {
@@ -95,7 +95,7 @@ describe("Building service test", () => {
         });
 
         it("should calculate time for level 1 upgrade starting from level 0", async () => {
-            const buildingId = 1;
+            const buildingId = "test";
             const startLevel = 0;
             const endLevel = 1;
             const buildingModel = {
@@ -128,7 +128,7 @@ describe("Building service test", () => {
         });
 
         it("should calculate time for level 3 upgrade starting from level 0", async () => {
-            const buildingId = 1;
+            const buildingId = "test";
             const startLevel = 0;
             const endLevel = 3;
             const buildingModel = {
@@ -163,7 +163,7 @@ describe("Building service test", () => {
 
     describe("getBuildingById", () => {
         it("should return building by its id", async () => {
-            const buildingId = 1;
+            const buildingId = "test";
             const buildingModelMock = {
                 id: buildingId,
                 role: BuildingRoleEnum.RESOURCE_PRODUCTION,
@@ -185,13 +185,13 @@ describe("Building service test", () => {
         it("should return multiple buildings", async () => {
             const buildingModelsMock = [
                 {
-                    id: 1,
+                    id: "test_1",
                     role: BuildingRoleEnum.RESOURCE_PRODUCTION,
                     name: 'Test building 1',
                     buildingDetailsAtCertainLevel: []
                 },
                 {
-                    id: 2,
+                    id: "test_2",
                     role: BuildingRoleEnum.TECHNOLOGY_PRODUCTION,
                     name: 'Test building 2',
                     buildingDetailsAtCertainLevel: []

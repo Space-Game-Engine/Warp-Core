@@ -209,7 +209,7 @@ describe("Resources calculator service test", () => {
                 startLevel: 1,
                 endLevel: 2,
                 building: {
-                    id: 5
+                    id: "test"
                 }
             } as BuildingQueueElementModel;
 
@@ -270,7 +270,7 @@ describe("Resources calculator service test", () => {
                 startLevel: 1,
                 endLevel: 2,
                 building: {
-                    id: 5
+                    id: "test"
                 }
             } as BuildingQueueElementModel;
 

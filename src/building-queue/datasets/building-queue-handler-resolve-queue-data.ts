@@ -2,7 +2,7 @@ export default [
     {
         name: "building zone does not have building set",
         buildingFromQueue: {
-            id: 3
+            id: "test"
         },
         buildingZoneFromQueue: {
             id: 1,
@@ -20,7 +20,7 @@ export default [
     {
         name: "building zone does not have building set and there are multiple queue items",
         buildingFromQueue: {
-            id: 3
+            id: "test"
         },
         buildingZoneFromQueue: {
             id: 1,
@@ -46,7 +46,7 @@ export default [
     {
         name: "building zone have building set and there is single queue item",
         buildingFromQueue: {
-            id: 3
+            id: "test"
         },
         buildingZoneFromQueue: {
             id: 1,
@@ -64,7 +64,7 @@ export default [
     {
         name: "building zone have building set and there are multiple queue items",
         buildingFromQueue: {
-            id: 3
+            id: "test"
         },
         buildingZoneFromQueue: {
             id: 1,
@@ -90,7 +90,7 @@ export default [
     {
         name: "all queue items are not related to selected building zone",
         buildingFromQueue: {
-            id: 3
+            id: "test"
         },
         buildingZoneFromQueue: {
             id: 1,
@@ -109,7 +109,7 @@ export default [
     {
         name: "there are some queue items with different building zone",
         buildingFromQueue: {
-            id: 3
+            id: "test"
         },
         buildingZoneFromQueue: {
             id: 1,

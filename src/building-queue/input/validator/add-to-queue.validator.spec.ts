@@ -49,7 +49,7 @@ describe("Add to queue validator", () => {
         it("should throw error when provided building zone does not exists", async () => {
             const addToQueue: AddToQueueInput = {
                 localBuildingZoneId: 1000,
-                buildingId: 1,
+                buildingId: "test",
                 endLevel: 10
             };
 
@@ -95,7 +95,7 @@ describe("Add to queue validator", () => {
         it("should throw error when building zone is not connected to any building and provided data contains unknown building id", async () => {
             const addToQueue: AddToQueueInput = {
                 localBuildingZoneId: 1,
-                buildingId: 100,
+                buildingId: "another_test",
                 endLevel: 10
             };
 
@@ -124,7 +124,7 @@ describe("Add to queue validator", () => {
         it("should throw error when events collects some errors", async () => {
             const addToQueue: AddToQueueInput = {
                 localBuildingZoneId: 1,
-                buildingId: 1,
+                buildingId: "test",
                 endLevel: 1
             };
 
@@ -135,7 +135,7 @@ describe("Add to queue validator", () => {
             } as BuildingZoneModel;
 
             const building = {
-                id: 1,
+                id: "test",
                 buildingDetailsAtCertainLevel: [
                     {
                         level: 10
@@ -176,7 +176,7 @@ describe("Add to queue validator", () => {
         it("should validate when there are no collected errors", async () => {
             const addToQueue: AddToQueueInput = {
                 localBuildingZoneId: 1,
-                buildingId: 1,
+                buildingId: "test",
                 endLevel: 1
             };
 
@@ -187,7 +187,7 @@ describe("Add to queue validator", () => {
             } as BuildingZoneModel;
 
             const building = {
-                id: 1,
+                id: "test",
                 buildingDetailsAtCertainLevel: [
                     {
                         level: 10
