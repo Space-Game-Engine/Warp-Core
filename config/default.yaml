@@ -10,10 +10,24 @@ jwt:
   secret: 'secret_code'
   expiresIn: 3600
   ignoreExpiration: false
-habitat:
-  buildingZones:
-    counterForNewHabitat: 10
-    isPossibleToCreateNewZones: true
-  buildingQueue:
-    maxElementsInQueue: 5
-    allowMultipleLevelUpdate: true
+runtime:
+  habitat:
+    buildingZones:
+      counterForNewHabitat: 10
+      isPossibleToCreateNewZones: true
+    buildingQueue:
+      maxElementsInQueue: 5
+      allowMultipleLevelUpdate: true
+    onStart:
+      resources:
+        - id: 'wood'
+          amount: 30
+        - id: 'coal'
+          amount: 5
+      buildings:
+        - id: 'warehouse'
+          localBuildingZoneId: 1
+          level: 1
+        - id: 'university'
+          localBuildingZoneId: 2
+          level: 1
