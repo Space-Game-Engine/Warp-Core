@@ -1,4 +1,4 @@
-import {IsNumber, IsString, Min} from "class-validator";
+import {IsNumber, IsPositive, IsString, Min} from "class-validator";
 
 export class HabitatResourcesConfig {
 
@@ -12,6 +12,6 @@ export class HabitatResourcesConfig {
      * How many resources user will have at the beginning?
      */
     @IsNumber()
-    @Min(0)
-    amount: string;
+    @IsPositive()
+    amount: number;
 }
