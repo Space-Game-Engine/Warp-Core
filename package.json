@@ -114,7 +114,10 @@
     "moduleNameMapper": {
       "@warp-core/test/(.*)": "<rootDir>../test/$1",
       "@warp-core/(.*)": "<rootDir>/$1"
-    }
+    },
+    "setupFilesAfterEnv": [
+      "<rootDir>../test/setupTests.ts"
+    ]
   },
   "main": "index.js",
   "directories": {
