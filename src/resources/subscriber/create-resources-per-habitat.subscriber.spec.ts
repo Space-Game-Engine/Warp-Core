@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { HabitatModel, HabitatResourceModel, HabitatResourceRepository, ResourceModel, ResourceRepository } from "@warp-core/database";
 import { HabitatCreatedEvent } from "@warp-core/habitat";
 import { CreateResourcesPerHabitat } from "@warp-core/resources/subscriber/create-resources-per-habitat.subscriber";
+import {prepareRepositoryMock} from "@warp-core/test/database/repository/prepare-repository-mock";
 
 jest.mock("@warp-core/database/repository/habitat-resource.repository");
 jest.mock("@warp-core/database/repository/resource.repository");
@@ -9,7 +10,11 @@ jest.mock("@warp-core/database/repository/resource.repository");
 describe("Create resources per habitat service tests", () => {
     let createResourcesPerHabitat: CreateResourcesPerHabitat;
     let habitatResourceRepository: jest.Mocked<HabitatResourceRepository>;
-    let resourceRepository: jest.Mocked<ResourceRepository>;
+    let resourceRepository: jest.Mocked<ResourceRepository>
+
+    beforeAll(() => {
+        prepareRepositoryMock(HabitatResourceRepository);
+    });
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -35,9 +40,9 @@ describe("Create resources per habitat service tests", () => {
 
             resourceRepository.find.mockResolvedValue(resourcesList);
 
-            await createResourcesPerHabitat.createResourcesPerHabitat(new HabitatCreatedEvent(habitat));
+            await createResourcesPerHabitat.createResourcesPerHabitat(new HabitatCreatedEvent(habitat), 'abc');
 
-            expect(habitatResourceRepository.save).toBeCalledTimes(0);
+            expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(0);
         });
 
         it("should save one habitat resource when there is one resource to be saved", async() => {
@@ -50,17 +55,19 @@ describe("Create resources per habitat service tests", () => {
 
             resourceRepository.find.mockResolvedValue(resourcesList);
 
-            await createResourcesPerHabitat.createResourcesPerHabitat(new HabitatCreatedEvent(habitat));
+            await createResourcesPerHabitat.createResourcesPerHabitat(new HabitatCreatedEvent(habitat), 'abc');
 
-            expect(habitatResourceRepository.save).toBeCalledTimes(1);
-            expect(habitatResourceRepository.save).toHaveBeenCalledWith(
+            expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(1);
+            const entityManager = habitatResourceRepository.getSharedTransaction('abc');
+            expect(entityManager.insert).toBeCalledTimes(1);
+            expect(entityManager.insert).toHaveBeenCalledWith(
+                HabitatResourceModel,
                 expect.arrayContaining<HabitatResourceModel>([
                     expect.objectContaining({
                         habitat: habitat,
                         resource: resourcesList[0]
                     })
-                ]),
-                expect.objectContaining({reload: false})
+                ])
             )
         });
 
@@ -82,10 +89,13 @@ describe("Create resources per habitat service tests", () => {
 
             resourceRepository.find.mockResolvedValue(resourcesList);
 
-            await createResourcesPerHabitat.createResourcesPerHabitat(new HabitatCreatedEvent(habitat));
+            await createResourcesPerHabitat.createResourcesPerHabitat(new HabitatCreatedEvent(habitat), 'abc');
 
-            expect(habitatResourceRepository.save).toBeCalledTimes(1);
-            expect(habitatResourceRepository.save).toHaveBeenCalledWith(
+            expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(1);
+            const entityManager = habitatResourceRepository.getSharedTransaction('abc');
+            expect(entityManager.insert).toBeCalledTimes(1);
+            expect(entityManager.insert).toHaveBeenCalledWith(
+                HabitatResourceModel,
                 expect.arrayContaining<HabitatResourceModel>([
                     expect.objectContaining({
                         habitat: habitat,
@@ -99,8 +109,7 @@ describe("Create resources per habitat service tests", () => {
                         habitat: habitat,
                         resource: resourcesList[2]
                     }),
-                ]),
-                expect.objectContaining({reload: false})
+                ])
             )
         });
     });
