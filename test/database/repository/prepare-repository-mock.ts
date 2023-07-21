@@ -1,3 +1,6 @@
+import {AbstractRepository} from "@warp-core/database/repository/abstract.repository";
+import {EntityManager} from "typeorm";
+
 /**
  * Prepare repository external fields, for example for shared transactions.
  * Example:
@@ -36,11 +39,11 @@ export function prepareRepositoryMock(repositoryType: any) {
         insert: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
-    };
+    } as any as EntityManager;
 
     jest.spyOn(repositoryType.prototype, 'createSharedTransaction')
-        .mockImplementation(() => {
-            return [123, manager];
+        .mockImplementation(async () => {
+            return ["123", manager];
         });
 
     jest.spyOn(repositoryType.prototype, 'getSharedTransaction')
@@ -49,12 +52,10 @@ export function prepareRepositoryMock(repositoryType: any) {
         });
 
     jest.spyOn(repositoryType.prototype, 'commitSharedTransaction')
-        .mockImplementation(() => {
-            return manager;
-        });
+        .mockImplementation(async (transactionId: string) => {});
 
     jest.spyOn(repositoryType.prototype, 'rollbackSharedTransaction')
-        .mockImplementation(() => {
-            return manager;
-        });
+        .mockImplementation(async (transactionId: string) => {});
+
+    repositoryType.prototype.__defineGetter__("manager", () => manager);
 }
