@@ -7,11 +7,13 @@ import { HabitatModule } from "@warp-core/habitat";
 import { BuildingZoneResolver } from "./building-zone.resolver";
 import { BuildingZoneService } from "./building-zone.service";
 import {CoreConfigModule} from "@warp-core/core/config/core-config.module";
+import {NewHabitatCreatedSubscriber} from "@warp-core/building-zone/subscriber/new-habitat-created.subscriber";
 
 @Module({
     providers: [
         BuildingZoneService,
-        BuildingZoneResolver
+        BuildingZoneResolver,
+        NewHabitatCreatedSubscriber,
     ],
     imports: [
         DatabaseModule,

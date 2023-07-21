@@ -3,8 +3,7 @@ import { when } from "jest-when";
 import { BuildingZoneService } from "./building-zone.service";
 import { BuildingZoneModel, BuildingZoneRepository, HabitatModel } from "@warp-core/database";
 import { AuthorizedHabitatModel } from "@warp-core/auth";
-import {RuntimeConfig} from "@warp-core/core/config/runtime.config";
-import {coreConfigMock} from "@warp-core/test/core-config-mock";
+import {prepareRepositoryMock} from "@warp-core/test/database/repository/prepare-repository-mock";
 
 jest.mock("@warp-core/database/repository/building-zone.repository");
 jest.mock("@warp-core/auth/payload/model/habitat.model");
@@ -13,7 +12,10 @@ describe("Building Zone Service", () => {
     let buildingZoneService: BuildingZoneService;
     let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
     let authorizedHabitatModel: AuthorizedHabitatModel;
-    let runtimeConfig: jest.Mocked<RuntimeConfig>;
+
+    beforeAll(() => {
+        prepareRepositoryMock(BuildingZoneRepository);
+    });
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -23,7 +25,6 @@ describe("Building Zone Service", () => {
                 BuildingZoneService,
                 BuildingZoneRepository,
                 AuthorizedHabitatModel,
-                coreConfigMock,
             ],
         }).compile();
 
@@ -31,7 +32,6 @@ describe("Building Zone Service", () => {
 
         buildingZoneRepository = module.get(BuildingZoneRepository);
         authorizedHabitatModel = module.get(AuthorizedHabitatModel);
-        runtimeConfig = module.get(RuntimeConfig);
     });
 
     describe("createNewBuildingZone", () => {
@@ -44,7 +44,9 @@ describe("Building Zone Service", () => {
 
             await buildingZoneService.createNewBuildingZone({ id: habitatId } as HabitatModel);
 
-            expect(buildingZoneRepository.save).toBeCalledWith(expect.objectContaining({
+            expect(buildingZoneRepository.manager.save).toBeCalledWith(
+                BuildingZoneModel,
+                expect.objectContaining({
                 localBuildingZoneId: 1,
                 habitatId: habitatId,
             }));
@@ -59,7 +61,9 @@ describe("Building Zone Service", () => {
 
             await buildingZoneService.createNewBuildingZone({ id: habitatId } as HabitatModel);
 
-            expect(buildingZoneRepository.save).toBeCalledWith(expect.objectContaining({
+            expect(buildingZoneRepository.manager.save).toBeCalledWith(
+                BuildingZoneModel,
+                expect.objectContaining({
                 localBuildingZoneId: 2,
                 habitatId: habitatId,
             }));
