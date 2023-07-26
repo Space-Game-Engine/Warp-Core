@@ -93,11 +93,11 @@ export abstract class AbstractRepository<T extends Object> extends Repository<T>
         const entityTypesToCheck = Array.isArray(entityType) ? entityType : [entityType];
 
         const subscriber = this.manager.connection.subscribers;
-        for (const subscriberKey in subscriber) {
-            const subscriberElement = subscriber[subscriberKey];
+        for (let i = subscriber.length - 1; i >= 0; --i) {
+            const subscriberElement = subscriber[i];
             if (entityTypesToCheck.includes(subscriberElement.listenTo())) {
                 AbstractRepository.disabledEntityListeners.set(subscriberElement.listenTo(), subscriberElement);
-                delete subscriber[subscriberKey];
+                subscriber.splice(subscriber.indexOf(subscriberElement), 1);
             }
         }
     }

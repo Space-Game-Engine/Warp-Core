@@ -68,7 +68,7 @@ export class BuildingQueueHandlerService {
         this.logger.debug(`Queue element processed/consumed for building zone with id ${queueElement.buildingZoneId}`);
 
         this.buildingQueueRepository.disableEntityListeners([
-            BuildingQueueElementModel,
+            BuildingZoneModel,
             HabitatResourceModel
         ]);
 
@@ -93,7 +93,7 @@ export class BuildingQueueHandlerService {
         );
 
         this.buildingQueueRepository.enableEntityListeners([
-            BuildingQueueElementModel,
+            BuildingZoneModel,
             HabitatResourceModel
         ]);
     }
