@@ -79,11 +79,11 @@ describe("First habitat created subscriber", () => {
               id: 1
             } as HabitatModel;
 
-            runtimeConfig.habitat.onStart.buildings.push({
+            runtimeConfig.habitat.onStart.buildings = [{
                 localBuildingZoneId: localBuildingId,
                 id: buildingToSet.id,
                 level: 1
-            });
+            }];
 
             when(buildingRepository.getBuildingsByIds)
                 .expectCalledWith(["mine"])
