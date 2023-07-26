@@ -52,7 +52,8 @@ export class CreateNewHabitatService {
             entityManager = this.habitatRepository.getSharedTransaction(transactionId);
         }
 
-        const newHabitat = await entityManager.save(HabitatModel, newHabitatData);
+        const newHabitat = entityManager.create<HabitatModel>(HabitatModel, newHabitatData);
+        await entityManager.save(newHabitat);
 
         await this.eventEmitter.emitAsync('habitat.created.after_save', new HabitatCreatedEvent(newHabitat), transactionId);
 

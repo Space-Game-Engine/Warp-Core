@@ -57,16 +57,19 @@ describe("Habitat service tests", () => {
                 buildingZones: [],
             } as HabitatModel;
 
-            when(habitatRepository.manager.save)
+            when(habitatRepository.manager.create)
                 .expectCalledWith(
                     HabitatModel,
                     expect.objectContaining(newHabitatInput)
                 )
-                .mockResolvedValueOnce(habitatModel);
+                .mockReturnValueOnce(habitatModel as never);
 
             const returnedHabitatModel = await createNewHabitatService.createNewHabitat(newHabitatInput);
 
             expect(returnedHabitatModel).toEqual(habitatModel);
+            expect(habitatRepository.manager.save).toHaveBeenCalledWith(
+                habitatModel
+            );
             expect(eventEmitter.emitAsync).toBeCalledTimes(1);
             expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
                 1,
@@ -93,15 +96,18 @@ describe("Habitat service tests", () => {
                 .expectCalledWith(userId)
                 .mockResolvedValueOnce([]);
 
-            when(habitatRepository.manager.save)
+            when(habitatRepository.manager.create)
                 .expectCalledWith(
                     HabitatModel,
                     expect.objectContaining({userId: userId})
                 )
-                .mockResolvedValueOnce(habitatModel);
+                .mockReturnValueOnce(habitatModel as never);
 
             await createNewHabitatService.createHabitatOnUserRegistration(payload);
 
+            expect(habitatRepository.manager.save).toHaveBeenCalledWith(
+                habitatModel
+            );
             expect(eventEmitter.emitAsync).toBeCalledTimes(2);
             expect(eventEmitter.emitAsync).toBeCalledWith(
                 expect.stringMatching('habitat.created.after_save'),
