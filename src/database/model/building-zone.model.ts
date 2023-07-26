@@ -73,7 +73,7 @@ export class BuildingZoneModel {
     )
     buildingQueue: BuildingQueueElementModel[] | Promise<BuildingQueueElementModel[]>;
 
-    currentLevelBuildingDetails: BuildingDetailsAtCertainLevelModel = null;
+    private currentLevelBuildingDetails: BuildingDetailsAtCertainLevelModel = null;
 
     async getBuildingLevelDetails(): Promise<BuildingDetailsAtCertainLevelModel | null> {
         if (this.currentLevelBuildingDetails !== null) {

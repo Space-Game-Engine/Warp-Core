@@ -39,6 +39,9 @@ export function prepareRepositoryMock(repositoryType: any) {
         insert: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
+        connection: {
+            subscribers: []
+        }
     } as any as EntityManager;
 
     jest.spyOn(repositoryType.prototype, 'createSharedTransaction')
