@@ -34,8 +34,8 @@ export class ResourceCalculatorService {
         this.logger.debug(`Resource ${resource.id} for habitat ${this.habitatModel.id} is calculated`);
     }
 
-    @OnEvent('building_queue.resolving.after_processing_element')
-    async addResourcesOnQueueUpdate(queueProcessingEvent: QueueElementProcessedEvent, transactionId: string) {
+    @OnEvent('building_queue.resolving.before_processing_element')
+    async addResourcesOnQueueUpdate(queueProcessingEvent: QueueElementProcessedEvent) {
         const buildingQueueElement = queueProcessingEvent.queueElement;
 
         this.logger.debug(`Calculating resource on queue update for building zone ${buildingQueueElement.buildingZoneId}`);
@@ -47,11 +47,29 @@ export class ResourceCalculatorService {
 
         for (const singleHabitatResource of habitatResources) {
             await this.calculateSingleResource(singleHabitatResource, buildingQueueElement.endTime);
-            singleHabitatResource.lastCalculationTime = new Date();
+            singleHabitatResource.lastCalculationTime = buildingQueueElement.endTime;
         }
 
-        const entityManager = this.habitatResourceRepository.getSharedTransaction(transactionId);
-        await entityManager.save(habitatResources);
+        await this.habitatResourceRepository.save(habitatResources);
+    }
+
+    @OnEvent('building_queue.resolving.after_processing_element')
+    async setLastCalculationTimeForNewResources(queueProcessingEvent: QueueElementProcessedEvent) {
+        const buildingQueueElement = queueProcessingEvent.queueElement;
+        this.logger.debug("Setting last calculation time for newly processed queue element");
+        const habitatResources = await this.habitatResourceRepository.getHabitatResourceByBuildingAndLevel(
+            await buildingQueueElement.building,
+            buildingQueueElement.endLevel,
+            this.habitatModel.id,
+        );
+
+        for (const singleHabitatResource of habitatResources) {
+            if (singleHabitatResource.lastCalculationTime === null) {
+                singleHabitatResource.lastCalculationTime = buildingQueueElement.endTime;
+            }
+        }
+
+        await this.habitatResourceRepository.save(habitatResources);
     }
 
     private async calculateResourceForBuildingZone(habitatResource: HabitatResourceModel, buildingZone: BuildingZoneModel, calculationEndTime: Date) {

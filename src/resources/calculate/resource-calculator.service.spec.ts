@@ -27,10 +27,6 @@ describe("Resources calculator service test", () => {
     let calculateResourceStorage: jest.Mocked<CalculateResourceStorageService>;
     let authorizedHabitatModel: jest.Mocked<AuthorizedHabitatModel>;
 
-    beforeAll(() => {
-        prepareRepositoryMock(HabitatResourceRepository);
-    });
-
     beforeEach(async () => {
         jest.clearAllMocks();
         const module: TestingModule = await Test.createTestingModule({
@@ -202,15 +198,15 @@ describe("Resources calculator service test", () => {
 
     describe("calculateOnQueueUpdate", () => {
         it("should update resource on queue update for building zone with single resource", async () => {
-            const transactionId = "abc";
             const secondsToCalculate = 10;
             const lastCalculationTime = DateTime.now().minus({second: secondsToCalculate}).toJSDate();
             const queueElement = {
                 startLevel: 1,
                 endLevel: 2,
+                endTime: new Date(),
                 building: {
                     id: "test"
-                }
+                },
             } as BuildingQueueElementModel;
 
             const habitatResource = {
@@ -251,24 +247,21 @@ describe("Resources calculator service test", () => {
                     await habitatResource.resource
                 ).mockResolvedValue([buildingZone]);
 
-            await resourcesCalculator.addResourcesOnQueueUpdate({queueElement: queueElement}, transactionId);
+            await resourcesCalculator.addResourcesOnQueueUpdate({queueElement: queueElement});
 
             expect(habitatResource.currentAmount).toEqual(20);
             expect(habitatResource.lastCalculationTime.getTime()).toBeGreaterThan(lastCalculationTime.getTime());
 
-            expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(1);
-            expect(habitatResourceRepository.getSharedTransaction).toBeCalledWith(transactionId);
-            const entityManager = habitatResourceRepository.getSharedTransaction(transactionId);
-            expect(entityManager.save).toBeCalledTimes(1);
+            expect(habitatResourceRepository.save).toBeCalledTimes(1);
         });
 
         it("should update resource on queue update for building zone with multiple resources", async () => {
-            const transactionId = "abc";
             const secondsToCalculate = 10;
             const lastCalculationTime = DateTime.now().minus({second: secondsToCalculate}).toJSDate();
             const queueElement = {
                 startLevel: 1,
                 endLevel: 2,
+                endTime: new Date(),
                 building: {
                     id: "test"
                 }
@@ -340,17 +333,14 @@ describe("Resources calculator service test", () => {
                     await habitatResource2.resource
                 ).mockResolvedValue([buildingZoneForSteel]);
 
-            await resourcesCalculator.addResourcesOnQueueUpdate({queueElement: queueElement}, transactionId);
+            await resourcesCalculator.addResourcesOnQueueUpdate({queueElement: queueElement});
 
             expect(habitatResource1.currentAmount).toEqual(20);
             expect(habitatResource2.currentAmount).toEqual(10);
             expect(habitatResource1.lastCalculationTime.getTime()).toBeGreaterThan(lastCalculationTime.getTime());
             expect(habitatResource2.lastCalculationTime.getTime()).toBeGreaterThan(lastCalculationTime.getTime());
 
-            expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(1);
-            expect(habitatResourceRepository.getSharedTransaction).toBeCalledWith(transactionId);
-            const entityManager = habitatResourceRepository.getSharedTransaction(transactionId);
-            expect(entityManager.save).toBeCalledTimes(1);
+            expect(habitatResourceRepository.save).toBeCalledTimes(1);
         });
     });
 });

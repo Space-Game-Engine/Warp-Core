@@ -72,7 +72,7 @@ export class QueueResourceExtractorService {
 
             await entityManager.update<HabitatResourceModel>(HabitatResourceModel, singleRequiredResource.id, {
                 currentAmount: singleRequiredResource.currentAmount,
-                lastCalculationTime: new Date(),
+                lastCalculationTime: singleRequiredResource.lastCalculationTime === null ? null : new Date(),
             });
         }
     }
