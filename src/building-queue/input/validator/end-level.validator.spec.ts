@@ -22,7 +22,7 @@ describe("End Level building queue validator", () => {
         it("should add error to event when building zone level is higher than add to queue input level", async () => {
             const addToQueue: AddToQueueInput = {
                 localBuildingZoneId: 1,
-                buildingId: 1,
+                buildingId: "test",
                 endLevel: 1
             };
 
@@ -33,7 +33,7 @@ describe("End Level building queue validator", () => {
             } as BuildingZoneModel;
 
             const building = {
-                id: 1
+                id: "test"
             } as BuildingModel;
 
             const queueValidationEvent = new QueueInputValidationEvent(
@@ -52,7 +52,7 @@ describe("End Level building queue validator", () => {
         it("should add error to event when building zone level equals queue end level", async () => {
             const addToQueue: AddToQueueInput = {
                 localBuildingZoneId: 1,
-                buildingId: 1,
+                buildingId: "test",
                 endLevel: 10
             };
 
@@ -63,7 +63,7 @@ describe("End Level building queue validator", () => {
             } as BuildingZoneModel;
 
             const building = {
-                id: 1
+                id: "test"
             } as BuildingModel;
 
             const queueValidationEvent = new QueueInputValidationEvent(
@@ -82,7 +82,7 @@ describe("End Level building queue validator", () => {
         it("should add error to event when add to queue level is higher than possible to update", async () => {
             const addToQueue: AddToQueueInput = {
                 localBuildingZoneId: 1,
-                buildingId: 1,
+                buildingId: "test",
                 endLevel: 100
             };
 
@@ -93,7 +93,7 @@ describe("End Level building queue validator", () => {
             } as BuildingZoneModel;
 
             const building = {
-                id: 1,
+                id: "test",
                 buildingDetailsAtCertainLevel: [
                     {
                         level: 10
@@ -117,7 +117,7 @@ describe("End Level building queue validator", () => {
         it("should be correct level settings for queue", async () => {
             const addToQueue: AddToQueueInput = {
                 localBuildingZoneId: 1,
-                buildingId: 1,
+                buildingId: "test",
                 endLevel: 10
             };
 
@@ -128,7 +128,7 @@ describe("End Level building queue validator", () => {
             } as BuildingZoneModel;
 
             const building = {
-                id: 1,
+                id: "test",
                 buildingDetailsAtCertainLevel: [
                     {
                         level: 10

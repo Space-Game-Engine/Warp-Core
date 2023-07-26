@@ -4,12 +4,13 @@ import {QueueInputValidationEvent} from "@warp-core/building-queue/event/queue-i
 import {ConfigService} from "@nestjs/config";
 import {AddToQueueInput} from "@warp-core/building-queue/input/add-to-queue.input";
 import {BuildingQueueRepository, BuildingZoneModel} from "@warp-core/database";
+import {RuntimeConfig} from "@warp-core/core/config/runtime.config";
 
 @Injectable()
 export class ConfigurationValidator {
     constructor(
         private readonly buildingQueueRepository: BuildingQueueRepository,
-        private readonly configService: ConfigService,
+        private readonly runtimeConfig: RuntimeConfig,
     ) {
     }
 
@@ -19,7 +20,7 @@ export class ConfigurationValidator {
         const addToQueueElement = queueValidationEvent.addToQueueInput;
         const buildingZone = queueValidationEvent.buildingZone;
 
-        if (this.configService.get<boolean>('habitat.buildingQueue.allowMultipleLevelUpdate') === true) {
+        if (this.runtimeConfig.habitat.buildingQueue.allowMultipleLevelUpdate === true) {
              const errorMessage = await this.isPossibleToQueueElementByMultipleLevels(addToQueueElement, buildingZone);
              if (errorMessage) {
                  queueValidationEvent.addError('endLevel', errorMessage);

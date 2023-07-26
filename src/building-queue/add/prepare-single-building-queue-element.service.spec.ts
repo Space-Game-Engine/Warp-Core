@@ -77,7 +77,7 @@ describe("Building queue add service tests", () => {
             addToQueueInput: {
                 localBuildingZoneId: 1,
                 endLevel: 1,
-                buildingId: 1
+                buildingId: "test"
             },
             buildingZone: {
                 id: 1,
@@ -85,7 +85,7 @@ describe("Building queue add service tests", () => {
                 building: null
             },
             building: {
-                id: 10,
+                id: "test",
             },
             resourcesCosts: [
                 {
@@ -103,7 +103,7 @@ describe("Building queue add service tests", () => {
             addToQueueInput: {
                 localBuildingZoneId: 1,
                 endLevel: 1,
-                buildingId: 1
+                buildingId: "test"
             },
             buildingZone: {
                 id: 1,
@@ -111,7 +111,7 @@ describe("Building queue add service tests", () => {
                 building: {}
             },
             building: {
-                id: 10,
+                id: "test",
             },
             resourcesCosts: [
                 {
@@ -129,7 +129,7 @@ describe("Building queue add service tests", () => {
             addToQueueInput: {
                 localBuildingZoneId: 1,
                 endLevel: 5,
-                buildingId: 1
+                buildingId: "test"
             },
             buildingZone: {
                 id: 1,
@@ -137,7 +137,7 @@ describe("Building queue add service tests", () => {
                 building: {}
             },
             building: {
-                id: 10,
+                id: "test",
             },
             resourcesCosts: [
                 {
@@ -155,7 +155,7 @@ describe("Building queue add service tests", () => {
             addToQueueInput: {
                 localBuildingZoneId: 1,
                 endLevel: 5,
-                buildingId: 1
+                buildingId: "test"
             },
             buildingZone: {
                 id: 1,

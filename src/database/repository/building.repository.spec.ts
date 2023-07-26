@@ -34,7 +34,7 @@ describe("Building repository test", () => {
     describe("getBuildingById", () => {
         it("should return single building by provided id", async () => {
             const buildingModel = {
-                id: 10,
+                id: "test",
                 role: BuildingRoleEnum.RESOURCE_PRODUCTION,
                 name: 'Test building',
                 buildingDetailsAtCertainLevel: [],
@@ -57,7 +57,7 @@ describe("Building repository test", () => {
     describe("getAllBuildings", () => {
         it("should return multiple buildings", async () => {
             const buildingModel = {
-                id: 10,
+                id: "test",
                 role: BuildingRoleEnum.RESOURCE_PRODUCTION,
                 name: 'Test building',
                 buildingDetailsAtCertainLevel: [],

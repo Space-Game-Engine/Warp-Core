@@ -35,6 +35,7 @@ describe("BuildingInstallService", () => {
 
         it("should add items from array to install", async () => {
             const buildingModel = {
+                id: "production_building",
                 role: BuildingRoleEnum.RESOURCE_PRODUCTION,
                 name: "Production building",
                 buildingDetailsAtCertainLevel: [

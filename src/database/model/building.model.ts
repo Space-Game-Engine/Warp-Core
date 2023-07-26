@@ -2,17 +2,31 @@ import { BuildingRoleEnum } from "@warp-core/database/enum/building-role.enum";
 import { BuildingDetailsAtCertainLevelModel } from "@warp-core/database/model/building-details-at-certain-level.model";
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Type } from "class-transformer";
-import { ArrayNotEmpty, IsEnum, IsNumber, IsOptional, Length, ValidateNested, ValidatePromise } from "class-validator";
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+    ArrayNotEmpty,
+    IsEnum,
+    IsString,
+    Length,
+    ValidateNested,
+    ValidatePromise
+} from "class-validator";
+import {
+    BeforeInsert,
+    BeforeUpdate,
+    Column,
+    Entity,
+    JoinColumn,
+    OneToMany,
+    PrimaryColumn
+} from "typeorm";
 
 @ObjectType({ description: "Single building type, describes its role in game" })
 @Entity({name: "building"})
 export class BuildingModel {
     @Field(() => ID)
-    @IsNumber()
-    @IsOptional()
-    @PrimaryGeneratedColumn()
-    id: number;
+    @IsString()
+    @PrimaryColumn()
+    id: string;
 
     @Field(() => BuildingRoleEnum, { description: "Role says what that building do" })
     @IsEnum(BuildingRoleEnum)

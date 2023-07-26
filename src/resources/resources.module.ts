@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { AuthModule } from "@warp-core/auth";
 import { DatabaseModule } from "@warp-core/database";
-import { CreateResourcesPerHabitat } from "@warp-core/resources/create-resources-per-habitat.service";
+import { CreateResourcesPerHabitat } from "@warp-core/resources/subscriber/create-resources-per-habitat.subscriber";
 import { HabitatResourceRecalculateSubscriber } from "@warp-core/resources/subscriber/habitat-resource-recalculate.subscriber";
 import { ResourceCalculatorService } from "@warp-core/resources/calculate/resource-calculator.service";
 import { ResourcesResolver } from "@warp-core/resources/resources.resolver";
@@ -11,6 +11,10 @@ import {CalculateResourceStorageService} from "@warp-core/resources/calculate/wa
 import {
     HabitatHasNewResourceProducerSubscriber
 } from "@warp-core/resources/subscriber/habitat-has-new-resource-producer.subscriber";
+import {CoreConfigModule} from "@warp-core/core/config/core-config.module";
+import {
+    AddResourcesOnFirstHabitatSubscriber
+} from "@warp-core/resources/subscriber/add-resources-on-first-habitat.subscriber";
 
 @Module({
     providers: [
@@ -22,10 +26,12 @@ import {
         QueueResourceExtractorService,
         ResourcesResolver,
         CalculateResourceStorageService,
+        AddResourcesOnFirstHabitatSubscriber,
     ],
     imports: [
         DatabaseModule,
         AuthModule,
+        CoreConfigModule,
     ],
     exports: [
         ResourcesService,

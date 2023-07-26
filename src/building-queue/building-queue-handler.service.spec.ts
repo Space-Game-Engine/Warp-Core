@@ -29,7 +29,6 @@ describe("Building queue handler service test", () => {
     let authorizedHabitatModel: AuthorizedHabitatModel;
     let eventEmitter: jest.Mocked<EventEmitter2>;
 
-
     beforeAll(() => {
         prepareRepositoryMock(BuildingQueueRepository);
     });
@@ -68,7 +67,6 @@ describe("Building queue handler service test", () => {
                 expect.objectContaining<QueueElementBeforeProcessingEvent>({
                     queueElement: singleQueueElement,
                 }),
-                expect.anything()
             );
 
             expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
@@ -77,7 +75,6 @@ describe("Building queue handler service test", () => {
                 expect.objectContaining<QueueElementAfterProcessingEvent>({
                     queueElement: singleQueueElement,
                 }),
-                expect.anything()
             );
         }
     }
@@ -154,23 +151,21 @@ describe("Building queue handler service test", () => {
 
                 await buildingQueueHandlerService.resolveQueue();
 
-                const entityManager = buildingQueueRepository.getSharedTransaction('123');
-
-                expect(entityManager.update).toBeCalledTimes(queueElementsToBeConsumed.length * 2);
-                let entityManagerUpdateCallCounter = 0;
+                expect(buildingQueueRepository.update).toBeCalledTimes(queueElementsToBeConsumed.length);
+                expect(buildingZoneRepository.update).toBeCalledTimes(queueElementsToBeConsumed.length);
+                let buildingQueueRepositoryCallCounter = 0;
+                let buildingZoneRepositoryCallCounter = 0;
                 for (const singleQueueElement of queueElementsToBeConsumed) {
-                    expect(entityManager.update).nthCalledWith(
-                        ++entityManagerUpdateCallCounter,
-                        BuildingZoneModel,
+                    expect(buildingZoneRepository.update).nthCalledWith(
+                        ++buildingZoneRepositoryCallCounter,
                         buildingZone.id,
                         {
                             buildingId: buildingZone.buildingId,
                             level: singleQueueElement.endLevel,
                         }
                     );
-                    expect(entityManager.update).nthCalledWith(
-                        ++entityManagerUpdateCallCounter,
-                        BuildingQueueElementModel,
+                    expect(buildingQueueRepository.update).nthCalledWith(
+                        ++buildingQueueRepositoryCallCounter,
                         singleQueueElement.id,
                         {isConsumed: true}
                     );

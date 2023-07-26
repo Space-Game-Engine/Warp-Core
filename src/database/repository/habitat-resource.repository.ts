@@ -2,8 +2,7 @@ import { Injectable } from "@nestjs/common";
 import {
     BuildingModel,
     BuildingProductionRateModel,
-    HabitatResourceModel,
-    ResourceModel
+    HabitatResourceModel
 } from "@warp-core/database/model";
 import { AbstractRepository } from "@warp-core/database/repository/abstract.repository";
 import { DataSource, In } from "typeorm";
@@ -14,8 +13,8 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
         super(HabitatResourceModel, dataSource.createEntityManager());
     }
 
-    async getHabitatResourceByBuildingAndLevel(building: BuildingModel | number, level: number, habitatId: number): Promise<HabitatResourceModel[]> {
-        let buildingId: number;
+    async getHabitatResourceByBuildingAndLevel(building: BuildingModel | string, level: number, habitatId: number): Promise<HabitatResourceModel[]> {
+        let buildingId: string;
 
         if (building instanceof BuildingModel) {
             buildingId = building.id;

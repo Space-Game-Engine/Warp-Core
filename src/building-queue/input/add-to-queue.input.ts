@@ -1,5 +1,5 @@
-import { Field, InputType, Int} from "@nestjs/graphql";
-import {  IsNumber, IsOptional, IsPositive} from "class-validator";
+import {Field, ID, InputType, Int} from "@nestjs/graphql";
+import {IsNumber, IsOptional, IsPositive, IsString} from "class-validator";
 
 @InputType({description: "Creates new element in queue"})
 export class AddToQueueInput
@@ -10,13 +10,12 @@ export class AddToQueueInput
     localBuildingZoneId: number;
 
     @IsOptional()
-    @IsNumber()
-    @IsPositive()
-    @Field(() => Int, {
+    @IsString()
+    @Field(() => ID, {
         description: "Id of building type that will be constructed. If building is already placed, that field will be ignored",
         nullable: true,
     })
-    buildingId?: number;
+    buildingId?: string;
 
     @IsNumber()
     @IsPositive()

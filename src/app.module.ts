@@ -16,6 +16,8 @@ import { validate } from '@warp-core/core/config/validate';
 import { DatabaseConfig } from '@warp-core/core/config/model/database.config';
 import { ResourcesModule } from '@warp-core/resources';
 import {parseValidationErrorMessageResponse} from "@warp-core/core/validation/parse-validation-error-message-response";
+import {ClsModule} from "nestjs-cls";
+import {CoreConfigModule} from "@warp-core/core/config/core-config.module";
 
 @Module({
     imports: [
@@ -23,6 +25,10 @@ import {parseValidationErrorMessageResponse} from "@warp-core/core/validation/pa
             isGlobal: true, // to get access to it in every component
             validate: validate,
             load: [config],
+        }),
+        ClsModule.forRoot({
+            global: true,
+            middleware: { mount: true, generateId: true },
         }),
         EventEmitterModule.forRoot({
             wildcard: true,
@@ -39,6 +45,7 @@ import {parseValidationErrorMessageResponse} from "@warp-core/core/validation/pa
                 return databaseConfiguration as TypeOrmModuleOptions;
             }
         }),
+        CoreConfigModule,
         DatabaseModule,
         BuildingModule,
         HabitatModule,

@@ -50,7 +50,7 @@ export class BuildingQueueElementModel implements DraftModelInterface{
     building?: BuildingModel | Promise<BuildingModel>;
 
     @Column({ nullable: true })
-    buildingId?: number;
+    buildingId?: string;
 
     @Field(() => BuildingZoneModel, { description: "Building zone connected to queue element" })
     @ManyToOne(

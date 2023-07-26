@@ -11,8 +11,8 @@ export class CreateResourcesPerHabitat {
         private readonly habitatResourceRepository: HabitatResourceRepository,
     ) { }
 
-    @OnEvent('habitat.create_new')
-    async createResourcesPerHabitat(newHabitatEvent: HabitatCreatedEvent): Promise<void> {
+    @OnEvent('habitat.created.after_save')
+    async createResourcesPerHabitat(newHabitatEvent: HabitatCreatedEvent, transactionId: string): Promise<void> {
         const resourcesList = await this.resourceRepository.find();
         const habitatResourcesToSave = [];
 
@@ -24,8 +24,10 @@ export class CreateResourcesPerHabitat {
             habitatResourcesToSave.push(habitatResource);
         }
 
+
         if (habitatResourcesToSave.length > 0) {
-            await this.habitatResourceRepository.save(habitatResourcesToSave, { reload: false });
+            const entityManager = this.habitatResourceRepository.getSharedTransaction(transactionId);
+            await entityManager.insert(HabitatResourceModel, habitatResourcesToSave);
         }
     }
 }

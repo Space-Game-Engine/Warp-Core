@@ -1,10 +1,13 @@
-import {EntityManager, QueryRunner, Repository} from "typeorm";
+import {EntityManager, EntitySubscriberInterface, QueryRunner, Repository} from "typeorm";
 import { v4 as uuidv4 } from 'uuid';
 import {DatabaseException} from "@warp-core/database/exception/database.exception";
+import {BuildingQueueElementModel, HabitatResourceModel} from "@warp-core/database";
 
 export abstract class AbstractRepository<T extends Object> extends Repository<T> {
 
     private static sharedTransactions: Map<string, QueryRunner> = new Map<string, QueryRunner>();
+
+    private static disabledEntityListeners : Map<Function | string, EntitySubscriberInterface> = new Map<Function | string, EntitySubscriberInterface>();
 
     /**
      * Creates shared transaction. Shared transaction allows to use transactions in different modules
@@ -84,5 +87,29 @@ export abstract class AbstractRepository<T extends Object> extends Repository<T>
 
     public transaction(runInTransaction: (entityManager: EntityManager) => Promise<unknown>) {
         return this.manager.transaction(runInTransaction)
+    }
+
+    public disableEntityListeners(entityType: Function | Function[] | string | string[]) {
+        const entityTypesToCheck = Array.isArray(entityType) ? entityType : [entityType];
+
+        const subscriber = this.manager.connection.subscribers;
+        for (let i = subscriber.length - 1; i >= 0; --i) {
+            const subscriberElement = subscriber[i];
+            if (entityTypesToCheck.includes(subscriberElement.listenTo())) {
+                AbstractRepository.disabledEntityListeners.set(subscriberElement.listenTo(), subscriberElement);
+                subscriber.splice(subscriber.indexOf(subscriberElement), 1);
+            }
+        }
+    }
+
+    public enableEntityListeners(entityType: Function | Function[] | string | string[]) {
+        const entityTypesToCheck = Array.isArray(entityType) ? entityType : [entityType];
+        const subscriber = this.manager.connection.subscribers;
+
+        for (const entityTypesToCheckElement of entityTypesToCheck) {
+            const disabledEntity = AbstractRepository.disabledEntityListeners.get(entityTypesToCheckElement);
+            subscriber.push(disabledEntity);
+            AbstractRepository.disabledEntityListeners.delete(entityTypesToCheckElement);
+        }
     }
 }

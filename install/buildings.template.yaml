@@ -1,6 +1,7 @@
 buildings:
   - role: warehouse
     name: Warehouse
+    id: warehouse
     buildingDetailsAtCertainLevel:
       - level: 1
         timeToUpdateBuildingInSeconds: 10
@@ -19,6 +20,7 @@ buildings:
             cost: 20
   - role: resource
     name: Coal Mine
+    id: coal_mine
     buildingDetailsAtCertainLevel:
       - level: 1
         timeToUpdateBuildingInSeconds: 1000
@@ -53,6 +55,7 @@ buildings:
             productionRate: 5
   - role: resource
     name: Lumber mill
+    id: lumber_mill
     buildingDetailsAtCertainLevel:
       - level: 1
         timeToUpdateBuildingInSeconds: 1000
@@ -87,6 +90,7 @@ buildings:
             cost: 50
   - role: technology
     name: University of Nothingness
+    id: university
     buildingDetailsAtCertainLevel:
       - level: 1
         timeToUpdateBuildingInSeconds: 1000
@@ -98,6 +102,7 @@ buildings:
         timeToUpdateBuildingInSeconds: 8000
   - role: unit
     name: Train factory
+    id: train_factory
     buildingDetailsAtCertainLevel:
       - level: 1
         timeToUpdateBuildingInSeconds: 1000

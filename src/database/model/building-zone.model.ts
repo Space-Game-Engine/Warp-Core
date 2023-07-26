@@ -51,7 +51,7 @@ export class BuildingZoneModel {
     building?: BuildingModel | Promise<BuildingModel>;
 
     @Column({name: 'buildingId', nullable: true})
-    buildingId?: number;
+    buildingId?: string;
 
     @Field({description: "What level is that"})
     @IsNumber()
@@ -73,7 +73,7 @@ export class BuildingZoneModel {
     )
     buildingQueue: BuildingQueueElementModel[] | Promise<BuildingQueueElementModel[]>;
 
-    currentLevelBuildingDetails: BuildingDetailsAtCertainLevelModel = null;
+    private currentLevelBuildingDetails: BuildingDetailsAtCertainLevelModel = null;
 
     async getBuildingLevelDetails(): Promise<BuildingDetailsAtCertainLevelModel | null> {
         if (this.currentLevelBuildingDetails !== null) {
