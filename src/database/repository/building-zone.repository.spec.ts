@@ -1,116 +1,126 @@
-import { Test, TestingModule } from "@nestjs/testing";
-import { BuildingZoneModel } from "@warp-core/database/model";
-import { BuildingZoneRepository } from "@warp-core/database/repository/building-zone.repository";
-import { when } from "jest-when";
-import { DataSource } from "typeorm";
+import {Test, TestingModule} from '@nestjs/testing';
+import {BuildingZoneModel} from '@warp-core/database/model';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
+import {when} from 'jest-when';
+import {DataSource} from 'typeorm';
 
-describe("Building zone repository test", () => {
-    let buildingZoneRepository: BuildingZoneRepository;
-    let findOneBuildingZoneSpy: jest.SpyInstance;
-    let findBuildingZoneSpy: jest.SpyInstance;
+describe('Building zone repository test', () => {
+	let buildingZoneRepository: BuildingZoneRepository;
+	let findOneBuildingZoneSpy: jest.SpyInstance;
+	let findBuildingZoneSpy: jest.SpyInstance;
 
-    beforeEach(async () => {
-        const module: TestingModule = await Test.createTestingModule({
-            providers: [
-                BuildingZoneRepository,
-                {
-                    provide: DataSource,
-                    useValue: {
-                        createEntityManager() { },
-                    }
-                }
-            ]
-        }).compile();
+	beforeEach(async () => {
+		const module: TestingModule = await Test.createTestingModule({
+			providers: [
+				BuildingZoneRepository,
+				{
+					provide: DataSource,
+					useValue: {
+						createEntityManager() {},
+					},
+				},
+			],
+		}).compile();
 
-        buildingZoneRepository = module.get<BuildingZoneRepository>(BuildingZoneRepository);
-        findOneBuildingZoneSpy = jest.spyOn(buildingZoneRepository, 'findOne');
-        findBuildingZoneSpy = jest.spyOn(buildingZoneRepository, 'find');
-    });
+		buildingZoneRepository = module.get<BuildingZoneRepository>(
+			BuildingZoneRepository,
+		);
+		findOneBuildingZoneSpy = jest.spyOn(buildingZoneRepository, 'findOne');
+		findBuildingZoneSpy = jest.spyOn(buildingZoneRepository, 'find');
+	});
 
-    test('building zone repository object should be defined', () => {
-        expect(buildingZoneRepository).toBeDefined();
-    });
+	test('building zone repository object should be defined', () => {
+		expect(buildingZoneRepository).toBeDefined();
+	});
 
-    describe("getAllBuildingZonesByHabitatId", () => {
-        it("should load all building zones for single habitat id", async () => {
-            const habitatId = 5;
-            const buildingZones = [
-                {
-                    id: 10,
-                    localBuildingZoneId: 1,
-                    level: 1
-                },
-                {
-                    id: 11,
-                    localBuildingZoneId: 2,
-                    level: 0
-                }
-            ] as BuildingZoneModel[];
+	describe('getAllBuildingZonesByHabitatId', () => {
+		it('should load all building zones for single habitat id', async () => {
+			const habitatId = 5;
+			const buildingZones = [
+				{
+					id: 10,
+					localBuildingZoneId: 1,
+					level: 1,
+				},
+				{
+					id: 11,
+					localBuildingZoneId: 2,
+					level: 0,
+				},
+			] as BuildingZoneModel[];
 
-            when(findBuildingZoneSpy)
+			when(findBuildingZoneSpy);
 
-            findBuildingZoneSpy.mockResolvedValue(buildingZones);
+			findBuildingZoneSpy.mockResolvedValue(buildingZones);
 
-            const returnedBuildingZones = await buildingZoneRepository.getAllBuildingZonesByHabitatId(habitatId);
+			const returnedBuildingZones =
+				await buildingZoneRepository.getAllBuildingZonesByHabitatId(habitatId);
 
-            expect(returnedBuildingZones).toEqual(buildingZones);
-            expect(findBuildingZoneSpy).toBeCalledWith(expect.objectContaining({
-                where: {
-                    habitat: {
-                        id: habitatId
-                    }
-                }
-            }));
-        });
-    });
+			expect(returnedBuildingZones).toEqual(buildingZones);
+			expect(findBuildingZoneSpy).toBeCalledWith(
+				expect.objectContaining({
+					where: {
+						habitat: {
+							id: habitatId,
+						},
+					},
+				}),
+			);
+		});
+	});
 
-    describe("getSingleBuildingZone", () => {
-        it("should fetch single building zone for provided counter and habitat id", async () => {
-            const habitatId = 5;
-            const buildingZone = {
-                id: 10,
-                localBuildingZoneId: 1,
-                level: 1
-            } as BuildingZoneModel;
+	describe('getSingleBuildingZone', () => {
+		it('should fetch single building zone for provided counter and habitat id', async () => {
+			const habitatId = 5;
+			const buildingZone = {
+				id: 10,
+				localBuildingZoneId: 1,
+				level: 1,
+			} as BuildingZoneModel;
 
-            findOneBuildingZoneSpy.mockResolvedValue(buildingZone);
+			findOneBuildingZoneSpy.mockResolvedValue(buildingZone);
 
-            const returnedBuildingZone = await buildingZoneRepository.getSingleBuildingZone(
-                buildingZone.localBuildingZoneId,
-                habitatId
-            );
+			const returnedBuildingZone =
+				await buildingZoneRepository.getSingleBuildingZone(
+					buildingZone.localBuildingZoneId,
+					habitatId,
+				);
 
-            expect(returnedBuildingZone).toEqual(buildingZone);
-            expect(findOneBuildingZoneSpy).toBeCalledWith(expect.objectContaining({
-                where: {
-                    localBuildingZoneId: buildingZone.localBuildingZoneId,
-                    habitat: {
-                        id: habitatId
-                    }
-                }
-            }));
-        });
-    });
+			expect(returnedBuildingZone).toEqual(buildingZone);
+			expect(findOneBuildingZoneSpy).toBeCalledWith(
+				expect.objectContaining({
+					where: {
+						localBuildingZoneId: buildingZone.localBuildingZoneId,
+						habitat: {
+							id: habitatId,
+						},
+					},
+				}),
+			);
+		});
+	});
 
-    describe("getSingleBuildingZoneById", () => {
-        it("should fetch single building zone for provided building zone id", async () => {
-            const buildingZone = {
-                id: 10,
-                localBuildingZoneId: 1,
-                level: 1
-            } as BuildingZoneModel;
+	describe('getSingleBuildingZoneById', () => {
+		it('should fetch single building zone for provided building zone id', async () => {
+			const buildingZone = {
+				id: 10,
+				localBuildingZoneId: 1,
+				level: 1,
+			} as BuildingZoneModel;
 
-            findOneBuildingZoneSpy.mockResolvedValue(buildingZone);
+			findOneBuildingZoneSpy.mockResolvedValue(buildingZone);
 
-            const returnedBuildingZone = await buildingZoneRepository.getSingleBuildingZoneById(buildingZone.id);
+			const returnedBuildingZone =
+				await buildingZoneRepository.getSingleBuildingZoneById(buildingZone.id);
 
-            expect(returnedBuildingZone).toEqual(buildingZone);
-            expect(findOneBuildingZoneSpy).toBeCalledWith(expect.objectContaining({
-                where: {
-                    id: buildingZone.id
-                }
-            }));
-        });
-    });
-
+			expect(returnedBuildingZone).toEqual(buildingZone);
+			expect(findOneBuildingZoneSpy).toBeCalledWith(
+				expect.objectContaining({
+					where: {
+						id: buildingZone.id,
+					},
+				}),
+			);
+		});
+	});
 });

@@ -1,3 +1,3 @@
 export type QueueValidationErrorType = {
-    [fieldName: string]: string[];
+	[fieldName: string]: string[];
 };

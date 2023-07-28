@@ -1,13 +1,13 @@
-import { IsBoolean, IsInt, IsString, Min } from "class-validator";
+import {IsBoolean, IsInt, IsString, Min} from 'class-validator';
 
 export class JwtConfig {
-    @IsString()
-    secret: string;
+	@IsString()
+	secret: string;
 
-    @IsInt()
-    @Min(1)
-    expiresIn: number;
+	@IsInt()
+	@Min(1)
+	expiresIn: number;
 
-    @IsBoolean()
-    ignoreExpiration: boolean;
+	@IsBoolean()
+	ignoreExpiration: boolean;
 }

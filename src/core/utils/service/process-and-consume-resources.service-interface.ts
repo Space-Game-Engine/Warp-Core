@@ -1,5 +1,5 @@
-import {DraftModelInterface} from "@warp-core/core/utils";
+import {DraftModelInterface} from '@warp-core/core/utils';
 
 export interface ProcessAndConsumeResourcesServiceInterface {
-    processAndConsumeResources(inputData: any): Promise<DraftModelInterface>;
+	processAndConsumeResources(inputData: any): Promise<DraftModelInterface>;
 }

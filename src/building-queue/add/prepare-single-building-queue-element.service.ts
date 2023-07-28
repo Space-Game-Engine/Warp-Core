@@ -1,87 +1,103 @@
-import {Inject, Injectable} from "@nestjs/common";
+import {Inject, Injectable} from '@nestjs/common';
+import {ResourcesCalculatorInterface} from '@warp-core/building-queue/add/calculate-resources/resources-calculator.interface';
 import {
-    ResourcesCalculatorInterface
-} from "@warp-core/building-queue/add/calculate-resources/resources-calculator.interface";
-import {
-    BuildingModel,
-    BuildingQueueElementModel,
-    BuildingQueueRepository,
-    BuildingZoneModel,
-    BuildingZoneRepository
-} from "@warp-core/database";
-import {BuildingService} from "@warp-core/building";
-import {AuthorizedHabitatModel} from "@warp-core/auth";
-import {AddToQueueInput} from "@warp-core/building-queue/input/add-to-queue.input";
-import {DateTime} from "luxon";
+	BuildingModel,
+	BuildingQueueElementModel,
+	BuildingQueueRepository,
+	BuildingZoneModel,
+	BuildingZoneRepository,
+} from '@warp-core/database';
+import {BuildingService} from '@warp-core/building';
+import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
+import {DateTime} from 'luxon';
 
 @Injectable()
 export class PrepareSingleBuildingQueueElementService {
+	constructor(
+		@Inject('QUEUE_ADD_CALCULATION')
+		protected readonly calculationService: ResourcesCalculatorInterface,
+		protected readonly buildingQueueRepository: BuildingQueueRepository,
+		protected readonly buildingZoneRepository: BuildingZoneRepository,
+		protected readonly buildingService: BuildingService,
+		protected readonly habitatModel: AuthorizedHabitatModel,
+	) {}
 
-    constructor(
-        @Inject('QUEUE_ADD_CALCULATION')
-        protected readonly calculationService: ResourcesCalculatorInterface,
-        protected readonly buildingQueueRepository: BuildingQueueRepository,
-        protected readonly buildingZoneRepository: BuildingZoneRepository,
-        protected readonly buildingService: BuildingService,
-        protected readonly habitatModel: AuthorizedHabitatModel,
-    ) {
-    }
+	async getQueueElement(
+		addToQueueElement: AddToQueueInput,
+	): Promise<BuildingQueueElementModel> {
+		const buildingZone =
+			await this.buildingZoneRepository.getSingleBuildingZone(
+				addToQueueElement.localBuildingZoneId,
+				this.habitatModel.id,
+			);
 
-    async getQueueElement(addToQueueElement: AddToQueueInput): Promise<BuildingQueueElementModel> {
-        const buildingZone = await this.buildingZoneRepository
-            .getSingleBuildingZone(
-                addToQueueElement.localBuildingZoneId,
-                this.habitatModel.id
-            );
+		let building = await buildingZone.building;
 
-        let building = await buildingZone.building;
+		if (!building) {
+			building = await this.buildingService.getBuildingById(
+				addToQueueElement.buildingId,
+			);
+		}
 
-        if (!building) {
-            building = await this.buildingService.getBuildingById(addToQueueElement.buildingId);
-        }
+		const resourceCost = await this.calculationService.calculateResourcesCosts(
+			addToQueueElement,
+			buildingZone,
+			building,
+		);
 
-        const resourceCost = await this.calculationService.calculateResourcesCosts(addToQueueElement, buildingZone, building);
+		const startTime = await this.prepareStartTimeForQueueElement(buildingZone);
+		const queueElement: BuildingQueueElementModel = {
+			id: null,
+			buildingId: building.id,
+			buildingZone: buildingZone,
+			buildingZoneId: buildingZone.id,
+			startTime: startTime,
+			startLevel: buildingZone.level,
+			endLevel: addToQueueElement.endLevel,
+			endTime: new Date(),
+			isConsumed: false,
+			costs: resourceCost,
+		};
 
-        const startTime = await this.prepareStartTimeForQueueElement(buildingZone);
-        const queueElement: BuildingQueueElementModel = {
-            id: null,
-            buildingId: building.id,
-            buildingZone: buildingZone,
-            buildingZoneId: buildingZone.id,
-            startTime: startTime,
-            startLevel: buildingZone.level,
-            endLevel: addToQueueElement.endLevel,
-            endTime: new Date(),
-            isConsumed: false,
-            costs: resourceCost
-        };
+		queueElement.endTime = await this.prepareEndTimeForQueueElement(
+			queueElement,
+			building,
+		);
 
-        queueElement.endTime = await this.prepareEndTimeForQueueElement(queueElement, building);
+		return queueElement;
+	}
 
-        return queueElement;
-    }
+	protected async prepareStartTimeForQueueElement(
+		buildingZone: BuildingZoneModel,
+	): Promise<Date> {
+		const currentBuildingQueue =
+			await this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(
+				buildingZone.habitatId,
+			);
 
-    protected async prepareStartTimeForQueueElement(buildingZone: BuildingZoneModel): Promise<Date> {
-        const currentBuildingQueue = await this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(buildingZone.habitatId);
+		if (currentBuildingQueue.length === 0) {
+			return new Date();
+		}
 
-        if (currentBuildingQueue.length === 0) {
-            return new Date();
-        }
+		const lastBuildingQueueElement = currentBuildingQueue.at(-1)!;
 
-        const lastBuildingQueueElement = currentBuildingQueue.at(-1)!;
+		return lastBuildingQueueElement.endTime;
+	}
 
-        return lastBuildingQueueElement.endTime;
-    }
+	protected async prepareEndTimeForQueueElement(
+		queueElement: BuildingQueueElementModel,
+		building: BuildingModel,
+	): Promise<Date> {
+		const startTime = DateTime.fromJSDate(queueElement.startTime);
+		const upgradeTime =
+			await this.buildingService.calculateTimeInSecondsToUpgradeBuilding(
+				queueElement.startLevel,
+				queueElement.endLevel,
+				building.id,
+			);
+		const endTime = startTime.plus({second: upgradeTime}).toJSDate();
 
-    protected async prepareEndTimeForQueueElement(queueElement: BuildingQueueElementModel, building: BuildingModel): Promise<Date> {
-        const startTime = DateTime.fromJSDate(queueElement.startTime);
-        const upgradeTime = await this.buildingService.calculateTimeInSecondsToUpgradeBuilding(
-            queueElement.startLevel,
-            queueElement.endLevel,
-            building.id
-        );
-        const endTime = startTime.plus({second: upgradeTime}).toJSDate();
-
-        return endTime;
-    }
+		return endTime;
+	}
 }

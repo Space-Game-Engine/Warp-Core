@@ -1,1 +1,1 @@
-export class QueueError extends Error { }
+export class QueueError extends Error {}
