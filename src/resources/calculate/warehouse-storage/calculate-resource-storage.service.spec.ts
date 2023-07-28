@@ -1,100 +1,102 @@
-import {BuildingZoneRepository, ResourceModel, WarehouseDetailsModel} from "@warp-core/database";
-import {AuthorizedHabitatModel} from "@warp-core/auth";
 import {
-    CalculateResourceStorageService
-} from "@warp-core/resources/calculate/warehouse-storage/calculate-resource-storage.service";
-import {Test, TestingModule} from "@nestjs/testing";
-import {when} from "jest-when";
+	BuildingZoneRepository,
+	ResourceModel,
+	WarehouseDetailsModel,
+} from '@warp-core/database';
+import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {CalculateResourceStorageService} from '@warp-core/resources/calculate/warehouse-storage/calculate-resource-storage.service';
+import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
 
-jest.mock("@warp-core/database/repository/building-zone.repository");
+jest.mock('@warp-core/database/repository/building-zone.repository');
 
-describe("Resource storage calculator", () => {
-    let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
-    let authorizedHabitatModel: AuthorizedHabitatModel;
-    let calculateStorageService: CalculateResourceStorageService;
+describe('Resource storage calculator', () => {
+	let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
+	let authorizedHabitatModel: AuthorizedHabitatModel;
+	let calculateStorageService: CalculateResourceStorageService;
 
-    beforeEach(async () => {
-        jest.clearAllMocks();
-        const module: TestingModule = await Test.createTestingModule({
-            providers: [
-                BuildingZoneRepository,
-                AuthorizedHabitatModel,
-                CalculateResourceStorageService
-            ]
-        }).compile();
+	beforeEach(async () => {
+		jest.clearAllMocks();
+		const module: TestingModule = await Test.createTestingModule({
+			providers: [
+				BuildingZoneRepository,
+				AuthorizedHabitatModel,
+				CalculateResourceStorageService,
+			],
+		}).compile();
 
-        buildingZoneRepository = module.get(BuildingZoneRepository);
-        authorizedHabitatModel = module.get(AuthorizedHabitatModel);
-        calculateStorageService = module.get(CalculateResourceStorageService);
-    });
+		buildingZoneRepository = module.get(BuildingZoneRepository);
+		authorizedHabitatModel = module.get(AuthorizedHabitatModel);
+		calculateStorageService = module.get(CalculateResourceStorageService);
+	});
 
-    describe("calculateStorage", () => {
-        it("should return 0 as resource storage when there are no warehouses connected to resource", async () => {
-            authorizedHabitatModel.id = 1;
-            const resourceToCheck = {
-                id: 'wood'
-            } as ResourceModel;
+	describe('calculateStorage', () => {
+		it('should return 0 as resource storage when there are no warehouses connected to resource', async () => {
+			authorizedHabitatModel.id = 1;
+			const resourceToCheck = {
+				id: 'wood',
+			} as ResourceModel;
 
-            const warehouses = [] as WarehouseDetailsModel[];
+			const warehouses = [] as WarehouseDetailsModel[];
 
-            when(buildingZoneRepository.getWarehouseForResourceAndHabitat)
-                .expectCalledWith(
-                    resourceToCheck,
-                    authorizedHabitatModel.id
-                ).mockResolvedValue(warehouses);
+			when(buildingZoneRepository.getWarehouseForResourceAndHabitat)
+				.expectCalledWith(resourceToCheck, authorizedHabitatModel.id)
+				.mockResolvedValue(warehouses);
 
-            const calculatedStorage = await calculateStorageService.calculateStorage(resourceToCheck);
+			const calculatedStorage = await calculateStorageService.calculateStorage(
+				resourceToCheck,
+			);
 
-            expect(calculatedStorage).toEqual(0);
-        });
+			expect(calculatedStorage).toEqual(0);
+		});
 
-        it("should return some storage when there is single warehouse", async () => {
-            authorizedHabitatModel.id = 1;
-            const resourceToCheck = {
-                id: 'wood'
-            } as ResourceModel;
+		it('should return some storage when there is single warehouse', async () => {
+			authorizedHabitatModel.id = 1;
+			const resourceToCheck = {
+				id: 'wood',
+			} as ResourceModel;
 
-            const warehouses = [
-                {
-                    amount: 50
-                }
-            ] as WarehouseDetailsModel[];
+			const warehouses = [
+				{
+					amount: 50,
+				},
+			] as WarehouseDetailsModel[];
 
-            when(buildingZoneRepository.getWarehouseForResourceAndHabitat)
-                .expectCalledWith(
-                    resourceToCheck,
-                    authorizedHabitatModel.id
-                ).mockResolvedValue(warehouses);
+			when(buildingZoneRepository.getWarehouseForResourceAndHabitat)
+				.expectCalledWith(resourceToCheck, authorizedHabitatModel.id)
+				.mockResolvedValue(warehouses);
 
-            const calculatedStorage = await calculateStorageService.calculateStorage(resourceToCheck);
+			const calculatedStorage = await calculateStorageService.calculateStorage(
+				resourceToCheck,
+			);
 
-            expect(calculatedStorage).toEqual(50);
-        });
+			expect(calculatedStorage).toEqual(50);
+		});
 
-        it("should return some storage when there are multiple warehouses", async () => {
-            authorizedHabitatModel.id = 1;
-            const resourceToCheck = {
-                id: 'wood'
-            } as ResourceModel;
+		it('should return some storage when there are multiple warehouses', async () => {
+			authorizedHabitatModel.id = 1;
+			const resourceToCheck = {
+				id: 'wood',
+			} as ResourceModel;
 
-            const warehouses = [
-                {
-                    amount: 50
-                },
-                {
-                    amount: 100
-                }
-            ] as WarehouseDetailsModel[];
+			const warehouses = [
+				{
+					amount: 50,
+				},
+				{
+					amount: 100,
+				},
+			] as WarehouseDetailsModel[];
 
-            when(buildingZoneRepository.getWarehouseForResourceAndHabitat)
-                .expectCalledWith(
-                    resourceToCheck,
-                    authorizedHabitatModel.id
-                ).mockResolvedValue(warehouses);
+			when(buildingZoneRepository.getWarehouseForResourceAndHabitat)
+				.expectCalledWith(resourceToCheck, authorizedHabitatModel.id)
+				.mockResolvedValue(warehouses);
 
-            const calculatedStorage = await calculateStorageService.calculateStorage(resourceToCheck);
+			const calculatedStorage = await calculateStorageService.calculateStorage(
+				resourceToCheck,
+			);
 
-            expect(calculatedStorage).toEqual(150);
-        });
-    });
+			expect(calculatedStorage).toEqual(150);
+		});
+	});
 });

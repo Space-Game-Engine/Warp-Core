@@ -1,14 +1,13 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
+import {Field, InputType, Int} from '@nestjs/graphql';
 
-@InputType({description: "Creates new habitat"})
+@InputType({description: 'Creates new habitat'})
 export class NewHabitatInput {
+	@Field(() => Int, {description: 'User id'})
+	userId: number;
 
-    @Field(() => Int, {description: "User id"})
-    userId: number;
+	@Field({nullable: true, description: 'Is that main habitat?'})
+	isMain?: boolean;
 
-    @Field({nullable: true, description: "Is that main habitat?"})
-    isMain?: boolean;
-
-    @Field({ description: "Name of the habitat" })
-    name: string = "default name";
+	@Field({description: 'Name of the habitat'})
+	name: string = 'default name';
 }

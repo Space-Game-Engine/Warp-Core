@@ -1,27 +1,31 @@
-import { Strategy } from 'passport-local';
-import { PassportStrategy } from '@nestjs/passport';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { ValidatorInterface } from '@warp-core/auth/strategy/validator/validator.interface';
-import { AuthModelInterface } from '@warp-core/auth/interface/auth-model.interface';
+import {Strategy} from 'passport-local';
+import {PassportStrategy} from '@nestjs/passport';
+import {Inject, Injectable, UnauthorizedException} from '@nestjs/common';
+import {ValidatorInterface} from '@warp-core/auth/strategy/validator/validator.interface';
+import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-    constructor(
-        @Inject('VALIDATOR_SERVICE') private readonly validatorService: ValidatorInterface,
-    ) {
-        super({
-            usernameField: "userId",
-            passwordField: "habitatId"
-        });
-    }
+	constructor(
+		@Inject('VALIDATOR_SERVICE')
+		private readonly validatorService: ValidatorInterface,
+	) {
+		super({
+			usernameField: 'userId',
+			passwordField: 'habitatId',
+		});
+	}
 
-    async validate(userId: number, habitatId: number): Promise<AuthModelInterface> {
-        const authModel = await this.validatorService.validate(userId, habitatId);
+	async validate(
+		userId: number,
+		habitatId: number,
+	): Promise<AuthModelInterface> {
+		const authModel = await this.validatorService.validate(userId, habitatId);
 
-        if (authModel === null) {
-            throw new UnauthorizedException();
-        }
+		if (authModel === null) {
+			throw new UnauthorizedException();
+		}
 
-        return authModel;
-    }
+		return authModel;
+	}
 }

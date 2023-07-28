@@ -1,22 +1,21 @@
 export class RegisterUserEvent {
-    
-    private habitatId: number;
+	private habitatId: number;
 
-    constructor(private readonly userId: number) {}
+	constructor(private readonly userId: number) {}
 
-    getUserId(): number {
-        return this.userId;
-    }
+	getUserId(): number {
+		return this.userId;
+	}
 
-    setHabitatId(habitatId: number) {
-        if (this.habitatId) {
-            return;
-        }
+	setHabitatId(habitatId: number) {
+		if (this.habitatId) {
+			return;
+		}
 
-        this.habitatId = habitatId;
-    }
+		this.habitatId = habitatId;
+	}
 
-    getHabitatId(): number {
-        return this.habitatId;
-    }
+	getHabitatId(): number {
+		return this.habitatId;
+	}
 }

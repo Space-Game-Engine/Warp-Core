@@ -1,3 +1,3 @@
-import {BadRequestException} from "@nestjs/common";
+import {BadRequestException} from '@nestjs/common';
 
 export class DatabaseException extends BadRequestException {}

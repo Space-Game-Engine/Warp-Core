@@ -1,1 +1,1 @@
-export * from "@warp-core/core/utils/resolver/resource-consumer.resolver-interface";
+export * from '@warp-core/core/utils/resolver/resource-consumer.resolver-interface';
