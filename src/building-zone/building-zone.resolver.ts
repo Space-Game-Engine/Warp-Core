@@ -9,14 +9,14 @@ import {
 import {BuildingZoneService} from '@warp-core/building-zone/building-zone.service';
 import {BuildingQueueRepository, BuildingZoneModel} from '@warp-core/database';
 
-@Resolver(of => BuildingZoneModel)
+@Resolver(() => BuildingZoneModel)
 export class BuildingZoneResolver {
 	constructor(
 		private readonly buildingZoneService: BuildingZoneService,
 		private readonly buildingQueueRepository: BuildingQueueRepository,
 	) {}
 
-	@Query(returns => BuildingZoneModel, {
+	@Query(() => BuildingZoneModel, {
 		nullable: true,
 		description: 'Returns single building zone',
 		name: 'buildingZone_get',
@@ -28,7 +28,7 @@ export class BuildingZoneResolver {
 		return this.buildingZoneService.getSingleBuildingZone(localBuildingZoneId);
 	}
 
-	@Query(returns => [BuildingZoneModel], {
+	@Query(() => [BuildingZoneModel], {
 		nullable: true,
 		description: 'Returns all building zones for single habitat',
 		name: 'buildingZone_getAll',

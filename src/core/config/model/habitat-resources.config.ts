@@ -1,4 +1,4 @@
-import {IsNumber, IsPositive, IsString, Min} from 'class-validator';
+import {IsNumber, IsPositive, IsString} from 'class-validator';
 
 export class HabitatResourcesConfig {
 	/**

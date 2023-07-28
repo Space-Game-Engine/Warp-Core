@@ -17,22 +17,20 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 	async getAllBuildingZonesByHabitatId(
 		habitatId: number,
 	): Promise<BuildingZoneModel[]> {
-		const buildingZones = await this.find({
+		return await this.find({
 			where: {
 				habitat: {
 					id: habitatId,
 				},
 			},
 		});
-
-		return buildingZones;
 	}
 
 	async getSingleBuildingZone(
 		localBuildingZoneId: number,
 		habitatId: number,
 	): Promise<BuildingZoneModel | null> {
-		const singleBuildingZone = await this.findOne({
+		return await this.findOne({
 			where: {
 				localBuildingZoneId: localBuildingZoneId,
 				habitat: {
@@ -40,20 +38,16 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 				},
 			},
 		});
-
-		return singleBuildingZone;
 	}
 
 	async getSingleBuildingZoneById(
 		id: number,
 	): Promise<BuildingZoneModel | null> {
-		const singleBuildingZone = await this.findOne({
+		return await this.findOne({
 			where: {
 				id: id,
 			},
 		});
-
-		return singleBuildingZone;
 	}
 
 	async getMaxOfCounterPerHabitat(habitatId: number): Promise<number> {

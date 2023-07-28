@@ -6,10 +6,6 @@ import {
 } from 'typeorm';
 import {v4 as uuidv4} from 'uuid';
 import {DatabaseException} from '@warp-core/database/exception/database.exception';
-import {
-	BuildingQueueElementModel,
-	HabitatResourceModel,
-} from '@warp-core/database';
 
 export abstract class AbstractRepository<
 	T extends Object,

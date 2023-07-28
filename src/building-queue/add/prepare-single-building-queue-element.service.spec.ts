@@ -9,7 +9,6 @@ import {
 	BuildingQueueRepository,
 	BuildingZoneModel,
 	BuildingZoneRepository,
-	HabitatModel,
 	QueueElementCostModel,
 } from '@warp-core/database';
 import {AuthorizedHabitatModel} from '@warp-core/auth';

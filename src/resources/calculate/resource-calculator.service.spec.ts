@@ -15,7 +15,6 @@ import {CalculateResourceStorageService} from '@warp-core/resources/calculate/wa
 import {default as singleBuildingZonesAndOneResourceCases} from '@warp-core/resources/datasets/calculate/single-building-zone-and-single-resource';
 import {default as singleBuildingZonesAndOneResourceCasesWithWarehouseLimit} from '@warp-core/resources/datasets/calculate/single-building-zone-and-single-resource-with-warehouse-limit';
 import {default as multipleBuildingZonesAndSingleResourceCases} from '@warp-core/resources/datasets/calculate/multiple-building-zones-and-single-resource';
-import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
 jest.mock('@warp-core/database/repository/building-zone.repository');

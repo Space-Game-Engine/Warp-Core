@@ -2,7 +2,6 @@ import {EndLevelValidator} from '@warp-core/building-queue/input/validator/end-l
 import {Test, TestingModule} from '@nestjs/testing';
 import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
 import {BuildingModel, BuildingZoneModel} from '@warp-core/database';
-import {when} from 'jest-when';
 import {QueueInputValidationEvent} from '@warp-core/building-queue/event/queue-input-validation.event';
 
 describe('End Level building queue validator', () => {

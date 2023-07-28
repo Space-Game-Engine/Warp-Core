@@ -11,13 +11,11 @@ export class HabitatValidatorService implements ValidatorInterface {
 		userId: number,
 		habitatId: number,
 	): Promise<AuthModelInterface | null> {
-		const habitatModel = await this.habitatRepository.findOne({
+		return await this.habitatRepository.findOne({
 			where: {
 				id: habitatId,
 				userId: userId,
 			},
 		});
-
-		return habitatModel;
 	}
 }

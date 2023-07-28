@@ -7,7 +7,7 @@ import {
 } from '@warp-core/database';
 import {ResourcesService} from '@warp-core/resources';
 
-@Resolver(of => HabitatModel)
+@Resolver(() => HabitatModel)
 export class HabitatResolver {
 	constructor(
 		private readonly habitatService: HabitatService,
@@ -15,7 +15,7 @@ export class HabitatResolver {
 		private readonly resourcesService: ResourcesService,
 	) {}
 
-	@Query(returns => HabitatModel, {
+	@Query(() => HabitatModel, {
 		nullable: true,
 		description: 'Get single habitat for logged in token',
 		name: 'habitat_get',
@@ -24,7 +24,7 @@ export class HabitatResolver {
 		return this.habitatService.getCurrentHabitat();
 	}
 
-	@Query(returns => [HabitatModel], {
+	@Query(() => [HabitatModel], {
 		nullable: true,
 		description: 'Get all habitats for user logged in',
 		name: 'habitat_getForUser',

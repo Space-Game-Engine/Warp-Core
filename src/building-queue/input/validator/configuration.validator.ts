@@ -1,7 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {OnEvent} from '@nestjs/event-emitter';
 import {QueueInputValidationEvent} from '@warp-core/building-queue/event/queue-input-validation.event';
-import {ConfigService} from '@nestjs/config';
 import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
 import {BuildingQueueRepository, BuildingZoneModel} from '@warp-core/database';
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';

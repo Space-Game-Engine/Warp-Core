@@ -1,8 +1,6 @@
 import {
-	BuildingZoneModel,
 	BuildingZoneRepository,
 	ResourceModel,
-	WarehouseTypeEnum,
 } from '@warp-core/database';
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {Injectable} from '@nestjs/common';

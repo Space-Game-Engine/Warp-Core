@@ -16,7 +16,7 @@ import {ResourceConsumerResolverInterface} from '@warp-core/core/utils';
 import {BuildingQueueDraftService} from '@warp-core/building-queue/add/building-queue-draft.service';
 import {DraftQueueElementValidator} from '@warp-core/building-queue/input/validator/draft-queue-element.validator';
 
-@Resolver(of => BuildingQueueElementModel)
+@Resolver(() => BuildingQueueElementModel)
 export class BuildingQueueResolver
 	implements ResourceConsumerResolverInterface
 {
@@ -26,7 +26,7 @@ export class BuildingQueueResolver
 		private readonly buildingQueueHandlerService: BuildingQueueHandlerService,
 	) {}
 
-	@Mutation(returns => BuildingQueueElementModel, {
+	@Mutation(() => BuildingQueueElementModel, {
 		description: 'Add to element queue and consume related resources',
 		name: 'buildingQueue_add',
 	})
@@ -36,7 +36,7 @@ export class BuildingQueueResolver
 		return this.buildingQueueAddService.processAndConsumeResources(addToQueue);
 	}
 
-	@Mutation(returns => BuildingQueueElementModel, {
+	@Mutation(() => BuildingQueueElementModel, {
 		description: 'Prepare a draft of a queue element',
 		name: 'buildingQueue_getDraft',
 	})
@@ -46,7 +46,7 @@ export class BuildingQueueResolver
 		return this.buildingQueueDraftService.getDraft(addToQueue);
 	}
 
-	@Query(returns => [BuildingQueueElementModel], {
+	@Query(() => [BuildingQueueElementModel], {
 		description:
 			'Checks all items in queue, recalculate them and return current items from queue',
 		name: 'buildingQueue_getAll',

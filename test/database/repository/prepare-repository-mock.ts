@@ -1,4 +1,3 @@
-import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 import {EntityManager} from 'typeorm';
 
 /**
