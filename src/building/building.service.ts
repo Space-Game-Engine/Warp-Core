@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { BuildingModel, BuildingRepository } from "@warp-core/database";
-import { UserInputError } from "apollo-server-express";
 
 @Injectable()
 export class BuildingService {
@@ -20,7 +19,7 @@ export class BuildingService {
         const building = await this.buildingRepository.getBuildingById(buildingId);
 
         if (!building) {
-            throw new UserInputError("Building does not exists");
+            throw new Error("Building does not exists");
         }
 
         let secondsToUpgrade = 0;
