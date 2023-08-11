@@ -5,7 +5,7 @@ import {BuildingModel, BuildingRepository} from '@warp-core/database';
 export class BuildingService {
 	constructor(private buildingRepository: BuildingRepository) {}
 
-	async getBuildingById(buildingId: string): Promise<BuildingModel> {
+	async getBuildingById(buildingId: string): Promise<BuildingModel | null> {
 		return this.buildingRepository.getBuildingById(buildingId);
 	}
 

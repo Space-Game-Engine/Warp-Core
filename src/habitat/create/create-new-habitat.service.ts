@@ -19,7 +19,7 @@ export class CreateNewHabitatService {
 		);
 
 		if (currentHabitats.length > 0) {
-			payload.setHabitatId(currentHabitats.find(() => true).id);
+			payload.setHabitatId(currentHabitats.pop()!.id);
 
 			return;
 		}

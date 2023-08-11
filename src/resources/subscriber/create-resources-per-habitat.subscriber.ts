@@ -20,7 +20,7 @@ export class CreateResourcesPerHabitat {
 		transactionId: string,
 	): Promise<void> {
 		const resourcesList = await this.resourceRepository.find();
-		const habitatResourcesToSave = [];
+		const habitatResourcesToSave: HabitatResourceModel[] = [];
 
 		for (const singleResource of resourcesList) {
 			const habitatResource = new HabitatResourceModel();

@@ -40,7 +40,7 @@ export class AddResourcesOnFirstHabitatSubscriber {
 			const habitatResource = habitatResourcesOnStart.find(
 				habitatResourceToCheck =>
 					habitatResourceToCheck.resourceId === singleResourceOnStart.id,
-			);
+			) as HabitatResourceModel;
 
 			habitatResource.currentAmount = singleResourceOnStart.amount;
 

@@ -127,21 +127,21 @@ export class BuildingDetailsAtCertainLevelModel {
 	@BeforeInsert()
 	@BeforeUpdate()
 	async setOneToManyRelations() {
-		const productionRates = await this.productionRate;
+		const productionRates = await this.productionRate ?? [];
 		for (const productionRate of productionRates) {
 			if (!(await productionRate.buildingDetails)) {
 				productionRate.buildingDetails = this;
 			}
 		}
 
-		const requirements = await this.requirements;
+		const requirements = await this.requirements ?? [];
 		for (const requirement of requirements) {
 			if (!(await requirement.buildingDetails)) {
 				requirement.buildingDetails = this;
 			}
 		}
 
-		const warehouse = await this.warehouse;
+		const warehouse = await this.warehouse ?? [];
 		for (const singleWarehouseDetail of warehouse) {
 			if (!(await singleWarehouseDetail.buildingDetails)) {
 				singleWarehouseDetail.buildingDetails = this;

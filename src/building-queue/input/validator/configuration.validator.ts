@@ -61,13 +61,13 @@ export class ConfigurationValidator {
 		const latestQueueElement = currentBuildingQueue.at(-1);
 
 		if (!latestQueueElement) {
-			return;
+			return null;
 		}
 
 		if (latestQueueElement.endLevel >= addToQueueElement.endLevel) {
 			return 'New queue element should have end level higher than last queue element';
 		}
 
-		return;
+		return null;
 	}
 }

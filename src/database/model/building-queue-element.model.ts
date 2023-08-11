@@ -18,7 +18,7 @@ export class BuildingQueueElementModel implements DraftModelInterface {
 	@Field(() => ID)
 	@IsNumber()
 	@PrimaryGeneratedColumn()
-	id?: number;
+	id?: number | null;
 
 	@Field({description: 'What was level on queue start?'})
 	@IsNumber()

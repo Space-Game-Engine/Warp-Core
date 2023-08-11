@@ -1,6 +1,7 @@
 import {OnEvent} from '@nestjs/event-emitter';
 import {QueueInputValidationEvent} from '@warp-core/building-queue/event/queue-input-validation.event';
 import {Injectable} from '@nestjs/common';
+import {QueueError} from '@warp-core/building-queue/exception/queue.error';
 
 @Injectable()
 export class EndLevelValidator {
@@ -31,6 +32,10 @@ export class EndLevelValidator {
 		const lastPossibleUpdate = (
 			await building.buildingDetailsAtCertainLevel
 		).at(-1);
+
+		if (!lastPossibleUpdate) {
+			throw new QueueError(`Last possible update value for building ${building.id} does not exists`);
+		}
 
 		if (addToQueue.endLevel > lastPossibleUpdate.level) {
 			queueValidationEvent.addError(

@@ -45,7 +45,7 @@ export abstract class AbstractRepository<
 	 */
 	private getSharedTransactionRunner(transactionId: string): QueryRunner {
 		if (AbstractRepository.sharedTransactions.has(transactionId)) {
-			return AbstractRepository.sharedTransactions.get(transactionId);
+			return <QueryRunner>AbstractRepository.sharedTransactions.get(transactionId);
 		}
 
 		throw new DatabaseException('Transaction for provided Id does not exists');
@@ -111,8 +111,11 @@ export abstract class AbstractRepository<
 		const subscriber = this.manager.connection.subscribers;
 		for (let i = subscriber.length - 1; i >= 0; --i) {
 			const subscriberElement = subscriber[i];
+
+			// @ts-ignore
 			if (entityTypesToCheck.includes(subscriberElement.listenTo())) {
 				AbstractRepository.disabledEntityListeners.set(
+					// @ts-ignore
 					subscriberElement.listenTo(),
 					subscriberElement,
 				);
@@ -133,6 +136,7 @@ export abstract class AbstractRepository<
 			const disabledEntity = AbstractRepository.disabledEntityListeners.get(
 				entityTypesToCheckElement,
 			);
+			// @ts-ignore
 			subscriber.push(disabledEntity);
 			AbstractRepository.disabledEntityListeners.delete(
 				entityTypesToCheckElement,

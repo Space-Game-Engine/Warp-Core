@@ -56,7 +56,7 @@ export class HabitatHasNewResourceProducerSubscriber {
 		queueElement: BuildingQueueElementModel,
 	): Promise<BuildingProductionRateModel[]> {
 		return this.buildingRepository.getProductionRateForProvidedLevel(
-			queueElement.buildingId,
+			queueElement.buildingId!,
 			queueElement.endLevel,
 		);
 	}

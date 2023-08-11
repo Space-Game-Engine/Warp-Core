@@ -46,11 +46,11 @@ export class FirstHabitatCreatedSubscriber {
 			const buildingZone = await this.buildingZoneService.getSingleBuildingZone(
 				habitatBuildingsConfig.localBuildingZoneId,
 				habitat,
-			);
+			) as BuildingZoneModel;
 
 			buildingZone.buildingId = buildingsToBuild.find(
 				singleBuilding => singleBuilding.id === habitatBuildingsConfig.id,
-			).id;
+			)!.id;
 
 			buildingZone.level = habitatBuildingsConfig.level;
 

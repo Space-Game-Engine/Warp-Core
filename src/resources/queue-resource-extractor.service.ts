@@ -71,7 +71,7 @@ export class QueueResourceExtractorService {
 		for (const singleCost of queueCost) {
 			const habitatResourceModel = requiredResources.find(
 				singleResource => singleResource.resourceId === singleCost.resource.id,
-			);
+			) as HabitatResourceModel;
 
 			if (habitatResourceModel.currentAmount < singleCost.cost) {
 				const difference = singleCost.cost - habitatResourceModel.currentAmount;
@@ -97,7 +97,7 @@ export class QueueResourceExtractorService {
 		for (const singleRequiredResource of requiredResources) {
 			const queueCostPerResource = queueCost.find(
 				cost => cost.resource.id === singleRequiredResource.resourceId,
-			);
+			) as QueueElementCostModel;
 
 			singleRequiredResource.currentAmount -= queueCostPerResource.cost;
 
