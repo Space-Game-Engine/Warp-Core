@@ -1,4 +1,12 @@
-habitat:
-  buildingZones:
-    counterForNewHabitat: 5
-    isPossibleToCreateNewZones: true
+database:
+  type: 'sqlite'
+  host: ''
+  port: ''
+  username: ''
+  password: ''
+  database: 'test_db.db'
+  synchronize: true
+  migrations:
+    - 'test/e2e/migrations/*.ts'
+  cli:
+    "migrationsDir": "test/e2e/migrations"

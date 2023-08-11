@@ -1,0 +1,16 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "roots": [
+    "<rootDir>"
+  ],
+  "moduleNameMapper": {
+    "@warp-core/test/(.*)": "<rootDir>../$1",
+    "@warp-core/(.*)": "<rootDir>../../src/$1"
+  }
+}
