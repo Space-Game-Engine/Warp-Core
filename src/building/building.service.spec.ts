@@ -55,7 +55,7 @@ describe('Building service test', () => {
 				role: BuildingRoleEnum.RESOURCE_PRODUCTION,
 				name: 'Test building',
 				buildingDetailsAtCertainLevel: [],
-			} as BuildingModel;
+			} as unknown as BuildingModel;
 
 			when(buildingRepository.getBuildingById)
 				.expectCalledWith(buildingId)
@@ -194,7 +194,7 @@ describe('Building service test', () => {
 				role: BuildingRoleEnum.RESOURCE_PRODUCTION,
 				name: 'Test building',
 				buildingDetailsAtCertainLevel: [],
-			} as BuildingModel;
+			} as unknown as BuildingModel;
 
 			when(buildingRepository.getBuildingById)
 				.expectCalledWith(buildingId)
@@ -221,7 +221,7 @@ describe('Building service test', () => {
 					name: 'Test building 2',
 					buildingDetailsAtCertainLevel: [],
 				},
-			] as BuildingModel[];
+			] as unknown as BuildingModel[];
 
 			when(buildingRepository.getAllBuildings)
 				.expectCalledWith()

@@ -20,7 +20,6 @@ export class QueueResourceExtractorService {
 	@OnEvent('building_queue.adding.after_processing_element')
 	async useResourcesOnQueueUpdate(
 		queueProcessingEvent: QueueElementProcessedEvent,
-		transactionId: string,
 	) {
 		const queueElement = queueProcessingEvent.queueElement;
 		const requiredResources = await this.getRequiredResourcesFromHabitat(
@@ -38,7 +37,6 @@ export class QueueResourceExtractorService {
 		await this.extractResources(
 			queueElement.costs,
 			requiredResources,
-			transactionId,
 		);
 	}
 
@@ -90,10 +88,7 @@ export class QueueResourceExtractorService {
 	private async extractResources(
 		queueCost: QueueElementCostModel[],
 		requiredResources: HabitatResourceModel[],
-		transactionId: string,
 	) {
-		const entityManager =
-			this.habitatResourceRepository.getSharedTransaction(transactionId);
 		for (const singleRequiredResource of requiredResources) {
 			const queueCostPerResource = queueCost.find(
 				cost => cost.resource.id === singleRequiredResource.resourceId,
@@ -101,8 +96,7 @@ export class QueueResourceExtractorService {
 
 			singleRequiredResource.currentAmount -= queueCostPerResource.cost;
 
-			await entityManager.update<HabitatResourceModel>(
-				HabitatResourceModel,
+			await this.habitatResourceRepository.update(
 				singleRequiredResource.id,
 				{
 					currentAmount: singleRequiredResource.currentAmount,

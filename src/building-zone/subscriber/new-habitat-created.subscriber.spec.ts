@@ -36,7 +36,6 @@ describe('New habitat created - subscriber', () => {
 
 			await newHabitatCreated.createBuildingZoneOnNewHabitatCreation(
 				{habitat: newHabitat},
-				'abc',
 			);
 
 			expect(buildingZoneService.createNewBuildingZone).toBeCalledTimes(
@@ -45,7 +44,6 @@ describe('New habitat created - subscriber', () => {
 
 			expect(buildingZoneService.createNewBuildingZone).toBeCalledWith(
 				newHabitat,
-				'abc',
 			);
 		});
 	});

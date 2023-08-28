@@ -41,7 +41,7 @@ describe('Habitat service tests', () => {
 					isMain: false,
 					buildingZones: [],
 				},
-			] as HabitatModel[];
+			] as unknown as HabitatModel[];
 
 			authorizedHabitatModel.userId = userId;
 
@@ -90,7 +90,7 @@ describe('Habitat service tests', () => {
 				userId: 1,
 				isMain: true,
 				buildingZones: [],
-			} as HabitatModel;
+			} as unknown as HabitatModel;
 
 			when(habitatRepository.getHabitatById)
 				.expectCalledWith(habitatId)

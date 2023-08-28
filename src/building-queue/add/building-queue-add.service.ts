@@ -30,28 +30,23 @@ export class BuildingQueueAddService
 			new QueueElementBeforeProcessingEvent(draftQueueElement),
 		);
 
-		const [transactionId, entityManager] =
-			await this.buildingQueueRepository.createSharedTransaction();
+		await this.buildingQueueRepository.startTransaction();
 
 		try {
-			const queueElement = await entityManager.save(
-				BuildingQueueElementModel,
+			const queueElement = await this.buildingQueueRepository.save(
 				draftQueueElement,
 			);
 
 			await this.eventEmitter.emitAsync(
 				'building_queue.adding.after_processing_element',
 				new QueueElementAfterProcessingEvent(queueElement),
-				transactionId,
 			);
 
-			await this.buildingQueueRepository.commitSharedTransaction(transactionId);
+			await this.buildingQueueRepository.commitTransaction();
 
 			return queueElement;
 		} catch (e) {
-			await this.buildingQueueRepository.rollbackSharedTransaction(
-				transactionId,
-			);
+			await this.buildingQueueRepository.rollbackTransaction();
 			throw e;
 		}
 	}

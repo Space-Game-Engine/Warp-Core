@@ -38,7 +38,7 @@ describe('Building repository test', () => {
 				role: BuildingRoleEnum.RESOURCE_PRODUCTION,
 				name: 'Test building',
 				buildingDetailsAtCertainLevel: [],
-			} as BuildingModel;
+			} as unknown as BuildingModel;
 
 			findOneBuildingSpy.mockResolvedValue(buildingModel);
 
@@ -65,7 +65,7 @@ describe('Building repository test', () => {
 				role: BuildingRoleEnum.RESOURCE_PRODUCTION,
 				name: 'Test building',
 				buildingDetailsAtCertainLevel: [],
-			} as BuildingModel;
+			} as unknown as BuildingModel;
 
 			findBuildingSpy.mockResolvedValue([buildingModel]);
 

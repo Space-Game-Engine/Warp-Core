@@ -52,7 +52,7 @@ export class BuildingQueueElementModel implements DraftModelInterface {
 		lazy: true,
 	})
 	@JoinColumn({name: 'buildingId'})
-	building?: BuildingModel | Promise<BuildingModel>;
+	building?: BuildingModel | Promise<BuildingModel> | null;
 
 	@Column({nullable: true})
 	buildingId?: string;

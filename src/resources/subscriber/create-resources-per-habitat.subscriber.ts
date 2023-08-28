@@ -17,7 +17,6 @@ export class CreateResourcesPerHabitat {
 	@OnEvent('habitat.created.after_save')
 	async createResourcesPerHabitat(
 		newHabitatEvent: HabitatCreatedEvent,
-		transactionId: string,
 	): Promise<void> {
 		const resourcesList = await this.resourceRepository.find();
 		const habitatResourcesToSave: HabitatResourceModel[] = [];
@@ -31,9 +30,7 @@ export class CreateResourcesPerHabitat {
 		}
 
 		if (habitatResourcesToSave.length > 0) {
-			const entityManager =
-				this.habitatResourceRepository.getSharedTransaction(transactionId);
-			await entityManager.insert(HabitatResourceModel, habitatResourcesToSave);
+			await this.habitatResourceRepository.insert(habitatResourcesToSave);
 		}
 	}
 }

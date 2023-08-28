@@ -31,19 +31,11 @@ export class BuildingZoneService {
 
 	async createNewBuildingZone(
 		habitat: HabitatModel,
-		transactionId: string | null = null,
 	): Promise<BuildingZoneModel> {
 		const maxCounterPerHabitat =
 			await this.buildingZoneRepository.getMaxOfCounterPerHabitat(habitat.id);
 
-		let entityManager = this.buildingZoneRepository.manager;
-
-		if (transactionId) {
-			entityManager =
-				this.buildingZoneRepository.getSharedTransaction(transactionId);
-		}
-
-		const newBuildingZone = await entityManager.save(BuildingZoneModel, {
+		const newBuildingZone = await this.buildingZoneRepository.save({
 			localBuildingZoneId: maxCounterPerHabitat + 1,
 			habitatId: habitat.id,
 			level: 0,

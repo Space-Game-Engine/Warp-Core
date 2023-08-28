@@ -57,11 +57,10 @@ describe('Habitat service tests', () => {
 				userId: newHabitatInput.userId,
 				isMain: newHabitatInput.isMain,
 				buildingZones: [],
-			} as HabitatModel;
+			} as unknown as HabitatModel;
 
-			when(habitatRepository.manager.create)
+			when(habitatRepository.create)
 				.expectCalledWith(
-					HabitatModel,
 					expect.objectContaining(newHabitatInput),
 				)
 				.mockReturnValueOnce(habitatModel as never);
@@ -70,13 +69,12 @@ describe('Habitat service tests', () => {
 				await createNewHabitatService.createNewHabitat(newHabitatInput);
 
 			expect(returnedHabitatModel).toEqual(habitatModel);
-			expect(habitatRepository.manager.save).toHaveBeenCalledWith(habitatModel);
+			expect(habitatRepository.save).toHaveBeenCalledWith(habitatModel);
 			expect(eventEmitter.emitAsync).toBeCalledTimes(1);
 			expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
 				1,
 				expect.stringMatching('habitat.created.after_save'),
 				expect.objectContaining({habitat: habitatModel}),
-				null,
 			);
 		});
 	});
@@ -90,33 +88,30 @@ describe('Habitat service tests', () => {
 				userId: userId,
 				isMain: true,
 				buildingZones: [],
-			} as HabitatModel;
+			} as unknown as HabitatModel;
 			const payload = new RegisterUserEvent(userId);
 
 			when(habitatRepository.getHabitatsByUserId)
 				.expectCalledWith(userId)
 				.mockResolvedValueOnce([]);
 
-			when(habitatRepository.manager.create)
+			when(habitatRepository.create)
 				.expectCalledWith(
-					HabitatModel,
 					expect.objectContaining({userId: userId}),
 				)
 				.mockReturnValueOnce(habitatModel as never);
 
 			await createNewHabitatService.createHabitatOnUserRegistration(payload);
 
-			expect(habitatRepository.manager.save).toHaveBeenCalledWith(habitatModel);
+			expect(habitatRepository.save).toHaveBeenCalledWith(habitatModel);
 			expect(eventEmitter.emitAsync).toBeCalledTimes(2);
 			expect(eventEmitter.emitAsync).toBeCalledWith(
 				expect.stringMatching('habitat.created.after_save'),
 				expect.objectContaining({habitat: habitatModel}),
-				expect.anything(),
 			);
 			expect(eventEmitter.emitAsync).toBeCalledWith(
 				expect.stringMatching('habitat.created.after_registration'),
 				expect.objectContaining({habitat: habitatModel}),
-				expect.anything(),
 			);
 			expect(payload.getHabitatId()).toBe(habitatModel.id);
 		});
@@ -129,7 +124,7 @@ describe('Habitat service tests', () => {
 				userId: userId,
 				isMain: true,
 				buildingZones: [],
-			} as HabitatModel;
+			} as unknown as HabitatModel;
 			const payload = new RegisterUserEvent(userId);
 
 			when(habitatRepository.getHabitatsByUserId)

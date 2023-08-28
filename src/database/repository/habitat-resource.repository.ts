@@ -61,15 +61,9 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
 		resourceIds: string[],
 		habitatId: number,
 		lastCalculationTime: Date,
-		transactionId: string | null = null,
 	) {
-		const entityManager =
-			transactionId === null
-				? this.manager
-				: this.getSharedTransaction(transactionId);
 
-		entityManager
-			.createQueryBuilder()
+		this.createQueryBuilder()
 			.update(HabitatResourceModel)
 			.set({lastCalculationTime: lastCalculationTime})
 			.where('resourceId in :resourceIds', {resourceIds: resourceIds})

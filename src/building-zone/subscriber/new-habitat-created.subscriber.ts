@@ -14,7 +14,6 @@ export class NewHabitatCreatedSubscriber {
 	@OnEvent('habitat.created.after_save')
 	async createBuildingZoneOnNewHabitatCreation(
 		payload: HabitatCreatedEvent,
-		transactionId: string,
 	) {
 		const counterForNewHabitat =
 			this.runtimeConfig.habitat.buildingZones.counterForNewHabitat;
@@ -25,7 +24,6 @@ export class NewHabitatCreatedSubscriber {
 		) {
 			await this.buildingZoneService.createNewBuildingZone(
 				payload.habitat,
-				transactionId,
 			);
 		}
 	}

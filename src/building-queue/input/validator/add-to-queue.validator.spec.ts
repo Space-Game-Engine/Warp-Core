@@ -82,7 +82,7 @@ describe('Add to queue validator', () => {
 					id: 1,
 					level: 0,
 					building: null,
-				} as BuildingZoneModel);
+				} as unknown as BuildingZoneModel);
 
 			try {
 				await addToQueueValidator.transform(addToQueue, {
@@ -112,10 +112,10 @@ describe('Add to queue validator', () => {
 					id: 1,
 					level: 0,
 					building: null,
-				} as BuildingZoneModel);
+				} as unknown as BuildingZoneModel);
 
 			when(buildingService.getBuildingById)
-				.calledWith(addToQueue.buildingId)
+				.calledWith(addToQueue.buildingId as string)
 				.mockResolvedValue(null);
 
 			try {
@@ -142,7 +142,7 @@ describe('Add to queue validator', () => {
 				id: 1,
 				level: 0,
 				building: null,
-			} as BuildingZoneModel;
+			} as unknown as BuildingZoneModel;
 
 			const building = {
 				id: 'test',
@@ -158,7 +158,7 @@ describe('Add to queue validator', () => {
 				.mockResolvedValue(buildingZone);
 
 			when(buildingService.getBuildingById)
-				.calledWith(addToQueue.buildingId)
+				.calledWith(addToQueue.buildingId as string)
 				.mockResolvedValue(building);
 
 			when(eventEmitter.emitAsync)
@@ -195,7 +195,7 @@ describe('Add to queue validator', () => {
 				id: 1,
 				level: 0,
 				building: null,
-			} as BuildingZoneModel;
+			} as unknown as BuildingZoneModel;
 
 			const building = {
 				id: 'test',
@@ -211,7 +211,7 @@ describe('Add to queue validator', () => {
 				.mockResolvedValue(buildingZone);
 
 			when(buildingService.getBuildingById)
-				.calledWith(addToQueue.buildingId)
+				.calledWith(addToQueue.buildingId as string)
 				.mockResolvedValue(building);
 
 			when(eventEmitter.emitAsync).calledWith(

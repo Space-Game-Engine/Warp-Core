@@ -38,7 +38,7 @@ describe('Habitat repository test', () => {
 				userId: 20,
 				isMain: true,
 				buildingZones: [],
-			} as HabitatModel;
+			} as unknown as HabitatModel;
 
 			findOneHabitatSpy.mockResolvedValue(habitatModel);
 
@@ -66,7 +66,7 @@ describe('Habitat repository test', () => {
 				userId: 20,
 				isMain: true,
 				buildingZones: [],
-			} as HabitatModel;
+			} as unknown as HabitatModel;
 
 			findHabitatSpy.mockResolvedValue([habitatModel]);
 

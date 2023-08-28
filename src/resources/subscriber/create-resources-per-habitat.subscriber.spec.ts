@@ -50,10 +50,7 @@ describe('Create resources per habitat service tests', () => {
 
 			await createResourcesPerHabitat.createResourcesPerHabitat(
 				new HabitatCreatedEvent(habitat),
-				'abc',
 			);
-
-			expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(0);
 		});
 
 		it('should save one habitat resource when there is one resource to be saved', async () => {
@@ -70,15 +67,10 @@ describe('Create resources per habitat service tests', () => {
 
 			await createResourcesPerHabitat.createResourcesPerHabitat(
 				new HabitatCreatedEvent(habitat),
-				'abc',
 			);
 
-			expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(1);
-			const entityManager =
-				habitatResourceRepository.getSharedTransaction('abc');
-			expect(entityManager.insert).toBeCalledTimes(1);
-			expect(entityManager.insert).toHaveBeenCalledWith(
-				HabitatResourceModel,
+			expect(habitatResourceRepository.insert).toBeCalledTimes(1);
+			expect(habitatResourceRepository.insert).toHaveBeenCalledWith(
 				expect.arrayContaining<HabitatResourceModel>([
 					expect.objectContaining({
 						habitat: habitat,
@@ -108,15 +100,10 @@ describe('Create resources per habitat service tests', () => {
 
 			await createResourcesPerHabitat.createResourcesPerHabitat(
 				new HabitatCreatedEvent(habitat),
-				'abc',
 			);
 
-			expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(1);
-			const entityManager =
-				habitatResourceRepository.getSharedTransaction('abc');
-			expect(entityManager.insert).toBeCalledTimes(1);
-			expect(entityManager.insert).toHaveBeenCalledWith(
-				HabitatResourceModel,
+			expect(habitatResourceRepository.insert).toBeCalledTimes(1);
+			expect(habitatResourceRepository.insert).toHaveBeenCalledWith(
 				expect.arrayContaining<HabitatResourceModel>([
 					expect.objectContaining({
 						habitat: habitat,

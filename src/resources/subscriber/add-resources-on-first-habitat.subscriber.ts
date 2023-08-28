@@ -17,7 +17,6 @@ export class AddResourcesOnFirstHabitatSubscriber {
 	@OnEvent('habitat.created.after_registration')
 	async addResourcesToHabitat(
 		newHabitatEvent: HabitatCreatedEvent,
-		transactionId: string,
 	) {
 		if (
 			!this.runtimeConfig.habitat.onStart.resources ||
@@ -28,8 +27,6 @@ export class AddResourcesOnFirstHabitatSubscriber {
 
 		const habitatModel = newHabitatEvent.habitat;
 		const resourcesOnStart = this.runtimeConfig.habitat.onStart.resources;
-		const entityManager =
-			this.habitatResourceRepository.getSharedTransaction(transactionId);
 		const habitatResourcesOnStart =
 			await this.habitatResourceRepository.getHabitatResourcesByIds(
 				resourcesOnStart.map(singleResourceOnStart => singleResourceOnStart.id),
@@ -44,7 +41,7 @@ export class AddResourcesOnFirstHabitatSubscriber {
 
 			habitatResource.currentAmount = singleResourceOnStart.amount;
 
-			await entityManager.update(HabitatResourceModel, habitatResource.id, {
+			await this.habitatResourceRepository.update(habitatResource.id, {
 				currentAmount: habitatResource.currentAmount,
 			});
 		}
