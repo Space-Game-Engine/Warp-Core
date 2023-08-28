@@ -1,6 +1,5 @@
 import {Injectable} from '@nestjs/common';
 import {
-	BuildingQueueElementModel,
 	BuildingQueueRepository,
 } from '@warp-core/database';
 import {EventEmitter2} from '@nestjs/event-emitter';

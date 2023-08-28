@@ -1,11 +1,7 @@
 import {
-	EntityManager,
 	EntitySubscriberInterface,
-	QueryRunner,
 	Repository,
 } from 'typeorm';
-import {v4 as uuidv4} from 'uuid';
-import {DatabaseException} from '@warp-core/database/exception/database.exception';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
 import {Inject} from '@nestjs/common';
 
