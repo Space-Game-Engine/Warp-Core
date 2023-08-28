@@ -43,25 +43,5 @@ export function prepareRepositoryMock(repositoryType: any) {
 		},
 	} as any as EntityManager;
 
-	jest
-		.spyOn(repositoryType.prototype, 'createSharedTransaction')
-		.mockImplementation(async () => {
-			return ['123', manager];
-		});
-
-	jest
-		.spyOn(repositoryType.prototype, 'getSharedTransaction')
-		.mockImplementation(() => {
-			return manager;
-		});
-
-	jest
-		.spyOn(repositoryType.prototype, 'commitSharedTransaction')
-		.mockImplementation(async (transactionId: string) => {});
-
-	jest
-		.spyOn(repositoryType.prototype, 'rollbackSharedTransaction')
-		.mockImplementation(async (transactionId: string) => {});
-
 	repositoryType.prototype.__defineGetter__('manager', () => manager);
 }

@@ -3,13 +3,14 @@ import {
 	Repository,
 } from 'typeorm';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
-import {Inject} from '@nestjs/common';
+import {Inject, Injectable} from '@nestjs/common';
 
+@Injectable()
 export abstract class AbstractRepository<
 	T extends Object,
 > extends Repository<T> {
 	@Inject(TransactionManagerService)
-	private static transactionManager: TransactionManagerService;
+	private readonly transactionManager: TransactionManagerService;
 
 	private static disabledEntityListeners: Map<
 		Function | string,
@@ -22,21 +23,21 @@ export abstract class AbstractRepository<
 	 * and different scopes.
 	 */
 	async startTransaction(): Promise<void> {
-		await AbstractRepository.transactionManager.startTransaction();
+		await this.transactionManager.startTransaction();
 	}
 
 	/**
 	 * Commit transaction
 	 */
 	async commitTransaction() {
-		await AbstractRepository.transactionManager.commitTransaction();
+		await this.transactionManager.commitTransaction();
 	}
 
 	/**
 	 * Rollback transaction
 	 */
 	async rollbackTransaction() {
-		await AbstractRepository.transactionManager.rollbackTransaction();
+		await this.transactionManager.rollbackTransaction();
 	}
 
 	public disableEntityListeners(

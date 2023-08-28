@@ -20,6 +20,7 @@ import {
 	HabitatResourceRepository,
 	ResourceRepository,
 } from '@warp-core/database/repository';
+import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
 
 @Module({
 	providers: [
@@ -29,6 +30,7 @@ import {
 		HabitatRepository,
 		HabitatResourceRepository,
 		ResourceRepository,
+		TransactionManagerService,
 	],
 	imports: [
 		forwardRef(() => TypeOrmModule.forFeature(DatabaseModule.entities())),

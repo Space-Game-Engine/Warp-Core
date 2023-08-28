@@ -12,5 +12,6 @@
   "moduleNameMapper": {
     "@warp-core/test/(.*)": "<rootDir>../$1",
     "@warp-core/(.*)": "<rootDir>../../src/$1"
-  }
+  },
+  "setupFilesAfterEnv": ["<rootDir>/utils/setupTests.ts"]
 }
