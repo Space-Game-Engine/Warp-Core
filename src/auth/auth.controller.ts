@@ -24,6 +24,7 @@ import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';
 import {LocalAuthGuard} from '@warp-core/auth/guard/local-auth.guard';
 import {AccessToken} from '@warp-core/auth/login/access-token.model';
 import {JwtAuthGuard} from '@warp-core/auth/guard/jwt-auth.guard';
+import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -70,7 +71,7 @@ export class AuthController {
 		description:
 			'Provided credentials are wrong, check again your UserId and HabitatId. Maybe try to create new habitat first?',
 	})
-	async login(@Request() req) {
+	async login(@Request() req: {user: AuthModelInterface}) {
 		return this.loginService.login(req.user);
 	}
 
