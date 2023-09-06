@@ -78,7 +78,7 @@ export class BuildingQueueHandlerService {
 		buildingZoneToProcess.level = queueElement.endLevel;
 
 		if (!buildingZoneToProcess.buildingId) {
-			buildingZoneToProcess.buildingId = (await queueElement.building).id;
+			buildingZoneToProcess.buildingId = (await queueElement.building)!.id;
 		}
 
 		queueElement.isConsumed = true;
@@ -101,7 +101,7 @@ export class BuildingQueueHandlerService {
 			buildingId: buildingZoneToProcess.buildingId,
 			level: buildingZoneToProcess.level,
 		});
-		await this.buildingQueueRepository.update(queueElement.id, {
+		await this.buildingQueueRepository.update(queueElement.id as number, {
 			isConsumed: queueElement.isConsumed,
 		});
 

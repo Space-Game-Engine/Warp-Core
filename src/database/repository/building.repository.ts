@@ -35,10 +35,14 @@ export class BuildingRepository extends AbstractRepository<BuildingModel> {
 		buildingLevel: number,
 	): Promise<BuildingProductionRateModel[]> {
 		const buildingModel = await this.getBuildingById(buildingId);
+		if (buildingModel == null) {
+			return [];
+		}
+
 		const detailsAtSelectedLevel = (
 			await buildingModel.buildingDetailsAtCertainLevel
 		).find(buildingDetails => buildingDetails.level === buildingLevel);
 
-		return await detailsAtSelectedLevel.productionRate;
+		return await detailsAtSelectedLevel!.productionRate ?? [];
 	}
 }

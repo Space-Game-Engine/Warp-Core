@@ -11,6 +11,7 @@ import {BuildingService} from '@warp-core/building';
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
 import {DateTime} from 'luxon';
+import {QueueError} from '@warp-core/building-queue/exception/queue.error';
 
 @Injectable()
 export class PrepareSingleBuildingQueueElementService {
@@ -30,14 +31,14 @@ export class PrepareSingleBuildingQueueElementService {
 			await this.buildingZoneRepository.getSingleBuildingZone(
 				addToQueueElement.localBuildingZoneId,
 				this.habitatModel.id,
-			);
+			) as BuildingZoneModel;
 
 		let building = await buildingZone.building;
 
 		if (!building) {
 			building = await this.buildingService.getBuildingById(
-				addToQueueElement.buildingId,
-			);
+				addToQueueElement.buildingId!,
+			) as BuildingModel;
 		}
 
 		const resourceCost = await this.calculationService.calculateResourcesCosts(

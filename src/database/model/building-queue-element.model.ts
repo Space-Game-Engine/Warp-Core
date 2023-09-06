@@ -18,7 +18,7 @@ export class BuildingQueueElementModel implements DraftModelInterface {
 	@Field(() => ID)
 	@IsNumber()
 	@PrimaryGeneratedColumn()
-	id?: number;
+	id?: number | null;
 
 	@Field({description: 'What was level on queue start?'})
 	@IsNumber()
@@ -52,7 +52,7 @@ export class BuildingQueueElementModel implements DraftModelInterface {
 		lazy: true,
 	})
 	@JoinColumn({name: 'buildingId'})
-	building?: BuildingModel | Promise<BuildingModel>;
+	building?: BuildingModel | Promise<BuildingModel> | null;
 
 	@Column({nullable: true})
 	buildingId?: string;

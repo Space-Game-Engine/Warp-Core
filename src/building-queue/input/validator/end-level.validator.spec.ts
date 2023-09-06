@@ -27,7 +27,7 @@ describe('End Level building queue validator', () => {
 				id: 1,
 				level: 10,
 				building: null,
-			} as BuildingZoneModel;
+			} as unknown as BuildingZoneModel;
 
 			const building = {
 				id: 'test',
@@ -57,7 +57,7 @@ describe('End Level building queue validator', () => {
 				id: 1,
 				level: 10,
 				building: null,
-			} as BuildingZoneModel;
+			} as unknown as BuildingZoneModel;
 
 			const building = {
 				id: 'test',
@@ -87,7 +87,7 @@ describe('End Level building queue validator', () => {
 				id: 1,
 				level: 10,
 				building: null,
-			} as BuildingZoneModel;
+			} as unknown as BuildingZoneModel;
 
 			const building = {
 				id: 'test',
@@ -124,7 +124,7 @@ describe('End Level building queue validator', () => {
 				id: 1,
 				level: 1,
 				building: null,
-			} as BuildingZoneModel;
+			} as unknown as BuildingZoneModel;
 
 			const building = {
 				id: 'test',

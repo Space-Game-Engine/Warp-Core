@@ -65,14 +65,12 @@ describe('Building queue element is saved', () => {
 				id: 1,
 			} as BuildingQueueElementModel;
 
-			const entityManager = buildingQueueRepository.getSharedTransaction('123');
-
 			when(prepareBuildingQueueElement.getQueueElement)
 				.expectCalledWith(addToQueueElement)
 				.mockResolvedValue(draftBuildingQueueElement);
 
-			when(entityManager.save)
-				.calledWith(BuildingQueueElementModel, draftBuildingQueueElement)
+			when(buildingQueueRepository.save)
+				.calledWith(draftBuildingQueueElement)
 				.mockResolvedValue(draftBuildingQueueElement);
 
 			const processedQueueElement =
@@ -81,7 +79,7 @@ describe('Building queue element is saved', () => {
 				);
 
 			expect(processedQueueElement).toEqual(draftBuildingQueueElement);
-			expect(buildingQueueRepository.commitSharedTransaction).toBeCalledTimes(
+			expect(buildingQueueRepository.commitTransaction).toBeCalledTimes(
 				1,
 			);
 			expect(eventEmitter.emitAsync).toBeCalledTimes(2);
@@ -96,7 +94,6 @@ describe('Building queue element is saved', () => {
 				2,
 				expect.stringMatching('building_queue.adding.after_processing_element'),
 				expect.any(QueueElementAfterProcessingEvent),
-				expect.anything(),
 			);
 		});
 
@@ -110,21 +107,18 @@ describe('Building queue element is saved', () => {
 				id: 1,
 			} as BuildingQueueElementModel;
 
-			const entityManager = buildingQueueRepository.getSharedTransaction('123');
-
 			when(prepareBuildingQueueElement.getQueueElement)
 				.expectCalledWith(addToQueueElement)
 				.mockResolvedValue(draftBuildingQueueElement);
 
-			when(entityManager.save)
-				.calledWith(BuildingQueueElementModel, draftBuildingQueueElement)
+			when(buildingQueueRepository.save)
+				.calledWith(draftBuildingQueueElement)
 				.mockResolvedValue(draftBuildingQueueElement);
 
 			when(eventEmitter.emitAsync)
 				.calledWith(
 					'building_queue.adding.after_processing_element',
 					expect.any(QueueElementAfterProcessingEvent),
-					expect.anything(),
 				)
 				.mockRejectedValue(new Error('something went wrong'));
 

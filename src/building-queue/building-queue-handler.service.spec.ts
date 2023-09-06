@@ -93,10 +93,8 @@ describe('Building queue handler service test', () => {
 
 			await buildingQueueHandlerService.resolveQueue();
 
-			const entityManager = buildingQueueRepository.getSharedTransaction('123');
-
 			expectEventToBeCalled([]);
-			expect(entityManager.update).not.toBeCalled();
+			expect(buildingQueueRepository.update).not.toBeCalled();
 			expect(eventEmitter.emitAsync).not.toBeCalled();
 		});
 
@@ -144,11 +142,11 @@ describe('Building queue handler service test', () => {
 								: building.id,
 					} as BuildingZoneModel;
 
-					const queueElementsToBeConsumed =
+					const queueElementsToBeConsumed: BuildingQueueElementModel[] =
 						singleQueueTest.queueItemsToBeConsumed.map(queueElement => {
 							return mapQueueElement(queueElement, building, buildingZone);
 						});
-					const queueElementsToNotBeConsumed =
+					const queueElementsToNotBeConsumed: BuildingQueueElementModel[] =
 						singleQueueTest.queueItemsToNotBeConsumed.map(queueElement => {
 							return mapQueueElement(queueElement, building, buildingZone);
 						});
@@ -190,8 +188,9 @@ describe('Building queue handler service test', () => {
 					expectEventToBeCalled(queueElementsToBeConsumed);
 
 					if (queueElementsToBeConsumed.length > 0) {
+						const queueElement: BuildingQueueElementModel = <BuildingQueueElementModel>queueElementsToBeConsumed.pop();
 						expect(buildingZone.level).toBe(
-							queueElementsToBeConsumed.pop().endLevel,
+							queueElement.endLevel,
 						);
 					}
 					expect(buildingZone.buildingId).toBe(building.id);

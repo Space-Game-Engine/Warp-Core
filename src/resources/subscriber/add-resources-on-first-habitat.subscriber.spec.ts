@@ -50,10 +50,8 @@ describe('Add resources on first user habitat', () => {
 				{
 					habitat: newHabitat,
 				},
-				'abc',
 			);
 
-			expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(0);
 			expect(
 				habitatResourceRepository.getHabitatResourcesByIds,
 			).toBeCalledTimes(0);
@@ -87,20 +85,13 @@ describe('Add resources on first user habitat', () => {
 				{
 					habitat: newHabitat,
 				},
-				'abc',
 			);
 
 			expect(habitatResources[0].currentAmount).toEqual(100);
 			expect(habitatResources[0].lastCalculationTime).toEqual(null);
 
-			expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(1);
-
-			const entityManager =
-				habitatResourceRepository.getSharedTransaction('abc');
-
-			expect(entityManager.update).toBeCalledTimes(1);
-			expect(entityManager.update).toBeCalledWith(
-				HabitatResourceModel,
+			expect(habitatResourceRepository.update).toBeCalledTimes(1);
+			expect(habitatResourceRepository.update).toBeCalledWith(
 				habitatResources[0].id,
 				{currentAmount: 100},
 			);

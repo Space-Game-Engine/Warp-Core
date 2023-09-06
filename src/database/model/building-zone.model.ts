@@ -90,7 +90,7 @@ export class BuildingZoneModel {
 		| BuildingQueueElementModel[]
 		| Promise<BuildingQueueElementModel[]>;
 
-	private currentLevelBuildingDetails: BuildingDetailsAtCertainLevelModel =
+	private currentLevelBuildingDetails: BuildingDetailsAtCertainLevelModel | null =
 		null;
 
 	async getBuildingLevelDetails(): Promise<BuildingDetailsAtCertainLevelModel | null> {
@@ -106,7 +106,7 @@ export class BuildingZoneModel {
 
 		this.currentLevelBuildingDetails = (
 			await building.buildingDetailsAtCertainLevel
-		).find(details => details.level === this.level);
+		).find(details => details.level === this.level) ?? null;
 
 		return this.currentLevelBuildingDetails;
 	}
@@ -127,7 +127,9 @@ export class BuildingZoneModel {
 			return false;
 		}
 
-		if ((await buildingDetails.warehouse).length > 0) {
+		const warehouses = await buildingDetails.warehouse ?? [];
+
+		if (warehouses.length > 0) {
 			return true;
 		}
 

@@ -1,6 +1,8 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {DataSource} from 'typeorm';
+import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
+jest.mock("../transaction-manager.service");
 
 describe('Habitat resource repository test', () => {
 	let habitatResourceRepository: HabitatResourceRepository;
@@ -15,6 +17,7 @@ describe('Habitat resource repository test', () => {
 						createEntityManager() {},
 					},
 				},
+				TransactionManagerService
 			],
 		}).compile();
 

@@ -30,7 +30,7 @@ export class ResourcesService {
 	}
 
 	async getAllResourcesForHabitat(
-		habitatModel: HabitatModel = null,
+		habitatModel: HabitatModel | null = null,
 	): Promise<HabitatResourceCombined[]> {
 		const habitatResources = await this.habitatResourceRepository.findBy({
 			habitatId: (habitatModel ?? this.habitatModel).id,

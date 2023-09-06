@@ -30,7 +30,7 @@ export class SimpleCalculationService implements ResourcesCalculatorInterface {
 
 		for (const buildingDetailsForUpdateElement of buildingDetailsForUpdate) {
 			const buildingUpdateCosts =
-				await buildingDetailsForUpdateElement.requirements;
+				await buildingDetailsForUpdateElement.requirements ?? [];
 
 			for (const buildingUpdateCost of buildingUpdateCosts) {
 				const resource = await buildingUpdateCost.resource;
@@ -53,7 +53,7 @@ export class SimpleCalculationService implements ResourcesCalculatorInterface {
 		let queueCostPerResource: QueueElementCostModel;
 
 		if (queueCost.has(resource.id) === true) {
-			queueCostPerResource = queueCost.get(resource.id);
+			queueCostPerResource = queueCost.get(resource.id) as QueueElementCostModel;
 		} else {
 			queueCostPerResource = new QueueElementCostModel();
 			queueCostPerResource.resource = resource;

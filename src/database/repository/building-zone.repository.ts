@@ -115,13 +115,13 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 					}
 					const buildingLevelDetails =
 						await singleBuildingZone.getBuildingLevelDetails();
-					return buildingLevelDetails.warehouse;
+					return buildingLevelDetails!.warehouse;
 				}),
 			)
 		).flat();
 
 		return warehouses.filter(singleWarehouse =>
-			singleWarehouse.isWarehouseLinkedToResource(resource),
-		);
+			singleWarehouse!.isWarehouseLinkedToResource(resource),
+		) as WarehouseDetailsModel[];
 	}
 }

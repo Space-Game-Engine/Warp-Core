@@ -205,7 +205,7 @@ describe('Building queue add service tests', () => {
 
 			if (buildingZone.building === null) {
 				when(buildingService.getBuildingById)
-					.expectCalledWith(addToQueueInput.buildingId)
+					.expectCalledWith(addToQueueInput.buildingId as string)
 					.mockResolvedValue(building);
 			} else {
 				expect(buildingService.getBuildingById).toBeCalledTimes(0);

@@ -6,6 +6,8 @@ import {
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {when} from 'jest-when';
 import {DataSource} from 'typeorm';
+import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
+jest.mock("../transaction-manager.service");
 
 describe('Building queue repository test', () => {
 	let buildingQueueRepository: BuildingQueueRepository;
@@ -23,6 +25,7 @@ describe('Building queue repository test', () => {
 						createEntityManager() {},
 					},
 				},
+				TransactionManagerService
 			],
 		}).compile();
 

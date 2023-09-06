@@ -62,7 +62,7 @@ export class ResourceCalculatorService {
 		);
 		const habitatResources =
 			await this.habitatResourceRepository.getHabitatResourceByBuildingAndLevel(
-				await buildingQueueElement.building,
+				await buildingQueueElement.building!,
 				buildingQueueElement.startLevel,
 				this.habitatModel.id,
 			);
@@ -88,7 +88,7 @@ export class ResourceCalculatorService {
 		);
 		const habitatResources =
 			await this.habitatResourceRepository.getHabitatResourceByBuildingAndLevel(
-				await buildingQueueElement.building,
+				await buildingQueueElement.building!,
 				buildingQueueElement.endLevel,
 				this.habitatModel.id,
 			);
@@ -136,11 +136,16 @@ export class ResourceCalculatorService {
 	private async getProductionRateForSingleBuildingZone(
 		buildingZone: BuildingZoneModel,
 	): Promise<number> {
-		const building = await buildingZone.building;
+		const building = await buildingZone.building!;
 		const buildingDetailsAtCertainLevel =
 			await building.buildingDetailsAtCertainLevel;
 		const productionRateModel = await buildingDetailsAtCertainLevel[0]
 			.productionRate;
+
+		if (!productionRateModel) {
+			return 0;
+		}
+
 		const productionRateValue = productionRateModel[0].productionRate;
 
 		return productionRateValue;

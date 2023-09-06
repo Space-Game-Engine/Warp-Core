@@ -54,12 +54,11 @@ describe('Add last calculation date for new resource producers', () => {
 			const productionRateModels = [] as BuildingProductionRateModel[];
 
 			when(buildingRepository.getProductionRateForProvidedLevel)
-				.expectCalledWith(queueElement.buildingId, queueElement.endLevel)
+				.expectCalledWith(queueElement.buildingId as string, queueElement.endLevel)
 				.mockResolvedValue(productionRateModels);
 
 			await habitatHasNewResourceProducerSubscriber.updateLastCalculationDateOnHabitatResource(
 				{queueElement: queueElement},
-				'abc',
 			);
 
 			expect(
@@ -84,12 +83,11 @@ describe('Add last calculation date for new resource producers', () => {
 			] as BuildingProductionRateModel[];
 
 			when(buildingRepository.getProductionRateForProvidedLevel)
-				.expectCalledWith(queueElement.buildingId, queueElement.endLevel)
+				.expectCalledWith(queueElement.buildingId as string, queueElement.endLevel)
 				.mockResolvedValue(productionRateModels);
 
 			await habitatHasNewResourceProducerSubscriber.updateLastCalculationDateOnHabitatResource(
 				{queueElement: queueElement},
-				'abc',
 			);
 
 			expect(

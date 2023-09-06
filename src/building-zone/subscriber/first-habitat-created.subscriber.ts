@@ -21,7 +21,6 @@ export class FirstHabitatCreatedSubscriber {
 	@OnEvent('habitat.created.after_registration')
 	async addBuildingsOnFirstHabitatCreation(
 		payload: HabitatCreatedEvent,
-		transactionId: string,
 	) {
 		if (
 			!this.runtimeConfig.habitat.onStart.buildings ||
@@ -39,22 +38,19 @@ export class FirstHabitatCreatedSubscriber {
 			),
 		);
 
-		const entityManager =
-			this.buildingZoneRepository.getSharedTransaction(transactionId);
-
 		for (const habitatBuildingsConfig of buildingsToBuildFromConfiguration) {
 			const buildingZone = await this.buildingZoneService.getSingleBuildingZone(
 				habitatBuildingsConfig.localBuildingZoneId,
 				habitat,
-			);
+			) as BuildingZoneModel;
 
 			buildingZone.buildingId = buildingsToBuild.find(
 				singleBuilding => singleBuilding.id === habitatBuildingsConfig.id,
-			).id;
+			)!.id;
 
 			buildingZone.level = habitatBuildingsConfig.level;
 
-			await entityManager.update(BuildingZoneModel, buildingZone.id, {
+			await this.buildingZoneRepository.update(buildingZone.id, {
 				buildingId: buildingZone.buildingId,
 				level: buildingZone.level,
 			});

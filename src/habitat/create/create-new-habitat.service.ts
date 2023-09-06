@@ -19,12 +19,12 @@ export class CreateNewHabitatService {
 		);
 
 		if (currentHabitats.length > 0) {
-			payload.setHabitatId(currentHabitats.find(() => true).id);
+			payload.setHabitatId(currentHabitats.pop()!.id);
 
 			return;
 		}
-		const [transactionId] =
-			await this.habitatRepository.createSharedTransaction();
+
+		await this.habitatRepository.startTransaction();
 
 		try {
 			const newHabitat = await this.createNewHabitat(
@@ -32,21 +32,19 @@ export class CreateNewHabitatService {
 					userId: payload.getUserId(),
 					isMain: true,
 					name: 'New habitat',
-				},
-				transactionId,
+				}
 			);
 
 			payload.setHabitatId(newHabitat.id);
 
 			await this.eventEmitter.emitAsync(
 				'habitat.created.after_registration',
-				new HabitatCreatedEvent(newHabitat),
-				transactionId,
+				new HabitatCreatedEvent(newHabitat)
 			);
 
-			await this.habitatRepository.commitSharedTransaction(transactionId);
+			await this.habitatRepository.commitTransaction();
 		} catch (e) {
-			await this.habitatRepository.rollbackSharedTransaction(transactionId);
+			await this.habitatRepository.rollbackTransaction();
 
 			throw e;
 		}
@@ -54,25 +52,15 @@ export class CreateNewHabitatService {
 
 	async createNewHabitat(
 		newHabitatData: NewHabitatInput,
-		transactionId: string | null = null,
 	): Promise<HabitatModel> {
-		let entityManager = this.habitatRepository.manager;
-
-		if (transactionId != null) {
-			entityManager =
-				this.habitatRepository.getSharedTransaction(transactionId);
-		}
-
-		const newHabitat = entityManager.create<HabitatModel>(
-			HabitatModel,
+		const newHabitat = this.habitatRepository.create(
 			newHabitatData,
 		);
-		await entityManager.save(newHabitat);
+		await this.habitatRepository.save(newHabitat);
 
 		await this.eventEmitter.emitAsync(
 			'habitat.created.after_save',
 			new HabitatCreatedEvent(newHabitat),
-			transactionId,
 		);
 
 		return newHabitat;

@@ -56,11 +56,9 @@ describe('First habitat created subscriber', () => {
 
 			await firstHabitatCreated.addBuildingsOnFirstHabitatCreation(
 				{habitat: habitat},
-				'abc',
 			);
 
 			expect(buildingRepository.getBuildingsByIds).toBeCalledTimes(0);
-			expect(buildingZoneRepository.getSharedTransaction).toBeCalledTimes(0);
 			expect(buildingZoneRepository.manager.update).toBeCalledTimes(0);
 		});
 
@@ -70,9 +68,9 @@ describe('First habitat created subscriber', () => {
 			const buildingZoneToChange = {
 				id: 1,
 				localBuildingZoneId: localBuildingId,
-				buildingId: null,
+				buildingId: undefined,
 				level: 0,
-			} as BuildingZoneModel;
+			} as any as BuildingZoneModel;
 
 			const buildingToSet = {
 				id: 'mine',
@@ -100,14 +98,12 @@ describe('First habitat created subscriber', () => {
 
 			await firstHabitatCreated.addBuildingsOnFirstHabitatCreation(
 				{habitat: habitat},
-				'abc',
 			);
 
 			expect(buildingZoneToChange.level).toBe(1);
 			expect(buildingZoneToChange.buildingId).toBe(buildingToSet.id);
-			expect(buildingZoneRepository.manager.update).toBeCalledTimes(1);
-			expect(buildingZoneRepository.manager.update).toBeCalledWith(
-				BuildingZoneModel,
+			expect(buildingZoneRepository.update).toBeCalledTimes(1);
+			expect(buildingZoneRepository.update).toBeCalledWith(
 				buildingZoneToChange.id,
 				expect.objectContaining({
 					buildingId: buildingToSet.id,

@@ -63,7 +63,7 @@ const jwtFactory = {
 				jwtService: JwtService,
 			) => {
 				const extractJwt = ExtractJwt.fromAuthHeaderAsBearerToken();
-				const payload = jwtService.decode(extractJwt(req)) as PayloadInterface;
+				const payload = jwtService.decode(extractJwt(req) ?? '') as PayloadInterface;
 
 				if (!payload) {
 					return null;

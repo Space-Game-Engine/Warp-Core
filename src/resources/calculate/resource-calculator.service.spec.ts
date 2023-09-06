@@ -1,6 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {
+	BuildingModel,
 	BuildingQueueElementModel,
 	BuildingZoneModel,
 	BuildingZoneRepository,
@@ -281,7 +282,7 @@ describe('Resources calculator service test', () => {
 
 			when(habitatResourceRepository.getHabitatResourceByBuildingAndLevel)
 				.expectCalledWith(
-					await queueElement.building,
+					(await queueElement.building) as BuildingModel,
 					queueElement.startLevel,
 					authorizedHabitatModel.id,
 				)
@@ -299,7 +300,7 @@ describe('Resources calculator service test', () => {
 			});
 
 			expect(habitatResource.currentAmount).toEqual(20);
-			expect(habitatResource.lastCalculationTime.getTime()).toBeGreaterThan(
+			expect(habitatResource.lastCalculationTime!.getTime()).toBeGreaterThan(
 				lastCalculationTime.getTime(),
 			);
 
@@ -378,7 +379,7 @@ describe('Resources calculator service test', () => {
 
 			when(habitatResourceRepository.getHabitatResourceByBuildingAndLevel)
 				.expectCalledWith(
-					await queueElement.building,
+					(await queueElement.building) as BuildingModel,
 					queueElement.startLevel,
 					authorizedHabitatModel.id,
 				)
@@ -396,10 +397,10 @@ describe('Resources calculator service test', () => {
 
 			expect(habitatResource1.currentAmount).toEqual(20);
 			expect(habitatResource2.currentAmount).toEqual(10);
-			expect(habitatResource1.lastCalculationTime.getTime()).toBeGreaterThan(
+			expect(habitatResource1.lastCalculationTime!.getTime()).toBeGreaterThan(
 				lastCalculationTime.getTime(),
 			);
-			expect(habitatResource2.lastCalculationTime.getTime()).toBeGreaterThan(
+			expect(habitatResource2.lastCalculationTime!.getTime()).toBeGreaterThan(
 				lastCalculationTime.getTime(),
 			);
 

@@ -41,8 +41,6 @@ import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
 				const databaseConfiguration =
 					configService.get<DatabaseConfig>('database');
 
-				databaseConfiguration.entities = AppModule.entities();
-
 				return databaseConfiguration as TypeOrmModuleOptions;
 			},
 		}),

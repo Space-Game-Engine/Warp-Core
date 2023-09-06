@@ -1,6 +1,6 @@
-import {Type} from '@nestjs/common';
 import {IsBoolean, IsString} from 'class-validator';
 import {DatabaseType} from 'typeorm';
+import {DatabaseModule} from '@warp-core/database';
 
 export class DatabaseConfig {
 	@IsString()
@@ -24,5 +24,7 @@ export class DatabaseConfig {
 	@IsBoolean()
 	synchronize: boolean;
 
-	entities: Type[];
+	get entities() {
+		return DatabaseModule.entities();
+	}
 }

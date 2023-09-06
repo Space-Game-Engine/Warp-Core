@@ -2,6 +2,8 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {HabitatModel} from '@warp-core/database/model';
 import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
 import {DataSource} from 'typeorm';
+import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
+jest.mock("../transaction-manager.service");
 
 describe('Habitat repository test', () => {
 	let habitatRepository: HabitatRepository;
@@ -18,6 +20,7 @@ describe('Habitat repository test', () => {
 						createEntityManager() {},
 					},
 				},
+				TransactionManagerService
 			],
 		}).compile();
 
@@ -38,7 +41,7 @@ describe('Habitat repository test', () => {
 				userId: 20,
 				isMain: true,
 				buildingZones: [],
-			} as HabitatModel;
+			} as unknown as HabitatModel;
 
 			findOneHabitatSpy.mockResolvedValue(habitatModel);
 
@@ -66,7 +69,7 @@ describe('Habitat repository test', () => {
 				userId: 20,
 				isMain: true,
 				buildingZones: [],
-			} as HabitatModel;
+			} as unknown as HabitatModel;
 
 			findHabitatSpy.mockResolvedValue([habitatModel]);
 

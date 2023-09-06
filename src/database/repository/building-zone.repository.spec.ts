@@ -3,6 +3,8 @@ import {BuildingZoneModel} from '@warp-core/database/model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {when} from 'jest-when';
 import {DataSource} from 'typeorm';
+import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
+jest.mock("../transaction-manager.service");
 
 describe('Building zone repository test', () => {
 	let buildingZoneRepository: BuildingZoneRepository;
@@ -19,6 +21,7 @@ describe('Building zone repository test', () => {
 						createEntityManager() {},
 					},
 				},
+				TransactionManagerService
 			],
 		}).compile();
 

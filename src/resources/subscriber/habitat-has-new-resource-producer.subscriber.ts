@@ -24,7 +24,6 @@ export class HabitatHasNewResourceProducerSubscriber {
 	@OnEvent('building_queue.resolving.before_processing_element')
 	async updateLastCalculationDateOnHabitatResource(
 		queueProcessingEvent: QueueElementProcessedEvent,
-		transactionId: string,
 	) {
 		const queueElement = queueProcessingEvent.queueElement;
 
@@ -46,7 +45,6 @@ export class HabitatHasNewResourceProducerSubscriber {
 			),
 			this.habitatModel.id,
 			queueElement.endTime,
-			transactionId,
 		);
 
 		this.logger.debug('Last calculation time from habitat resources updated');
@@ -56,7 +54,7 @@ export class HabitatHasNewResourceProducerSubscriber {
 		queueElement: BuildingQueueElementModel,
 	): Promise<BuildingProductionRateModel[]> {
 		return this.buildingRepository.getProductionRateForProvidedLevel(
-			queueElement.buildingId,
+			queueElement.buildingId!,
 			queueElement.endLevel,
 		);
 	}

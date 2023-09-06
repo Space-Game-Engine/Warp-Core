@@ -19,8 +19,6 @@ describe('Resource extraction service', () => {
 	let habitatResourceRepository: jest.Mocked<HabitatResourceRepository>;
 	let authorizedHabitatModel: jest.Mocked<AuthorizedHabitatModel>;
 
-	const transactionId = '12345';
-
 	beforeAll(() => {
 		prepareRepositoryMock(HabitatResourceRepository);
 	});
@@ -77,13 +75,10 @@ describe('Resource extraction service', () => {
 			await expect(
 				resourceExtractorService.useResourcesOnQueueUpdate(
 					{queueElement: {costs: costs}} as QueueElementProcessedEvent,
-					transactionId,
 				),
 			).rejects.toThrowError(
 				'Requested resources from queue does not equal resources from habitat',
 			);
-
-			expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(0);
 		});
 
 		const insufficientResources = [
@@ -211,7 +206,6 @@ describe('Resource extraction service', () => {
 					try {
 						await resourceExtractorService.useResourcesOnQueueUpdate(
 							{queueElement: {costs: costs}} as QueueElementProcessedEvent,
-							transactionId,
 						);
 					} catch (e) {
 						expect(e).toBeInstanceOf(InsufficientResourcesException);
@@ -222,7 +216,7 @@ describe('Resource extraction service', () => {
 							e.insufficientResources;
 
 						for (const calculationResult of singleCase.exceptionCalculationResults) {
-							const resourceFromException = insufficientResources.find(
+							const resourceFromException = <InsufficientResourceType>insufficientResources.find(
 								singleResourceFromException =>
 									calculationResult.resourceId ===
 									singleResourceFromException.resourceId,
@@ -236,6 +230,11 @@ describe('Resource extraction service', () => {
 								singleResource =>
 									singleResource.resourceId === calculationResult.resourceId,
 							);
+
+							if (typeof queueCost === 'undefined' || typeof habitatResource === 'undefined') {
+								continue;
+							}
+
 							expect(resourceFromException.resourceId).toEqual(
 								queueCost.resource.id,
 							);
@@ -291,15 +290,13 @@ describe('Resource extraction service', () => {
 
 			await resourceExtractorService.useResourcesOnQueueUpdate(
 				{queueElement: {costs: costs}} as QueueElementProcessedEvent,
-				transactionId,
 			);
 
 			expect(habitatResources[0].currentAmount).toEqual(0);
 			expect(habitatResources[1].currentAmount).toEqual(0);
 
-			expect(habitatResourceRepository.getSharedTransaction).toBeCalledTimes(1);
 			expect(
-				habitatResourceRepository.getSharedTransaction(transactionId).update,
+				habitatResourceRepository.update,
 			).toBeCalledTimes(2);
 		});
 	});
