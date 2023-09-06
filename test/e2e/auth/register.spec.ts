@@ -3,19 +3,29 @@ import {TestingModule} from '@nestjs/testing';
 import {HttpStatus, INestApplication} from '@nestjs/common';
 import * as request from 'supertest';
 import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';
+import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 
 describe('register', () => {
 	let module: TestingModule;
 	let app: INestApplication;
-	// let databaseConnection;
+	let config: RuntimeConfig;
+
 	beforeAll(async () => {
 		module = await e2eModule();
 		app = module.createNestApplication();
 		await app.init();
+
+		config = app.get(RuntimeConfig);
+
 	});
 
 	it('should create a new habitat when user was not registered already', () => {
 		const newUserId = 9999;
+
+		config.habitat.onStart = {
+			resources: [],
+			buildings: []
+		};
 
 		return request(app.getHttpServer())
 			.get(`/auth/create/${newUserId}`)
@@ -28,6 +38,11 @@ describe('register', () => {
 
 	it('should create a new habitat and allow user to login when user was not registered already', async () => {
 		const newUserId = 9999;
+
+		config.habitat.onStart = {
+			resources: [],
+			buildings: []
+		};
 
 		const registerResponse = await request(app.getHttpServer())
 			.get(`/auth/create/${newUserId}`)
