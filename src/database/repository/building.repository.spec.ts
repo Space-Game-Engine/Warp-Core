@@ -3,6 +3,8 @@ import {BuildingRoleEnum} from '@warp-core/database/enum';
 import {BuildingModel} from '@warp-core/database/model';
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {DataSource} from 'typeorm';
+import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
+jest.mock("../transaction-manager.service");
 
 describe('Building repository test', () => {
 	let buildingRepository: BuildingRepository;
@@ -19,6 +21,7 @@ describe('Building repository test', () => {
 						createEntityManager() {},
 					},
 				},
+				TransactionManagerService
 			],
 		}).compile();
 
