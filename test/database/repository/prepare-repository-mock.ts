@@ -1,7 +1,7 @@
 import {EntityManager} from 'typeorm';
 
 /**
- * Prepare repository external fields, for example for shared transactions.
+ * Prepare repository external fields.
  * Example:
  * ```javascript
  * import {YourRepository} from "@warp-core/database/repository/YOUR_REPOSITORY";
