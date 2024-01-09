@@ -25,18 +25,22 @@ describe('BuildingInstallService', () => {
 		buildingRepository = module.get(BuildingRepository);
 	});
 
-	describe('install', () => {
+	describe('loadModels', () => {
 		it('should throw error when installation object contains errors', () => {
 			const buildingModel = {
 				role: 'totally_wrong_type',
 				name: 'Really wrong building',
 				buildingDetailsAtCertainLevel: [],
-			};
+			} as unknown as BuildingModel;
 
 			expect(
-				buildingInstallService.install([buildingModel]),
-			).rejects.toThrowError('Validation error, see logs');
+				() => buildingInstallService.loadModels({buildings: [buildingModel]}),
+			).toThrowError('Validation error, see logs');
 		});
+	});
+
+	describe('install', () => {
+
 
 		it('should add items from array to install', async () => {
 			const buildingModel = {
@@ -51,8 +55,8 @@ describe('BuildingInstallService', () => {
 					},
 				],
 			} as BuildingModel;
-
-			await buildingInstallService.install([buildingModel]);
+			buildingInstallService.loadModels({buildings: [buildingModel]})
+			await buildingInstallService.install();
 
 			expect(buildingRepository.save).toBeCalledTimes(1);
 			expect(buildingRepository.save).toBeCalledWith(buildingModel);

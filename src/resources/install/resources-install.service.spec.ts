@@ -1,5 +1,5 @@
 import {Test, TestingModule} from '@nestjs/testing';
-import {ResourcesInstallService} from '@warp-core/core/install/service/resources-install.service';
+import {ResourcesInstallService} from '@warp-core/resources/install/resources-install.service';
 import {
 	ResourceModel,
 	ResourceRepository,
@@ -25,18 +25,21 @@ describe('ResourcesInstallService', () => {
 		resourceRepository = module.get(ResourceRepository);
 	});
 
-	describe('install', () => {
-		it('should throw error when installation object contains errors', () => {
+	describe('loadModels',  () => {
+		it('should throw error when loaded object contains errors', () => {
 			const resourceModel = {
 				name: 'Really wrong building',
 				baseMaxCapacity: 'this is not a number',
 				type: 'unknown type',
-			};
+			} as unknown as ResourceModel;
 
 			expect(
-				resourcesInstallService.install([resourceModel]),
-			).rejects.toThrowError('Validation error, see logs');
+				() => resourcesInstallService.loadModels({resources: [resourceModel]}),
+			).toThrowError('Validation error, see logs');
 		});
+	});
+
+	describe('install', () => {
 
 		it('should add items from array to install', async () => {
 			const resourceModel = {
@@ -46,7 +49,8 @@ describe('ResourcesInstallService', () => {
 				type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
 			} as ResourceModel;
 
-			await resourcesInstallService.install([resourceModel]);
+			resourcesInstallService.loadModels({resources: [resourceModel]});
+			await resourcesInstallService.install();
 
 			expect(resourceRepository.save).toBeCalledTimes(1);
 			expect(resourceRepository.save).toBeCalledWith(resourceModel);
