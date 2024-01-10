@@ -7,12 +7,8 @@ export interface ModuleInstallationInterface<T>{
 	 *
 	 * @param {LoadedConfig} loadedConfig
 	 */
-	loadModels(loadedConfig: LoadedConfig): void;
+	loadModels(loadedConfig: LoadedConfig): T[];
 
-	/**
-	 * Proceeds with installation of already loaded models
-	 */
-	install(): Promise<void>;
 }
 
 export type ModuleInstallationInterfaceType = Type<ModuleInstallationInterface<any>>;

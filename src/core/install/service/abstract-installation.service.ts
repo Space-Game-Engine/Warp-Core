@@ -4,6 +4,7 @@ import {validateSync} from 'class-validator';
 import {ModuleInstallationInterface} from '@warp-core/core/install/service/module-installation.interface';
 import {LoadedConfig} from '@warp-core/core/install/service/load-config.service';
 import {InstallError} from '@warp-core/core/install/exception/install.error';
+import {InstallValidationError} from '@warp-core/core/install/exception/install-validation.error';
 
 export abstract class AbstractInstallationService<T>
 	implements ModuleInstallationInterface<T>
@@ -12,7 +13,7 @@ export abstract class AbstractInstallationService<T>
 
 	protected modelsList: T[] = [];
 
-	loadModels(loadedConfig: LoadedConfig) {
+	loadModels(loadedConfig: LoadedConfig): T[] {
 		const arrayToInstall = this.parseConfig(loadedConfig);
 
 		for (const key in arrayToInstall) {
@@ -25,16 +26,16 @@ export abstract class AbstractInstallationService<T>
 				elementsToInstall,
 			) as T;
 
+			this.preValidationObject(modelToSave);
+
 			this.isModelValid(modelToSave);
+
+			this.postValidationObject(modelToSave);
 
 			this.modelsList.push(modelToSave);
 		}
-	}
 
-	async install() {
-		for (const singleModel of this.modelsList) {
-			await this.saveModel(singleModel);
-		}
+		return this.modelsList;
 	}
 
 	protected isModelValid(model: any): boolean {
@@ -46,10 +47,27 @@ export abstract class AbstractInstallationService<T>
 
 		AbstractInstallationService.logger.error('Validation error');
 		AbstractInstallationService.logger.error(validationErrors);
-		throw new Error('Validation error, see logs');
+		throw new InstallValidationError('Validation error, see logs');
 	}
 
-	protected abstract saveModel(modelToSave: T): Promise<void>;
+	/**
+	 * Allows modifying an object **before** validation
+	 * @param modelToSave
+	 * @protected
+	 */
+	protected preValidationObject(modelToSave: T): T {
+		return modelToSave;
+	}
+
+
+	/**
+	 * Allows modifying an object **after** validation
+	 * @param modelToSave
+	 * @protected
+	 */
+	protected postValidationObject(modelToSave: T): T {
+		return modelToSave;
+	}
 
 	protected abstract modelType(): Type<T>;
 
