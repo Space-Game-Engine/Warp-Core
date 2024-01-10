@@ -1,9 +1,10 @@
 import {DynamicModule, Module, Type} from '@nestjs/common';
+import {MultiBar, Presets} from 'cli-progress';
 import {InstallCommand} from './install.command';
 import {LoadConfigService} from './service/load-config.service';
 import {ModuleInstallationInterfaceType} from '@warp-core/core/install/service/module-installation.interface';
 import {GameInstallerService} from '@warp-core/core/install/service/game-installer.service';
-import {INSTALLER_SERVICES} from '@warp-core/core/install/installation.constants';
+import {INSTALLER_SERVICES, PROGRESS_BAR} from '@warp-core/core/install/installation.constants';
 
 type singleInstallToken = {
 	module: Type<any>,
@@ -27,6 +28,16 @@ export class InstallModule {
 					inject: this.getInstallationServices()
 				},
 				GameInstallerService,
+				{
+					provide: PROGRESS_BAR,
+					useFactory: () => {
+						return new MultiBar({
+							clearOnComplete: false,
+							hideCursor: true,
+							format: ' {bar} | {step_name} | {value}/{total}',
+						}, Presets.shades_grey);
+		}
+				}
 			],
 			imports: [
 				...this.getModules()
