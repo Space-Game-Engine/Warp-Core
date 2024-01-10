@@ -1,5 +1,5 @@
 import {Injectable, Type} from '@nestjs/common';
-import {BuildingModel, BuildingRepository} from '@warp-core/database';
+import {BuildingModel} from '@warp-core/database';
 import {AbstractInstallationService, InstallError, LoadedConfig} from '@warp-core/core/install';
 
 @Injectable()

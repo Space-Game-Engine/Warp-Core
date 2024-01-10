@@ -1,5 +1,5 @@
 import {Injectable, Type} from '@nestjs/common';
-import {ResourceModel, ResourceRepository} from '@warp-core/database';
+import {ResourceModel} from '@warp-core/database';
 import {AbstractInstallationService, InstallError, LoadedConfig} from '@warp-core/core/install';
 
 @Injectable()
