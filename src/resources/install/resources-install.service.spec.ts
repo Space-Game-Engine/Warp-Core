@@ -2,27 +2,23 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {ResourcesInstallService} from '@warp-core/resources/install/resources-install.service';
 import {
 	ResourceModel,
-	ResourceRepository,
 	ResourceTypeEnum,
 } from '@warp-core/database';
 
-jest.mock('@warp-core/database/repository/resource.repository');
 
 describe('ResourcesInstallService', () => {
 	let resourcesInstallService: ResourcesInstallService;
-	let resourceRepository: jest.Mocked<ResourceRepository>;
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
 
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [ResourcesInstallService, ResourceRepository],
+			providers: [ResourcesInstallService],
 		}).compile();
 
 		resourcesInstallService = module.get<ResourcesInstallService>(
 			ResourcesInstallService,
 		);
-		resourceRepository = module.get(ResourceRepository);
 	});
 
 	describe('loadModels',  () => {
@@ -37,9 +33,6 @@ describe('ResourcesInstallService', () => {
 				() => resourcesInstallService.loadModels({resources: [resourceModel]}),
 			).toThrowError('Validation error, see logs');
 		});
-	});
-
-	describe('install', () => {
 
 		it('should add items from array to install', async () => {
 			const resourceModel = {
@@ -49,11 +42,10 @@ describe('ResourcesInstallService', () => {
 				type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
 			} as ResourceModel;
 
-			resourcesInstallService.loadModels({resources: [resourceModel]});
-			await resourcesInstallService.install();
+			const models = resourcesInstallService.loadModels({resources: [resourceModel]});
 
-			expect(resourceRepository.save).toBeCalledTimes(1);
-			expect(resourceRepository.save).toBeCalledWith(resourceModel);
+			expect(models).toHaveLength(1);
+			expect(models.pop()).toBeInstanceOf(ResourceModel);
 		});
 	});
 });

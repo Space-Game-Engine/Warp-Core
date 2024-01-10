@@ -4,13 +4,6 @@ import {AbstractInstallationService, InstallError, LoadedConfig} from '@warp-cor
 
 @Injectable()
 export class ResourcesInstallService extends AbstractInstallationService<ResourceModel>{
-	constructor(private resourceRepository: ResourceRepository) {
-		super();
-	}
-
-	protected async saveModel(modelToSave: ResourceModel): Promise<void> {
-		await this.resourceRepository.save(modelToSave);
-	}
 
 	protected modelType(): Type<ResourceModel> {
 		return ResourceModel;

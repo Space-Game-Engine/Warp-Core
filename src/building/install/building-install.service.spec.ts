@@ -37,10 +37,6 @@ describe('BuildingInstallService', () => {
 				() => buildingInstallService.loadModels({buildings: [buildingModel]}),
 			).toThrowError('Validation error, see logs');
 		});
-	});
-
-	describe('install', () => {
-
 
 		it('should add items from array to install', async () => {
 			const buildingModel = {
@@ -55,11 +51,11 @@ describe('BuildingInstallService', () => {
 					},
 				],
 			} as BuildingModel;
-			buildingInstallService.loadModels({buildings: [buildingModel]})
-			await buildingInstallService.install();
 
-			expect(buildingRepository.save).toBeCalledTimes(1);
-			expect(buildingRepository.save).toBeCalledWith(buildingModel);
+			const models = buildingInstallService.loadModels({buildings: [buildingModel]})
+
+			expect(models).toHaveLength(1);
+			expect(models.pop()).toBeInstanceOf(BuildingModel);
 		});
 	});
 });

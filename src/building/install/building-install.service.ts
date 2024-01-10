@@ -4,14 +4,6 @@ import {AbstractInstallationService, InstallError, LoadedConfig} from '@warp-cor
 
 @Injectable()
 export class BuildingInstallService extends AbstractInstallationService<BuildingModel> {
-	constructor(private buildingRepository: BuildingRepository) {
-		super();
-	}
-
-	protected async saveModel(modelToSave: BuildingModel): Promise<void> {
-		await this.buildingRepository.save(modelToSave);
-	}
-
 	protected modelType(): Type<BuildingModel> {
 		return BuildingModel;
 	}
