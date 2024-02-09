@@ -11,6 +11,8 @@ import {CalculateResourceStorageService} from '@warp-core/resources/calculate/wa
 import {HabitatHasNewResourceProducerSubscriber} from '@warp-core/resources/subscriber/habitat-has-new-resource-producer.subscriber';
 import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
 import {AddResourcesOnFirstHabitatSubscriber} from '@warp-core/resources/subscriber/add-resources-on-first-habitat.subscriber';
+import {ResourcesInstallService} from '@warp-core/resources/install/resources-install.service';
+import {AddInstallService} from '@warp-core/core/install/add-install-service.decorator';
 
 @Module({
 	providers: [
@@ -23,8 +25,13 @@ import {AddResourcesOnFirstHabitatSubscriber} from '@warp-core/resources/subscri
 		ResourcesResolver,
 		CalculateResourceStorageService,
 		AddResourcesOnFirstHabitatSubscriber,
+		ResourcesInstallService,
 	],
 	imports: [DatabaseModule, AuthModule, CoreConfigModule],
-	exports: [ResourcesService],
+	exports: [
+		ResourcesService,
+		ResourcesInstallService,
+	],
 })
+@AddInstallService(ResourcesInstallService)
 export class ResourcesModule {}

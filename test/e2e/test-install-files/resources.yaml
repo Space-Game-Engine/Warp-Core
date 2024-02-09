@@ -1,0 +1,13 @@
+resources:
+  - id: wood
+    name: Spruce wood
+    type: construction
+  - id: stone_granite
+    name: Granite
+    type: construction
+  - id: stone_sandstone
+    name: Sandstone
+    type: construction
+  - id: coal
+    name: Mine coal
+    type: energy

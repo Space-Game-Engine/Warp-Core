@@ -1,41 +1,37 @@
 import {Test, TestingModule} from '@nestjs/testing';
-import {ResourcesInstallService} from '@warp-core/core/install/service/resources-install.service';
+import {ResourcesInstallService} from '@warp-core/resources/install/resources-install.service';
 import {
 	ResourceModel,
-	ResourceRepository,
 	ResourceTypeEnum,
 } from '@warp-core/database';
 
-jest.mock('@warp-core/database/repository/resource.repository');
 
 describe('ResourcesInstallService', () => {
 	let resourcesInstallService: ResourcesInstallService;
-	let resourceRepository: jest.Mocked<ResourceRepository>;
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
 
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [ResourcesInstallService, ResourceRepository],
+			providers: [ResourcesInstallService],
 		}).compile();
 
 		resourcesInstallService = module.get<ResourcesInstallService>(
 			ResourcesInstallService,
 		);
-		resourceRepository = module.get(ResourceRepository);
 	});
 
-	describe('install', () => {
-		it('should throw error when installation object contains errors', () => {
+	describe('loadModels',  () => {
+		it('should throw error when loaded object contains errors', () => {
 			const resourceModel = {
 				name: 'Really wrong building',
 				baseMaxCapacity: 'this is not a number',
 				type: 'unknown type',
-			};
+			} as unknown as ResourceModel;
 
 			expect(
-				resourcesInstallService.install([resourceModel]),
-			).rejects.toThrowError('Validation error, see logs');
+				() => resourcesInstallService.loadModels({resources: [resourceModel]}),
+			).toThrowError('Validation error, see logs');
 		});
 
 		it('should add items from array to install', async () => {
@@ -46,10 +42,10 @@ describe('ResourcesInstallService', () => {
 				type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
 			} as ResourceModel;
 
-			await resourcesInstallService.install([resourceModel]);
+			const models = resourcesInstallService.loadModels({resources: [resourceModel]});
 
-			expect(resourceRepository.save).toBeCalledTimes(1);
-			expect(resourceRepository.save).toBeCalledWith(resourceModel);
+			expect(models).toHaveLength(1);
+			expect(models.pop()).toBeInstanceOf(ResourceModel);
 		});
 	});
 });

@@ -21,6 +21,8 @@ import {
 	ResourceRepository,
 } from '@warp-core/database/repository';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
+import {InstallationDetailsModel} from '@warp-core/database/model/installation-details.model';
+import {InstallationDetailsRepository} from '@warp-core/database/repository/installation-details.repository';
 
 @Module({
 	providers: [
@@ -30,6 +32,7 @@ import {TransactionManagerService} from '@warp-core/database/transaction-manager
 		HabitatRepository,
 		HabitatResourceRepository,
 		ResourceRepository,
+		InstallationDetailsRepository,
 		TransactionManagerService,
 	],
 	imports: [
@@ -42,6 +45,7 @@ import {TransactionManagerService} from '@warp-core/database/transaction-manager
 		HabitatRepository,
 		HabitatResourceRepository,
 		ResourceRepository,
+		InstallationDetailsRepository,
 	],
 })
 export class DatabaseModule {
@@ -57,6 +61,7 @@ export class DatabaseModule {
 			BuildingProductionRateModel,
 			BuildingRequirementsModel,
 			WarehouseDetailsModel,
+			InstallationDetailsModel,
 		];
 	}
 }
