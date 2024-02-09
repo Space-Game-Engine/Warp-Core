@@ -2,10 +2,11 @@ import {Inject, Injectable} from '@nestjs/common';
 import {
 	ModuleInstallationInterface,
 } from '@warp-core/core/install/service/module-installation.interface';
-import {LoadConfigService} from '@warp-core/core/install/service/load-config.service';
+import { LoadedConfig} from '@warp-core/core/install/service/load-config.service';
 import {INSTALLER_SERVICES, PROGRESS_BAR} from '@warp-core/core/install/installation.constants';
 import {MultiBar, SingleBar} from 'cli-progress';
 import {DataSource} from 'typeorm';
+import {InstallationDetailsRepository} from '@warp-core/database/repository/installation-details.repository';
 
 @Injectable()
 export class GameInstallerService {
@@ -13,9 +14,9 @@ export class GameInstallerService {
 	private readonly mainProgressBar: SingleBar;
 
 	constructor(
+		private readonly installationDetailsRepository: InstallationDetailsRepository,
 		@Inject(INSTALLER_SERVICES)
 		private readonly installers: ModuleInstallationInterface<any>[],
-		private readonly loadConfig: LoadConfigService,
 		@Inject(PROGRESS_BAR)
 		private readonly progressBar: MultiBar,
 		private readonly dataSource: DataSource,
@@ -27,8 +28,27 @@ export class GameInstallerService {
 		return this.installers.length + 2;
 	}
 
-	public async installGame(directory: string) {
-		const loadedConfig = this.loadInstallationConfig(directory);
+	public async installGame(loadedConfig: LoadedConfig) {
+		if (await this.installationDetailsRepository.isPossibleToInstallGame() === false) {
+			this.skipInstallationProcess();
+			return;
+		}
+
+		const models = this.loadGameModels(loadedConfig);
+		await this.saveGameModelsToDatabase(models);
+		await this.logIntoRegister();
+
+		this.progressBar.stop();
+	}
+
+	private skipInstallationProcess(){
+		this.mainProgressBar.update(this.getProgressBarSteps(), {
+			step_name: 'Game already installed, process skipped'
+		});
+		this.mainProgressBar.stop();
+	}
+
+	private loadGameModels(loadedConfig: LoadedConfig): object[] {
 		const models: object[] = [];
 
 		for (const singleInstaller of this.installers) {
@@ -38,19 +58,22 @@ export class GameInstallerService {
 			models.push(...singleInstaller.loadModels(loadedConfig));
 		}
 
+		return models;
+	}
+
+	private async saveGameModelsToDatabase(models: object[]) {
 		this.mainProgressBar.increment({
 			step_name: `Saving data to database`,
 		});
+
 		await this.dataSource.manager.save(models);
 
 		this.mainProgressBar.increment({
 			step_name: `All steps are finished`,
 		});
-
-		this.progressBar.stop();
 	}
 
-	private loadInstallationConfig(directory: string) {
-		return this.loadConfig.fetchConfig(directory);
+	private async logIntoRegister() {
+		await this.installationDetailsRepository.insert({});
 	}
 }

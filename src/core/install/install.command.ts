@@ -1,11 +1,13 @@
 import {Command, Option} from 'nestjs-command';
 import {Injectable} from '@nestjs/common';
 import {GameInstallerService} from '@warp-core/core/install/service/game-installer.service';
+import {LoadConfigService} from '@warp-core/core/install/service/load-config.service';
 
 @Injectable()
 export class InstallCommand {
 	constructor(
 		private readonly gameInstaller: GameInstallerService,
+		private readonly loadConfig: LoadConfigService,
 	) {}
 
 	@Command({
@@ -23,6 +25,8 @@ export class InstallCommand {
 		})
 		directory: string,
 	) {
-		await this.gameInstaller.installGame(directory);
+		const installationConfig =  this.loadConfig.fetchConfig(directory);
+
+		await this.gameInstaller.installGame(installationConfig);
 	}
 }

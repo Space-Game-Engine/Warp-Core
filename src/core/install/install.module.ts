@@ -5,6 +5,7 @@ import {LoadConfigService} from './service/load-config.service';
 import {ModuleInstallationInterfaceType} from '@warp-core/core/install/service/module-installation.interface';
 import {GameInstallerService} from '@warp-core/core/install/service/game-installer.service';
 import {INSTALLER_SERVICES, PROGRESS_BAR} from '@warp-core/core/install/installation.constants';
+import {DatabaseModule} from '@warp-core/database';
 
 type singleInstallToken = {
 	module: Type<any>,
@@ -40,6 +41,7 @@ export class InstallModule {
 				}
 			],
 			imports: [
+				DatabaseModule,
 				...this.getModules()
 			]
 		}
