@@ -1,71 +1,92 @@
-import {TestingModule} from '@nestjs/testing';
 import {HttpStatus, INestApplication} from '@nestjs/common';
-import {e2eModule} from '@warp-core/test/e2e/utils/e2e-module';
-import requestGraphql from '@warp-core/test/e2e/utils/graphql-request-test';
+
 import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';
+import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/e2e-module';
+import {requestGraphQL} from '@warp-core/test/e2e/utils/graphql-request-test';
 import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
-import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 
 describe('Get list of all buildings as unauthenticated', () => {
-	let module: TestingModule;
 	let app: INestApplication;
 	let requestTest: GraphqlRequestTest;
 
 	beforeAll(async () => {
-		module = await e2eModule();
-		app = module.createNestApplication();
-		await app.init();
+		app = await createNestApplicationE2E();
 
-		requestTest = requestGraphql(app.getHttpServer());
+		requestTest = requestGraphQL(app.getHttpServer());
 	});
 
 	it('should not return buildings list when user is not authenticated', async () => {
 		const response = await requestTest
-			.query(`
-				{
-					building_getAll {
-						name
-					}
+			.query({
+				root: 'building_getAll',
+				fields: {
+					fields: ['name']
 				}
-			`)
+				})
 			.send()
 			.expect(HttpStatus.OK);
 
-		expect(response.body.errors[0].message).toEqual('Unauthorized');
+		expect(response.body.errors[0].message).toBe('Unauthorized');
 		expect(response.body.data.building_getAll).toBeNull();
 	});
 });
 
 describe('Get list of all buildings as authenticated', () => {
-	let module: TestingModule;
 	let app: INestApplication;
 	let requestTest: GraphqlRequestTest;
 
 	beforeAll(async () => {
-		module = await e2eModule();
-		app = module.createNestApplication();
-		await app.init();
+		app = await createNestApplicationE2E();
 
-		requestTest = requestGraphql(app.getHttpServer());
+		requestTest = requestGraphQL(app.getHttpServer());
 		await requestTest.authenticate({
 			userId: 1,
 			habitatId: 1,
 		} as LoginParameters);
 	});
 
-	it('should not return buildings list when user is not authenticated', async () => {
-		const config = app.get(RuntimeConfig);
+	it('should return buildings list with length of 5 when user is authenticated', async () => {
 		const response = await requestTest
-			.query(`
-				{
-					building_getAll{
-						name
-					}
+			.query({
+				root: 'building_getAll',
+				fields: {
+					fields: ['name']
 				}
-			`)
+			})
 			.send()
 			.expect(HttpStatus.OK);
 
 		expect(response.body.data.building_getAll).toHaveLength(5);
+	});
+
+	it('should return buildings with building details at certain level when user is authenticated', async () => {
+		const response = await requestTest
+			.query({
+					root: 'building_getAll',
+					fields: {
+						fields: ['name'],
+						buildingDetailsAtCertainLevel: {
+							fields: ['level']
+						}
+					}
+				})
+			.send()
+			.expect(HttpStatus.OK);
+
+		const expectSingleBuildingContent = expect.objectContaining({
+			name: expect.stringMatching(/\w+/),
+			buildingDetailsAtCertainLevel: expect.any(Array),
+		});
+
+		expect(response.body.data.building_getAll).toHaveLength(5);
+		expect(response.body.data.building_getAll).toEqual(
+			expect.arrayContaining([
+				expectSingleBuildingContent,
+				expectSingleBuildingContent,
+				expectSingleBuildingContent,
+				expectSingleBuildingContent,
+				expectSingleBuildingContent,
+			]),
+		);
 	});
 });
