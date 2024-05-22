@@ -1,6 +1,6 @@
 import {
 	Args,
-	Int,
+	ID,
 	Parent,
 	Query,
 	ResolveField,
@@ -18,7 +18,7 @@ export class BuildingResolver {
 		description: 'Returns single building type',
 		name: 'building_get',
 	})
-	building(@Args('id', {type: () => Int}) id: string) {
+	building(@Args('id', {type: () => ID}) id: string) {
 		return this.buildingService.getBuildingById(id);
 	}
 
