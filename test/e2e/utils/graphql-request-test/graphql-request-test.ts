@@ -12,15 +12,29 @@ import {
 export class GraphqlRequestTest {
 	private queryParameters: GraphQLQueryParameters;
 	private operationName: OperationType;
-	private serverPath = '/graphql';
+	private readonly serverPath = '/graphql';
 	private loginToken: string;
 
 	constructor(private readonly supertest: supertest.Agent) {}
 
-	async authenticate(loginParameters: LoginParameters) {
+	async register(userId: number): Promise<LoginParameters> {
+		const registerResponse = await this.supertest.get(`/auth/create/${userId}`);
+
+		return registerResponse.body;
+	}
+
+	async authenticate(loginParameters: LoginParameters): Promise<this> {
 		const loginResponse = await this.supertest.post('/auth/login').send(loginParameters).expect(HttpStatus.CREATED);
 
 		this.loginToken = loginResponse.body.access_token;
+
+		return this;
+	}
+
+	async registerAndAuthenticate(userId: number): Promise<this> {
+		const loginParameters = await this.register(userId);
+
+		await this.authenticate(loginParameters);
 
 		return this;
 	}
