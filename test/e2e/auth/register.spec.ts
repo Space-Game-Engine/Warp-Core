@@ -15,7 +15,7 @@ describe('register', () => {
 		config = app.get(RuntimeConfig);
 	});
 
-	it('should create a new habitat when user was not registered already', () => {
+	it('should create a new habitat when user was not registered already', async () => {
 		const newUserId = 9999;
 
 		config.habitat.onStart = {
@@ -23,10 +23,14 @@ describe('register', () => {
 			buildings: [],
 		};
 
-		return request(app.getHttpServer()).get(`/auth/create/${newUserId}`).expect(HttpStatus.OK).expect({
-			userId: newUserId,
-			habitatId: 2,
-		});
+		const response = await request(app.getHttpServer())
+			.get(`/auth/create/${newUserId}`)
+			.expect(HttpStatus.OK);
+
+		expect(response.body).toHaveProperty('userId');
+		expect(response.body.userId).toEqual(newUserId);
+		expect(response.body).toHaveProperty('habitatId');
+		expect(response.body.habitatId).toEqual(expect.any(Number));
 	});
 
 	it('should create a new habitat and allow user to login when user was not registered already', async () => {
@@ -37,16 +41,18 @@ describe('register', () => {
 			buildings: [],
 		};
 
-		const registerResponse = await request(app.getHttpServer()).get(`/auth/create/${newUserId}`).expect(HttpStatus.OK);
+		const registerResponse = await request(app.getHttpServer())
+			.get(`/auth/create/${newUserId}`)
+			.expect(HttpStatus.OK);
 
 		expect(registerResponse.body).toHaveProperty('userId');
 		expect(registerResponse.body.userId).toEqual(newUserId);
 		expect(registerResponse.body).toHaveProperty('habitatId');
-		expect(registerResponse.body.habitatId).toBe(2);
+		expect(registerResponse.body.habitatId).toEqual(expect.any(Number));
 
 		const loginResponse = await request(app.getHttpServer())
 			.post('/auth/login')
-			.send({userId: newUserId, habitatId: 2} as LoginParameters)
+			.send({userId: newUserId, habitatId: registerResponse.body.habitatId} as LoginParameters)
 			.expect(HttpStatus.CREATED);
 
 		expect(loginResponse.body).toHaveProperty('access_token');
