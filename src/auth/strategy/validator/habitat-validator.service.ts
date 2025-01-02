@@ -1,13 +1,15 @@
 import {Injectable} from '@nestjs/common';
+
+import {ValidatorInterface} from './validator.interface';
+
 import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
 import {HabitatRepository} from '@warp-core/database';
-import {ValidatorInterface} from './validator.interface';
 
 @Injectable()
 export class HabitatValidatorService implements ValidatorInterface {
 	constructor(private readonly habitatRepository: HabitatRepository) {}
 
-	async validate(
+	public async validate(
 		userId: number,
 		habitatId: number,
 	): Promise<AuthModelInterface | null> {

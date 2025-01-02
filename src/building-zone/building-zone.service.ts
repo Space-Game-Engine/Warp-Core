@@ -1,4 +1,5 @@
 import {Injectable} from '@nestjs/common';
+
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {
 	BuildingZoneModel,
@@ -13,11 +14,11 @@ export class BuildingZoneService {
 		private readonly habitatModel: AuthorizedHabitatModel,
 	) {}
 
-	async getAllZonesForCurrentHabitat(): Promise<BuildingZoneModel[]> {
+	public async getAllZonesForCurrentHabitat(): Promise<BuildingZoneModel[]> {
 		return this.habitatModel.buildingZones;
 	}
 
-	async getSingleBuildingZone(
+	public async getSingleBuildingZone(
 		localBuildingZoneId: number,
 		habitatModel: HabitatModel = this.habitatModel,
 	): Promise<BuildingZoneModel | null> {
@@ -29,7 +30,7 @@ export class BuildingZoneService {
 		);
 	}
 
-	async createNewBuildingZone(
+	public async createNewBuildingZone(
 		habitat: HabitatModel,
 	): Promise<BuildingZoneModel> {
 		const maxCounterPerHabitat =

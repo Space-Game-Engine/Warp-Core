@@ -1,8 +1,9 @@
-import {EndLevelValidator} from '@warp-core/building-queue/input/validator/end-level.validator';
 import {Test, TestingModule} from '@nestjs/testing';
-import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
-import {BuildingModel, BuildingZoneModel} from '@warp-core/database';
+
 import {QueueInputValidationEvent} from '@warp-core/building-queue/event/queue-input-validation.event';
+import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
+import {EndLevelValidator} from '@warp-core/building-queue/input/validator/end-level.validator';
+import {BuildingModel, BuildingZoneModel} from '@warp-core/database';
 
 describe('End Level building queue validator', () => {
 	let endLevelValidator: EndLevelValidator;

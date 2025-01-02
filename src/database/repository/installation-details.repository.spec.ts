@@ -1,8 +1,9 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {DataSource} from 'typeorm';
-import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
+
 import {InstallationDetailsRepository} from '@warp-core/database/repository/installation-details.repository';
-jest.mock("../transaction-manager.service");
+import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
+jest.mock('../transaction-manager.service');
 
 describe('Resource repository test', () => {
 	let installationDetailsRepository: InstallationDetailsRepository;
@@ -14,14 +15,16 @@ describe('Resource repository test', () => {
 				{
 					provide: DataSource,
 					useValue: {
-						createEntityManager() {},
+						createEntityManager: (): void => {},
 					},
 				},
-				TransactionManagerService
+				TransactionManagerService,
 			],
 		}).compile();
 
-		installationDetailsRepository = module.get<InstallationDetailsRepository>(InstallationDetailsRepository);
+		installationDetailsRepository = module.get<InstallationDetailsRepository>(
+			InstallationDetailsRepository,
+		);
 	});
 
 	test('Installation details repository object should be defined', () => {

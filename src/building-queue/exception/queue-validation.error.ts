@@ -1,4 +1,5 @@
 import {UnprocessableEntityException} from '@nestjs/common';
+
 import {QueueValidationErrorType} from '@warp-core/building-queue/exception/queue-validation-error.type';
 
 export class QueueValidationError extends UnprocessableEntityException {

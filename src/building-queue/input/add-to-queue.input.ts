@@ -6,7 +6,7 @@ export class AddToQueueInput {
 	@IsNumber({}, {message: 'Building zone id must be a number'})
 	@IsPositive({message: 'Building zone id must be a positive number'})
 	@Field(() => Int, {description: 'Local Id of building zone'})
-	localBuildingZoneId: number;
+	public localBuildingZoneId: number;
 
 	@IsOptional()
 	@IsString()
@@ -15,10 +15,10 @@ export class AddToQueueInput {
 			'Id of building type that will be constructed. If building is already placed, that field will be ignored',
 		nullable: true,
 	})
-	buildingId?: string | null;
+	public buildingId?: string | null;
 
 	@IsNumber()
 	@IsPositive()
 	@Field(() => Int, {description: 'How much levels will be build'})
-	endLevel: number;
+	public endLevel: number;
 }

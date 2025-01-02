@@ -6,8 +6,13 @@ import {
 	ResolveField,
 	Resolver,
 } from '@nestjs/graphql';
-import {BuildingModel} from '@warp-core/database';
+
 import {BuildingService} from './building.service';
+
+import {
+	BuildingDetailsAtCertainLevelModel,
+	BuildingModel,
+} from '@warp-core/database';
 
 @Resolver(() => BuildingModel)
 export class BuildingResolver {
@@ -18,7 +23,9 @@ export class BuildingResolver {
 		description: 'Returns single building type',
 		name: 'building_get',
 	})
-	building(@Args('id', {type: () => Int}) id: string) {
+	public building(
+		@Args('id', {type: () => Int}) id: string,
+	): Promise<BuildingModel | null> {
 		return this.buildingService.getBuildingById(id);
 	}
 
@@ -27,12 +34,14 @@ export class BuildingResolver {
 		description: 'Returns all possible building types',
 		name: 'building_getAll',
 	})
-	allBuildings() {
+	public allBuildings(): Promise<BuildingModel[]> {
 		return this.buildingService.getAllBuildings();
 	}
 
 	@ResolveField()
-	buildingDetailsAtCertainLevel(@Parent() building: BuildingModel) {
+	public async buildingDetailsAtCertainLevel(
+		@Parent() building: BuildingModel,
+	): Promise<BuildingDetailsAtCertainLevelModel[]> {
 		return building.buildingDetailsAtCertainLevel;
 	}
 }

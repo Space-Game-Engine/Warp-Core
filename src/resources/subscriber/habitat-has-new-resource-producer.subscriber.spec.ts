@@ -1,14 +1,15 @@
+import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {
 	BuildingProductionRateModel,
 	BuildingQueueElementModel,
 	BuildingRepository,
 	HabitatResourceRepository,
 } from '@warp-core/database';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
-import {Test, TestingModule} from '@nestjs/testing';
-import {when} from 'jest-when';
 import {HabitatHasNewResourceProducerSubscriber} from '@warp-core/resources/subscriber/habitat-has-new-resource-producer.subscriber';
+import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 
 jest.mock('@warp-core/database/repository/building.repository');
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
@@ -54,7 +55,10 @@ describe('Add last calculation date for new resource producers', () => {
 			const productionRateModels = [] as BuildingProductionRateModel[];
 
 			when(buildingRepository.getProductionRateForProvidedLevel)
-				.expectCalledWith(queueElement.buildingId as string, queueElement.endLevel)
+				.expectCalledWith(
+					queueElement.buildingId as string,
+					queueElement.endLevel,
+				)
 				.mockResolvedValue(productionRateModels);
 
 			await habitatHasNewResourceProducerSubscriber.updateLastCalculationDateOnHabitatResource(
@@ -83,7 +87,10 @@ describe('Add last calculation date for new resource producers', () => {
 			] as BuildingProductionRateModel[];
 
 			when(buildingRepository.getProductionRateForProvidedLevel)
-				.expectCalledWith(queueElement.buildingId as string, queueElement.endLevel)
+				.expectCalledWith(
+					queueElement.buildingId as string,
+					queueElement.endLevel,
+				)
 				.mockResolvedValue(productionRateModels);
 
 			await habitatHasNewResourceProducerSubscriber.updateLastCalculationDateOnHabitatResource(

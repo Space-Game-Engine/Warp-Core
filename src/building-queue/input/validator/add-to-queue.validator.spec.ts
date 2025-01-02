@@ -1,13 +1,15 @@
-import {when} from 'jest-when';
+import {ArgumentMetadata} from '@nestjs/common';
+import {EventEmitter2} from '@nestjs/event-emitter';
 import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+
+import {BuildingService} from '@warp-core/building';
+import {QueueInputValidationEvent} from '@warp-core/building-queue/event/queue-input-validation.event';
+import {QueueValidationError} from '@warp-core/building-queue/exception/queue-validation.error';
 import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
 import {AddToQueueValidator} from '@warp-core/building-queue/input/validator/add-to-queue.validator';
 import {BuildingZoneService} from '@warp-core/building-zone/building-zone.service';
-import {BuildingService} from '@warp-core/building';
 import {BuildingModel, BuildingZoneModel} from '@warp-core/database';
-import {QueueInputValidationEvent} from '@warp-core/building-queue/event/queue-input-validation.event';
-import {EventEmitter2} from '@nestjs/event-emitter';
-import {QueueValidationError} from '@warp-core/building-queue/exception/queue-validation.error';
 
 jest.mock('@warp-core/building/building.service');
 jest.mock('@warp-core/building-zone/building-zone.service');
@@ -25,7 +27,7 @@ describe('Add to queue validator', () => {
 		// because it triggers strange `decorator is not a function` error not connected to anything...
 		eventEmitter = {
 			emitAsync: jest.fn(),
-		} as any as EventEmitter2;
+		} as unknown as EventEmitter2;
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
@@ -59,7 +61,7 @@ describe('Add to queue validator', () => {
 			try {
 				await addToQueueValidator.transform(addToQueue, {
 					metatype: AddToQueueInput,
-				} as any);
+				} as ArgumentMetadata);
 			} catch (e) {
 				expect(e).toBeInstanceOf(QueueValidationError);
 				expect(e.message).toContain('Queue Validation Error');
@@ -87,7 +89,7 @@ describe('Add to queue validator', () => {
 			try {
 				await addToQueueValidator.transform(addToQueue, {
 					metatype: AddToQueueInput,
-				} as any);
+				} as ArgumentMetadata);
 			} catch (e) {
 				expect(e).toBeInstanceOf(QueueValidationError);
 				expect(e.message).toContain('Queue Validation Error');
@@ -121,7 +123,7 @@ describe('Add to queue validator', () => {
 			try {
 				await addToQueueValidator.transform(addToQueue, {
 					metatype: AddToQueueInput,
-				} as any);
+				} as ArgumentMetadata);
 			} catch (e) {
 				expect(e).toBeInstanceOf(QueueValidationError);
 				expect(e.message).toContain('Queue Validation Error');
@@ -176,7 +178,7 @@ describe('Add to queue validator', () => {
 			try {
 				await addToQueueValidator.transform(addToQueue, {
 					metatype: AddToQueueInput,
-				} as any);
+				} as ArgumentMetadata);
 			} catch (e) {
 				expect(e).toBeInstanceOf(QueueValidationError);
 				expect(e.message).toContain('Queue Validation Error');
@@ -222,7 +224,7 @@ describe('Add to queue validator', () => {
 			await expect(
 				addToQueueValidator.transform(addToQueue, {
 					metatype: AddToQueueInput,
-				} as any),
+				} as ArgumentMetadata),
 			).resolves.toEqual(addToQueue);
 		});
 	});

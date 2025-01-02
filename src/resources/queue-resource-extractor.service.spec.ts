@@ -1,15 +1,16 @@
+import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {QueueElementProcessedEvent} from '@warp-core/building-queue';
 import {
 	HabitatResourceModel,
 	HabitatResourceRepository,
 	QueueElementCostModel,
 } from '@warp-core/database';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {Test, TestingModule} from '@nestjs/testing';
-import {QueueResourceExtractorService} from '@warp-core/resources/queue-resource-extractor.service';
-import {QueueElementProcessedEvent} from '@warp-core/building-queue';
-import {when} from 'jest-when';
-import {InsufficientResourcesException} from '@warp-core/resources/exception/Insufficient-resources.exception';
 import {InsufficientResourceType} from '@warp-core/resources/exception/insufficient-resource.type';
+import {InsufficientResourcesException} from '@warp-core/resources/exception/Insufficient-resources.exception';
+import {QueueResourceExtractorService} from '@warp-core/resources/queue-resource-extractor.service';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
@@ -73,9 +74,9 @@ describe('Resource extraction service', () => {
 				.mockResolvedValue(habitatResources);
 
 			await expect(
-				resourceExtractorService.useResourcesOnQueueUpdate(
-					{queueElement: {costs: costs}} as QueueElementProcessedEvent,
-				),
+				resourceExtractorService.useResourcesOnQueueUpdate({
+					queueElement: {costs: costs},
+				} as QueueElementProcessedEvent),
 			).rejects.toThrowError(
 				'Requested resources from queue does not equal resources from habitat',
 			);
@@ -204,9 +205,9 @@ describe('Resource extraction service', () => {
 						.mockResolvedValue(habitatResources);
 
 					try {
-						await resourceExtractorService.useResourcesOnQueueUpdate(
-							{queueElement: {costs: costs}} as QueueElementProcessedEvent,
-						);
+						await resourceExtractorService.useResourcesOnQueueUpdate({
+							queueElement: {costs: costs},
+						} as QueueElementProcessedEvent);
 					} catch (e) {
 						expect(e).toBeInstanceOf(InsufficientResourcesException);
 						expect(e.insufficientResources).toHaveLength(
@@ -216,10 +217,12 @@ describe('Resource extraction service', () => {
 							e.insufficientResources;
 
 						for (const calculationResult of singleCase.exceptionCalculationResults) {
-							const resourceFromException = <InsufficientResourceType>insufficientResources.find(
-								singleResourceFromException =>
-									calculationResult.resourceId ===
-									singleResourceFromException.resourceId,
+							const resourceFromException = <InsufficientResourceType>(
+								insufficientResources.find(
+									singleResourceFromException =>
+										calculationResult.resourceId ===
+										singleResourceFromException.resourceId,
+								)
 							);
 							const queueCost = singleCase.queueCosts.find(
 								singleElement =>
@@ -231,7 +234,10 @@ describe('Resource extraction service', () => {
 									singleResource.resourceId === calculationResult.resourceId,
 							);
 
-							if (typeof queueCost === 'undefined' || typeof habitatResource === 'undefined') {
+							if (
+								typeof queueCost === 'undefined' ||
+								typeof habitatResource === 'undefined'
+							) {
 								continue;
 							}
 
@@ -288,16 +294,14 @@ describe('Resource extraction service', () => {
 				)
 				.mockResolvedValue(habitatResources);
 
-			await resourceExtractorService.useResourcesOnQueueUpdate(
-				{queueElement: {costs: costs}} as QueueElementProcessedEvent,
-			);
+			await resourceExtractorService.useResourcesOnQueueUpdate({
+				queueElement: {costs: costs},
+			} as QueueElementProcessedEvent);
 
 			expect(habitatResources[0].currentAmount).toEqual(0);
 			expect(habitatResources[1].currentAmount).toEqual(0);
 
-			expect(
-				habitatResourceRepository.update,
-			).toBeCalledTimes(2);
+			expect(habitatResourceRepository.update).toBeCalledTimes(2);
 		});
 	});
 });

@@ -1,11 +1,12 @@
-import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
-import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
-import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
 import {Field, ID, ObjectType} from '@nestjs/graphql';
 import {IsBoolean, IsNumber} from 'class-validator';
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+
+import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
+import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 
 @ObjectType({description: 'Single habitat that belongs to user'})
 @Entity({name: 'habitat'})
@@ -13,27 +14,27 @@ export class HabitatModel implements AuthModelInterface {
 	@Field(() => ID)
 	@IsNumber()
 	@PrimaryGeneratedColumn()
-	id: number;
+	public id: number;
 
 	@Field({description: 'Custom name of the habitat'})
 	@Column('varchar')
-	name: string;
+	public name: string;
 
 	@Field()
 	@IsNumber()
 	@Column('int')
-	userId: number;
+	public userId: number;
 
 	@Field({description: 'Is that habitat a capital one'})
 	@IsBoolean()
 	@Column('boolean')
-	isMain: boolean;
+	public isMain: boolean;
 
 	@Field(() => [BuildingZoneModel])
 	@OneToMany(() => BuildingZoneModel, buildingZone => buildingZone.habitat, {
 		lazy: true,
 	})
-	buildingZones: BuildingZoneModel[] | Promise<BuildingZoneModel[]>;
+	public buildingZones: BuildingZoneModel[] | Promise<BuildingZoneModel[]>;
 
 	@Field(() => [HabitatResourceCombined])
 	@OneToMany(
@@ -43,7 +44,9 @@ export class HabitatModel implements AuthModelInterface {
 			lazy: true,
 		},
 	)
-	habitatResources: HabitatResourceModel[] | Promise<HabitatResourceModel[]>;
+	public habitatResources:
+		| HabitatResourceModel[]
+		| Promise<HabitatResourceModel[]>;
 
 	@Field(() => [BuildingQueueElementModel])
 	@OneToMany(
@@ -53,11 +56,11 @@ export class HabitatModel implements AuthModelInterface {
 			lazy: true,
 		},
 	)
-	buildingQueue:
+	public buildingQueue:
 		| BuildingQueueElementModel[]
 		| Promise<BuildingQueueElementModel[]>;
 
-	getAuthId(): any {
-		return this.id;
+	public getAuthId(): string {
+		return this.id.toString();
 	}
 }

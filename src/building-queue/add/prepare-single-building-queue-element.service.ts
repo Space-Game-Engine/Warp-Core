@@ -1,5 +1,10 @@
 import {Inject, Injectable} from '@nestjs/common';
+import {DateTime} from 'luxon';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {BuildingService} from '@warp-core/building';
 import {ResourcesCalculatorInterface} from '@warp-core/building-queue/add/calculate-resources/resources-calculator.interface';
+import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
 import {
 	BuildingModel,
 	BuildingQueueElementModel,
@@ -7,11 +12,6 @@ import {
 	BuildingZoneModel,
 	BuildingZoneRepository,
 } from '@warp-core/database';
-import {BuildingService} from '@warp-core/building';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
-import {DateTime} from 'luxon';
-import {QueueError} from '@warp-core/building-queue/exception/queue.error';
 
 @Injectable()
 export class PrepareSingleBuildingQueueElementService {
@@ -24,21 +24,21 @@ export class PrepareSingleBuildingQueueElementService {
 		protected readonly habitatModel: AuthorizedHabitatModel,
 	) {}
 
-	async getQueueElement(
+	public async getQueueElement(
 		addToQueueElement: AddToQueueInput,
 	): Promise<BuildingQueueElementModel> {
 		const buildingZone =
-			await this.buildingZoneRepository.getSingleBuildingZone(
+			(await this.buildingZoneRepository.getSingleBuildingZone(
 				addToQueueElement.localBuildingZoneId,
 				this.habitatModel.id,
-			) as BuildingZoneModel;
+			)) as BuildingZoneModel;
 
 		let building = await buildingZone.building;
 
 		if (!building) {
-			building = await this.buildingService.getBuildingById(
+			building = (await this.buildingService.getBuildingById(
 				addToQueueElement.buildingId!,
-			) as BuildingModel;
+			)) as BuildingModel;
 		}
 
 		const resourceCost = await this.calculationService.calculateResourcesCosts(

@@ -1,10 +1,11 @@
 import {Injectable} from '@nestjs/common';
+import {DataSource, LessThanOrEqual, MoreThanOrEqual} from 'typeorm';
+
 import {
 	BuildingQueueElementModel,
 	BuildingZoneModel,
 } from '@warp-core/database/model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
-import {DataSource, LessThanOrEqual, MoreThanOrEqual} from 'typeorm';
 
 @Injectable()
 export class BuildingQueueRepository extends AbstractRepository<BuildingQueueElementModel> {
@@ -12,7 +13,7 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
 		super(BuildingQueueElementModel, dataSource.createEntityManager());
 	}
 
-	getCurrentBuildingQueueForHabitat(
+	public getCurrentBuildingQueueForHabitat(
 		habitatId: number,
 	): Promise<BuildingQueueElementModel[]> {
 		return this.find({
@@ -25,7 +26,7 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
 		});
 	}
 
-	getCurrentBuildingQueueForBuildingZone(
+	public getCurrentBuildingQueueForBuildingZone(
 		buildingZone: BuildingZoneModel,
 	): Promise<BuildingQueueElementModel[]> {
 		return this.find({
@@ -38,7 +39,7 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
 		});
 	}
 
-	getSingleBuildingQueueElementById(
+	public getSingleBuildingQueueElementById(
 		queueElementId: number,
 	): Promise<BuildingQueueElementModel | null> {
 		return this.findOne({
@@ -48,7 +49,7 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
 		});
 	}
 
-	countActiveBuildingQueueElementsForHabitat(
+	public countActiveBuildingQueueElementsForHabitat(
 		habitatId: number,
 	): Promise<number> {
 		return this.count({
@@ -61,7 +62,7 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
 		});
 	}
 
-	getUnresolvedQueueForHabitat(
+	public getUnresolvedQueueForHabitat(
 		habitatId: number,
 	): Promise<BuildingQueueElementModel[]> {
 		return this.findBy({
@@ -73,7 +74,7 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
 		});
 	}
 
-	getUnresolvedQueueForSingleBuildingZone(
+	public getUnresolvedQueueForSingleBuildingZone(
 		buildingZoneId: number,
 	): Promise<BuildingQueueElementModel[]> {
 		const queryBuilder = this.createQueryBuilder('buildingQueue');

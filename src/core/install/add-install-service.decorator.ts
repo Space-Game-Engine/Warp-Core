@@ -1,14 +1,15 @@
-import {
-	ModuleInstallationInterfaceType,
-} from '@warp-core/core/install/service/module-installation.interface';
-import {InstallModule} from '@warp-core/core/install/install.module';
 import {Type} from '@nestjs/common';
 
-export function AddInstallService(installService: ModuleInstallationInterfaceType): ClassDecorator {
-	return (target: Function) => {
+import {InstallModule} from '@warp-core/core/install/install.module';
+import {ModuleInstallationInterfaceType} from '@warp-core/core/install/service/module-installation.interface';
+
+export function AddInstallService(
+	installService: ModuleInstallationInterfaceType,
+): ClassDecorator {
+	return <T>(target: T) => {
 		InstallModule.installTokens.add({
-			module: target as Type<any>,
-			service: installService
-		})
-	}
+			module: target as Type<T>,
+			service: installService,
+		});
+	};
 }

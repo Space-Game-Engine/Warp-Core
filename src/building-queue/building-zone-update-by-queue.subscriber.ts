@@ -1,8 +1,9 @@
 import {Injectable, Logger} from '@nestjs/common';
+import {DataSource, EntitySubscriberInterface, EventSubscriber} from 'typeorm';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {BuildingQueueHandlerService} from '@warp-core/building-queue/building-queue-handler.service';
 import {BuildingZoneModel} from '@warp-core/database';
-import {DataSource, EntitySubscriberInterface, EventSubscriber} from 'typeorm';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 
 @Injectable()
 @EventSubscriber()
@@ -21,11 +22,11 @@ export class BuildingZoneUpdateByQueueSubscriber
 		dataSource.subscribers.push(this);
 	}
 
-	listenTo() {
+	public listenTo(): typeof BuildingZoneModel {
 		return BuildingZoneModel;
 	}
 
-	async afterLoad(entity: BuildingZoneModel, event?) {
+	public async afterLoad(entity: BuildingZoneModel): Promise<void> {
 		if (!this.habitatModel.id) {
 			return;
 		}

@@ -1,10 +1,14 @@
 import {Injectable, Type} from '@nestjs/common';
+
+import {
+	AbstractInstallationService,
+	InstallError,
+	LoadedConfig,
+} from '@warp-core/core/install';
 import {ResourceModel} from '@warp-core/database';
-import {AbstractInstallationService, InstallError, LoadedConfig} from '@warp-core/core/install';
 
 @Injectable()
-export class ResourcesInstallService extends AbstractInstallationService<ResourceModel>{
-
+export class ResourcesInstallService extends AbstractInstallationService<ResourceModel> {
 	protected modelType(): Type<ResourceModel> {
 		return ResourceModel;
 	}

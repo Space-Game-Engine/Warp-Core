@@ -1,9 +1,10 @@
 import {Injectable} from '@nestjs/common';
 import {OnEvent} from '@nestjs/event-emitter';
+
 import {QueueInputValidationEvent} from '@warp-core/building-queue/event/queue-input-validation.event';
 import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
-import {BuildingQueueRepository, BuildingZoneModel} from '@warp-core/database';
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
+import {BuildingQueueRepository, BuildingZoneModel} from '@warp-core/database';
 
 @Injectable()
 export class ConfigurationValidator {
@@ -14,7 +15,9 @@ export class ConfigurationValidator {
 
 	@OnEvent('building_queue.validating.add_to_queue')
 	@OnEvent('building_queue.validating.draft_queue_element')
-	async validate(queueValidationEvent: QueueInputValidationEvent) {
+	public async validate(
+		queueValidationEvent: QueueInputValidationEvent,
+	): Promise<void> {
 		const addToQueueElement = queueValidationEvent.addToQueueInput;
 		const buildingZone = queueValidationEvent.buildingZone;
 
@@ -46,7 +49,7 @@ export class ConfigurationValidator {
 	private async isPossibleToQueueElementByOneLevel(
 		addToQueueElement: AddToQueueInput,
 		buildingZone: BuildingZoneModel,
-	): Promise<Boolean> {
+	): Promise<boolean> {
 		return addToQueueElement.endLevel - 1 <= buildingZone.level;
 	}
 

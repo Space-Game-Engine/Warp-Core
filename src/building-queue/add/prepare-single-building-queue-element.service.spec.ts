@@ -1,8 +1,13 @@
-import {Test, TestingModule} from '@nestjs/testing';
 import {ConfigService} from '@nestjs/config';
+import {EventEmitter2} from '@nestjs/event-emitter';
+import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
-import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {BuildingService} from '@warp-core/building';
+import {ResourcesCalculatorInterface} from '@warp-core/building-queue/add/calculate-resources/resources-calculator.interface';
+import {PrepareSingleBuildingQueueElementService} from '@warp-core/building-queue/add/prepare-single-building-queue-element.service';
+import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
 import {
 	BuildingModel,
 	BuildingQueueElementModel,
@@ -11,10 +16,6 @@ import {
 	BuildingZoneRepository,
 	QueueElementCostModel,
 } from '@warp-core/database';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {EventEmitter2} from '@nestjs/event-emitter';
-import {ResourcesCalculatorInterface} from '@warp-core/building-queue/add/calculate-resources/resources-calculator.interface';
-import {PrepareSingleBuildingQueueElementService} from '@warp-core/building-queue/add/prepare-single-building-queue-element.service';
 
 jest.mock('@warp-core/database/repository/building-queue.repository');
 jest.mock('@warp-core/database/repository/building-zone.repository');
@@ -224,9 +225,8 @@ describe('Building queue add service tests', () => {
 				)
 				.mockResolvedValue(buildingTime);
 
-			const queueDraft = await prepareBuildingQueueElement.getQueueElement(
-				addToQueueInput,
-			);
+			const queueDraft =
+				await prepareBuildingQueueElement.getQueueElement(addToQueueInput);
 
 			expect(queueDraft.id).toBeNull();
 			expect(queueDraft.buildingId).toEqual(building.id);

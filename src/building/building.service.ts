@@ -1,19 +1,22 @@
 import {Injectable} from '@nestjs/common';
+
 import {BuildingModel, BuildingRepository} from '@warp-core/database';
 
 @Injectable()
 export class BuildingService {
 	constructor(private buildingRepository: BuildingRepository) {}
 
-	async getBuildingById(buildingId: string): Promise<BuildingModel | null> {
+	public async getBuildingById(
+		buildingId: string,
+	): Promise<BuildingModel | null> {
 		return this.buildingRepository.getBuildingById(buildingId);
 	}
 
-	async getAllBuildings(): Promise<BuildingModel[]> {
+	public async getAllBuildings(): Promise<BuildingModel[]> {
 		return this.buildingRepository.getAllBuildings();
 	}
 
-	async calculateTimeInSecondsToUpgradeBuilding(
+	public async calculateTimeInSecondsToUpgradeBuilding(
 		startLevel: number,
 		endLevel: number,
 		buildingId: string,

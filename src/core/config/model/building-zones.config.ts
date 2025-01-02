@@ -6,11 +6,11 @@ export class BuildingZoneConfig {
 	 */
 	@Min(1)
 	@IsNumber()
-	counterForNewHabitat: number;
+	public counterForNewHabitat: number;
 
 	/**
 	 * Can user create new building zones?
 	 */
 	@IsBoolean()
-	isPossibleToCreateNewZones: boolean;
+	public isPossibleToCreateNewZones: boolean;
 }

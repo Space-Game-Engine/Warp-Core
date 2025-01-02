@@ -1,3 +1,6 @@
+import {Injectable} from '@nestjs/common';
+
+import {ResourcesCalculatorInterface} from '@warp-core/building-queue/add/calculate-resources/resources-calculator.interface';
 import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
 import {
 	BuildingModel,
@@ -6,12 +9,10 @@ import {
 	ResourceModel,
 	ResourceTypeEnum,
 } from '@warp-core/database';
-import {ResourcesCalculatorInterface} from '@warp-core/building-queue/add/calculate-resources/resources-calculator.interface';
-import {Injectable} from '@nestjs/common';
 
 @Injectable()
 export class SimpleCalculationService implements ResourcesCalculatorInterface {
-	async calculateResourcesCosts(
+	public async calculateResourcesCosts(
 		addToQueueElement: AddToQueueInput,
 		buildingZone: BuildingZoneModel,
 		building: BuildingModel,
@@ -30,7 +31,7 @@ export class SimpleCalculationService implements ResourcesCalculatorInterface {
 
 		for (const buildingDetailsForUpdateElement of buildingDetailsForUpdate) {
 			const buildingUpdateCosts =
-				await buildingDetailsForUpdateElement.requirements ?? [];
+				(await buildingDetailsForUpdateElement.requirements) ?? [];
 
 			for (const buildingUpdateCost of buildingUpdateCosts) {
 				const resource = await buildingUpdateCost.resource;
@@ -49,11 +50,13 @@ export class SimpleCalculationService implements ResourcesCalculatorInterface {
 		queueCost: Map<string, QueueElementCostModel>,
 		resource: ResourceModel,
 		cost: number,
-	) {
+	): void {
 		let queueCostPerResource: QueueElementCostModel;
 
 		if (queueCost.has(resource.id) === true) {
-			queueCostPerResource = queueCost.get(resource.id) as QueueElementCostModel;
+			queueCostPerResource = queueCost.get(
+				resource.id,
+			) as QueueElementCostModel;
 		} else {
 			queueCostPerResource = new QueueElementCostModel();
 			queueCostPerResource.resource = resource;

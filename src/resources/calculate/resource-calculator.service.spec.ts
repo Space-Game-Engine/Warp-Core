@@ -1,4 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+import {DateTime} from 'luxon';
+
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {
 	BuildingModel,
@@ -10,12 +13,10 @@ import {
 	ResourceModel,
 } from '@warp-core/database';
 import {ResourceCalculatorService} from '@warp-core/resources/calculate/resource-calculator.service';
-import {when} from 'jest-when';
-import {DateTime} from 'luxon';
 import {CalculateResourceStorageService} from '@warp-core/resources/calculate/warehouse-storage/calculate-resource-storage.service';
+import {default as multipleBuildingZonesAndSingleResourceCases} from '@warp-core/resources/datasets/calculate/multiple-building-zones-and-single-resource';
 import {default as singleBuildingZonesAndOneResourceCases} from '@warp-core/resources/datasets/calculate/single-building-zone-and-single-resource';
 import {default as singleBuildingZonesAndOneResourceCasesWithWarehouseLimit} from '@warp-core/resources/datasets/calculate/single-building-zone-and-single-resource-with-warehouse-limit';
-import {default as multipleBuildingZonesAndSingleResourceCases} from '@warp-core/resources/datasets/calculate/multiple-building-zones-and-single-resource';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
 jest.mock('@warp-core/database/repository/building-zone.repository');

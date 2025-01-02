@@ -8,10 +8,12 @@ enum Environment {
 
 class EnvironmentVariables {
 	@IsEnum(Environment)
-	NODE_ENV: Environment = Environment.Local;
+	public NODE_ENV: Environment = Environment.Local;
 }
 
-export function validate(config: Record<string, unknown>) {
+export function validate(
+	config: Record<string, unknown>,
+): EnvironmentVariables {
 	const validatedConfig = plainToInstance(EnvironmentVariables, config, {
 		enableImplicitConversion: true,
 	});

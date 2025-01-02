@@ -1,8 +1,9 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {EventEmitter2} from '@nestjs/event-emitter';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {QueueElementAfterProcessingEvent} from '@warp-core/building-queue/event/queue-element-after-processing.event';
 import {QueueElementBeforeProcessingEvent} from '@warp-core/building-queue/event/queue-element-before-processing.event';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {
 	BuildingQueueElementModel,
 	BuildingQueueRepository,
@@ -22,13 +23,13 @@ export class BuildingQueueHandlerService {
 		private readonly eventEmitter: EventEmitter2,
 	) {}
 
-	async getQueueItemsForHabitat() {
+	public getQueueItemsForHabitat(): Promise<BuildingQueueElementModel[]> {
 		return this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(
 			this.habitatModel.id,
 		);
 	}
 
-	async resolveQueue() {
+	public async resolveQueue(): Promise<void> {
 		this.logger.debug(`Resolving queue for habitat ${this.habitatModel.id}`);
 		const notResolvedQueueItems =
 			await this.buildingQueueRepository.getUnresolvedQueueForHabitat(
@@ -45,7 +46,9 @@ export class BuildingQueueHandlerService {
 		}
 	}
 
-	async resolveQueueForSingleBuildingZone(buildingZone: BuildingZoneModel) {
+	public async resolveQueueForSingleBuildingZone(
+		buildingZone: BuildingZoneModel,
+	): Promise<void> {
 		this.logger.debug(`Resolving queue for building zone ${buildingZone.id}`);
 		const notResolvedQueueItems =
 			await this.buildingQueueRepository.getUnresolvedQueueForSingleBuildingZone(
@@ -61,7 +64,7 @@ export class BuildingQueueHandlerService {
 	private async processMultipleQueueElements(
 		queueElements: BuildingQueueElementModel[],
 		buildingZone: BuildingZoneModel,
-	) {
+	): Promise<void> {
 		this.logger.debug(`${queueElements.length} queue elements to process`);
 		for (const singleQueueElement of queueElements) {
 			await this.processQueueElement(singleQueueElement, buildingZone);
@@ -71,7 +74,7 @@ export class BuildingQueueHandlerService {
 	private async processQueueElement(
 		queueElement: BuildingQueueElementModel,
 		buildingZoneToProcess: BuildingZoneModel,
-	) {
+	): Promise<void> {
 		this.logger.debug(
 			`Processing queue element for building zone with id ${buildingZoneToProcess.id}`,
 		);

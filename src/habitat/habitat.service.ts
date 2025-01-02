@@ -1,4 +1,5 @@
 import {Injectable} from '@nestjs/common';
+
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {HabitatModel, HabitatRepository} from '@warp-core/database';
 
@@ -9,15 +10,15 @@ export class HabitatService {
 		private readonly habitatModel: AuthorizedHabitatModel,
 	) {}
 
-	async getCurrentHabitat(): Promise<HabitatModel> {
+	public async getCurrentHabitat(): Promise<HabitatModel> {
 		return this.habitatModel;
 	}
 
-	async getHabitatsForLoggedIn(): Promise<HabitatModel[]> {
+	public async getHabitatsForLoggedIn(): Promise<HabitatModel[]> {
 		return this.habitatRepository.getHabitatsByUserId(this.habitatModel.userId);
 	}
 
-	async getHabitatById(habitatId: number): Promise<HabitatModel | null> {
+	public async getHabitatById(habitatId: number): Promise<HabitatModel | null> {
 		return this.habitatRepository.getHabitatById(habitatId);
 	}
 }

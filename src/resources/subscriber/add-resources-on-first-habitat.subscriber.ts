@@ -1,11 +1,12 @@
 import {Injectable} from '@nestjs/common';
-import {HabitatCreatedEvent} from '@warp-core/habitat';
 import {OnEvent} from '@nestjs/event-emitter';
+
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {
 	HabitatResourceModel,
 	HabitatResourceRepository,
 } from '@warp-core/database';
+import {HabitatCreatedEvent} from '@warp-core/habitat';
 
 @Injectable()
 export class AddResourcesOnFirstHabitatSubscriber {
@@ -15,9 +16,9 @@ export class AddResourcesOnFirstHabitatSubscriber {
 	) {}
 
 	@OnEvent('habitat.created.after_registration')
-	async addResourcesToHabitat(
+	public async addResourcesToHabitat(
 		newHabitatEvent: HabitatCreatedEvent,
-	) {
+	): Promise<void> {
 		if (
 			!this.runtimeConfig.habitat.onStart.resources ||
 			this.runtimeConfig.habitat.onStart.resources.length === 0

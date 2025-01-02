@@ -1,5 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
+
 import {BuildingInstallService} from './building-install.service';
+
 import {
 	BuildingModel,
 	BuildingRepository,
@@ -33,8 +35,8 @@ describe('BuildingInstallService', () => {
 				buildingDetailsAtCertainLevel: [],
 			} as unknown as BuildingModel;
 
-			expect(
-				() => buildingInstallService.loadModels({buildings: [buildingModel]}),
+			expect(() =>
+				buildingInstallService.loadModels({buildings: [buildingModel]}),
 			).toThrowError('Validation error, see logs');
 		});
 
@@ -52,7 +54,9 @@ describe('BuildingInstallService', () => {
 				],
 			} as BuildingModel;
 
-			const models = buildingInstallService.loadModels({buildings: [buildingModel]})
+			const models = buildingInstallService.loadModels({
+				buildings: [buildingModel],
+			});
 
 			expect(models).toHaveLength(1);
 			expect(models.pop()).toBeInstanceOf(BuildingModel);

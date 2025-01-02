@@ -1,9 +1,10 @@
+import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+
 import {BuildingQueueDraftService} from '@warp-core/building-queue/add/building-queue-draft.service';
 import {PrepareSingleBuildingQueueElementService} from '@warp-core/building-queue/add/prepare-single-building-queue-element.service';
-import {Test, TestingModule} from '@nestjs/testing';
-import {BuildingQueueElementModel} from '@warp-core/database';
-import {when} from 'jest-when';
 import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
+import {BuildingQueueElementModel} from '@warp-core/database';
 
 jest.mock(
 	'@warp-core/building-queue/add/prepare-single-building-queue-element.service',
@@ -44,9 +45,8 @@ describe('Prepare building queue draft', () => {
 				.expectCalledWith(addToQueueElement)
 				.mockResolvedValue(preparedBuildingQueue);
 
-			const draftQueueElement = await buildingQueueDraft.getDraft(
-				addToQueueElement,
-			);
+			const draftQueueElement =
+				await buildingQueueDraft.getDraft(addToQueueElement);
 
 			expect(draftQueueElement).toEqual(preparedBuildingQueue);
 		});

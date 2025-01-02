@@ -1,8 +1,9 @@
 import {Injectable} from '@nestjs/common';
 import {OnEvent} from '@nestjs/event-emitter';
-import {HabitatCreatedEvent} from '@warp-core/habitat';
-import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
+
 import {BuildingZoneService} from '@warp-core/building-zone/building-zone.service';
+import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
+import {HabitatCreatedEvent} from '@warp-core/habitat';
 
 @Injectable()
 export class NewHabitatCreatedSubscriber {
@@ -12,9 +13,9 @@ export class NewHabitatCreatedSubscriber {
 	) {}
 
 	@OnEvent('habitat.created.after_save')
-	async createBuildingZoneOnNewHabitatCreation(
+	public async createBuildingZoneOnNewHabitatCreation(
 		payload: HabitatCreatedEvent,
-	) {
+	): Promise<void> {
 		const counterForNewHabitat =
 			this.runtimeConfig.habitat.buildingZones.counterForNewHabitat;
 		for (
@@ -22,9 +23,7 @@ export class NewHabitatCreatedSubscriber {
 			buildingZoneCounter < counterForNewHabitat;
 			buildingZoneCounter++
 		) {
-			await this.buildingZoneService.createNewBuildingZone(
-				payload.habitat,
-			);
+			await this.buildingZoneService.createNewBuildingZone(payload.habitat);
 		}
 	}
 }

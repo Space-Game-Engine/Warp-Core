@@ -1,7 +1,8 @@
-import {AbstractBuildingResourcesDetailsAtCertainLevel} from '@warp-core/database/model/abstracts/building-resources-details-at-certain-level.abstract-model';
 import {Field, ObjectType} from '@nestjs/graphql';
 import {IsNumber} from 'class-validator';
 import {Column, Entity} from 'typeorm';
+
+import {AbstractBuildingResourcesDetailsAtCertainLevel} from '@warp-core/database/model/abstracts/building-resources-details-at-certain-level.abstract-model';
 
 @ObjectType({
 	description: 'Defines what resources are needed to build that building',
@@ -12,5 +13,5 @@ export class BuildingRequirementsModel extends AbstractBuildingResourcesDetailsA
 	@Field({description: 'Current level cost'})
 	@IsNumber()
 	@Column()
-	cost: number;
+	public cost: number;
 }

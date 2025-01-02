@@ -1,9 +1,7 @@
-import {
-	BuildingZoneRepository,
-	ResourceModel,
-} from '@warp-core/database';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {Injectable} from '@nestjs/common';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {BuildingZoneRepository, ResourceModel} from '@warp-core/database';
 
 @Injectable()
 export class CalculateResourceStorageService {
@@ -12,7 +10,7 @@ export class CalculateResourceStorageService {
 		private readonly habitatModel: AuthorizedHabitatModel,
 	) {}
 
-	async calculateStorage(resource: ResourceModel): Promise<number> {
+	public async calculateStorage(resource: ResourceModel): Promise<number> {
 		let storagePerResource = 0;
 		const warehouses =
 			await this.buildingZoneRepository.getWarehouseForResourceAndHabitat(

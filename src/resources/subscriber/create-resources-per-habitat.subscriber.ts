@@ -1,5 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {OnEvent} from '@nestjs/event-emitter';
+
 import {
 	HabitatResourceModel,
 	HabitatResourceRepository,
@@ -15,7 +16,7 @@ export class CreateResourcesPerHabitat {
 	) {}
 
 	@OnEvent('habitat.created.after_save')
-	async createResourcesPerHabitat(
+	public async createResourcesPerHabitat(
 		newHabitatEvent: HabitatCreatedEvent,
 	): Promise<void> {
 		const resourcesList = await this.resourceRepository.find();

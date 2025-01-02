@@ -1,15 +1,16 @@
 import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {QueueInputValidationEvent} from '@warp-core/building-queue/event/queue-input-validation.event';
+import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
+import {MaxQueueCountValidator} from '@warp-core/building-queue/input/validator/max-queue-count.validator';
+import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {
 	BuildingModel,
 	BuildingQueueRepository,
 	BuildingZoneModel,
 } from '@warp-core/database';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {MaxQueueCountValidator} from '@warp-core/building-queue/input/validator/max-queue-count.validator';
-import {when} from 'jest-when';
-import {QueueInputValidationEvent} from '@warp-core/building-queue/event/queue-input-validation.event';
-import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
-import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
 
 jest.mock('@warp-core/database/repository/building-queue.repository');

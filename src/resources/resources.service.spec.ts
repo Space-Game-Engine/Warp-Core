@@ -1,4 +1,6 @@
 import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {
 	HabitatModel,
@@ -8,7 +10,6 @@ import {
 	ResourceModel,
 } from '@warp-core/database';
 import {ResourcesService} from '@warp-core/resources/resources.service';
-import {when} from 'jest-when';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');

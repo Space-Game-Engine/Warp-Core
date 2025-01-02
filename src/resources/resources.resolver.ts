@@ -1,4 +1,5 @@
 import {Args, ID, Parent, Query, ResolveField, Resolver} from '@nestjs/graphql';
+
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {HabitatResourceCombined} from '@warp-core/database';
 import {ResourcesService} from '@warp-core/resources/resources.service';
@@ -14,7 +15,9 @@ export class ResourcesResolver {
 		description: 'Returns single resource type defined in game',
 		name: 'resource_get',
 	})
-	resource(@Args('id', {type: () => ID}) id: string) {
+	public resource(
+		@Args('id', {type: () => ID}) id: string,
+	): Promise<HabitatResourceCombined | null> {
 		return this.resourcesService.getSingleResourceById(id);
 	}
 
@@ -22,12 +25,14 @@ export class ResourcesResolver {
 		description: 'Returns all resource types',
 		name: 'resource_getAll',
 	})
-	allResources() {
+	public allResources(): Promise<HabitatResourceCombined[]> {
 		return this.resourcesService.getAllResourcesForHabitat();
 	}
 
 	@ResolveField()
-	habitat(@Parent() resource: HabitatResourceCombined) {
+	public habitat(
+		@Parent() resource: HabitatResourceCombined,
+	): AuthorizedHabitatModel {
 		return this.habitatModel;
 	}
 }

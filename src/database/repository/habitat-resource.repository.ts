@@ -1,11 +1,12 @@
 import {Injectable} from '@nestjs/common';
+import {DataSource, In} from 'typeorm';
+
 import {
 	BuildingModel,
 	BuildingProductionRateModel,
 	HabitatResourceModel,
 } from '@warp-core/database/model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
-import {DataSource, In} from 'typeorm';
 
 @Injectable()
 export class HabitatResourceRepository extends AbstractRepository<HabitatResourceModel> {
@@ -13,7 +14,7 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
 		super(HabitatResourceModel, dataSource.createEntityManager());
 	}
 
-	async getHabitatResourceByBuildingAndLevel(
+	public getHabitatResourceByBuildingAndLevel(
 		building: BuildingModel | string,
 		level: number,
 		habitatId: number,
@@ -47,7 +48,7 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
 		return queryBuilder.getMany();
 	}
 
-	async getHabitatResourcesByIds(
+	public getHabitatResourcesByIds(
 		resourcesIds: string[],
 		habitatId: number,
 	): Promise<HabitatResourceModel[]> {
@@ -57,12 +58,11 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
 		});
 	}
 
-	async updateLastCalculationDateForManyResources(
+	public updateLastCalculationDateForManyResources(
 		resourceIds: string[],
 		habitatId: number,
 		lastCalculationTime: Date,
-	) {
-
+	): void {
 		this.createQueryBuilder()
 			.update(HabitatResourceModel)
 			.set({lastCalculationTime: lastCalculationTime})

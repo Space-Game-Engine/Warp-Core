@@ -1,12 +1,14 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
+
 import {BuildingZoneService} from './building-zone.service';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {
 	BuildingZoneModel,
 	BuildingZoneRepository,
 	HabitatModel,
 } from '@warp-core/database';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 
 jest.mock('@warp-core/database/repository/building-zone.repository');

@@ -1,5 +1,7 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {OnEvent} from '@nestjs/event-emitter';
+import {DateTime} from 'luxon';
+
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {QueueElementProcessedEvent} from '@warp-core/building-queue';
 import {
@@ -8,7 +10,6 @@ import {
 	HabitatResourceModel,
 	HabitatResourceRepository,
 } from '@warp-core/database';
-import {DateTime} from 'luxon';
 import {CalculateResourceStorageService} from '@warp-core/resources/calculate/warehouse-storage/calculate-resource-storage.service';
 
 @Injectable()
@@ -22,10 +23,10 @@ export class ResourceCalculatorService {
 		private readonly habitatModel: AuthorizedHabitatModel,
 	) {}
 
-	async calculateSingleResource(
+	public async calculateSingleResource(
 		habitatResource: HabitatResourceModel,
 		calculationEndTime: Date = new Date(),
-	) {
+	): Promise<void> {
 		const resource = await habitatResource.resource;
 
 		this.logger.debug(
@@ -52,9 +53,9 @@ export class ResourceCalculatorService {
 	}
 
 	@OnEvent('building_queue.resolving.before_processing_element')
-	async addResourcesOnQueueUpdate(
+	public async addResourcesOnQueueUpdate(
 		queueProcessingEvent: QueueElementProcessedEvent,
-	) {
+	): Promise<void> {
 		const buildingQueueElement = queueProcessingEvent.queueElement;
 
 		this.logger.debug(
@@ -79,9 +80,9 @@ export class ResourceCalculatorService {
 	}
 
 	@OnEvent('building_queue.resolving.after_processing_element')
-	async setLastCalculationTimeForNewResources(
+	public async setLastCalculationTimeForNewResources(
 		queueProcessingEvent: QueueElementProcessedEvent,
-	) {
+	): Promise<void> {
 		const buildingQueueElement = queueProcessingEvent.queueElement;
 		this.logger.debug(
 			'Setting last calculation time for newly processed queue element',
@@ -107,10 +108,9 @@ export class ResourceCalculatorService {
 		habitatResource: HabitatResourceModel,
 		buildingZone: BuildingZoneModel,
 		calculationEndTime: Date,
-	) {
-		const productionRate = await this.getProductionRateForSingleBuildingZone(
-			buildingZone,
-		);
+	): Promise<void> {
+		const productionRate =
+			await this.getProductionRateForSingleBuildingZone(buildingZone);
 		const lastlyCalculatedAmount = habitatResource.currentAmount;
 		const lastCalculationTime = DateTime.fromJSDate(
 			habitatResource.lastCalculationTime ?? new Date(),
@@ -139,8 +139,8 @@ export class ResourceCalculatorService {
 		const building = await buildingZone.building!;
 		const buildingDetailsAtCertainLevel =
 			await building.buildingDetailsAtCertainLevel;
-		const productionRateModel = await buildingDetailsAtCertainLevel[0]
-			.productionRate;
+		const productionRateModel =
+			await buildingDetailsAtCertainLevel[0].productionRate;
 
 		if (!productionRateModel) {
 			return 0;

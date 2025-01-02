@@ -1,5 +1,6 @@
 import {Injectable} from '@nestjs/common';
 import {EventEmitter2, OnEvent} from '@nestjs/event-emitter';
+
 import {RegisterUserEvent} from '@warp-core/auth';
 import {HabitatModel, HabitatRepository} from '@warp-core/database';
 import {HabitatCreatedEvent} from '@warp-core/habitat/event/habitat-created.event';
@@ -13,7 +14,9 @@ export class CreateNewHabitatService {
 	) {}
 
 	@OnEvent('user.create_new')
-	async createHabitatOnUserRegistration(payload: RegisterUserEvent) {
+	public async createHabitatOnUserRegistration(
+		payload: RegisterUserEvent,
+	): Promise<void> {
 		const currentHabitats = await this.habitatRepository.getHabitatsByUserId(
 			payload.getUserId(),
 		);
@@ -27,19 +30,17 @@ export class CreateNewHabitatService {
 		await this.habitatRepository.startTransaction();
 
 		try {
-			const newHabitat = await this.createNewHabitat(
-				{
-					userId: payload.getUserId(),
-					isMain: true,
-					name: 'New habitat',
-				}
-			);
+			const newHabitat = await this.createNewHabitat({
+				userId: payload.getUserId(),
+				isMain: true,
+				name: 'New habitat',
+			});
 
 			payload.setHabitatId(newHabitat.id);
 
 			await this.eventEmitter.emitAsync(
 				'habitat.created.after_registration',
-				new HabitatCreatedEvent(newHabitat)
+				new HabitatCreatedEvent(newHabitat),
 			);
 
 			await this.habitatRepository.commitTransaction();
@@ -50,12 +51,10 @@ export class CreateNewHabitatService {
 		}
 	}
 
-	async createNewHabitat(
+	public async createNewHabitat(
 		newHabitatData: NewHabitatInput,
 	): Promise<HabitatModel> {
-		const newHabitat = this.habitatRepository.create(
-			newHabitatData,
-		);
+		const newHabitat = this.habitatRepository.create(newHabitatData);
 		await this.habitatRepository.save(newHabitat);
 
 		await this.eventEmitter.emitAsync(

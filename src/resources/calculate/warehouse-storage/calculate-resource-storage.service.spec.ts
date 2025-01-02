@@ -1,12 +1,13 @@
+import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {
 	BuildingZoneRepository,
 	ResourceModel,
 	WarehouseDetailsModel,
 } from '@warp-core/database';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {CalculateResourceStorageService} from '@warp-core/resources/calculate/warehouse-storage/calculate-resource-storage.service';
-import {Test, TestingModule} from '@nestjs/testing';
-import {when} from 'jest-when';
 
 jest.mock('@warp-core/database/repository/building-zone.repository');
 
@@ -43,9 +44,8 @@ describe('Resource storage calculator', () => {
 				.expectCalledWith(resourceToCheck, authorizedHabitatModel.id)
 				.mockResolvedValue(warehouses);
 
-			const calculatedStorage = await calculateStorageService.calculateStorage(
-				resourceToCheck,
-			);
+			const calculatedStorage =
+				await calculateStorageService.calculateStorage(resourceToCheck);
 
 			expect(calculatedStorage).toEqual(0);
 		});
@@ -66,9 +66,8 @@ describe('Resource storage calculator', () => {
 				.expectCalledWith(resourceToCheck, authorizedHabitatModel.id)
 				.mockResolvedValue(warehouses);
 
-			const calculatedStorage = await calculateStorageService.calculateStorage(
-				resourceToCheck,
-			);
+			const calculatedStorage =
+				await calculateStorageService.calculateStorage(resourceToCheck);
 
 			expect(calculatedStorage).toEqual(50);
 		});
@@ -92,9 +91,8 @@ describe('Resource storage calculator', () => {
 				.expectCalledWith(resourceToCheck, authorizedHabitatModel.id)
 				.mockResolvedValue(warehouses);
 
-			const calculatedStorage = await calculateStorageService.calculateStorage(
-				resourceToCheck,
-			);
+			const calculatedStorage =
+				await calculateStorageService.calculateStorage(resourceToCheck);
 
 			expect(calculatedStorage).toEqual(150);
 		});

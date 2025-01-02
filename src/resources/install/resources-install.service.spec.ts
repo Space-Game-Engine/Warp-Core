@@ -1,10 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
-import {ResourcesInstallService} from '@warp-core/resources/install/resources-install.service';
-import {
-	ResourceModel,
-	ResourceTypeEnum,
-} from '@warp-core/database';
 
+import {ResourceModel, ResourceTypeEnum} from '@warp-core/database';
+import {ResourcesInstallService} from '@warp-core/resources/install/resources-install.service';
 
 describe('ResourcesInstallService', () => {
 	let resourcesInstallService: ResourcesInstallService;
@@ -21,7 +18,7 @@ describe('ResourcesInstallService', () => {
 		);
 	});
 
-	describe('loadModels',  () => {
+	describe('loadModels', () => {
 		it('should throw error when loaded object contains errors', () => {
 			const resourceModel = {
 				name: 'Really wrong building',
@@ -29,8 +26,8 @@ describe('ResourcesInstallService', () => {
 				type: 'unknown type',
 			} as unknown as ResourceModel;
 
-			expect(
-				() => resourcesInstallService.loadModels({resources: [resourceModel]}),
+			expect(() =>
+				resourcesInstallService.loadModels({resources: [resourceModel]}),
 			).toThrowError('Validation error, see logs');
 		});
 
@@ -42,7 +39,9 @@ describe('ResourcesInstallService', () => {
 				type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
 			} as ResourceModel;
 
-			const models = resourcesInstallService.loadModels({resources: [resourceModel]});
+			const models = resourcesInstallService.loadModels({
+				resources: [resourceModel],
+			});
 
 			expect(models).toHaveLength(1);
 			expect(models.pop()).toBeInstanceOf(ResourceModel);

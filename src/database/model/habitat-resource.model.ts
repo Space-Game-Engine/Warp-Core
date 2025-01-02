@@ -1,5 +1,3 @@
-import {HabitatModel} from '@warp-core/database/model/habitat.model';
-import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {Field, ObjectType} from '@nestjs/graphql';
 import {IsNumber, ValidateNested} from 'class-validator';
 import {
@@ -10,13 +8,16 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {ResourceModel} from '@warp-core/database/model/resource.model';
+
 @ObjectType({
 	description: 'Resource type, defines what kind of resources are in game',
 })
 @Entity({name: 'habitat-resource'})
 export class HabitatResourceModel {
 	@PrimaryGeneratedColumn()
-	id: string;
+	public id: string;
 
 	@Field(() => HabitatModel, {
 		description: 'Habitat connected to that resource',
@@ -26,18 +27,18 @@ export class HabitatResourceModel {
 		lazy: true,
 	})
 	@JoinColumn({name: 'habitatId'})
-	habitat: HabitatModel | Promise<HabitatModel>;
+	public habitat: HabitatModel | Promise<HabitatModel>;
 
 	@Column({name: 'habitatId'})
-	habitatId: number;
+	public habitatId: number;
 
 	@Field({description: 'Current amount of the resources'})
 	@IsNumber()
 	@Column('int')
-	currentAmount: number = 0;
+	public currentAmount: number = 0;
 
 	@Column({type: 'datetime', nullable: true})
-	lastCalculationTime: Date | null = null;
+	public lastCalculationTime: Date | null = null;
 
 	@Field(() => ResourceModel, {description: 'Get connected resource details'})
 	@ValidateNested()
@@ -45,8 +46,8 @@ export class HabitatResourceModel {
 		lazy: true,
 	})
 	@JoinColumn({name: 'resourceId'})
-	resource: ResourceModel | Promise<ResourceModel>;
+	public resource: ResourceModel | Promise<ResourceModel>;
 
 	@Column({name: 'resourceId'})
-	resourceId: string;
+	public resourceId: string;
 }

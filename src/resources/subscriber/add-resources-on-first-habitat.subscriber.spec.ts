@@ -1,14 +1,15 @@
+import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {
 	HabitatModel,
 	HabitatResourceModel,
 	HabitatResourceRepository,
 } from '@warp-core/database';
-import {Test, TestingModule} from '@nestjs/testing';
+import {AddResourcesOnFirstHabitatSubscriber} from '@warp-core/resources/subscriber/add-resources-on-first-habitat.subscriber';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
-import {AddResourcesOnFirstHabitatSubscriber} from '@warp-core/resources/subscriber/add-resources-on-first-habitat.subscriber';
-import {when} from 'jest-when';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
 describe('Add resources on first user habitat', () => {
@@ -46,11 +47,9 @@ describe('Add resources on first user habitat', () => {
 				id: 1,
 			} as HabitatModel;
 
-			await addResourcesOnFirstHabitat.addResourcesToHabitat(
-				{
-					habitat: newHabitat,
-				},
-			);
+			await addResourcesOnFirstHabitat.addResourcesToHabitat({
+				habitat: newHabitat,
+			});
 
 			expect(
 				habitatResourceRepository.getHabitatResourcesByIds,
@@ -81,11 +80,9 @@ describe('Add resources on first user habitat', () => {
 				.calledWith(['wood'], newHabitat.id)
 				.mockResolvedValue(habitatResources);
 
-			await addResourcesOnFirstHabitat.addResourcesToHabitat(
-				{
-					habitat: newHabitat,
-				},
-			);
+			await addResourcesOnFirstHabitat.addResourcesToHabitat({
+				habitat: newHabitat,
+			});
 
 			expect(habitatResources[0].currentAmount).toEqual(100);
 			expect(habitatResources[0].lastCalculationTime).toEqual(null);

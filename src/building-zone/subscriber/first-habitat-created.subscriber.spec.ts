@@ -1,5 +1,9 @@
-import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+
 import {BuildingZoneService} from '@warp-core/building-zone/building-zone.service';
+import {FirstHabitatCreatedSubscriber} from '@warp-core/building-zone/subscriber/first-habitat-created.subscriber';
+import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {
 	BuildingModel,
 	BuildingRepository,
@@ -7,11 +11,8 @@ import {
 	BuildingZoneRepository,
 	HabitatModel,
 } from '@warp-core/database';
-import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
-import {Test, TestingModule} from '@nestjs/testing';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
-import {FirstHabitatCreatedSubscriber} from '@warp-core/building-zone/subscriber/first-habitat-created.subscriber';
-import {when} from 'jest-when';
+import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 
 jest.mock('@warp-core/building-zone/building-zone.service');
 jest.mock('@warp-core/database/repository/building-zone.repository');
@@ -54,9 +55,9 @@ describe('First habitat created subscriber', () => {
 				id: 1,
 			} as HabitatModel;
 
-			await firstHabitatCreated.addBuildingsOnFirstHabitatCreation(
-				{habitat: habitat},
-			);
+			await firstHabitatCreated.addBuildingsOnFirstHabitatCreation({
+				habitat: habitat,
+			});
 
 			expect(buildingRepository.getBuildingsByIds).toBeCalledTimes(0);
 			expect(buildingZoneRepository.manager.update).toBeCalledTimes(0);
@@ -70,7 +71,7 @@ describe('First habitat created subscriber', () => {
 				localBuildingZoneId: localBuildingId,
 				buildingId: undefined,
 				level: 0,
-			} as any as BuildingZoneModel;
+			} as unknown as BuildingZoneModel;
 
 			const buildingToSet = {
 				id: 'mine',
@@ -96,9 +97,9 @@ describe('First habitat created subscriber', () => {
 				.expectCalledWith(localBuildingId, habitat)
 				.mockResolvedValue(buildingZoneToChange);
 
-			await firstHabitatCreated.addBuildingsOnFirstHabitatCreation(
-				{habitat: habitat},
-			);
+			await firstHabitatCreated.addBuildingsOnFirstHabitatCreation({
+				habitat: habitat,
+			});
 
 			expect(buildingZoneToChange.level).toBe(1);
 			expect(buildingZoneToChange.buildingId).toBe(buildingToSet.id);

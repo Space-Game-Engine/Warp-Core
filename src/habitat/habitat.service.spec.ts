@@ -1,6 +1,8 @@
 import {Test, TestingModule} from '@nestjs/testing';
-import {HabitatService} from './habitat.service';
 import {when} from 'jest-when';
+
+import {HabitatService} from './habitat.service';
+
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {HabitatModel, HabitatRepository} from '@warp-core/database';
 

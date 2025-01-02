@@ -1,5 +1,12 @@
+import {EventEmitter2} from '@nestjs/event-emitter';
 import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+
 import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {BuildingQueueHandlerService} from '@warp-core/building-queue/building-queue-handler.service';
+import {default as queueItemsElements} from '@warp-core/building-queue/datasets/building-queue-handler-resolve-queue-data';
+import {QueueElementAfterProcessingEvent} from '@warp-core/building-queue/event/queue-element-after-processing.event';
+import {QueueElementBeforeProcessingEvent} from '@warp-core/building-queue/event/queue-element-before-processing.event';
 import {
 	BuildingModel,
 	BuildingQueueElementModel,
@@ -7,12 +14,6 @@ import {
 	BuildingZoneModel,
 	BuildingZoneRepository,
 } from '@warp-core/database';
-import {default as queueItemsElements} from '@warp-core/building-queue/datasets/building-queue-handler-resolve-queue-data';
-import {BuildingQueueHandlerService} from '@warp-core/building-queue/building-queue-handler.service';
-import {when} from 'jest-when';
-import {EventEmitter2} from '@nestjs/event-emitter';
-import {QueueElementBeforeProcessingEvent} from '@warp-core/building-queue/event/queue-element-before-processing.event';
-import {QueueElementAfterProcessingEvent} from '@warp-core/building-queue/event/queue-element-after-processing.event';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 
 jest.mock('@warp-core/database/repository/building-queue.repository');
@@ -55,7 +56,9 @@ describe('Building queue handler service test', () => {
 		authorizedHabitatModel.buildingZones = [];
 	});
 
-	function expectEventToBeCalled(queueElements: BuildingQueueElementModel[]) {
+	function expectEventToBeCalled(
+		queueElements: BuildingQueueElementModel[],
+	): void {
 		expect(eventEmitter.emitAsync).toBeCalledTimes(queueElements.length * 2);
 
 		let counter = 0;
@@ -101,8 +104,12 @@ describe('Building queue handler service test', () => {
 		describe.each(queueItemsElements)(
 			'Consume queue elements',
 			singleQueueTest => {
-				function mapQueueElement(singleQueueElement, building, buildingZone) {
-					let buildingZoneForQueueElement;
+				function mapQueueElement(
+					singleQueueElement,
+					building,
+					buildingZone,
+				): BuildingQueueElementModel {
+					let buildingZoneForQueueElement: BuildingZoneModel;
 
 					if (
 						singleQueueElement.buildingZoneId &&
@@ -188,10 +195,10 @@ describe('Building queue handler service test', () => {
 					expectEventToBeCalled(queueElementsToBeConsumed);
 
 					if (queueElementsToBeConsumed.length > 0) {
-						const queueElement: BuildingQueueElementModel = <BuildingQueueElementModel>queueElementsToBeConsumed.pop();
-						expect(buildingZone.level).toBe(
-							queueElement.endLevel,
-						);
+						const queueElement: BuildingQueueElementModel = <
+							BuildingQueueElementModel
+						>queueElementsToBeConsumed.pop();
+						expect(buildingZone.level).toBe(queueElement.endLevel);
 					}
 					expect(buildingZone.buildingId).toBe(building.id);
 				});

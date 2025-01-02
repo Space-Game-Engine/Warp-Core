@@ -1,4 +1,5 @@
 import {Test, TestingModule} from '@nestjs/testing';
+
 import {SimpleCalculationService} from '@warp-core/building-queue/add/calculate-resources/simple-calculation.service';
 import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
 import {

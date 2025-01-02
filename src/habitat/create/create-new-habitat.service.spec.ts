@@ -1,11 +1,12 @@
+import {EventEmitter2} from '@nestjs/event-emitter';
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
-import {NewHabitatInput} from '@warp-core/habitat/input/NewHabitatInput';
-import {CreateNewHabitatService} from '@warp-core/habitat/create/create-new-habitat.service';
-import {HabitatModel, HabitatRepository} from '@warp-core/database';
+
 import {RegisterUserEvent} from '@warp-core/auth';
+import {HabitatModel, HabitatRepository} from '@warp-core/database';
+import {CreateNewHabitatService} from '@warp-core/habitat/create/create-new-habitat.service';
+import {NewHabitatInput} from '@warp-core/habitat/input/NewHabitatInput';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
-import {EventEmitter2} from '@nestjs/event-emitter';
 
 jest.mock('@warp-core/database/repository/habitat.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');
@@ -24,7 +25,7 @@ describe('Habitat service tests', () => {
 
 		eventEmitter = {
 			emitAsync: jest.fn(),
-		} as any as EventEmitter2;
+		} as unknown as EventEmitter2;
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
@@ -60,9 +61,7 @@ describe('Habitat service tests', () => {
 			} as unknown as HabitatModel;
 
 			when(habitatRepository.create)
-				.expectCalledWith(
-					expect.objectContaining(newHabitatInput),
-				)
+				.expectCalledWith(expect.objectContaining(newHabitatInput))
 				.mockReturnValueOnce(habitatModel as never);
 
 			const returnedHabitatModel =
@@ -96,9 +95,7 @@ describe('Habitat service tests', () => {
 				.mockResolvedValueOnce([]);
 
 			when(habitatRepository.create)
-				.expectCalledWith(
-					expect.objectContaining({userId: userId}),
-				)
+				.expectCalledWith(expect.objectContaining({userId: userId}))
 				.mockReturnValueOnce(habitatModel as never);
 
 			await createNewHabitatService.createHabitatOnUserRegistration(payload);

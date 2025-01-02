@@ -1,13 +1,14 @@
 import {Injectable, Logger} from '@nestjs/common';
-import {QueueElementProcessedEvent} from '@warp-core/building-queue';
 import {OnEvent} from '@nestjs/event-emitter';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {QueueElementProcessedEvent} from '@warp-core/building-queue';
 import {
 	BuildingProductionRateModel,
 	BuildingQueueElementModel,
 	BuildingRepository,
 	HabitatResourceRepository,
 } from '@warp-core/database';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 
 @Injectable()
 export class HabitatHasNewResourceProducerSubscriber {
@@ -22,9 +23,9 @@ export class HabitatHasNewResourceProducerSubscriber {
 	) {}
 
 	@OnEvent('building_queue.resolving.before_processing_element')
-	async updateLastCalculationDateOnHabitatResource(
+	public async updateLastCalculationDateOnHabitatResource(
 		queueProcessingEvent: QueueElementProcessedEvent,
-	) {
+	): Promise<void> {
 		const queueElement = queueProcessingEvent.queueElement;
 
 		this.logger.debug('Checking building production resources');

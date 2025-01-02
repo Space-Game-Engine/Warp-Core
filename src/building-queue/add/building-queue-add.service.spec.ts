@@ -1,18 +1,19 @@
-import {PrepareSingleBuildingQueueElementService} from '@warp-core/building-queue/add/prepare-single-building-queue-element.service';
-import {Test, TestingModule} from '@nestjs/testing';
-import {
-	BuildingQueueElementModel,
-	BuildingQueueRepository,
-} from '@warp-core/database';
-import {when} from 'jest-when';
-import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
-import {BuildingQueueAddService} from '@warp-core/building-queue/add/building-queue-add.service';
 import {EventEmitter2} from '@nestjs/event-emitter';
-import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
+import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
+
 import {
 	QueueElementAfterProcessingEvent,
 	QueueElementBeforeProcessingEvent,
 } from '@warp-core/building-queue';
+import {BuildingQueueAddService} from '@warp-core/building-queue/add/building-queue-add.service';
+import {PrepareSingleBuildingQueueElementService} from '@warp-core/building-queue/add/prepare-single-building-queue-element.service';
+import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
+import {
+	BuildingQueueElementModel,
+	BuildingQueueRepository,
+} from '@warp-core/database';
+import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 
 jest.mock('@warp-core/database/repository/building-queue.repository');
 jest.mock(
@@ -33,7 +34,7 @@ describe('Building queue element is saved', () => {
 		jest.clearAllMocks();
 		eventEmitter = {
 			emitAsync: jest.fn(),
-		} as any as EventEmitter2;
+		} as unknown as EventEmitter2;
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
@@ -79,9 +80,7 @@ describe('Building queue element is saved', () => {
 				);
 
 			expect(processedQueueElement).toEqual(draftBuildingQueueElement);
-			expect(buildingQueueRepository.commitTransaction).toBeCalledTimes(
-				1,
-			);
+			expect(buildingQueueRepository.commitTransaction).toBeCalledTimes(1);
 			expect(eventEmitter.emitAsync).toBeCalledTimes(2);
 			expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
 				1,

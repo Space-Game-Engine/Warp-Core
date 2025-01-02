@@ -1,12 +1,13 @@
 import {Field, ObjectType} from '@nestjs/graphql';
 import {IsEnum, IsNotEmpty, IsNumber, ValidateIf} from 'class-validator';
 import {BeforeInsert, Column, Entity, JoinColumn, ManyToOne} from 'typeorm';
-import {AbstractDetailsAtCertainLevelModel} from '@warp-core/database/model/abstracts/details-at-certain-level.abstract-model';
+
 import {
 	ResourceModel,
 	ResourceTypeEnum,
 	WarehouseTypeEnum,
 } from '@warp-core/database';
+import {AbstractDetailsAtCertainLevelModel} from '@warp-core/database/model/abstracts/details-at-certain-level.abstract-model';
 
 @ObjectType({description: 'Stores resources and other stuff'})
 @Entity({name: 'warehouse-details'})
@@ -16,7 +17,7 @@ export class WarehouseDetailsModel extends AbstractDetailsAtCertainLevelModel {
 	})
 	@IsEnum(WarehouseTypeEnum)
 	@Column('varchar')
-	warehouseType: WarehouseTypeEnum;
+	public warehouseType: WarehouseTypeEnum;
 
 	@Field(() => ResourceModel, {
 		description: 'Get connected resource details',
@@ -27,7 +28,7 @@ export class WarehouseDetailsModel extends AbstractDetailsAtCertainLevelModel {
 		nullable: true,
 	})
 	@JoinColumn({name: 'resourceId'})
-	resource?: ResourceModel | Promise<ResourceModel> | null;
+	public resource?: ResourceModel | Promise<ResourceModel> | null;
 
 	@Column({name: 'resourceId', nullable: true})
 	@ValidateIf(
@@ -35,7 +36,7 @@ export class WarehouseDetailsModel extends AbstractDetailsAtCertainLevelModel {
 			details.warehouseType === WarehouseTypeEnum.ONE_KIND_OF_RESOURCE,
 	)
 	@IsNotEmpty()
-	resourceId?: string | null;
+	public resourceId?: string | null;
 
 	@Field(() => ResourceTypeEnum, {
 		description: 'What kind of resource can be hold in here?',
@@ -48,15 +49,15 @@ export class WarehouseDetailsModel extends AbstractDetailsAtCertainLevelModel {
 	@IsNotEmpty()
 	@IsEnum(ResourceTypeEnum)
 	@Column('varchar', {nullable: true})
-	resourceType?: ResourceTypeEnum | null;
+	public resourceType?: ResourceTypeEnum | null;
 
 	@Field({description: 'Amount of resources stored here'})
 	@IsNumber()
 	@Column()
-	amount: number;
+	public amount: number;
 
 	@BeforeInsert()
-	validateWarehouseDetails() {
+	public validateWarehouseDetails(): void {
 		switch (this.warehouseType) {
 			case WarehouseTypeEnum.ONE_TYPE_OF_RESOURCE:
 				if (!this.resourceType) {
@@ -74,7 +75,7 @@ export class WarehouseDetailsModel extends AbstractDetailsAtCertainLevelModel {
 		}
 	}
 
-	isWarehouseLinkedToResource(resource: ResourceModel): boolean {
+	public isWarehouseLinkedToResource(resource: ResourceModel): boolean {
 		switch (this.warehouseType) {
 			case WarehouseTypeEnum.ANY_RESOURCE:
 				return true;

@@ -1,13 +1,14 @@
 import {Injectable} from '@nestjs/common';
 import {OnEvent} from '@nestjs/event-emitter';
-import {HabitatCreatedEvent} from '@warp-core/habitat';
-import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
+
 import {BuildingZoneService} from '@warp-core/building-zone/building-zone.service';
+import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {
 	BuildingRepository,
 	BuildingZoneModel,
 	BuildingZoneRepository,
 } from '@warp-core/database';
+import {HabitatCreatedEvent} from '@warp-core/habitat';
 
 @Injectable()
 export class FirstHabitatCreatedSubscriber {
@@ -19,9 +20,9 @@ export class FirstHabitatCreatedSubscriber {
 	) {}
 
 	@OnEvent('habitat.created.after_registration')
-	async addBuildingsOnFirstHabitatCreation(
+	public async addBuildingsOnFirstHabitatCreation(
 		payload: HabitatCreatedEvent,
-	) {
+	): Promise<void> {
 		if (
 			!this.runtimeConfig.habitat.onStart.buildings ||
 			this.runtimeConfig.habitat.onStart.buildings.length === 0
@@ -39,10 +40,11 @@ export class FirstHabitatCreatedSubscriber {
 		);
 
 		for (const habitatBuildingsConfig of buildingsToBuildFromConfiguration) {
-			const buildingZone = await this.buildingZoneService.getSingleBuildingZone(
-				habitatBuildingsConfig.localBuildingZoneId,
-				habitat,
-			) as BuildingZoneModel;
+			const buildingZone =
+				(await this.buildingZoneService.getSingleBuildingZone(
+					habitatBuildingsConfig.localBuildingZoneId,
+					habitat,
+				)) as BuildingZoneModel;
 
 			buildingZone.buildingId = buildingsToBuild.find(
 				singleBuilding => singleBuilding.id === habitatBuildingsConfig.id,

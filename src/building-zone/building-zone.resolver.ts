@@ -6,8 +6,15 @@ import {
 	ResolveField,
 	Resolver,
 } from '@nestjs/graphql';
+
 import {BuildingZoneService} from '@warp-core/building-zone/building-zone.service';
-import {BuildingQueueRepository, BuildingZoneModel} from '@warp-core/database';
+import {
+	BuildingModel,
+	BuildingQueueElementModel,
+	BuildingQueueRepository,
+	BuildingZoneModel,
+	HabitatModel,
+} from '@warp-core/database';
 
 @Resolver(() => BuildingZoneModel)
 export class BuildingZoneResolver {
@@ -21,10 +28,10 @@ export class BuildingZoneResolver {
 		description: 'Returns single building zone',
 		name: 'buildingZone_get',
 	})
-	buildingZone(
+	public buildingZone(
 		@Args('localBuildingZoneId', {type: () => Int})
 		localBuildingZoneId: number,
-	) {
+	): Promise<BuildingZoneModel | null> {
 		return this.buildingZoneService.getSingleBuildingZone(localBuildingZoneId);
 	}
 
@@ -33,22 +40,28 @@ export class BuildingZoneResolver {
 		description: 'Returns all building zones for single habitat',
 		name: 'buildingZone_getAll',
 	})
-	allBuildingZones() {
+	public allBuildingZones(): Promise<BuildingZoneModel[]> {
 		return this.buildingZoneService.getAllZonesForCurrentHabitat();
 	}
 
 	@ResolveField()
-	habitat(@Parent() buildingZone: BuildingZoneModel) {
+	public async habitat(
+		@Parent() buildingZone: BuildingZoneModel,
+	): Promise<HabitatModel> {
 		return buildingZone.habitat;
 	}
 
 	@ResolveField()
-	building(@Parent() buildingZone: BuildingZoneModel) {
+	public async building(
+		@Parent() buildingZone: BuildingZoneModel,
+	): Promise<BuildingModel | undefined> {
 		return buildingZone.building;
 	}
 
 	@ResolveField()
-	buildingQueue(@Parent() buildingZone: BuildingZoneModel) {
+	public buildingQueue(
+		@Parent() buildingZone: BuildingZoneModel,
+	): Promise<BuildingQueueElementModel[]> {
 		return this.buildingQueueRepository.getCurrentBuildingQueueForBuildingZone(
 			buildingZone,
 		);

@@ -1,12 +1,13 @@
-import {CustomValidator} from '@warp-core/core';
-import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
-import {BuildingZoneService} from '@warp-core/building-zone/building-zone.service';
-import {BuildingService} from '@warp-core/building';
+import {Injectable} from '@nestjs/common';
 import {EventEmitter2} from '@nestjs/event-emitter';
+
+import {BuildingService} from '@warp-core/building';
 import {QueueInputValidationEvent} from '@warp-core/building-queue/event/queue-input-validation.event';
 import {QueueValidationError} from '@warp-core/building-queue/exception/queue-validation.error';
+import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
+import {BuildingZoneService} from '@warp-core/building-zone/building-zone.service';
+import {CustomValidator} from '@warp-core/core';
 import {BuildingModel, BuildingZoneModel} from '@warp-core/database';
-import {Injectable} from '@nestjs/common';
 
 @Injectable()
 export abstract class AbstractNewQueueElementValidator extends CustomValidator<AddToQueueInput> {

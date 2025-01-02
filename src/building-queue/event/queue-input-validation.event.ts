@@ -1,6 +1,6 @@
+import {QueueValidationErrorType} from '@warp-core/building-queue/exception/queue-validation-error.type';
 import {AddToQueueInput} from '@warp-core/building-queue/input/add-to-queue.input';
 import {BuildingModel, BuildingZoneModel} from '@warp-core/database';
-import {QueueValidationErrorType} from '@warp-core/building-queue/exception/queue-validation-error.type';
 
 export class QueueInputValidationEvent {
 	public readonly queueErrors: QueueValidationErrorType = {};
@@ -11,14 +11,14 @@ export class QueueInputValidationEvent {
 		public readonly buildingZone: BuildingZoneModel,
 	) {}
 
-	addError(fieldName: string, error: string) {
+	public addError(fieldName: string, error: string): void {
 		const fieldNameErrors = this.queueErrors[fieldName] ?? [];
 		fieldNameErrors.push(error);
 
 		this.queueErrors[fieldName] = fieldNameErrors;
 	}
 
-	hasError(): boolean {
+	public hasError(): boolean {
 		return Object.keys(this.queueErrors).length > 0;
 	}
 }

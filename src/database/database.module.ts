@@ -1,5 +1,7 @@
 import {forwardRef, Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
+import {EntityClassOrSchema} from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
+
 import {
 	BuildingDetailsAtCertainLevelModel,
 	BuildingModel,
@@ -12,6 +14,7 @@ import {
 	ResourceModel,
 	WarehouseDetailsModel,
 } from '@warp-core/database/model';
+import {InstallationDetailsModel} from '@warp-core/database/model/installation-details.model';
 import {
 	BuildingQueueRepository,
 	BuildingRepository,
@@ -20,9 +23,8 @@ import {
 	HabitatResourceRepository,
 	ResourceRepository,
 } from '@warp-core/database/repository';
-import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
-import {InstallationDetailsModel} from '@warp-core/database/model/installation-details.model';
 import {InstallationDetailsRepository} from '@warp-core/database/repository/installation-details.repository';
+import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
 
 @Module({
 	providers: [
@@ -49,7 +51,7 @@ import {InstallationDetailsRepository} from '@warp-core/database/repository/inst
 	],
 })
 export class DatabaseModule {
-	static entities() {
+	public static entities(): EntityClassOrSchema[] {
 		return [
 			BuildingModel,
 			BuildingDetailsAtCertainLevelModel,

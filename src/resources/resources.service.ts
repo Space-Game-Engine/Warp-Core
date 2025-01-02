@@ -1,4 +1,5 @@
 import {Injectable} from '@nestjs/common';
+
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {
 	HabitatModel,
@@ -14,7 +15,7 @@ export class ResourcesService {
 		private readonly habitatModel: AuthorizedHabitatModel,
 	) {}
 
-	async getSingleResourceById(
+	public async getSingleResourceById(
 		id: string,
 	): Promise<HabitatResourceCombined | null> {
 		const habitatResource = await this.habitatResourceRepository.findOneBy({
@@ -29,7 +30,7 @@ export class ResourcesService {
 		return this.prepareHabitatResourceMappedModel(habitatResource);
 	}
 
-	async getAllResourcesForHabitat(
+	public async getAllResourcesForHabitat(
 		habitatModel: HabitatModel | null = null,
 	): Promise<HabitatResourceCombined[]> {
 		const habitatResources = await this.habitatResourceRepository.findBy({

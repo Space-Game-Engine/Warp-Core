@@ -30,7 +30,7 @@ import {EntityManager} from 'typeorm';
  * ```
  * @param repositoryType
  */
-export function prepareRepositoryMock(repositoryType: any) {
+export function prepareRepositoryMock(repositoryType: any): void { // eslint-disable-line
 	const manager = {
 		save: jest.fn(),
 		count: jest.fn(),
@@ -41,7 +41,7 @@ export function prepareRepositoryMock(repositoryType: any) {
 		connection: {
 			subscribers: [],
 		},
-	} as any as EntityManager;
+	} as unknown as EntityManager;
 
 	repositoryType.prototype.__defineGetter__('manager', () => manager);
 }

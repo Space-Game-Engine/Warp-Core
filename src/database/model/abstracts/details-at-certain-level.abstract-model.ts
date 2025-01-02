@@ -1,6 +1,7 @@
-import {ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
-import {IsNumber, IsOptional, ValidateNested} from 'class-validator';
 import {Field, InterfaceType} from '@nestjs/graphql';
+import {IsNumber, IsOptional, ValidateNested} from 'class-validator';
+import {ManyToOne, PrimaryGeneratedColumn} from 'typeorm';
+
 import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database';
 
 @InterfaceType()
@@ -8,7 +9,7 @@ export abstract class AbstractDetailsAtCertainLevelModel {
 	@PrimaryGeneratedColumn()
 	@IsNumber()
 	@IsOptional()
-	id: number;
+	public id: number;
 
 	@Field(() => BuildingDetailsAtCertainLevelModel, {
 		description: 'Details how to upgrade that building',
@@ -21,7 +22,7 @@ export abstract class AbstractDetailsAtCertainLevelModel {
 			lazy: true,
 		},
 	)
-	buildingDetails:
+	public buildingDetails:
 		| BuildingDetailsAtCertainLevelModel
 		| Promise<BuildingDetailsAtCertainLevelModel>;
 }

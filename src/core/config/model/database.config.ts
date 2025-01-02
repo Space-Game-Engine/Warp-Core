@@ -1,30 +1,31 @@
 import {IsBoolean, IsString} from 'class-validator';
 import {DatabaseType} from 'typeorm';
+
 import {DatabaseModule} from '@warp-core/database';
 
 export class DatabaseConfig {
 	@IsString()
-	type: DatabaseType;
+	public type: DatabaseType;
 
 	@IsString()
-	host?: string;
+	public host?: string;
 
 	@IsString()
-	port?: string;
+	public port?: string;
 
 	@IsString()
-	username?: string;
+	public username?: string;
 
 	@IsString()
-	password?: string;
+	public password?: string;
 
 	@IsString()
-	database: string;
+	public database: string;
 
 	@IsBoolean()
-	synchronize: boolean;
+	public synchronize: boolean;
 
-	get entities() {
+	public get entities(): object[] {
 		return DatabaseModule.entities();
 	}
 }

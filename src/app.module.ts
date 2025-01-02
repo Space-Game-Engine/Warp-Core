@@ -1,23 +1,25 @@
-import {Module} from '@nestjs/common';
-import {GraphQLModule} from '@nestjs/graphql';
-import {EventEmitterModule} from '@nestjs/event-emitter';
-import {ApolloDriver, ApolloDriverConfig} from '@nestjs/apollo';
 import {join} from 'path';
-import {TypeOrmModule, TypeOrmModuleOptions} from '@nestjs/typeorm';
+
+import {ApolloDriver, ApolloDriverConfig} from '@nestjs/apollo';
+import {Module} from '@nestjs/common';
 import {ConfigModule, ConfigService} from '@nestjs/config';
-import {DatabaseModule} from '@warp-core/database';
-import {BuildingModule} from '@warp-core/building';
-import {HabitatModule} from '@warp-core/habitat';
-import {BuildingZoneModule} from '@warp-core/building-zone/building-zone.module';
-import {BuildingQueueModule} from '@warp-core/building-queue';
-import {AuthModule} from '@warp-core/auth';
-import config from '@warp-core/core/config/config-parser';
-import {validate} from '@warp-core/core/config/validate';
-import {DatabaseConfig} from '@warp-core/core/config/model/database.config';
-import {ResourcesModule} from '@warp-core/resources';
-import {parseValidationErrorMessageResponse} from '@warp-core/core/validation/parse-validation-error-message-response';
+import {EventEmitterModule} from '@nestjs/event-emitter';
+import {GraphQLModule} from '@nestjs/graphql';
+import {TypeOrmModule, TypeOrmModuleOptions} from '@nestjs/typeorm';
+import {EntityClassOrSchema} from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
 import {ClsModule} from 'nestjs-cls';
+
+import {AuthModule} from '@warp-core/auth';
+import {BuildingModule} from '@warp-core/building';
+import {BuildingQueueModule} from '@warp-core/building-queue';
+import {BuildingZoneModule} from '@warp-core/building-zone/building-zone.module';
+import config from '@warp-core/core/config/config-parser';
 import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
+import {DatabaseConfig} from '@warp-core/core/config/model/database.config';
+import {validate} from '@warp-core/core/config/validate';
+import {parseValidationErrorMessageResponse} from '@warp-core/core/validation/parse-validation-error-message-response';
+import {DatabaseModule} from '@warp-core/database';
+import {ResourcesModule} from '@warp-core/resources';
 
 @Module({
 	imports: [
@@ -46,10 +48,10 @@ import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
 		}),
 		CoreConfigModule,
 		DatabaseModule,
-		BuildingModule,
-		HabitatModule,
-		BuildingZoneModule,
 		BuildingQueueModule,
+		BuildingModule,
+		// HabitatModule,
+		BuildingZoneModule,
 		ResourcesModule,
 		GraphQLModule.forRoot<ApolloDriverConfig>({
 			driver: ApolloDriver,
@@ -60,7 +62,7 @@ import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
 	],
 })
 export class AppModule {
-	static entities() {
+	public static entities(): EntityClassOrSchema[] {
 		return [...DatabaseModule.entities()];
 	}
 }

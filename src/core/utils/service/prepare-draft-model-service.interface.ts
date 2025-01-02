@@ -5,5 +5,5 @@ export interface PrepareDraftModelServiceInterface {
 	 * Prepare draft model to be used as preview for a user
 	 * @param inputData
 	 */
-	getDraft(inputData: any): Promise<DraftModelInterface>;
+	getDraft(inputData: object): Promise<DraftModelInterface>;
 }

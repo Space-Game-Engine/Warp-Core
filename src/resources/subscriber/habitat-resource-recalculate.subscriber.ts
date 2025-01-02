@@ -1,8 +1,9 @@
 import {Injectable, Logger} from '@nestjs/common';
+import {DataSource, EntitySubscriberInterface, EventSubscriber} from 'typeorm';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {HabitatResourceModel} from '@warp-core/database';
 import {ResourceCalculatorService} from '@warp-core/resources/calculate/resource-calculator.service';
-import {DataSource, EntitySubscriberInterface, EventSubscriber} from 'typeorm';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 
 @Injectable()
 @EventSubscriber()
@@ -21,11 +22,11 @@ export class HabitatResourceRecalculateSubscriber
 		dataSource.subscribers.push(this);
 	}
 
-	listenTo() {
+	public listenTo(): typeof HabitatResourceModel {
 		return HabitatResourceModel;
 	}
 
-	async afterLoad(entity: HabitatResourceModel) {
+	public async afterLoad(entity: HabitatResourceModel): Promise<void> {
 		if (!this.habitatModel.id) {
 			return;
 		}

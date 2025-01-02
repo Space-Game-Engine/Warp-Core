@@ -1,12 +1,13 @@
 import {BadRequestException, Injectable} from '@nestjs/common';
-import {QueueElementProcessedEvent} from '@warp-core/building-queue';
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {OnEvent} from '@nestjs/event-emitter';
-import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
+
+import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {QueueElementProcessedEvent} from '@warp-core/building-queue';
 import {
 	HabitatResourceModel,
 	HabitatResourceRepository,
 } from '@warp-core/database';
+import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {InsufficientResourceType} from '@warp-core/resources/exception/insufficient-resource.type';
 import {InsufficientResourcesException} from '@warp-core/resources/exception/Insufficient-resources.exception';
 
@@ -18,9 +19,9 @@ export class QueueResourceExtractorService {
 	) {}
 
 	@OnEvent('building_queue.adding.after_processing_element')
-	async useResourcesOnQueueUpdate(
+	public async useResourcesOnQueueUpdate(
 		queueProcessingEvent: QueueElementProcessedEvent,
-	) {
+	): Promise<void> {
 		const queueElement = queueProcessingEvent.queueElement;
 		const requiredResources = await this.getRequiredResourcesFromHabitat(
 			queueElement.costs,
@@ -34,10 +35,7 @@ export class QueueResourceExtractorService {
 			throw new InsufficientResourcesException(errors);
 		}
 
-		await this.extractResources(
-			queueElement.costs,
-			requiredResources,
-		);
+		await this.extractResources(queueElement.costs, requiredResources);
 	}
 
 	private async getRequiredResourcesFromHabitat(
@@ -88,7 +86,7 @@ export class QueueResourceExtractorService {
 	private async extractResources(
 		queueCost: QueueElementCostModel[],
 		requiredResources: HabitatResourceModel[],
-	) {
+	): Promise<void> {
 		for (const singleRequiredResource of requiredResources) {
 			const queueCostPerResource = queueCost.find(
 				cost => cost.resource.id === singleRequiredResource.resourceId,
@@ -96,16 +94,13 @@ export class QueueResourceExtractorService {
 
 			singleRequiredResource.currentAmount -= queueCostPerResource.cost;
 
-			await this.habitatResourceRepository.update(
-				singleRequiredResource.id,
-				{
-					currentAmount: singleRequiredResource.currentAmount,
-					lastCalculationTime:
-						singleRequiredResource.lastCalculationTime === null
-							? null
-							: new Date(),
-				},
-			);
+			await this.habitatResourceRepository.update(singleRequiredResource.id, {
+				currentAmount: singleRequiredResource.currentAmount,
+				lastCalculationTime:
+					singleRequiredResource.lastCalculationTime === null
+						? null
+						: new Date(),
+			});
 		}
 	}
 }

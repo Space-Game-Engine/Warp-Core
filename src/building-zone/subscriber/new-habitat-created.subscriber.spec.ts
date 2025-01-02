@@ -1,9 +1,10 @@
-import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
+import {Test, TestingModule} from '@nestjs/testing';
+
 import {BuildingZoneService} from '@warp-core/building-zone/building-zone.service';
 import {NewHabitatCreatedSubscriber} from '@warp-core/building-zone/subscriber/new-habitat-created.subscriber';
-import {Test, TestingModule} from '@nestjs/testing';
-import {coreConfigMock} from '@warp-core/test/core-config-mock';
+import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {HabitatModel} from '@warp-core/database';
+import {coreConfigMock} from '@warp-core/test/core-config-mock';
 
 jest.mock('@warp-core/building-zone/building-zone.service');
 describe('New habitat created - subscriber', () => {
@@ -34,9 +35,9 @@ describe('New habitat created - subscriber', () => {
 				id: 5,
 			} as HabitatModel;
 
-			await newHabitatCreated.createBuildingZoneOnNewHabitatCreation(
-				{habitat: newHabitat},
-			);
+			await newHabitatCreated.createBuildingZoneOnNewHabitatCreation({
+				habitat: newHabitat,
+			});
 
 			expect(buildingZoneService.createNewBuildingZone).toBeCalledTimes(
 				runtimeConfig.habitat.buildingZones.counterForNewHabitat,
