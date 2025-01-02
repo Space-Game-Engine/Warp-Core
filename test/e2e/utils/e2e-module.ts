@@ -2,9 +2,17 @@ import {INestApplication} from '@nestjs/common';
 import {Test, TestingModule} from '@nestjs/testing';
 
 import {AppModule} from '@warp-core/app.module';
+import {TypeOrmModule} from '@nestjs/typeorm';
+import {datasource} from '@warp-core/test/e2e/utils/dataSource';
 
 export async function e2eModule(): Promise<TestingModule> {
-	return await Test.createTestingModule({imports: [AppModule]}).compile();
+	const builder = Test.createTestingModule({imports: [AppModule]});
+	const overrideTypeORM = builder.overrideModule(TypeOrmModule);
+	overrideTypeORM.useModule(TypeOrmModule.forRootAsync({
+		dataSourceFactory: async() => datasource.initialize(),
+	}));
+
+	return await builder.compile();
 }
 
 export async function createNestApplicationE2E(): Promise<INestApplication> {
