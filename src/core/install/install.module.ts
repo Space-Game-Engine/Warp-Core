@@ -10,7 +10,7 @@ import {
 } from '@warp-core/core/install/installation.constants';
 import {GameInstallerService} from '@warp-core/core/install/service/game-installer.service';
 import {ModuleInstallationInterfaceType} from '@warp-core/core/install/service/module-installation.interface';
-import {DatabaseModule} from '@warp-core/database';
+import {DatabaseModule} from '@warp-core/database/database.module';
 
 type SingleInstallToken = {
 	module: Type;

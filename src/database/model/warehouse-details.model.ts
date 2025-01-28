@@ -2,11 +2,8 @@ import {Field, ObjectType} from '@nestjs/graphql';
 import {IsEnum, IsNotEmpty, IsNumber, ValidateIf} from 'class-validator';
 import {BeforeInsert, Column, Entity, JoinColumn, ManyToOne} from 'typeorm';
 
-import {
-	ResourceModel,
-	ResourceTypeEnum,
-	WarehouseTypeEnum,
-} from '@warp-core/database';
+import {ResourceTypeEnum, WarehouseTypeEnum} from '@warp-core/database/enum';
+import {ResourceModel} from '@warp-core/database/model';
 import {AbstractDetailsAtCertainLevelModel} from '@warp-core/database/model/abstracts/details-at-certain-level.abstract-model';
 
 @ObjectType({description: 'Stores resources and other stuff'})

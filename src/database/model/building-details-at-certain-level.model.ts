@@ -17,12 +17,10 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {
-	BuildingRequirementsModel,
-	WarehouseDetailsModel,
-} from '@warp-core/database';
 import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
+import {BuildingRequirementsModel} from '@warp-core/database/model/building-requirements.model';
 import {BuildingModel} from '@warp-core/database/model/building.model';
+import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
 
 @ObjectType({description: 'Details how to upgrade single building'})
 @Entity({name: 'building-details-at-certain-level'})

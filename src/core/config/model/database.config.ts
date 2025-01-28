@@ -1,7 +1,7 @@
 import {IsBoolean, IsString} from 'class-validator';
 import {DatabaseType} from 'typeorm';
 
-import {DatabaseModule} from '@warp-core/database';
+import {DatabaseModule} from '@warp-core/database/database.module';
 
 export class DatabaseConfig {
 	@IsString()
