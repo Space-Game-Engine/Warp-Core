@@ -3,8 +3,8 @@ import {EventEmitter2} from '@nestjs/event-emitter';
 
 import {RegisterInterface} from './register.interface';
 
-import {RegisterUserEvent} from '@warp-core/auth';
 import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';
+import {RegisterUserEvent} from '@warp-core/auth/register/register-user.event';
 
 @Injectable()
 export class RegisterService implements RegisterInterface {

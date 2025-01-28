@@ -17,7 +17,8 @@ import {RegisterService} from '@warp-core/auth/register/register.service';
 import {JwtStrategy} from '@warp-core/auth/strategy/jwt.strategy';
 import {LocalStrategy} from '@warp-core/auth/strategy/local.strategy';
 import {HabitatValidatorService} from '@warp-core/auth/strategy/validator/habitat-validator.service';
-import {DatabaseModule, HabitatRepository} from '@warp-core/database';
+import {HabitatRepository} from '@warp-core/database';
+import {DatabaseModule} from '@warp-core/database/database.module';
 
 const jwtFactory = {
 	useFactory: async (
