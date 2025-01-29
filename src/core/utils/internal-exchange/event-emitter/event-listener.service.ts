@@ -1,9 +1,9 @@
 import {Injectable} from '@nestjs/common';
 import {EventEmitter2} from '@nestjs/event-emitter';
 
+import {EventName} from '@warp-core/core/utils/internal-exchange';
 import {EventEmitterRequest} from '@warp-core/core/utils/internal-exchange/event-emitter/event-emitter.service';
 import {InternalExchangeListener} from '@warp-core/core/utils/internal-exchange/internal-exchange.listener';
-import {EventName} from 'src/core/utils/internal-exchange';
 
 @Injectable()
 export class EventListenerService extends InternalExchangeListener {

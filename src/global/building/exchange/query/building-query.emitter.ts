@@ -1,11 +1,11 @@
 import {Inject, Injectable} from '@nestjs/common';
 
-import {BuildingModel} from '@warp-core/database';
-import {BuildingQueryNames} from '@warp-core/global/building/exchange/query/building-query.names';
 import {
 	InternalExchangeEmitter,
 	QueryExchangeResponse,
-} from 'src/core/utils/internal-exchange';
+} from '@warp-core/core/utils/internal-exchange';
+import {BuildingModel} from '@warp-core/database';
+import {BuildingQueryNames} from '@warp-core/global/building/exchange/query/building-query.names';
 
 @Injectable()
 export class BuildingQueryEmitter {
@@ -16,8 +16,8 @@ export class BuildingQueryEmitter {
 
 	public getBuildingById(
 		buildingId: string,
-	): Promise<QueryExchangeResponse<BuildingModel>> {
-		return this.emitter.query<BuildingModel>({
+	): Promise<QueryExchangeResponse<BuildingModel | null>> {
+		return this.emitter.query<BuildingModel | null>({
 			eventName: BuildingQueryNames.GetBuildingById,
 			requestData: {id: buildingId},
 		});

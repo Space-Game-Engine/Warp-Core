@@ -12,15 +12,15 @@ import {
 	BuildingZoneRepository,
 	QueueElementCostModel,
 } from '@warp-core/database';
+import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {ResourcesCalculatorInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/resources-calculator.interface';
 import {PrepareSingleBuildingQueueElementService} from '@warp-core/user/queue/building-queue/add/prepare-single-building-queue-element.service';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
-import {BuildingService} from 'src/global/building';
 
 jest.mock('@warp-core/database/repository/building-queue.repository');
 jest.mock('@warp-core/database/repository/building-zone.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');
-jest.mock('@warp-core/global/building/building.service');
+jest.mock('@warp-core/global/building/exchange/query/building-query.emitter');
 jest.mock('@nestjs/config');
 jest.mock('@nestjs/event-emitter');
 
@@ -28,7 +28,7 @@ describe('Building queue add service tests', () => {
 	let prepareBuildingQueueElement: PrepareSingleBuildingQueueElementService;
 	let buildingQueueRepository: jest.Mocked<BuildingQueueRepository>;
 	let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
-	let buildingService: jest.Mocked<BuildingService>;
+	let buildingService: jest.Mocked<BuildingQueryEmitter>;
 	let habitatMock: jest.Mocked<AuthorizedHabitatModel>;
 	let configService: jest.Mocked<ConfigService>;
 	let eventEmitter: jest.Mocked<EventEmitter2>;
@@ -46,7 +46,7 @@ describe('Building queue add service tests', () => {
 				PrepareSingleBuildingQueueElementService,
 				BuildingQueueRepository,
 				BuildingZoneRepository,
-				BuildingService,
+				BuildingQueryEmitter,
 				ConfigService,
 				AuthorizedHabitatModel,
 				EventEmitter2,
@@ -63,7 +63,7 @@ describe('Building queue add service tests', () => {
 			);
 		buildingQueueRepository = module.get(BuildingQueueRepository);
 		buildingZoneRepository = module.get(BuildingZoneRepository);
-		buildingService = module.get(BuildingService);
+		buildingService = module.get(BuildingQueryEmitter);
 		configService = module.get(ConfigService);
 		habitatMock = module.get(AuthorizedHabitatModel);
 		eventEmitter = module.get(EventEmitter2);
@@ -207,7 +207,7 @@ describe('Building queue add service tests', () => {
 			if (buildingZone.building === null) {
 				when(buildingService.getBuildingById)
 					.expectCalledWith(addToQueueInput.buildingId as string)
-					.mockResolvedValue(building);
+					.mockResolvedValue({data: building, error: undefined});
 			} else {
 				expect(buildingService.getBuildingById).toBeCalledTimes(0);
 			}
@@ -218,12 +218,12 @@ describe('Building queue add service tests', () => {
 				.expectCalledWith(habitatMock.id)
 				.mockResolvedValue(existingQueue);
 			when(buildingService.calculateTimeInSecondsToUpgradeBuilding)
-				.expectCalledWith(
-					buildingZone.level,
-					addToQueueInput.endLevel,
-					building.id,
-				)
-				.mockResolvedValue(buildingTime);
+				.expectCalledWith({
+					startLevel: buildingZone.level,
+					endLevel: addToQueueInput.endLevel,
+					buildingId: building.id,
+				})
+				.mockResolvedValue({data: buildingTime, error: undefined});
 
 			const queueDraft =
 				await prepareBuildingQueueElement.getQueueElement(addToQueueInput);

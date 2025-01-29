@@ -5,6 +5,8 @@ import {when} from 'jest-when';
 import {RegisterUserEvent} from '@warp-core/auth';
 import {HabitatModel, HabitatRepository} from '@warp-core/database';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
+import {NewHabitatInput} from '@warp-core/user/habitat/input/new-habitat.input';
+import {CreateNewHabitatService} from '@warp-core/user/habitat/subscriber/create/create-new-habitat.service';
 
 jest.mock('@warp-core/database/repository/habitat.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');

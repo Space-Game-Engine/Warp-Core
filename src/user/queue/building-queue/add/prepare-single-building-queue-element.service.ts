@@ -2,6 +2,7 @@ import {Inject, Injectable} from '@nestjs/common';
 import {DateTime} from 'luxon';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
 import {
 	BuildingModel,
 	BuildingQueueElementModel,
@@ -13,7 +14,6 @@ import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {ResourcesCalculatorInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/resources-calculator.interface';
 import {QueueError} from '@warp-core/user/queue/building-queue/exception/queue.error';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
-import {InternalEmitterError} from 'src/core/utils/internal-exchange';
 
 @Injectable()
 export class PrepareSingleBuildingQueueElementService {

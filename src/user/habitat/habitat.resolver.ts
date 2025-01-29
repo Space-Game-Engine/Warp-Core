@@ -2,6 +2,7 @@ import {Parent, Query, ResolveField, Resolver} from '@nestjs/graphql';
 
 import {HabitatService} from './habitat.service';
 
+import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
 import {
 	BuildingQueueElementModel,
 	BuildingQueueRepository,
@@ -10,7 +11,6 @@ import {
 	HabitatResourceCombined,
 } from '@warp-core/database';
 import {ResourcesQueryEmitter} from '@warp-core/user/resources';
-import {InternalEmitterError} from 'src/core/utils/internal-exchange';
 
 @Resolver(() => HabitatModel)
 export class HabitatResolver {

@@ -4,20 +4,20 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {BuildingModel, BuildingZoneModel} from '@warp-core/database';
-import {BuildingZoneService} from '@warp-core/user/building-zone/building-zone.service';
+import {BuildingQueryEmitter} from '@warp-core/global/building';
+import {BuildingZoneEmitter} from '@warp-core/user/building-zone';
 import {QueueInputValidationEvent} from '@warp-core/user/queue/building-queue/event/queue-input-validation.event';
 import {QueueValidationError} from '@warp-core/user/queue/building-queue/exception/queue-validation.error';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 import {AddToQueueValidator} from '@warp-core/user/queue/building-queue/input/validator/add-to-queue.validator';
-import {BuildingService} from 'src/global/building';
 
-jest.mock('@warp-core/global/building/building.service');
-jest.mock('@warp-core/user/building-zone/building-zone.service');
+jest.mock('@warp-core/global/building/exchange/query/building-query.emitter');
+jest.mock('@warp-core/user/building-zone/exchange/query/building-zone.emitter');
 
 describe('Add to queue validator', () => {
 	let addToQueueValidator: AddToQueueValidator;
-	let buildingService: jest.Mocked<BuildingService>;
-	let buildingZoneService: jest.Mocked<BuildingZoneService>;
+	let buildingService: jest.Mocked<BuildingQueryEmitter>;
+	let buildingZoneService: jest.Mocked<BuildingZoneEmitter>;
 	let eventEmitter: EventEmitter2;
 
 	beforeEach(async () => {
@@ -31,8 +31,8 @@ describe('Add to queue validator', () => {
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
-				BuildingService,
-				BuildingZoneService,
+				BuildingQueryEmitter,
+				BuildingZoneEmitter,
 				AddToQueueValidator,
 				{
 					provide: EventEmitter2,
@@ -42,8 +42,8 @@ describe('Add to queue validator', () => {
 		}).compile();
 
 		addToQueueValidator = module.get(AddToQueueValidator);
-		buildingZoneService = module.get(BuildingZoneService);
-		buildingService = module.get(BuildingService);
+		buildingZoneService = module.get(BuildingZoneEmitter);
+		buildingService = module.get(BuildingQueryEmitter);
 	});
 
 	describe('validate', () => {
@@ -55,8 +55,8 @@ describe('Add to queue validator', () => {
 			};
 
 			when(buildingZoneService.getSingleBuildingZone)
-				.calledWith(addToQueue.localBuildingZoneId)
-				.mockResolvedValue(null);
+				.calledWith({localBuildingZoneId: addToQueue.localBuildingZoneId})
+				.mockResolvedValue({data: null, error: undefined});
 
 			try {
 				await addToQueueValidator.transform(addToQueue, {
@@ -79,12 +79,15 @@ describe('Add to queue validator', () => {
 			};
 
 			when(buildingZoneService.getSingleBuildingZone)
-				.calledWith(addToQueue.localBuildingZoneId)
+				.calledWith({localBuildingZoneId: addToQueue.localBuildingZoneId})
 				.mockResolvedValue({
-					id: 1,
-					level: 0,
-					building: null,
-				} as unknown as BuildingZoneModel);
+					data: {
+						id: 1,
+						level: 0,
+						building: null,
+					} as unknown as BuildingZoneModel,
+					error: undefined,
+				});
 
 			try {
 				await addToQueueValidator.transform(addToQueue, {
@@ -109,16 +112,19 @@ describe('Add to queue validator', () => {
 			};
 
 			when(buildingZoneService.getSingleBuildingZone)
-				.calledWith(addToQueue.localBuildingZoneId)
+				.calledWith({localBuildingZoneId: addToQueue.localBuildingZoneId})
 				.mockResolvedValue({
-					id: 1,
-					level: 0,
-					building: null,
-				} as unknown as BuildingZoneModel);
+					data: {
+						id: 1,
+						level: 0,
+						building: null,
+					} as unknown as BuildingZoneModel,
+					error: undefined,
+				});
 
 			when(buildingService.getBuildingById)
 				.calledWith(addToQueue.buildingId as string)
-				.mockResolvedValue(null);
+				.mockResolvedValue({data: null, error: undefined});
 
 			try {
 				await addToQueueValidator.transform(addToQueue, {
@@ -156,12 +162,12 @@ describe('Add to queue validator', () => {
 			} as BuildingModel;
 
 			when(buildingZoneService.getSingleBuildingZone)
-				.calledWith(addToQueue.localBuildingZoneId)
-				.mockResolvedValue(buildingZone);
+				.calledWith({localBuildingZoneId: addToQueue.localBuildingZoneId})
+				.mockResolvedValue({data: buildingZone, error: undefined});
 
 			when(buildingService.getBuildingById)
 				.calledWith(addToQueue.buildingId as string)
-				.mockResolvedValue(building);
+				.mockResolvedValue({data: building, error: undefined});
 
 			when(eventEmitter.emitAsync)
 				.calledWith(
@@ -209,12 +215,12 @@ describe('Add to queue validator', () => {
 			} as BuildingModel;
 
 			when(buildingZoneService.getSingleBuildingZone)
-				.calledWith(addToQueue.localBuildingZoneId)
-				.mockResolvedValue(buildingZone);
+				.calledWith({localBuildingZoneId: addToQueue.localBuildingZoneId})
+				.mockResolvedValue({data: buildingZone, error: undefined});
 
 			when(buildingService.getBuildingById)
 				.calledWith(addToQueue.buildingId as string)
-				.mockResolvedValue(building);
+				.mockResolvedValue({data: building, error: undefined});
 
 			when(eventEmitter.emitAsync).calledWith(
 				expect.stringMatching('building_queue.validating.add_to_queue'),

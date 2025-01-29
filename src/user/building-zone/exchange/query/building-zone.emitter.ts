@@ -1,11 +1,11 @@
 import {Inject, Injectable} from '@nestjs/common';
 
-import {BuildingZoneModel} from '@warp-core/database';
-import {BuildingZoneNames} from '@warp-core/user/building-zone/exchange/query/building-zone.names';
 import {
 	InternalExchangeEmitter,
 	QueryExchangeResponse,
-} from 'src/core/utils/internal-exchange';
+} from '@warp-core/core/utils/internal-exchange';
+import {BuildingZoneModel} from '@warp-core/database';
+import {BuildingZoneNames} from '@warp-core/user/building-zone/exchange/query/building-zone.names';
 
 @Injectable()
 export class BuildingZoneEmitter {

@@ -1,11 +1,11 @@
 import {Inject, Injectable} from '@nestjs/common';
 
-import {HabitatResourceCombined} from '@warp-core/database';
-import {ResourcesQueryNames} from '@warp-core/user/resources/exchange/query/resources-query.names';
 import {
 	InternalExchangeEmitter,
 	QueryExchangeResponse,
-} from 'src/core/utils/internal-exchange';
+} from '@warp-core/core/utils/internal-exchange';
+import {HabitatResourceCombined} from '@warp-core/database';
+import {ResourcesQueryNames} from '@warp-core/user/resources/exchange/query/resources-query.names';
 
 @Injectable()
 export class ResourcesQueryEmitter {

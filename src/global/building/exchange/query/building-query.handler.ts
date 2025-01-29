@@ -1,9 +1,9 @@
 import {Injectable} from '@nestjs/common';
 
+import {InternalExchangeQuery} from '@warp-core/core/utils/internal-exchange';
 import {BuildingModel} from '@warp-core/database';
 import {BuildingService} from '@warp-core/global/building/building.service';
 import {BuildingQueryNames} from '@warp-core/global/building/exchange/query/building-query.names';
-import {InternalExchangeQuery} from 'src/core/utils/internal-exchange';
 
 @Injectable()
 export class BuildingQueryHandler {
