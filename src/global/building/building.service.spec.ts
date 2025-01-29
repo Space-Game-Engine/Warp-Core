@@ -38,11 +38,11 @@ describe('Building service test', () => {
 				.mockResolvedValue(buildingModel);
 
 			try {
-				await buildingService.calculateTimeInSecondsToUpgradeBuilding(
+				await buildingService.calculateTimeInSecondsToUpgradeBuilding({
 					startLevel,
 					endLevel,
 					buildingId,
-				);
+				});
 			} catch (error) {
 				expect(error.message).toEqual('Building does not exists');
 			}
@@ -64,11 +64,11 @@ describe('Building service test', () => {
 				.mockResolvedValue(buildingModel);
 
 			const calculatedTime =
-				await buildingService.calculateTimeInSecondsToUpgradeBuilding(
+				await buildingService.calculateTimeInSecondsToUpgradeBuilding({
 					startLevel,
 					endLevel,
 					buildingId,
-				);
+				});
 
 			expect(calculatedTime).toEqual(0);
 		});
@@ -102,11 +102,11 @@ describe('Building service test', () => {
 				.mockResolvedValue(buildingModel);
 
 			const calculatedTime =
-				await buildingService.calculateTimeInSecondsToUpgradeBuilding(
+				await buildingService.calculateTimeInSecondsToUpgradeBuilding({
 					startLevel,
 					endLevel,
 					buildingId,
-				);
+				});
 
 			expect(calculatedTime).toEqual(10);
 		});
@@ -140,11 +140,11 @@ describe('Building service test', () => {
 				.mockResolvedValue(buildingModel);
 
 			const calculatedTime =
-				await buildingService.calculateTimeInSecondsToUpgradeBuilding(
+				await buildingService.calculateTimeInSecondsToUpgradeBuilding({
 					startLevel,
 					endLevel,
 					buildingId,
-				);
+				});
 
 			expect(calculatedTime).toEqual(1);
 		});
@@ -178,11 +178,11 @@ describe('Building service test', () => {
 				.mockResolvedValue(buildingModel);
 
 			const calculatedTime =
-				await buildingService.calculateTimeInSecondsToUpgradeBuilding(
+				await buildingService.calculateTimeInSecondsToUpgradeBuilding({
 					startLevel,
 					endLevel,
 					buildingId,
-				);
+				});
 
 			expect(calculatedTime).toEqual(111);
 		});

@@ -2,11 +2,8 @@ import {Test, TestingModule} from '@nestjs/testing';
 
 import {BuildingInstallService} from './building-install.service';
 
-import {
-	BuildingModel,
-	BuildingRepository,
-	BuildingRoleEnum,
-} from '@warp-core/database';
+import {BuildingRepository, BuildingRoleEnum} from '@warp-core/database';
+import {BuildingModel} from '@warp-core/database/model/building.model';
 
 jest.mock('@warp-core/database/repository/building.repository');
 

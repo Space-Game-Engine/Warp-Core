@@ -5,7 +5,7 @@ import {
 	InstallError,
 	LoadedConfig,
 } from '@warp-core/core/install';
-import {BuildingModel} from '@warp-core/database';
+import {BuildingModel} from '@warp-core/database/model/building.model';
 
 @Injectable()
 export class BuildingInstallService extends AbstractInstallationService<BuildingModel> {
