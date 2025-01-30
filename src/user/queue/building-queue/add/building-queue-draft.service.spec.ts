@@ -1,7 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {BuildingQueueElementModel} from '@warp-core/database';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingQueueDraftService} from '@warp-core/user/queue/building-queue/add/building-queue-draft.service';
 import {PrepareSingleBuildingQueueElementService} from '@warp-core/user/queue/building-queue/add/prepare-single-building-queue-element.service';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';

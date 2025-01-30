@@ -3,12 +3,10 @@ import {OnEvent} from '@nestjs/event-emitter';
 import {DateTime} from 'luxon';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {
-	BuildingZoneModel,
-	BuildingZoneRepository,
-	HabitatResourceModel,
-	HabitatResourceRepository,
-} from '@warp-core/database';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
+import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {QueueElementProcessedEvent} from '@warp-core/user/queue/building-queue';
 import {CalculateResourceStorageService} from '@warp-core/user/resources/calculate/warehouse-storage/calculate-resource-storage.service';
 

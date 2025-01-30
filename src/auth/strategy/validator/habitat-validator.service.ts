@@ -3,7 +3,7 @@ import {Injectable} from '@nestjs/common';
 import {ValidatorInterface} from './validator.interface';
 
 import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
-import {HabitatRepository} from '@warp-core/database';
+import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
 
 @Injectable()
 export class HabitatValidatorService implements ValidatorInterface {

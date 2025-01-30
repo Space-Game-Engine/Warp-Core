@@ -9,10 +9,8 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {
-	BuildingDetailsAtCertainLevelModel,
-	BuildingRoleEnum,
-} from '@warp-core/database';
+import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
+import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingModel} from '@warp-core/database/model/building.model';
 import {HabitatModel} from '@warp-core/database/model/habitat.model';

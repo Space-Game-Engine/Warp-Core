@@ -1,6 +1,7 @@
 import {Injectable} from '@nestjs/common';
 
-import {BuildingModel, BuildingRepository} from '@warp-core/database';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 
 @Injectable()
 export class BuildingService {

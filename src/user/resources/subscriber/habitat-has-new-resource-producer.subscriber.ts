@@ -2,12 +2,10 @@ import {Injectable, Logger} from '@nestjs/common';
 import {OnEvent} from '@nestjs/event-emitter';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {
-	BuildingProductionRateModel,
-	BuildingQueueElementModel,
-	BuildingRepository,
-	HabitatResourceRepository,
-} from '@warp-core/database';
+import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingRepository} from '@warp-core/database/repository/building.repository';
+import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {QueueElementProcessedEvent} from '@warp-core/user/queue/building-queue';
 
 @Injectable()

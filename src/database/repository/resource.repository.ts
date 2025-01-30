@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 import {DataSource} from 'typeorm';
 
-import {ResourceModel} from '@warp-core/database/model';
+import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()

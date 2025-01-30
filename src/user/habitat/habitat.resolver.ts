@@ -3,13 +3,11 @@ import {Parent, Query, ResolveField, Resolver} from '@nestjs/graphql';
 import {HabitatService} from './habitat.service';
 
 import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
-import {
-	BuildingQueueElementModel,
-	BuildingQueueRepository,
-	BuildingZoneModel,
-	HabitatModel,
-	HabitatResourceCombined,
-} from '@warp-core/database';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {ResourcesQueryEmitter} from '@warp-core/user/resources';
 
 @Resolver(() => HabitatModel)

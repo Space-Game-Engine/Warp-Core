@@ -2,7 +2,8 @@ import {Injectable} from '@nestjs/common';
 import {EventEmitter2} from '@nestjs/event-emitter';
 
 import {CustomValidator} from '@warp-core/core';
-import {BuildingModel, BuildingZoneModel} from '@warp-core/database';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {BuildingZoneEmitter} from '@warp-core/user/building-zone/exchange';
 import {QueueInputValidationEvent} from '@warp-core/user/queue/building-queue/event/queue-input-validation.event';

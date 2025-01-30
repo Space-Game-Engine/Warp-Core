@@ -4,14 +4,12 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {
-	BuildingModel,
-	BuildingQueueElementModel,
-	BuildingQueueRepository,
-	BuildingZoneModel,
-	BuildingZoneRepository,
-	QueueElementCostModel,
-} from '@warp-core/database';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
+import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {ResourcesCalculatorInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/resources-calculator.interface';
 import {PrepareSingleBuildingQueueElementService} from '@warp-core/user/queue/building-queue/add/prepare-single-building-queue-element.service';

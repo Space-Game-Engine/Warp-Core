@@ -7,13 +7,11 @@ import {
 	Resolver,
 } from '@nestjs/graphql';
 
-import {
-	BuildingModel,
-	BuildingQueueElementModel,
-	BuildingQueueRepository,
-	BuildingZoneModel,
-	HabitatModel,
-} from '@warp-core/database';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingZoneService} from '@warp-core/user/building-zone/building-zone.service';
 
 @Resolver(() => BuildingZoneModel)

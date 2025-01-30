@@ -2,7 +2,8 @@ import {Injectable} from '@nestjs/common';
 import {EventEmitter2, OnEvent} from '@nestjs/event-emitter';
 
 import {RegisterUserEvent} from '@warp-core/auth';
-import {HabitatModel, HabitatRepository} from '@warp-core/database';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
 import {HabitatCreatedEvent} from '@warp-core/user/habitat/event/habitat-created.event';
 import {NewHabitatInput} from '@warp-core/user/habitat/input/new-habitat.input';
 

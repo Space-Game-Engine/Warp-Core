@@ -1,4 +1,5 @@
-import {BuildingModel, BuildingZoneModel} from '@warp-core/database';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
 import {QueueValidationErrorType} from '@warp-core/user/queue/building-queue/exception/queue-validation-error.type';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 

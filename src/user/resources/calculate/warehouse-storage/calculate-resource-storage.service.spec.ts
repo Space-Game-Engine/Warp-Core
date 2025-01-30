@@ -2,11 +2,9 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {
-	BuildingZoneRepository,
-	ResourceModel,
-	WarehouseDetailsModel,
-} from '@warp-core/database';
+import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {CalculateResourceStorageService} from '@warp-core/user/resources/calculate/warehouse-storage/calculate-resource-storage.service';
 
 jest.mock('@warp-core/database/repository/building-zone.repository');

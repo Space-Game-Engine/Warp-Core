@@ -3,11 +3,9 @@ import {when} from 'jest-when';
 
 import {BuildingService} from './building.service';
 
-import {
-	BuildingModel,
-	BuildingRepository,
-	BuildingRoleEnum,
-} from '@warp-core/database';
+import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 
 jest.mock('@warp-core/database/repository/building.repository');
 

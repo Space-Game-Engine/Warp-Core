@@ -3,11 +3,9 @@ import {when} from 'jest-when';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {
-	BuildingModel,
-	BuildingQueueRepository,
-	BuildingZoneModel,
-} from '@warp-core/database';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
 import {QueueInputValidationEvent} from '@warp-core/user/queue/building-queue/event/queue-input-validation.event';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';

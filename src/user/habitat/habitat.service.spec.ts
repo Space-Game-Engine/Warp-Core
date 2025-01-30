@@ -4,7 +4,8 @@ import {when} from 'jest-when';
 import {HabitatService} from './habitat.service';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {HabitatModel, HabitatRepository} from '@warp-core/database';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
 
 jest.mock('@warp-core/database/repository/habitat.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');

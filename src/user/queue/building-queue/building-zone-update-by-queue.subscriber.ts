@@ -2,7 +2,7 @@ import {Injectable, Logger} from '@nestjs/common';
 import {DataSource, EntitySubscriberInterface, EventSubscriber} from 'typeorm';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {BuildingZoneModel} from '@warp-core/database';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueueHandlerService} from '@warp-core/user/queue/building-queue/building-queue-handler.service';
 
 @Injectable()

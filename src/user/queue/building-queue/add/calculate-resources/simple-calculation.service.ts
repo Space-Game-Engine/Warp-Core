@@ -1,12 +1,10 @@
 import {Injectable} from '@nestjs/common';
 
-import {
-	BuildingModel,
-	BuildingZoneModel,
-	QueueElementCostModel,
-	ResourceModel,
-	ResourceTypeEnum,
-} from '@warp-core/database';
+import {ResourceTypeEnum} from '@warp-core/database/enum/resource-type.enum';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
+import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {ResourcesCalculatorInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/resources-calculator.interface';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 

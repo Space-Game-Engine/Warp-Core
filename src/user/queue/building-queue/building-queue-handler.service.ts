@@ -2,13 +2,11 @@ import {Injectable, Logger} from '@nestjs/common';
 import {EventEmitter2} from '@nestjs/event-emitter';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {
-	BuildingQueueElementModel,
-	BuildingQueueRepository,
-	BuildingZoneModel,
-	BuildingZoneRepository,
-	HabitatResourceModel,
-} from '@warp-core/database';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {QueueElementAfterProcessingEvent} from '@warp-core/user/queue/building-queue/event/queue-element-after-processing.event';
 import {QueueElementBeforeProcessingEvent} from '@warp-core/user/queue/building-queue/event/queue-element-before-processing.event';
 

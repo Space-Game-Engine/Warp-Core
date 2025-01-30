@@ -3,15 +3,13 @@ import {when} from 'jest-when';
 import {DateTime} from 'luxon';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {
-	BuildingModel,
-	BuildingQueueElementModel,
-	BuildingZoneModel,
-	BuildingZoneRepository,
-	HabitatResourceModel,
-	HabitatResourceRepository,
-	ResourceModel,
-} from '@warp-core/database';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
+import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {ResourceCalculatorService} from '@warp-core/user/resources/calculate/resource-calculator.service';
 import {CalculateResourceStorageService} from '@warp-core/user/resources/calculate/warehouse-storage/calculate-resource-storage.service';
 import {default as multipleBuildingZonesAndSingleResourceCases} from '@warp-core/user/resources/datasets/calculate/multiple-building-zones-and-single-resource';

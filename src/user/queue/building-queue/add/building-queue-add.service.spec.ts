@@ -2,10 +2,8 @@ import {EventEmitter2} from '@nestjs/event-emitter';
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {
-	BuildingQueueElementModel,
-	BuildingQueueRepository,
-} from '@warp-core/database';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 import {
 	QueueElementAfterProcessingEvent,

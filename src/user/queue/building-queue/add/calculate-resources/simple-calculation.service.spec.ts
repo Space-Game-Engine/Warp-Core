@@ -1,10 +1,8 @@
 import {Test, TestingModule} from '@nestjs/testing';
 
-import {
-	BuildingModel,
-	BuildingZoneModel,
-	ResourceTypeEnum,
-} from '@warp-core/database';
+import {ResourceTypeEnum} from '@warp-core/database/enum/resource-type.enum';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
 import {SimpleCalculationService} from '@warp-core/user/queue/building-queue/add/calculate-resources/simple-calculation.service';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 

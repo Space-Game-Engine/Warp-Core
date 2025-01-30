@@ -1,14 +1,34 @@
 import {Field, ObjectType} from '@nestjs/graphql';
-import {IsEnum, IsNotEmpty, IsNumber, ValidateIf} from 'class-validator';
-import {BeforeInsert, Column, Entity, JoinColumn, ManyToOne} from 'typeorm';
+import {
+	IsEnum,
+	IsNotEmpty,
+	IsNumber,
+	IsOptional,
+	ValidateIf,
+	ValidateNested,
+} from 'class-validator';
+import {
+	BeforeInsert,
+	Column,
+	Entity,
+	JoinColumn,
+	ManyToOne,
+	PrimaryGeneratedColumn,
+} from 'typeorm';
 
-import {ResourceTypeEnum, WarehouseTypeEnum} from '@warp-core/database/enum';
-import {ResourceModel} from '@warp-core/database/model';
-import {AbstractDetailsAtCertainLevelModel} from '@warp-core/database/model/abstracts/details-at-certain-level.abstract-model';
+import {ResourceTypeEnum} from '@warp-core/database/enum/resource-type.enum';
+import {WarehouseTypeEnum} from '@warp-core/database/enum/warehouse-type.enum';
+import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';
+import {ResourceModel} from '@warp-core/database/model/resource.model';
 
 @ObjectType({description: 'Stores resources and other stuff'})
 @Entity({name: 'warehouse-details'})
-export class WarehouseDetailsModel extends AbstractDetailsAtCertainLevelModel {
+export class WarehouseDetailsModel {
+	@PrimaryGeneratedColumn()
+	@IsNumber()
+	@IsOptional()
+	public id: number;
+
 	@Field(() => WarehouseTypeEnum, {
 		description: 'What type of warehouse is it?',
 	})
@@ -52,6 +72,21 @@ export class WarehouseDetailsModel extends AbstractDetailsAtCertainLevelModel {
 	@IsNumber()
 	@Column()
 	public amount: number;
+
+	@Field(() => BuildingDetailsAtCertainLevelModel, {
+		description: 'Details how to upgrade that building',
+	})
+	@ValidateNested()
+	@ManyToOne(
+		() => BuildingDetailsAtCertainLevelModel,
+		buildingDetails => buildingDetails.productionRate,
+		{
+			lazy: true,
+		},
+	)
+	public buildingDetails:
+		| BuildingDetailsAtCertainLevelModel
+		| Promise<BuildingDetailsAtCertainLevelModel>;
 
 	@BeforeInsert()
 	public validateWarehouseDetails(): void {

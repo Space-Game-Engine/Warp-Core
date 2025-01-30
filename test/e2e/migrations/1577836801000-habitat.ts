@@ -1,6 +1,6 @@
 import {MigrationInterface, QueryRunner} from 'typeorm';
 
-import {HabitatModel} from '@warp-core/database';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
 
 export class HabitatMigration1577836801000 implements MigrationInterface {
 	public readonly habitatsToMigrate = [

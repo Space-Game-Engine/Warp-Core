@@ -3,7 +3,8 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {RegisterUserEvent} from '@warp-core/auth';
-import {HabitatModel, HabitatRepository} from '@warp-core/database';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 import {NewHabitatInput} from '@warp-core/user/habitat/input/new-habitat.input';
 import {CreateNewHabitatService} from '@warp-core/user/habitat/subscriber/create/create-new-habitat.service';

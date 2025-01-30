@@ -2,12 +2,10 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {
-	BuildingProductionRateModel,
-	BuildingQueueElementModel,
-	BuildingRepository,
-	HabitatResourceRepository,
-} from '@warp-core/database';
+import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingRepository} from '@warp-core/database/repository/building.repository';
+import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 import {HabitatHasNewResourceProducerSubscriber} from '@warp-core/user/resources/subscriber/habitat-has-new-resource-producer.subscriber';
 

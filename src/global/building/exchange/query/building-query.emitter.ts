@@ -4,7 +4,7 @@ import {
 	InternalExchangeEmitter,
 	QueryExchangeResponse,
 } from '@warp-core/core/utils/internal-exchange';
-import {BuildingModel} from '@warp-core/database';
+import {BuildingModel} from '@warp-core/database/model/building.model';
 import {BuildingQueryNames} from '@warp-core/global/building/exchange/query/building-query.names';
 
 @Injectable()

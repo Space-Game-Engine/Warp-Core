@@ -3,13 +3,11 @@ import {DateTime} from 'luxon';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
-import {
-	BuildingModel,
-	BuildingQueueElementModel,
-	BuildingQueueRepository,
-	BuildingZoneModel,
-	BuildingZoneRepository,
-} from '@warp-core/database';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {ResourcesCalculatorInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/resources-calculator.interface';
 import {QueueError} from '@warp-core/user/queue/building-queue/exception/queue.error';

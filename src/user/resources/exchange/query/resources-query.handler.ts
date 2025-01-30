@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 
 import {InternalExchangeQuery} from '@warp-core/core/utils/internal-exchange';
-import {HabitatResourceCombined} from '@warp-core/database';
+import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
 import {ResourcesQueryNames} from '@warp-core/user/resources/exchange/query/resources-query.names';
 import {ResourcesService} from '@warp-core/user/resources/resources.service';
 

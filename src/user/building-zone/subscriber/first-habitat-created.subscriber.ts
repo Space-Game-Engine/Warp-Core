@@ -2,11 +2,9 @@ import {Injectable} from '@nestjs/common';
 import {OnEvent} from '@nestjs/event-emitter';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {
-	BuildingRepository,
-	BuildingZoneModel,
-	BuildingZoneRepository,
-} from '@warp-core/database';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
+import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {BuildingZoneService} from '@warp-core/user/building-zone/building-zone.service';
 import {HabitatCreatedEvent} from '@warp-core/user/habitat';
 

@@ -2,13 +2,11 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {
-	HabitatModel,
-	HabitatResourceCombined,
-	HabitatResourceModel,
-	HabitatResourceRepository,
-	ResourceModel,
-} from '@warp-core/database';
+import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
+import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {ResourcesService} from '@warp-core/user/resources/resources.service';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
@@ -111,8 +109,8 @@ describe('Resources service', () => {
 				.mockResolvedValue(habitatResourceArray);
 
 			expect(
-				resourcesService.getAllResourcesForHabitat(),
-			).resolves.toMatchObject<HabitatResourceCombined>(expect.anything());
+				await resourcesService.getAllResourcesForHabitat(),
+			).toMatchObject<HabitatResourceCombined>(expect.anything());
 		});
 
 		it('should return array of combined habitat resource models for provided habitat', async () => {
@@ -146,8 +144,8 @@ describe('Resources service', () => {
 				.mockResolvedValue(habitatResourceArray);
 
 			expect(
-				resourcesService.getAllResourcesForHabitat(habitatModel),
-			).resolves.toMatchObject<HabitatResourceCombined>(expect.anything());
+				await resourcesService.getAllResourcesForHabitat(habitatModel),
+			).toMatchObject<HabitatResourceCombined>(expect.anything());
 		});
 	});
 });

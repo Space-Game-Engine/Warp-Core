@@ -1,7 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {HabitatModel} from '@warp-core/database';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
 import {BuildingZoneService} from '@warp-core/user/building-zone/building-zone.service';
 import {NewHabitatCreatedSubscriber} from '@warp-core/user/building-zone/subscriber/new-habitat-created.subscriber';

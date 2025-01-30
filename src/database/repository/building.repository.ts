@@ -1,10 +1,8 @@
 import {Injectable} from '@nestjs/common';
 import {DataSource, In} from 'typeorm';
 
-import {
-	BuildingModel,
-	BuildingProductionRateModel,
-} from '@warp-core/database/model';
+import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()

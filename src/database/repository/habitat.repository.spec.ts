@@ -1,7 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {DataSource} from 'typeorm';
 
-import {HabitatModel} from '@warp-core/database/model';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
 jest.mock('../transaction-manager.service');

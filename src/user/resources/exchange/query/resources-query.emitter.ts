@@ -4,7 +4,7 @@ import {
 	InternalExchangeEmitter,
 	QueryExchangeResponse,
 } from '@warp-core/core/utils/internal-exchange';
-import {HabitatResourceCombined} from '@warp-core/database';
+import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
 import {ResourcesQueryNames} from '@warp-core/user/resources/exchange/query/resources-query.names';
 
 @Injectable()

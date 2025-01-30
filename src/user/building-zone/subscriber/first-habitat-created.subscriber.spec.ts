@@ -2,13 +2,11 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {
-	BuildingModel,
-	BuildingRepository,
-	BuildingZoneModel,
-	BuildingZoneRepository,
-	HabitatModel,
-} from '@warp-core/database';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
+import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 import {BuildingZoneService} from '@warp-core/user/building-zone/building-zone.service';

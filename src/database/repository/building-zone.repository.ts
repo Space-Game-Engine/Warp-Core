@@ -1,12 +1,10 @@
 import {Injectable} from '@nestjs/common';
 import {DataSource, FindOptionsUtils} from 'typeorm';
 
-import {
-	BuildingZoneModel,
-	HabitatModel,
-	ResourceModel,
-	WarehouseDetailsModel,
-} from '@warp-core/database/model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()

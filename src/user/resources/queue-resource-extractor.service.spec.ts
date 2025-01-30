@@ -2,11 +2,9 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {
-	HabitatResourceModel,
-	HabitatResourceRepository,
-	QueueElementCostModel,
-} from '@warp-core/database';
+import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
+import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 import {QueueElementProcessedEvent} from '@warp-core/user/queue/building-queue';
 import {InsufficientResourceType} from '@warp-core/user/resources/exception/insufficient-resource.type';

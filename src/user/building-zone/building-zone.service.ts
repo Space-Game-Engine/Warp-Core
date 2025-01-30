@@ -1,11 +1,9 @@
 import {Injectable} from '@nestjs/common';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {
-	BuildingZoneModel,
-	BuildingZoneRepository,
-	HabitatModel,
-} from '@warp-core/database';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 
 @Injectable()
 export class BuildingZoneService {

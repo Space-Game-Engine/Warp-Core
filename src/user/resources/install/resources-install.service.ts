@@ -5,7 +5,7 @@ import {
 	InstallError,
 	LoadedConfig,
 } from '@warp-core/core/install';
-import {ResourceModel} from '@warp-core/database';
+import {ResourceModel} from '@warp-core/database/model/resource.model';
 
 @Injectable()
 export class ResourcesInstallService extends AbstractInstallationService<ResourceModel> {

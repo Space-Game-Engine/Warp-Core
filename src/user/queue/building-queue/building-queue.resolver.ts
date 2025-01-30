@@ -9,11 +9,9 @@ import {
 
 import {ResourceConsumerResolverInterface} from '@warp-core/core/utils';
 import {DraftModelInterface} from '@warp-core/core/utils/model';
-import {
-	BuildingModel,
-	BuildingQueueElementModel,
-	BuildingZoneModel,
-} from '@warp-core/database';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
 import {BuildingQueueAddService} from '@warp-core/user/queue/building-queue/add/building-queue-add.service';
 import {BuildingQueueDraftService} from '@warp-core/user/queue/building-queue/add/building-queue-draft.service';
 import {BuildingQueueHandlerService} from '@warp-core/user/queue/building-queue/building-queue-handler.service';

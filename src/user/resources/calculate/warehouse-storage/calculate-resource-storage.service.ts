@@ -1,7 +1,8 @@
 import {Injectable} from '@nestjs/common';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {BuildingZoneRepository, ResourceModel} from '@warp-core/database';
+import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 
 @Injectable()
 export class CalculateResourceStorageService {
