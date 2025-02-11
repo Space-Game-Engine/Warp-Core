@@ -6,11 +6,11 @@ export class BuildingQueueConfig {
 	 */
 	@Min(1)
 	@IsNumber()
-	maxElementsInQueue: number;
+	public maxElementsInQueue: number;
 
 	/**
 	 * Can user update single buildings by multiple levels?
 	 */
 	@IsBoolean()
-	allowMultipleLevelUpdate: boolean;
+	public allowMultipleLevelUpdate: boolean;
 }

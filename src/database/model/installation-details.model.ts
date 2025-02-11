@@ -1,15 +1,20 @@
-import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn} from 'typeorm';
+import {
+	Column,
+	CreateDateColumn,
+	Entity,
+	PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({name: 'installation-details-model'})
 export class InstallationDetailsModel {
 	@PrimaryGeneratedColumn()
-	id: number;
+	public id: number;
 
 	@Column('boolean', {
-		default: true
+		default: true,
 	})
-	successfulInstall: boolean = true;
+	public successfulInstall: boolean = true;
 
 	@CreateDateColumn()
-	installationDate: Date;
+	public installationDate: Date;
 }

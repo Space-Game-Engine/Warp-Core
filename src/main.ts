@@ -1,10 +1,11 @@
 import {ValidationPipe} from '@nestjs/common';
 import {NestFactory} from '@nestjs/core';
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
-import {AppModule} from '@warp-core/app.module';
 import {useContainer} from 'class-validator';
 
-async function bootstrap() {
+import {AppModule} from '@warp-core/app.module';
+
+async function bootstrap(): Promise<void> {
 	const appURL = '/graphql';
 	const localDocUrl = '/doc';
 	const app = await NestFactory.create(AppModule);

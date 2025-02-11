@@ -1,13 +1,12 @@
 import {Test, TestingModule} from '@nestjs/testing';
-import {
-	BuildingQueueElementModel,
-	BuildingZoneModel,
-} from '@warp-core/database/model';
-import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {when} from 'jest-when';
 import {DataSource} from 'typeorm';
+
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
-jest.mock("../transaction-manager.service");
+jest.mock('../transaction-manager.service');
 
 describe('Building queue repository test', () => {
 	let buildingQueueRepository: BuildingQueueRepository;
@@ -22,10 +21,10 @@ describe('Building queue repository test', () => {
 				{
 					provide: DataSource,
 					useValue: {
-						createEntityManager() {},
+						createEntityManager: (): void => {},
 					},
 				},
-				TransactionManagerService
+				TransactionManagerService,
 			],
 		}).compile();
 

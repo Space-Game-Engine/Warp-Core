@@ -1,35 +1,42 @@
 import {Inject, Injectable} from '@nestjs/common';
-import {
-	ModuleInstallationInterface,
-} from '@warp-core/core/install/service/module-installation.interface';
-import { LoadedConfig} from '@warp-core/core/install/service/load-config.service';
-import {INSTALLER_SERVICES, PROGRESS_BAR} from '@warp-core/core/install/installation.constants';
 import {MultiBar, SingleBar} from 'cli-progress';
 import {DataSource} from 'typeorm';
+
+import {
+	INSTALLER_SERVICES,
+	PROGRESS_BAR,
+} from '@warp-core/core/install/installation.constants';
+import {LoadedConfig} from '@warp-core/core/install/service/load-config.service';
+import {ModuleInstallationInterface} from '@warp-core/core/install/service/module-installation.interface';
 import {InstallationDetailsRepository} from '@warp-core/database/repository/installation-details.repository';
 
 @Injectable()
 export class GameInstallerService {
-
 	private readonly mainProgressBar: SingleBar;
 
 	constructor(
 		private readonly installationDetailsRepository: InstallationDetailsRepository,
 		@Inject(INSTALLER_SERVICES)
-		private readonly installers: ModuleInstallationInterface<any>[],
+		private readonly installers: ModuleInstallationInterface<object>[],
 		@Inject(PROGRESS_BAR)
 		private readonly progressBar: MultiBar,
 		private readonly dataSource: DataSource,
 	) {
-		this.mainProgressBar = this.progressBar.create(this.getProgressBarSteps(), 0);
+		this.mainProgressBar = this.progressBar.create(
+			this.getProgressBarSteps(),
+			0,
+		);
 	}
-	
+
 	private getProgressBarSteps(): number {
 		return this.installers.length + 2;
 	}
 
-	public async installGame(loadedConfig: LoadedConfig) {
-		if (await this.installationDetailsRepository.isPossibleToInstallGame() === false) {
+	public async installGame(loadedConfig: LoadedConfig): Promise<void> {
+		if (
+			(await this.installationDetailsRepository.isPossibleToInstallGame()) ===
+			false
+		) {
 			this.skipInstallationProcess();
 			return;
 		}
@@ -41,9 +48,9 @@ export class GameInstallerService {
 		this.progressBar.stop();
 	}
 
-	private skipInstallationProcess(){
+	private skipInstallationProcess(): void {
 		this.mainProgressBar.update(this.getProgressBarSteps(), {
-			step_name: 'Game already installed, process skipped'
+			step_name: 'Game already installed, process skipped',
 		});
 		this.mainProgressBar.stop();
 	}
@@ -61,7 +68,7 @@ export class GameInstallerService {
 		return models;
 	}
 
-	private async saveGameModelsToDatabase(models: object[]) {
+	private async saveGameModelsToDatabase(models: object[]): Promise<void> {
 		this.mainProgressBar.increment({
 			step_name: `Saving data to database`,
 		});
@@ -73,7 +80,7 @@ export class GameInstallerService {
 		});
 	}
 
-	private async logIntoRegister() {
+	private async logIntoRegister(): Promise<void> {
 		await this.installationDetailsRepository.insert({});
 	}
 }

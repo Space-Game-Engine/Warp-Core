@@ -5,14 +5,14 @@ export class HabitatBuildingsConfig {
 	 * Id of the building from `building` table
 	 */
 	@IsString()
-	id: string;
+	public id: string;
 
 	/**
 	 * Building zone id from habitat - there will be placed a new building
 	 */
 	@IsNumber()
 	@Min(1)
-	localBuildingZoneId: number;
+	public localBuildingZoneId: number;
 
 	/**
 	 * What level should new building have?
@@ -20,5 +20,5 @@ export class HabitatBuildingsConfig {
 	@IsNumber()
 	@Min(1)
 	@IsOptional()
-	level: number = 1;
+	public level: number = 1;
 }

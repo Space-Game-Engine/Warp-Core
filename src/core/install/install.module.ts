@@ -1,23 +1,27 @@
 import {DynamicModule, Module, Type} from '@nestjs/common';
 import {MultiBar, Presets} from 'cli-progress';
+
 import {InstallCommand} from './install.command';
 import {LoadConfigService} from './service/load-config.service';
-import {ModuleInstallationInterfaceType} from '@warp-core/core/install/service/module-installation.interface';
+
+import {
+	INSTALLER_SERVICES,
+	PROGRESS_BAR,
+} from '@warp-core/core/install/installation.constants';
 import {GameInstallerService} from '@warp-core/core/install/service/game-installer.service';
-import {INSTALLER_SERVICES, PROGRESS_BAR} from '@warp-core/core/install/installation.constants';
-import {DatabaseModule} from '@warp-core/database';
+import {ModuleInstallationInterfaceType} from '@warp-core/core/install/service/module-installation.interface';
+import {DatabaseModule} from '@warp-core/database/database.module';
 
-type singleInstallToken = {
-	module: Type<any>,
-	service: ModuleInstallationInterfaceType
-}
-
+type SingleInstallToken = {
+	module: Type;
+	service: ModuleInstallationInterfaceType;
+};
 
 @Module({})
 export class InstallModule {
-	public static readonly installTokens: Set<singleInstallToken> = new Set();
+	public static readonly installTokens: Set<SingleInstallToken> = new Set();
 
-	static register(): DynamicModule {
+	public static register(): DynamicModule {
 		return {
 			module: InstallModule,
 			providers: [
@@ -26,28 +30,28 @@ export class InstallModule {
 				{
 					provide: INSTALLER_SERVICES,
 					useFactory: (...args: ModuleInstallationInterfaceType[]) => args,
-					inject: this.getInstallationServices()
+					inject: this.getInstallationServices(),
 				},
 				GameInstallerService,
 				{
 					provide: PROGRESS_BAR,
-					useFactory: () => {
-						return new MultiBar({
-							clearOnComplete: false,
-							hideCursor: true,
-							format: ' {bar} | {step_name} | {value}/{total}',
-						}, Presets.shades_grey);
-		}
-				}
+					useFactory: (): MultiBar => {
+						return new MultiBar(
+							{
+								clearOnComplete: false,
+								hideCursor: true,
+								format: ' {bar} | {step_name} | {value}/{total}',
+							},
+							Presets.shades_grey,
+						);
+					},
+				},
 			],
-			imports: [
-				DatabaseModule,
-				...this.getModules()
-			]
-		}
+			imports: [DatabaseModule, ...this.getModules()],
+		};
 	}
 
-	private static getModules(): Type<any>[] {
+	private static getModules(): Type[] {
 		return Array.from(this.installTokens).map(value => value.module);
 	}
 

@@ -1,48 +1,46 @@
-import {
-	EntitySubscriberInterface,
-	Repository,
-} from 'typeorm';
-import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
 import {Inject, Injectable} from '@nestjs/common';
+import {EntitySubscriberInterface, Repository} from 'typeorm';
+
+import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
 
 @Injectable()
 export abstract class AbstractRepository<
-	T extends Object,
+	T extends object,
 > extends Repository<T> {
 	@Inject(TransactionManagerService)
 	private readonly transactionManager: TransactionManagerService;
 
 	private static disabledEntityListeners: Map<
-		Function | string,
+		object | string,
 		EntitySubscriberInterface
-	> = new Map<Function | string, EntitySubscriberInterface>();
+	> = new Map<object | string, EntitySubscriberInterface>();
 
 	/**
 	 * Creates shared transaction.
 	 * Shared transaction allows using transactions in different modules
 	 * and different scopes.
 	 */
-	async startTransaction(): Promise<void> {
-		await this.transactionManager.startTransaction();
+	public startTransaction(): Promise<void> {
+		return this.transactionManager.startTransaction();
 	}
 
 	/**
 	 * Commit transaction
 	 */
-	async commitTransaction() {
-		await this.transactionManager.commitTransaction();
+	public commitTransaction(): Promise<void> {
+		return this.transactionManager.commitTransaction();
 	}
 
 	/**
 	 * Rollback transaction
 	 */
-	async rollbackTransaction() {
-		await this.transactionManager.rollbackTransaction();
+	public rollbackTransaction(): Promise<void> {
+		return this.transactionManager.rollbackTransaction();
 	}
 
 	public disableEntityListeners(
-		entityType: Function | Function[] | string | string[],
-	) {
+		entityType: object | object[] | string | string[],
+	): void {
 		const entityTypesToCheck = Array.isArray(entityType)
 			? entityType
 			: [entityType];
@@ -51,10 +49,12 @@ export abstract class AbstractRepository<
 		for (let i = subscriber.length - 1; i >= 0; --i) {
 			const subscriberElement = subscriber[i];
 
-			// @ts-ignore
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
 			if (entityTypesToCheck.includes(subscriberElement.listenTo())) {
 				AbstractRepository.disabledEntityListeners.set(
-					// @ts-ignore
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-expect-error
 					subscriberElement.listenTo(),
 					subscriberElement,
 				);
@@ -64,8 +64,8 @@ export abstract class AbstractRepository<
 	}
 
 	public enableEntityListeners(
-		entityType: Function | Function[] | string | string[],
-	) {
+		entityType: object | object[] | string | string[],
+	): void {
 		const entityTypesToCheck = Array.isArray(entityType)
 			? entityType
 			: [entityType];
@@ -75,7 +75,8 @@ export abstract class AbstractRepository<
 			const disabledEntity = AbstractRepository.disabledEntityListeners.get(
 				entityTypesToCheckElement,
 			);
-			// @ts-ignore
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-expect-error
 			subscriber.push(disabledEntity);
 			AbstractRepository.disabledEntityListeners.delete(
 				entityTypesToCheckElement,

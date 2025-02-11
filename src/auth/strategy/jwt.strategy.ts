@@ -1,7 +1,9 @@
-import {ExtractJwt, Strategy} from 'passport-jwt';
-import {PassportStrategy} from '@nestjs/passport';
 import {Injectable} from '@nestjs/common';
 import {ConfigService} from '@nestjs/config';
+import {PassportStrategy} from '@nestjs/passport';
+import {ExtractJwt, Strategy} from 'passport-jwt';
+
+import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
 import {PayloadInterface} from '@warp-core/auth/interface/payload.interface';
 
 @Injectable()
@@ -14,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		});
 	}
 
-	async validate(payload: PayloadInterface) {
+	public validate(payload: PayloadInterface): AuthModelInterface {
 		return payload.dbModel;
 	}
 }

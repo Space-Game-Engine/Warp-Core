@@ -5,11 +5,11 @@ export class LoginParameters {
 		type: Number,
 		description: 'Id of user that wants to log in',
 	})
-	readonly userId: number;
+	public readonly userId: number;
 
 	@ApiProperty({
 		type: Number,
 		description: 'Id of habitat that should be shown',
 	})
-	readonly habitatId: number;
+	public readonly habitatId: number;
 }

@@ -1,10 +1,9 @@
 import {Injectable} from '@nestjs/common';
-import {
-	BuildingModel,
-	BuildingProductionRateModel,
-} from '@warp-core/database/model';
-import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 import {DataSource, In} from 'typeorm';
+
+import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()
 export class BuildingRepository extends AbstractRepository<BuildingModel> {
@@ -12,7 +11,7 @@ export class BuildingRepository extends AbstractRepository<BuildingModel> {
 		super(BuildingModel, dataSource.createEntityManager());
 	}
 
-	getBuildingById(buildingId: string): Promise<BuildingModel | null> {
+	public getBuildingById(buildingId: string): Promise<BuildingModel | null> {
 		return this.findOne({
 			where: {
 				id: buildingId,
@@ -20,17 +19,17 @@ export class BuildingRepository extends AbstractRepository<BuildingModel> {
 		});
 	}
 
-	getAllBuildings(): Promise<BuildingModel[]> {
+	public getAllBuildings(): Promise<BuildingModel[]> {
 		return this.find();
 	}
 
-	getBuildingsByIds(buildingIds: string[]): Promise<BuildingModel[]> {
+	public getBuildingsByIds(buildingIds: string[]): Promise<BuildingModel[]> {
 		return this.findBy({
 			id: In(buildingIds),
 		});
 	}
 
-	async getProductionRateForProvidedLevel(
+	public async getProductionRateForProvidedLevel(
 		buildingId: string,
 		buildingLevel: number,
 	): Promise<BuildingProductionRateModel[]> {
@@ -43,6 +42,6 @@ export class BuildingRepository extends AbstractRepository<BuildingModel> {
 			await buildingModel.buildingDetailsAtCertainLevel
 		).find(buildingDetails => buildingDetails.level === buildingLevel);
 
-		return await detailsAtSelectedLevel!.productionRate ?? [];
+		return (await detailsAtSelectedLevel!.productionRate) ?? [];
 	}
 }

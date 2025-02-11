@@ -1,6 +1,3 @@
-import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {BuildingModel} from '@warp-core/database/model/building.model';
-import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {Field, ID, ObjectType} from '@nestjs/graphql';
 import {IsBoolean, IsDate, IsNumber} from 'class-validator';
 import {
@@ -10,7 +7,11 @@ import {
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
+
 import {DraftModelInterface} from '@warp-core/core/utils';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 
 @ObjectType({description: 'Defines one pending item in building queue'})
 @Entity({name: 'building-queue-element'})
@@ -18,31 +19,31 @@ export class BuildingQueueElementModel implements DraftModelInterface {
 	@Field(() => ID)
 	@IsNumber()
 	@PrimaryGeneratedColumn()
-	id?: number | null;
+	public id?: number | null;
 
 	@Field({description: 'What was level on queue start?'})
 	@IsNumber()
 	@Column('int')
-	startLevel: number;
+	public startLevel: number;
 
 	@Field({description: 'What was level on queue end?'})
 	@IsNumber()
 	@Column('int')
-	endLevel: number;
+	public endLevel: number;
 
 	@Field({description: 'At what time queue element will start?'})
 	@IsDate()
 	@Column('datetime')
-	startTime: Date;
+	public startTime: Date;
 
 	@Field({description: 'At what time queue element will end?'})
 	@IsDate()
 	@Column('datetime')
-	endTime: Date;
+	public endTime: Date;
 
 	@IsBoolean()
 	@Column('boolean')
-	isConsumed: boolean = false;
+	public isConsumed: boolean = false;
 
 	@Field(() => BuildingModel, {
 		nullable: true,
@@ -52,10 +53,10 @@ export class BuildingQueueElementModel implements DraftModelInterface {
 		lazy: true,
 	})
 	@JoinColumn({name: 'buildingId'})
-	building?: BuildingModel | Promise<BuildingModel> | null;
+	public building?: BuildingModel | Promise<BuildingModel> | null;
 
 	@Column({nullable: true})
-	buildingId?: string;
+	public buildingId?: string;
 
 	@Field(() => BuildingZoneModel, {
 		description: 'Building zone connected to queue element',
@@ -68,14 +69,14 @@ export class BuildingQueueElementModel implements DraftModelInterface {
 		},
 	)
 	@JoinColumn({name: 'buildingZoneId'})
-	buildingZone: BuildingZoneModel | Promise<BuildingZoneModel>;
+	public buildingZone: BuildingZoneModel | Promise<BuildingZoneModel>;
 
 	@Column()
-	buildingZoneId?: number;
+	public buildingZoneId?: number;
 
 	@Field(() => [QueueElementCostModel], {
 		description: 'How much does that queue element cost?',
 	})
 	@Column('simple-json')
-	costs: QueueElementCostModel[];
+	public costs: QueueElementCostModel[];
 }

@@ -2,7 +2,12 @@ import {Module} from '@nestjs/common';
 import {ConfigModule, ConfigService} from '@nestjs/config';
 import {APP_GUARD} from '@nestjs/core';
 import {JwtModule, JwtService} from '@nestjs/jwt';
+import {JwtModuleOptions} from '@nestjs/jwt/dist/interfaces/jwt-module-options.interface';
 import {PassportModule} from '@nestjs/passport';
+import {Request} from 'express';
+import {CLS_REQ, ClsModule} from 'nestjs-cls';
+import {ExtractJwt} from 'passport-jwt';
+
 import {AuthController} from '@warp-core/auth/auth.controller';
 import {GqlAuthGuard} from '@warp-core/auth/guard/gql-auth.guard';
 import {PayloadInterface} from '@warp-core/auth/interface/payload.interface';
@@ -12,13 +17,13 @@ import {RegisterService} from '@warp-core/auth/register/register.service';
 import {JwtStrategy} from '@warp-core/auth/strategy/jwt.strategy';
 import {LocalStrategy} from '@warp-core/auth/strategy/local.strategy';
 import {HabitatValidatorService} from '@warp-core/auth/strategy/validator/habitat-validator.service';
-import {DatabaseModule, HabitatRepository} from '@warp-core/database';
-import {Request} from 'express';
-import {CLS_REQ, ClsModule} from 'nestjs-cls';
-import {ExtractJwt} from 'passport-jwt';
+import {DatabaseModule} from '@warp-core/database/database.module';
+import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
 
 const jwtFactory = {
-	useFactory: async (configService: ConfigService) => ({
+	useFactory: async (
+		configService: ConfigService,
+	): Promise<JwtModuleOptions> => ({
 		secret: configService.get('jwt.secret'),
 		signOptions: {
 			expiresIn: configService.get('jwt.expiresIn'),
@@ -63,7 +68,9 @@ const jwtFactory = {
 				jwtService: JwtService,
 			) => {
 				const extractJwt = ExtractJwt.fromAuthHeaderAsBearerToken();
-				const payload = jwtService.decode(extractJwt(req) ?? '') as PayloadInterface;
+				const payload = jwtService.decode(
+					extractJwt(req) ?? '',
+				) as PayloadInterface;
 
 				if (!payload) {
 					return null;

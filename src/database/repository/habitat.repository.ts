@@ -1,7 +1,8 @@
 import {Injectable} from '@nestjs/common';
-import {HabitatModel} from '@warp-core/database/model';
-import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 import {DataSource} from 'typeorm';
+
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()
 export class HabitatRepository extends AbstractRepository<HabitatModel> {
@@ -9,7 +10,7 @@ export class HabitatRepository extends AbstractRepository<HabitatModel> {
 		super(HabitatModel, dataSource.createEntityManager());
 	}
 
-	getHabitatById(habitatId: number): Promise<HabitatModel | null> {
+	public getHabitatById(habitatId: number): Promise<HabitatModel | null> {
 		return this.findOne({
 			where: {
 				id: habitatId,
@@ -17,7 +18,7 @@ export class HabitatRepository extends AbstractRepository<HabitatModel> {
 		});
 	}
 
-	getHabitatsByUserId(userId: number): Promise<HabitatModel[]> {
+	public getHabitatsByUserId(userId: number): Promise<HabitatModel[]> {
 		return this.find({
 			where: {
 				userId: userId,

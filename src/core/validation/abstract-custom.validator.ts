@@ -3,13 +3,13 @@ import {
 	ArgumentMetadata,
 	BadRequestException,
 } from '@nestjs/common';
-import {validate} from 'class-validator';
 import {plainToInstance} from 'class-transformer';
+import {validate} from 'class-validator';
 
 export abstract class CustomValidator<T extends object>
-	implements PipeTransform<any>
+	implements PipeTransform<T>
 {
-	async transform(value: any, {metatype}: ArgumentMetadata) {
+	public async transform(value: T, {metatype}: ArgumentMetadata): Promise<T> {
 		if (!metatype || !this.isPossibleToValidate(metatype)) {
 			return value;
 		}
@@ -23,8 +23,8 @@ export abstract class CustomValidator<T extends object>
 		return value;
 	}
 
-	private isPossibleToValidate(metatype: Function): boolean {
-		const types: Function[] = [String, Boolean, Number, Array, Object];
+	private isPossibleToValidate(metatype): boolean {
+		const types = [String, Boolean, Number, Array, Object];
 		return !types.includes(metatype);
 	}
 

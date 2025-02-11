@@ -1,47 +1,63 @@
 module.exports = {
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint/eslint-plugin', 'unused-imports'],
+  extends: [
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'prettier',
+    'plugin:prettier/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
+  ],
   root: true,
   env: {
     node: true,
+    jest: true,
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
-  extends: [
-    'plugin:@typescript-eslint/recommended',
-    'prettier',
-  ],
-  overrides: [
-    {
-      files: ['**/*.ts'],
-      parser: '@typescript-eslint/parser',
-      parserOptions: {
-        project: 'tsconfig.json',
-        sourceType: 'module',
-      },
-      rules: {
-        '@typescript-eslint/interface-name-prefix': 'off',
-        '@typescript-eslint/explicit-function-return-type': 'off',
-        '@typescript-eslint/no-explicit-any': 'off',
-        '@typescript-eslint/explicit-module-boundary-types': 'off',
-        '@typescript-eslint/no-unused-vars': 'off',
-        '@typescript-eslint/ban-types': 'off',
-        '@typescript-eslint/ban-ts-comment': 'off',
-      },
+  settings: {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts"]
     },
-    {
-      files: ['**/*.spec.ts', 'integration/**/*.ts'],
-      parser: '@typescript-eslint/parser',
-      parserOptions: {
-        project: 'tsconfig.spec.json',
-        sourceType: 'module',
-      },
-      rules: {
-        '@typescript-eslint/interface-name-prefix': 'off',
-        '@typescript-eslint/explicit-function-return-type': 'off',
-        '@typescript-eslint/no-explicit-any': 'off',
-        '@typescript-eslint/explicit-module-boundary-types': 'off',
-        '@typescript-eslint/no-unused-vars': 'off',
-        '@typescript-eslint/ban-types': 'off',
-        '@typescript-eslint/no-empty-function': 'off',
-      },
+    'import/resolver': {
+      'typescript': {
+        "alwaysTryTypes": true,
+      }
     }
-  ]
+  },
+  rules: {
+    'no-fallthrough': 'error',
+    'prettier/prettier': 'error',
+    '@typescript-eslint/no-explicit-any': 'error',
+    'import/order': [
+      'error',
+      {
+        'newlines-between': 'always',
+        alphabetize: { order: 'asc', caseInsensitive: true },
+      },
+    ],
+    '@typescript-eslint/explicit-member-accessibility': [
+      'error',
+      {
+        overrides: {
+          accessors: 'explicit',
+          constructors: 'off',
+          methods: 'explicit',
+          properties: 'explicit',
+          parameterProperties: 'explicit',
+        },
+      },
+    ],
+    'import/no-unresolved': 'error',
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/array-type': [
+      'error',
+      {
+        default: 'array',
+        readonly: 'array',
+      },
+    ],
+    '@typescript-eslint/explicit-function-return-type': 'error',
+    'unused-imports/no-unused-imports': 'error',
+  },
+  ignorePatterns: ['node_modules', 'dist'],
 };
