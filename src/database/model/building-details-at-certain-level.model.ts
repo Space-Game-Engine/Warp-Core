@@ -1,5 +1,3 @@
-import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
-import {BuildingModel} from '@warp-core/database/model/building.model';
 import {Field, ID, Int, ObjectType} from '@nestjs/graphql';
 import {Type} from 'class-transformer';
 import {
@@ -18,17 +16,18 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
-import {
-	BuildingRequirementsModel,
-	WarehouseDetailsModel,
-} from '@warp-core/database';
+
+import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
+import {BuildingRequirementsModel} from '@warp-core/database/model/building-requirements.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
 
 @ObjectType({description: 'Details how to upgrade single building'})
 @Entity({name: 'building-details-at-certain-level'})
 export class BuildingDetailsAtCertainLevelModel {
 	@Field(() => ID)
 	@PrimaryGeneratedColumn()
-	id: number;
+	public id: number;
 
 	@Field(() => BuildingModel, {
 		description: 'Building connected to that details',
@@ -40,13 +39,13 @@ export class BuildingDetailsAtCertainLevelModel {
 			lazy: true,
 		},
 	)
-	building: BuildingModel | Promise<BuildingModel>;
+	public building: BuildingModel | Promise<BuildingModel>;
 
 	@Field(() => Int, {description: 'What level is described by this entry'})
 	@IsNumber()
 	@Min(1)
 	@Column('int')
-	level: number;
+	public level: number;
 
 	@Field(() => Int, {
 		description: 'How much time it takes to upgrade that building',
@@ -54,7 +53,7 @@ export class BuildingDetailsAtCertainLevelModel {
 	@IsNumber()
 	@Min(1)
 	@Column('int')
-	timeToUpdateBuildingInSeconds: number;
+	public timeToUpdateBuildingInSeconds: number;
 
 	@Field(() => [BuildingProductionRateModel], {
 		description:
@@ -75,7 +74,7 @@ export class BuildingDetailsAtCertainLevelModel {
 		},
 	)
 	@Type(() => BuildingProductionRateModel)
-	productionRate?:
+	public productionRate?:
 		| BuildingProductionRateModel[]
 		| Promise<BuildingProductionRateModel[]>
 		| null;
@@ -99,7 +98,7 @@ export class BuildingDetailsAtCertainLevelModel {
 		},
 	)
 	@Type(() => BuildingRequirementsModel)
-	requirements?:
+	public requirements?:
 		| BuildingRequirementsModel[]
 		| Promise<BuildingRequirementsModel[]>
 		| null;
@@ -122,26 +121,29 @@ export class BuildingDetailsAtCertainLevelModel {
 		},
 	)
 	@Type(() => WarehouseDetailsModel)
-	warehouse?: WarehouseDetailsModel[] | Promise<WarehouseDetailsModel[]> | null;
+	public warehouse?:
+		| WarehouseDetailsModel[]
+		| Promise<WarehouseDetailsModel[]>
+		| null;
 
 	@BeforeInsert()
 	@BeforeUpdate()
-	async setOneToManyRelations() {
-		const productionRates = await this.productionRate ?? [];
+	public async setOneToManyRelations(): Promise<void> {
+		const productionRates = (await this.productionRate) ?? [];
 		for (const productionRate of productionRates) {
 			if (!(await productionRate.buildingDetails)) {
 				productionRate.buildingDetails = this;
 			}
 		}
 
-		const requirements = await this.requirements ?? [];
+		const requirements = (await this.requirements) ?? [];
 		for (const requirement of requirements) {
 			if (!(await requirement.buildingDetails)) {
 				requirement.buildingDetails = this;
 			}
 		}
 
-		const warehouse = await this.warehouse ?? [];
+		const warehouse = (await this.warehouse) ?? [];
 		for (const singleWarehouseDetail of warehouse) {
 			if (!(await singleWarehouseDetail.buildingDetails)) {
 				singleWarehouseDetail.buildingDetails = this;

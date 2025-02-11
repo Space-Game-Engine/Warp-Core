@@ -1,8 +1,9 @@
 import {Test, TestingModule} from '@nestjs/testing';
-import {ResourceRepository} from '@warp-core/database/repository/resource.repository';
 import {DataSource} from 'typeorm';
+
+import {ResourceRepository} from '@warp-core/database/repository/resource.repository';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
-jest.mock("../transaction-manager.service");
+jest.mock('../transaction-manager.service');
 
 describe('Resource repository test', () => {
 	let resourceRepository: ResourceRepository;
@@ -14,10 +15,10 @@ describe('Resource repository test', () => {
 				{
 					provide: DataSource,
 					useValue: {
-						createEntityManager() {},
+						createEntityManager: (): void => {},
 					},
 				},
-				TransactionManagerService
+				TransactionManagerService,
 			],
 		}).compile();
 

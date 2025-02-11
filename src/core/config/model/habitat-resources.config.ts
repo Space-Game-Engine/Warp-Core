@@ -5,12 +5,12 @@ export class HabitatResourcesConfig {
 	 * Resource id from `resource` table
 	 */
 	@IsString()
-	id: string;
+	public id: string;
 
 	/**
 	 * How many resources user will have at the beginning?
 	 */
 	@IsNumber()
 	@IsPositive()
-	amount: number;
+	public amount: number;
 }

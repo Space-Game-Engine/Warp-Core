@@ -1,7 +1,9 @@
 import {Type} from 'class-transformer';
 import {IsOptional, ValidateNested} from 'class-validator';
+
 import {BuildingQueueConfig} from './building-queue.config';
 import {BuildingZoneConfig} from './building-zones.config';
+
 import {OnStartConfig} from '@warp-core/core/config/model/on-start.config';
 
 export class HabitatConfig {
@@ -11,14 +13,14 @@ export class HabitatConfig {
 	 */
 	@Type(() => BuildingZoneConfig)
 	@ValidateNested()
-	buildingZones: BuildingZoneConfig;
+	public buildingZones: BuildingZoneConfig;
 
 	/**
 	 * Configuration related to building queue
 	 */
 	@Type(() => BuildingQueueConfig)
 	@ValidateNested()
-	buildingQueue: BuildingQueueConfig;
+	public buildingQueue: BuildingQueueConfig;
 
 	/**
 	 * What should game do when user create its first habitat
@@ -26,5 +28,5 @@ export class HabitatConfig {
 	@Type(() => OnStartConfig)
 	@ValidateNested()
 	@IsOptional()
-	onStart: OnStartConfig;
+	public onStart: OnStartConfig;
 }

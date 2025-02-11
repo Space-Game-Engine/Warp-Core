@@ -1,5 +1,6 @@
-import {Command, Option} from 'nestjs-command';
 import {Injectable} from '@nestjs/common';
+import {Command, Option} from 'nestjs-command';
+
 import {GameInstallerService} from '@warp-core/core/install/service/game-installer.service';
 import {LoadConfigService} from '@warp-core/core/install/service/load-config.service';
 
@@ -14,7 +15,7 @@ export class InstallCommand {
 		command: 'install',
 		describe: 'installs basics of game data',
 	})
-	async install(
+	public async install(
 		@Option({
 			name: 'directory',
 			describe: 'directory where yaml files are placed',
@@ -24,8 +25,8 @@ export class InstallCommand {
 			demandOption: false,
 		})
 		directory: string,
-	) {
-		const installationConfig =  this.loadConfig.fetchConfig(directory);
+	): Promise<void> {
+		const installationConfig = this.loadConfig.fetchConfig(directory);
 
 		await this.gameInstaller.installGame(installationConfig);
 	}

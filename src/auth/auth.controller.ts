@@ -9,7 +9,6 @@ import {
 	Inject,
 	ParseIntPipe,
 } from '@nestjs/common';
-import {Response} from 'express';
 import {
 	ApiBody,
 	ApiCreatedResponse,
@@ -17,14 +16,16 @@ import {
 	ApiQuery,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import {Response} from 'express';
+
+import {Public} from '@warp-core/auth/decorator/public-path.decorator';
+import {JwtAuthGuard} from '@warp-core/auth/guard/jwt-auth.guard';
+import {LocalAuthGuard} from '@warp-core/auth/guard/local-auth.guard';
+import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
+import {AccessToken} from '@warp-core/auth/login/access-token.model';
+import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';
 import {LoginInterface} from '@warp-core/auth/login/login.interface';
 import {RegisterInterface} from '@warp-core/auth/register/register.interface';
-import {Public} from '@warp-core/auth/decorator/public-path.decorator';
-import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';
-import {LocalAuthGuard} from '@warp-core/auth/guard/local-auth.guard';
-import {AccessToken} from '@warp-core/auth/login/access-token.model';
-import {JwtAuthGuard} from '@warp-core/auth/guard/jwt-auth.guard';
-import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -47,10 +48,10 @@ export class AuthController {
 			'New habitat for provided user was created. You can reuse response in login request to fetch jwt token',
 		type: LoginParameters,
 	})
-	async createHabitat(
+	public async createHabitat(
 		@Param('id', new ParseIntPipe()) id: number,
 		@Res() res: Response,
-	) {
+	): Promise<void> {
 		const loginParameters = await this.registerService.registerUser(id);
 
 		res.json(loginParameters);
@@ -71,13 +72,15 @@ export class AuthController {
 		description:
 			'Provided credentials are wrong, check again your UserId and HabitatId. Maybe try to create new habitat first?',
 	})
-	async login(@Request() req: {user: AuthModelInterface}) {
+	public login(
+		@Request() req: {user: AuthModelInterface},
+	): Promise<AccessToken> {
 		return this.loginService.login(req.user);
 	}
 
 	@UseGuards(JwtAuthGuard)
 	@Get('profile')
-	getProfile(@Request() req) {
+	public getProfile(@Request() req): AuthModelInterface {
 		return req.user;
 	}
 }

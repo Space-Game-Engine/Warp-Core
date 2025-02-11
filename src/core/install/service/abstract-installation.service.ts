@@ -1,19 +1,19 @@
 import {Logger, Type} from '@nestjs/common';
 import {plainToInstance} from 'class-transformer';
 import {validateSync} from 'class-validator';
-import {ModuleInstallationInterface} from '@warp-core/core/install/service/module-installation.interface';
-import {LoadedConfig} from '@warp-core/core/install/service/load-config.service';
-import {InstallError} from '@warp-core/core/install/exception/install.error';
-import {InstallValidationError} from '@warp-core/core/install/exception/install-validation.error';
 
-export abstract class AbstractInstallationService<T>
+import {InstallValidationError} from '@warp-core/core/install/exception/install-validation.error';
+import {LoadedConfig} from '@warp-core/core/install/service/load-config.service';
+import {ModuleInstallationInterface} from '@warp-core/core/install/service/module-installation.interface';
+
+export abstract class AbstractInstallationService<T extends object>
 	implements ModuleInstallationInterface<T>
 {
 	protected static readonly logger: Logger = new Logger('installation');
 
 	protected modelsList: T[] = [];
 
-	loadModels(loadedConfig: LoadedConfig): T[] {
+	public loadModels(loadedConfig: LoadedConfig): T[] {
 		const arrayToInstall = this.parseConfig(loadedConfig);
 
 		for (const key in arrayToInstall) {
@@ -38,7 +38,7 @@ export abstract class AbstractInstallationService<T>
 		return this.modelsList;
 	}
 
-	protected isModelValid(model: any): boolean {
+	protected isModelValid(model: object): boolean {
 		const validationErrors = validateSync(model);
 
 		if (validationErrors.length === 0) {
@@ -58,7 +58,6 @@ export abstract class AbstractInstallationService<T>
 	protected preValidationObject(modelToSave: T): T {
 		return modelToSave;
 	}
-
 
 	/**
 	 * Allows modifying an object **after** validation

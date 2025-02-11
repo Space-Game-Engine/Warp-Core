@@ -3,18 +3,17 @@ import {DataSource} from 'typeorm';
 
 @Injectable()
 export class TransactionManagerService {
-
 	constructor(private dataSource: DataSource) {}
 
-	public async startTransaction() {
-		this.dataSource.manager.queryRunner?.startTransaction();
+	public startTransaction(): Promise<void> {
+		return this.dataSource.manager.queryRunner!.startTransaction();
 	}
 
-	public async commitTransaction() {
-		this.dataSource.manager.queryRunner?.commitTransaction();
+	public commitTransaction(): Promise<void> {
+		return this.dataSource.manager.queryRunner!.commitTransaction();
 	}
 
-	public async rollbackTransaction() {
-		this.dataSource.manager.queryRunner?.rollbackTransaction();
+	public rollbackTransaction(): Promise<void> {
+		return this.dataSource.manager.queryRunner!.rollbackTransaction();
 	}
 }

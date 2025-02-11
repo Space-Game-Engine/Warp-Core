@@ -1,10 +1,11 @@
 import {Test, TestingModule} from '@nestjs/testing';
-import {BuildingZoneModel} from '@warp-core/database/model';
-import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {when} from 'jest-when';
 import {DataSource} from 'typeorm';
+
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
-jest.mock("../transaction-manager.service");
+jest.mock('../transaction-manager.service');
 
 describe('Building zone repository test', () => {
 	let buildingZoneRepository: BuildingZoneRepository;
@@ -18,10 +19,10 @@ describe('Building zone repository test', () => {
 				{
 					provide: DataSource,
 					useValue: {
-						createEntityManager() {},
+						createEntityManager: (): void => {},
 					},
 				},
-				TransactionManagerService
+				TransactionManagerService,
 			],
 		}).compile();
 

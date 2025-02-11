@@ -3,11 +3,11 @@ export class RegisterUserEvent {
 
 	constructor(private readonly userId: number) {}
 
-	getUserId(): number {
+	public getUserId(): number {
 		return this.userId;
 	}
 
-	setHabitatId(habitatId: number) {
+	public setHabitatId(habitatId: number): void {
 		if (this.habitatId) {
 			return;
 		}
@@ -15,7 +15,7 @@ export class RegisterUserEvent {
 		this.habitatId = habitatId;
 	}
 
-	getHabitatId(): number {
+	public getHabitatId(): number {
 		return this.habitatId;
 	}
 }

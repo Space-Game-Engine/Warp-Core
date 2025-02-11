@@ -1,2 +1,2 @@
-export const INSTALLER_SERVICES = 'INSTALLER_SERVICES';
-export const PROGRESS_BAR = 'PROGRESS_BAR';
+export const INSTALLER_SERVICES = Symbol('INSTALLER_SERVICES');
+export const PROGRESS_BAR = Symbol('PROGRESS_BAR');

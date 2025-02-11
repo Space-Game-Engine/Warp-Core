@@ -1,11 +1,12 @@
-import {validateSync} from 'class-validator';
 import {plainToInstance} from 'class-transformer';
+import {validateSync} from 'class-validator';
+
 import {CoreConfig} from './model/core.config';
 
 class ConfigParser {
 	private loadedConfig: CoreConfig;
 
-	getConfig(): CoreConfig {
+	public getConfig(): CoreConfig {
 		if (!this.loadedConfig) {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const config = require('config');

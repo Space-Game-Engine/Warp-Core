@@ -1,6 +1,7 @@
+import {IntersectionType, ObjectType, OmitType} from '@nestjs/graphql';
+
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {ResourceModel} from '@warp-core/database/model/resource.model';
-import {IntersectionType, ObjectType, OmitType} from '@nestjs/graphql';
 
 @ObjectType()
 export class HabitatResourceCombined extends IntersectionType(

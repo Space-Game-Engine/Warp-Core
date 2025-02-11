@@ -1,6 +1,3 @@
-import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
-import {BuildingModel} from '@warp-core/database/model/building.model';
-import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {Field, ObjectType} from '@nestjs/graphql';
 import {IsNumber, Min, ValidateNested} from 'class-validator';
 import {
@@ -11,10 +8,12 @@ import {
 	OneToMany,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
-import {
-	BuildingDetailsAtCertainLevelModel,
-	BuildingRoleEnum,
-} from '@warp-core/database';
+
+import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
+import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {BuildingModel} from '@warp-core/database/model/building.model';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
 
 @ObjectType({
 	description:
@@ -25,17 +24,17 @@ export class BuildingZoneModel {
 	/**
 	 * Minimal level with created building on that zone
 	 */
-	static readonly MINIMAL_BUILDING_LEVEL = 1;
+	public static readonly MINIMAL_BUILDING_LEVEL = 1;
 
 	// Real ID of building zone
 	@IsNumber()
 	@PrimaryGeneratedColumn()
-	id: number;
+	public id: number;
 
 	@Field({description: 'Building zone id counted for single habitat'})
 	@IsNumber()
 	@Column('int')
-	localBuildingZoneId: number;
+	public localBuildingZoneId: number;
 
 	@Field(() => HabitatModel, {
 		description: 'Habitat connected to that building zone',
@@ -45,10 +44,10 @@ export class BuildingZoneModel {
 		lazy: true,
 	})
 	@JoinColumn({name: 'habitatId'})
-	habitat: HabitatModel | Promise<HabitatModel>;
+	public habitat: HabitatModel | Promise<HabitatModel>;
 
 	@Column({name: 'habitatId'})
-	habitatId: number;
+	public habitatId: number;
 
 	@Field(() => BuildingModel, {
 		nullable: true,
@@ -58,23 +57,23 @@ export class BuildingZoneModel {
 		lazy: true,
 	})
 	@JoinColumn({name: 'buildingId'})
-	building?: BuildingModel | Promise<BuildingModel>;
+	public building?: BuildingModel | Promise<BuildingModel>;
 
 	@Column({name: 'buildingId', nullable: true})
-	buildingId?: string;
+	public buildingId?: string;
 
 	@Field({description: 'What level is that'})
 	@IsNumber()
 	@Min(0)
 	@Column('int')
-	level: number = 0;
+	public level: number = 0;
 
 	@Field({
 		nullable: true,
 		description: 'Where is that building zone placed in our habitat',
 	})
 	@Column('simple-json')
-	placement?: string;
+	public placement?: string;
 
 	@Field(() => [BuildingQueueElementModel], {
 		description: 'List of all queues connected to that building zone',
@@ -86,14 +85,14 @@ export class BuildingZoneModel {
 			lazy: true,
 		},
 	)
-	buildingQueue:
+	public buildingQueue:
 		| BuildingQueueElementModel[]
 		| Promise<BuildingQueueElementModel[]>;
 
 	private currentLevelBuildingDetails: BuildingDetailsAtCertainLevelModel | null =
 		null;
 
-	async getBuildingLevelDetails(): Promise<BuildingDetailsAtCertainLevelModel | null> {
+	public async getBuildingLevelDetails(): Promise<BuildingDetailsAtCertainLevelModel | null> {
 		if (this.currentLevelBuildingDetails !== null) {
 			return this.currentLevelBuildingDetails;
 		}
@@ -104,14 +103,15 @@ export class BuildingZoneModel {
 			return null;
 		}
 
-		this.currentLevelBuildingDetails = (
-			await building.buildingDetailsAtCertainLevel
-		).find(details => details.level === this.level) ?? null;
+		this.currentLevelBuildingDetails =
+			(await building.buildingDetailsAtCertainLevel).find(
+				details => details.level === this.level,
+			) ?? null;
 
 		return this.currentLevelBuildingDetails;
 	}
 
-	async hasWarehouse(): Promise<boolean> {
+	public async hasWarehouse(): Promise<boolean> {
 		const building = await this.building;
 		if (!building) {
 			return false;
@@ -127,7 +127,7 @@ export class BuildingZoneModel {
 			return false;
 		}
 
-		const warehouses = await buildingDetails.warehouse ?? [];
+		const warehouses = (await buildingDetails.warehouse) ?? [];
 
 		if (warehouses.length > 0) {
 			return true;

@@ -1,7 +1,8 @@
 import {Injectable} from '@nestjs/common';
-import {ResourceModel} from '@warp-core/database/model';
-import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 import {DataSource} from 'typeorm';
+
+import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()
 export class ResourceRepository extends AbstractRepository<ResourceModel> {

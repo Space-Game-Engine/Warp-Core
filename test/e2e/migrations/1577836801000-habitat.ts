@@ -1,5 +1,6 @@
 import {MigrationInterface, QueryRunner} from 'typeorm';
-import {HabitatModel} from '@warp-core/database';
+
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
 
 export class HabitatMigration1577836801000 implements MigrationInterface {
 	public readonly habitatsToMigrate = [
@@ -7,17 +8,17 @@ export class HabitatMigration1577836801000 implements MigrationInterface {
 			id: 1,
 			userId: 1,
 			isMain: true,
-			name: "first test habitat"
-		}
+			name: 'first test habitat',
+		},
 	] as HabitatModel[];
 
-	async up(queryRunner: QueryRunner) {
+	public async up(queryRunner: QueryRunner): Promise<void> {
 		for (const habitatModel of this.habitatsToMigrate) {
 			await queryRunner.manager.insert(HabitatModel, habitatModel);
 		}
 	}
 
-	async down(queryRunner: QueryRunner) {
+	public async down(queryRunner: QueryRunner): Promise<void> {
 		await queryRunner.manager.clear(HabitatModel);
 	}
 }

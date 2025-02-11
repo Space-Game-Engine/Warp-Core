@@ -1,8 +1,9 @@
-import {e2eModule} from '@warp-core/test/e2e/utils/e2e-module';
-import {TestingModule} from '@nestjs/testing';
 import {HttpStatus, INestApplication} from '@nestjs/common';
+import {TestingModule} from '@nestjs/testing';
 import * as request from 'supertest';
+
 import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';
+import {e2eModule} from '@warp-core/test/e2e/utils/e2e-module';
 
 describe('Login', () => {
 	let module: TestingModule;

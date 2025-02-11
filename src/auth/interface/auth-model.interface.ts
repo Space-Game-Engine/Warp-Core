@@ -5,5 +5,5 @@ export interface AuthModelInterface {
 	/**
 	 * Get Id from implemented model
 	 */
-	getAuthId(): any;
+	getAuthId(): string;
 }

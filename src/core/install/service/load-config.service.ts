@@ -1,12 +1,13 @@
 import * as fs from 'fs';
+
 import * as yaml from 'js-yaml';
 
 export type LoadedConfig = {
-	[key: string]: object[]
-}
+	[key: string]: object[];
+};
 
 export class LoadConfigService {
-	fetchConfig(configDirectory: string): LoadedConfig {
+	public fetchConfig(configDirectory: string): LoadedConfig {
 		if (fs.existsSync(configDirectory) === false) {
 			throw new Error(
 				'Installation directory does not exists: ' + configDirectory,

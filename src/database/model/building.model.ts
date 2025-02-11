@@ -1,5 +1,3 @@
-import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
-import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';
 import {Field, ID, ObjectType} from '@nestjs/graphql';
 import {Type} from 'class-transformer';
 import {
@@ -20,25 +18,28 @@ import {
 	PrimaryColumn,
 } from 'typeorm';
 
+import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
+import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';
+
 @ObjectType({description: 'Single building type, describes its role in game'})
 @Entity({name: 'building'})
 export class BuildingModel {
 	@Field(() => ID)
 	@IsString()
 	@PrimaryColumn()
-	id: string;
+	public id: string;
 
 	@Field(() => BuildingRoleEnum, {
 		description: 'Role says what that building do',
 	})
 	@IsEnum(BuildingRoleEnum)
 	@Column('varchar')
-	role: BuildingRoleEnum;
+	public role: BuildingRoleEnum;
 
 	@Field({description: 'What name that kind of building have'})
 	@Length(2, 255)
 	@Column('varchar')
-	name: string;
+	public name: string;
 
 	@Field(() => [BuildingDetailsAtCertainLevelModel], {
 		description: 'Details how to upgrade that building',
@@ -57,13 +58,13 @@ export class BuildingModel {
 	)
 	@JoinColumn({name: 'buildingDetailsAtCertainLevelId'})
 	@Type(() => BuildingDetailsAtCertainLevelModel)
-	buildingDetailsAtCertainLevel:
+	public buildingDetailsAtCertainLevel:
 		| BuildingDetailsAtCertainLevelModel[]
 		| Promise<BuildingDetailsAtCertainLevelModel[]>;
 
 	@BeforeInsert()
 	@BeforeUpdate()
-	async setOneToManyRelations() {
+	public async setOneToManyRelations(): Promise<void> {
 		const buildingDetails = await this.buildingDetailsAtCertainLevel;
 		for (const buildingDetail of buildingDetails) {
 			if (!(await buildingDetail.building)) {

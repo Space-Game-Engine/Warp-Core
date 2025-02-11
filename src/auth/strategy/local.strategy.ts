@@ -1,8 +1,9 @@
-import {Strategy} from 'passport-local';
-import {PassportStrategy} from '@nestjs/passport';
 import {Inject, Injectable, UnauthorizedException} from '@nestjs/common';
-import {ValidatorInterface} from '@warp-core/auth/strategy/validator/validator.interface';
+import {PassportStrategy} from '@nestjs/passport';
+import {Strategy} from 'passport-local';
+
 import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
+import {ValidatorInterface} from '@warp-core/auth/strategy/validator/validator.interface';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -16,7 +17,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 		});
 	}
 
-	async validate(
+	public async validate(
 		userId: number,
 		habitatId: number,
 	): Promise<AuthModelInterface> {

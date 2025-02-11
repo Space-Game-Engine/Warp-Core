@@ -1,12 +1,11 @@
 import {Injectable} from '@nestjs/common';
-import {
-	BuildingZoneModel,
-	HabitatModel,
-	ResourceModel,
-	WarehouseDetailsModel,
-} from '@warp-core/database/model';
-import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 import {DataSource, FindOptionsUtils} from 'typeorm';
+
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
+import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()
 export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel> {
@@ -14,10 +13,10 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 		super(BuildingZoneModel, dataSource.createEntityManager());
 	}
 
-	async getAllBuildingZonesByHabitatId(
+	public getAllBuildingZonesByHabitatId(
 		habitatId: number,
 	): Promise<BuildingZoneModel[]> {
-		return await this.find({
+		return this.find({
 			where: {
 				habitat: {
 					id: habitatId,
@@ -26,11 +25,11 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 		});
 	}
 
-	async getSingleBuildingZone(
+	public getSingleBuildingZone(
 		localBuildingZoneId: number,
 		habitatId: number,
 	): Promise<BuildingZoneModel | null> {
-		return await this.findOne({
+		return this.findOne({
 			where: {
 				localBuildingZoneId: localBuildingZoneId,
 				habitat: {
@@ -40,20 +39,19 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 		});
 	}
 
-	async getSingleBuildingZoneById(
+	public getSingleBuildingZoneById(
 		id: number,
 	): Promise<BuildingZoneModel | null> {
-		return await this.findOne({
+		return this.findOne({
 			where: {
 				id: id,
 			},
 		});
 	}
 
-	async getMaxOfCounterPerHabitat(habitatId: number): Promise<number> {
-		const allBuildingZones = await this.getAllBuildingZonesByHabitatId(
-			habitatId,
-		);
+	public async getMaxOfCounterPerHabitat(habitatId: number): Promise<number> {
+		const allBuildingZones =
+			await this.getAllBuildingZonesByHabitatId(habitatId);
 		let maxCounterValue = 0;
 
 		for (const singleBuildingZone of allBuildingZones) {
@@ -65,7 +63,7 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 		return maxCounterValue;
 	}
 
-	getBuildingZoneProducersForSingleResource(
+	public getBuildingZoneProducersForSingleResource(
 		habitat: HabitatModel | number,
 		resourceType: ResourceModel,
 	): Promise<BuildingZoneModel[]> {
@@ -100,13 +98,12 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 		return queryBuilder.getMany();
 	}
 
-	async getWarehouseForResourceAndHabitat(
+	public async getWarehouseForResourceAndHabitat(
 		resource: ResourceModel,
 		habitatId: number,
 	): Promise<WarehouseDetailsModel[]> {
-		const buildingZonesForHabitat = await this.getAllBuildingZonesByHabitatId(
-			habitatId,
-		);
+		const buildingZonesForHabitat =
+			await this.getAllBuildingZonesByHabitatId(habitatId);
 		const warehouses = (
 			await Promise.all(
 				buildingZonesForHabitat.map(async singleBuildingZone => {

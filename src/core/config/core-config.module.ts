@@ -1,5 +1,6 @@
 import {Module} from '@nestjs/common';
 import {ConfigService} from '@nestjs/config';
+
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 
 @Module({
@@ -7,7 +8,7 @@ import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 		{
 			provide: RuntimeConfig,
 			inject: [ConfigService],
-			useFactory: (configService: ConfigService) => {
+			useFactory: (configService: ConfigService): RuntimeConfig | undefined => {
 				return configService.get<RuntimeConfig>('runtime');
 			},
 		},
