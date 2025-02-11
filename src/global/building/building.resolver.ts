@@ -1,4 +1,5 @@
 import {Args, ID, Parent, Query, ResolveField, Resolver} from '@nestjs/graphql';
+
 import {BuildingService} from './building.service';
 
 import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';

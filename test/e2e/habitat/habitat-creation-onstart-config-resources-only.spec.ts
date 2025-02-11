@@ -1,12 +1,13 @@
 import {HttpStatus, INestApplication} from '@nestjs/common';
-import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
+
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
 import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/e2e-module';
 import {requestGraphQL} from '@warp-core/test/e2e/utils/graphql-request-test';
-import {BuildingZoneModel, HabitatResourceCombined} from '@warp-core/database';
+import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
 
 describe('Habitat Creation when onStart config contains resources', () => {
-
 	let app: INestApplication;
 	let requestTest: GraphqlRequestTest;
 	let config: RuntimeConfig;
@@ -63,9 +64,11 @@ describe('Habitat Creation when onStart config contains resources', () => {
 			.send()
 			.expect(HttpStatus.OK);
 
-		response.body.data.buildingZone_getAll.forEach((buildingZone: Partial<BuildingZoneModel>) => {
-			expect(buildingZone.building).toBeNull();
-		});
+		response.body.data.buildingZone_getAll.forEach(
+			(buildingZone: Partial<BuildingZoneModel>) => {
+				expect(buildingZone.building).toBeNull();
+			},
+		);
 	});
 
 	it('should have empty building queue', async () => {
@@ -93,24 +96,25 @@ describe('Habitat Creation when onStart config contains resources', () => {
 			.send()
 			.expect(HttpStatus.OK);
 
-		response.body.data.resource_getAll.forEach((singleResource: Partial<HabitatResourceCombined>) => {
-			let amountToExpect = 0;
-			switch (singleResource.id) {
-				case 'wood':
-					amountToExpect = 100;
-					break;
-				case 'stone_granite':
-					amountToExpect = 200;
-					break;
-				case 'coal':
-					amountToExpect = 50;
-					break;
-				default:
-					amountToExpect = 0;
-			}
+		response.body.data.resource_getAll.forEach(
+			(singleResource: Partial<HabitatResourceCombined>) => {
+				let amountToExpect = 0;
+				switch (singleResource.id) {
+					case 'wood':
+						amountToExpect = 100;
+						break;
+					case 'stone_granite':
+						amountToExpect = 200;
+						break;
+					case 'coal':
+						amountToExpect = 50;
+						break;
+					default:
+						amountToExpect = 0;
+				}
 
-			expect(singleResource.currentAmount).toEqual(amountToExpect);
-		});
+				expect(singleResource.currentAmount).toEqual(amountToExpect);
+			},
+		);
 	});
-
 });

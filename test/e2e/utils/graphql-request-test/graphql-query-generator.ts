@@ -1,9 +1,11 @@
 export type GraphQLQueryVariableDetails = {
-	value: any;
-	type: 'Int' | 'Float' | 'ID' | 'string'
-}
+	value: unknown;
+	type: 'Int' | 'Float' | 'ID' | 'string';
+};
 
-export type GraphQLQueryVariables = {[key: string]: GraphQLQueryVariableDetails};
+export type GraphQLQueryVariables = {
+	[key: string]: GraphQLQueryVariableDetails;
+};
 
 export type GraphQLQueryFields = {
 	fields?: string[];
@@ -15,19 +17,17 @@ export type GraphQLQueryParameters = {
 	fields: GraphQLQueryFields;
 	variables?: GraphQLQueryVariables | undefined;
 	operationName?: string;
-}
+};
 
 export type OperationType = 'query' | 'mutation';
 
-export function generateGraphQLQuery(operationType: OperationType, {
-	root,
-	fields,
-	variables,
-	operationName,
-}: GraphQLQueryParameters) {
-	const {functionArguments, queryVariables, variablesWithValues} = prepareDynamicVariablesForQuery(variables ?? {});
-	const mainQuery =
-		`${operationType} ${operationName ?? ''}${queryVariables} {
+export function generateGraphQLQuery(
+	operationType: OperationType,
+	{root, fields, variables, operationName}: GraphQLQueryParameters,
+): {query: string; variables: {[p: string]: string}} {
+	const {functionArguments, queryVariables, variablesWithValues} =
+		prepareDynamicVariablesForQuery(variables ?? {});
+	const mainQuery = `${operationType} ${operationName ?? ''}${queryVariables} {
 			${root} ${functionArguments} {
 				${processFields(fields)}
 			} 
@@ -40,9 +40,9 @@ export function generateGraphQLQuery(operationType: OperationType, {
 }
 
 function prepareDynamicVariablesForQuery(variables: GraphQLQueryVariables): {
-	functionArguments: string,
-	queryVariables: string,
-	variablesWithValues: {[key: string]: string}
+	functionArguments: string;
+	queryVariables: string;
+	variablesWithValues: {[key: string]: string};
 } {
 	const dynamicVariables = {
 		functionArguments: '',
@@ -54,7 +54,9 @@ function prepareDynamicVariablesForQuery(variables: GraphQLQueryVariables): {
 		return dynamicVariables;
 	}
 
-	const functionArguments = {}, variablesAcceptedByQuery = {}, variablesWithValues = {};
+	const functionArguments = {},
+		variablesAcceptedByQuery = {},
+		variablesWithValues = {};
 	for (const fieldName in variables) {
 		const {type, value} = variables[fieldName];
 		const variableName = '$' + fieldName;
@@ -63,14 +65,20 @@ function prepareDynamicVariablesForQuery(variables: GraphQLQueryVariables): {
 		variablesWithValues[fieldName] = value;
 	}
 
-	dynamicVariables.functionArguments = `(${stringifyArguments(functionArguments)})`;
-	dynamicVariables.queryVariables = `(${stringifyArguments(variablesAcceptedByQuery)})`;
+	dynamicVariables.functionArguments = `(${stringifyArguments(
+		functionArguments,
+	)})`;
+	dynamicVariables.queryVariables = `(${stringifyArguments(
+		variablesAcceptedByQuery,
+	)})`;
 	dynamicVariables.variablesWithValues = variablesWithValues;
 
 	return dynamicVariables;
 }
 
-function stringifyArguments(argumentsToStringify: {[key: string]: string}) {
+function stringifyArguments(argumentsToStringify: {
+	[key: string]: string;
+}): string {
 	const preparedArguments: string[] = [];
 	for (const argumentKey in argumentsToStringify) {
 		const argumentValue = argumentsToStringify[argumentKey];
@@ -90,7 +98,9 @@ function processFields(fields: GraphQLQueryFields): string {
 
 	for (const key in fields) {
 		if (key !== 'fields' && fields[key] !== undefined) {
-			queryParts.push(`${key} { ${processFields(fields[key] as GraphQLQueryFields)} }`);
+			queryParts.push(
+				`${key} { ${processFields(fields[key] as GraphQLQueryFields)} }`,
+			);
 		}
 	}
 

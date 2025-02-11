@@ -20,9 +20,9 @@ describe('Get list of all buildings as unauthenticated', () => {
 			.query({
 				root: 'building_getAll',
 				fields: {
-					fields: ['name']
-				}
-				})
+					fields: ['name'],
+				},
+			})
 			.send()
 			.expect(HttpStatus.OK);
 
@@ -50,8 +50,8 @@ describe('Get list of all buildings as authenticated', () => {
 			.query({
 				root: 'building_getAll',
 				fields: {
-					fields: ['name']
-				}
+					fields: ['name'],
+				},
 			})
 			.send()
 			.expect(HttpStatus.OK);
@@ -62,14 +62,14 @@ describe('Get list of all buildings as authenticated', () => {
 	it('should return buildings with building details at certain level when user is authenticated', async () => {
 		const response = await requestTest
 			.query({
-					root: 'building_getAll',
-					fields: {
-						fields: ['name'],
-						buildingDetailsAtCertainLevel: {
-							fields: ['level']
-						}
-					}
-				})
+				root: 'building_getAll',
+				fields: {
+					fields: ['name'],
+					buildingDetailsAtCertainLevel: {
+						fields: ['level'],
+					},
+				},
+			})
 			.send()
 			.expect(HttpStatus.OK);
 

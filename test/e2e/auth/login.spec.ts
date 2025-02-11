@@ -1,5 +1,4 @@
 import {HttpStatus, INestApplication} from '@nestjs/common';
-import {TestingModule} from '@nestjs/testing';
 import * as request from 'supertest';
 
 import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';

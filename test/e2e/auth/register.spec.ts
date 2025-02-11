@@ -52,7 +52,10 @@ describe('register', () => {
 
 		const loginResponse = await request(app.getHttpServer())
 			.post('/auth/login')
-			.send({userId: newUserId, habitatId: registerResponse.body.habitatId} as LoginParameters)
+			.send({
+				userId: newUserId,
+				habitatId: registerResponse.body.habitatId,
+			} as LoginParameters)
 			.expect(HttpStatus.CREATED);
 
 		expect(loginResponse.body).toHaveProperty('access_token');
