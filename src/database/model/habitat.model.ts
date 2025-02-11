@@ -5,7 +5,6 @@ import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 
 @ObjectType({description: 'Single habitat that belongs to user'})
@@ -36,7 +35,6 @@ export class HabitatModel implements AuthModelInterface {
 	})
 	public buildingZones: BuildingZoneModel[] | Promise<BuildingZoneModel[]>;
 
-	@Field(() => [HabitatResourceCombined])
 	@OneToMany(
 		() => HabitatResourceModel,
 		habitatResource => habitatResource.habitat,

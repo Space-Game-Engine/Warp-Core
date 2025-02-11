@@ -114,7 +114,8 @@ describe('Resources service', () => {
 		});
 
 		it('should return array of combined habitat resource models for provided habitat', async () => {
-			const habitatModel = {id: 10} as HabitatModel;
+			const habitatModel = new HabitatModel();
+			habitatModel.id = 10;
 
 			const habitatResourceArray = [
 				{
