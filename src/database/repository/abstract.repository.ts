@@ -20,22 +20,22 @@ export abstract class AbstractRepository<
 	 * Shared transaction allows using transactions in different modules
 	 * and different scopes.
 	 */
-	public async startTransaction(): Promise<void> {
-		await this.transactionManager.startTransaction();
+	public startTransaction(): Promise<void> {
+		return this.transactionManager.startTransaction();
 	}
 
 	/**
 	 * Commit transaction
 	 */
-	public async commitTransaction(): Promise<void> {
-		await this.transactionManager.commitTransaction();
+	public commitTransaction(): Promise<void> {
+		return this.transactionManager.commitTransaction();
 	}
 
 	/**
 	 * Rollback transaction
 	 */
-	public async rollbackTransaction(): Promise<void> {
-		await this.transactionManager.rollbackTransaction();
+	public rollbackTransaction(): Promise<void> {
+		return this.transactionManager.rollbackTransaction();
 	}
 
 	public disableEntityListeners(

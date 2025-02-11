@@ -4,25 +4,20 @@ import {BuildingInstallService} from './building-install.service';
 
 import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
 import {BuildingModel} from '@warp-core/database/model/building.model';
-import {BuildingRepository} from '@warp-core/database/repository/building.repository';
-
-jest.mock('@warp-core/database/repository/building.repository');
 
 describe('BuildingInstallService', () => {
 	let buildingInstallService: BuildingInstallService;
-	let buildingRepository: jest.Mocked<BuildingRepository>;
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
 
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [BuildingInstallService, BuildingRepository],
+			providers: [BuildingInstallService],
 		}).compile();
 
 		buildingInstallService = module.get<BuildingInstallService>(
 			BuildingInstallService,
 		);
-		buildingRepository = module.get(BuildingRepository);
 	});
 
 	describe('loadModels', () => {

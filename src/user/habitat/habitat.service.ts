@@ -15,11 +15,11 @@ export class HabitatService {
 		return this.habitatModel;
 	}
 
-	public async getHabitatsForLoggedIn(): Promise<HabitatModel[]> {
+	public getHabitatsForLoggedIn(): Promise<HabitatModel[]> {
 		return this.habitatRepository.getHabitatsByUserId(this.habitatModel.userId);
 	}
 
-	public async getHabitatById(habitatId: number): Promise<HabitatModel | null> {
+	public getHabitatById(habitatId: number): Promise<HabitatModel | null> {
 		return this.habitatRepository.getHabitatById(habitatId);
 	}
 }

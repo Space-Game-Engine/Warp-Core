@@ -23,7 +23,7 @@ export class EventEmitterService extends InternalExchangeEmitter {
 	): Promise<QueryExchangeResponse<ResponseType>> {
 		const emitObject: EventEmitterRequest<ResponseType> = {
 			data: request.requestData,
-			response: null as QueryExchangeResponse<ResponseType>['data'],
+			response: undefined,
 		};
 
 		try {

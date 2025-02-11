@@ -7,13 +7,11 @@ import {BuildingRepository} from '@warp-core/database/repository/building.reposi
 export class BuildingService {
 	constructor(private buildingRepository: BuildingRepository) {}
 
-	public async getBuildingById(
-		buildingId: string,
-	): Promise<BuildingModel | null> {
+	public getBuildingById(buildingId: string): Promise<BuildingModel | null> {
 		return this.buildingRepository.getBuildingById(buildingId);
 	}
 
-	public async getAllBuildings(): Promise<BuildingModel[]> {
+	public getAllBuildings(): Promise<BuildingModel[]> {
 		return this.buildingRepository.getAllBuildings();
 	}
 

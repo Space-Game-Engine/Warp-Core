@@ -1,5 +1,3 @@
-import {ConfigService} from '@nestjs/config';
-import {EventEmitter2} from '@nestjs/event-emitter';
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
@@ -22,14 +20,12 @@ jest.mock('@warp-core/global/building/exchange/query/building-query.emitter');
 jest.mock('@nestjs/config');
 jest.mock('@nestjs/event-emitter');
 
-describe('Building queue add service tests', () => {
+describe('Prepare single building queue element tests', () => {
 	let prepareBuildingQueueElement: PrepareSingleBuildingQueueElementService;
 	let buildingQueueRepository: jest.Mocked<BuildingQueueRepository>;
 	let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
 	let buildingService: jest.Mocked<BuildingQueryEmitter>;
 	let habitatMock: jest.Mocked<AuthorizedHabitatModel>;
-	let configService: jest.Mocked<ConfigService>;
-	let eventEmitter: jest.Mocked<EventEmitter2>;
 	let resourcesCalculator: ResourcesCalculatorInterface;
 
 	beforeEach(async () => {
@@ -45,9 +41,7 @@ describe('Building queue add service tests', () => {
 				BuildingQueueRepository,
 				BuildingZoneRepository,
 				BuildingQueryEmitter,
-				ConfigService,
 				AuthorizedHabitatModel,
-				EventEmitter2,
 				{
 					provide: 'QUEUE_ADD_CALCULATION',
 					useValue: resourcesCalculator,
@@ -62,9 +56,7 @@ describe('Building queue add service tests', () => {
 		buildingQueueRepository = module.get(BuildingQueueRepository);
 		buildingZoneRepository = module.get(BuildingZoneRepository);
 		buildingService = module.get(BuildingQueryEmitter);
-		configService = module.get(ConfigService);
 		habitatMock = module.get(AuthorizedHabitatModel);
-		eventEmitter = module.get(EventEmitter2);
 	});
 
 	const testCases = [

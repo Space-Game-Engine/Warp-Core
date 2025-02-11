@@ -5,15 +5,15 @@ import {DataSource} from 'typeorm';
 export class TransactionManagerService {
 	constructor(private dataSource: DataSource) {}
 
-	public async startTransaction(): Promise<void> {
-		this.dataSource.manager.queryRunner?.startTransaction();
+	public startTransaction(): Promise<void> {
+		return this.dataSource.manager.queryRunner!.startTransaction();
 	}
 
-	public async commitTransaction(): Promise<void> {
-		this.dataSource.manager.queryRunner?.commitTransaction();
+	public commitTransaction(): Promise<void> {
+		return this.dataSource.manager.queryRunner!.commitTransaction();
 	}
 
-	public async rollbackTransaction(): Promise<void> {
-		this.dataSource.manager.queryRunner?.rollbackTransaction();
+	public rollbackTransaction(): Promise<void> {
+		return this.dataSource.manager.queryRunner!.rollbackTransaction();
 	}
 }

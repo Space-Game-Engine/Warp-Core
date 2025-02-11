@@ -13,6 +13,7 @@ export class BuildingQueryHandler {
 	public getBuildingById(buildingId: string): Promise<BuildingModel | null> {
 		return this.buildingService.getBuildingById(buildingId);
 	}
+
 	@InternalExchangeQuery(
 		BuildingQueryNames.CalculateTimeInSecondsToUpgradeBuilding,
 	)

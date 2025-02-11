@@ -18,7 +18,7 @@ jest.mock(
 	'@warp-core/user/queue/building-queue/add/prepare-single-building-queue-element.service',
 );
 
-describe('Building queue element is saved', () => {
+describe('Building queue add', () => {
 	let buildingQueueAddElement: BuildingQueueAddService;
 	let prepareBuildingQueueElement: jest.Mocked<PrepareSingleBuildingQueueElementService>;
 	let buildingQueueRepository: jest.Mocked<BuildingQueueRepository>;
