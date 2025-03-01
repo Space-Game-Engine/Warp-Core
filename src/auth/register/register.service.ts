@@ -1,23 +1,32 @@
-import {Injectable} from '@nestjs/common';
-import {EventEmitter2} from '@nestjs/event-emitter';
+import {Injectable, InternalServerErrorException} from '@nestjs/common';
 
 import {RegisterInterface} from './register.interface';
 
 import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';
-import {RegisterUserEvent} from '@warp-core/auth/register/register-user.event';
+import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
+import {HabitatEmitter} from '@warp-core/user/habitat';
 
 @Injectable()
 export class RegisterService implements RegisterInterface {
-	constructor(private readonly eventEmitter: EventEmitter2) {}
+	constructor(private readonly habitatEmitter: HabitatEmitter) {}
 
 	public async registerUser(userId: number): Promise<LoginParameters> {
-		const registerEvent = new RegisterUserEvent(userId);
+		const {data: habitat, error} =
+			await this.habitatEmitter.createFirstUserHabitat({userId});
 
-		await this.eventEmitter.emitAsync('user.create_new', registerEvent);
+		if (error) {
+			throw new InternalEmitterError(error);
+		}
+
+		if (!habitat) {
+			throw new InternalServerErrorException(
+				'No habitat found, please try again.',
+			);
+		}
 
 		return {
 			userId,
-			habitatId: registerEvent.getHabitatId(),
+			habitatId: habitat.id,
 		} as LoginParameters;
 	}
 }
