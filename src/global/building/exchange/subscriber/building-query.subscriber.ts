@@ -6,7 +6,7 @@ import {BuildingService} from '@warp-core/global/building/building.service';
 import {BuildingQueryNames} from '@warp-core/global/building/exchange/query/building-query.names';
 
 @Injectable()
-export class BuildingQueryHandler {
+export class BuildingQuerySubscriber {
 	constructor(private readonly buildingService: BuildingService) {}
 
 	@InternalExchangeQuery(BuildingQueryNames.GetBuildingById)
