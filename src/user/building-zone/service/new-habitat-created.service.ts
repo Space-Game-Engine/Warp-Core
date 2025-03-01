@@ -1,18 +1,16 @@
 import {Injectable} from '@nestjs/common';
-import {OnEvent} from '@nestjs/event-emitter';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {BuildingZoneService} from '@warp-core/user/building-zone/building-zone.service';
+import {BuildingZoneService} from '@warp-core/user/building-zone/service/building-zone.service';
 import {HabitatCreatedEvent} from '@warp-core/user/habitat';
 
 @Injectable()
-export class NewHabitatCreatedSubscriber {
+export class NewHabitatCreatedService {
 	constructor(
 		private readonly runtimeConfig: RuntimeConfig,
 		private readonly buildingZoneService: BuildingZoneService,
 	) {}
 
-	@OnEvent('habitat.created.after_save')
 	public async createBuildingZoneOnNewHabitatCreation(
 		payload: HabitatCreatedEvent,
 	): Promise<void> {

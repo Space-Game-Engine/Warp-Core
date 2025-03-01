@@ -1,22 +1,24 @@
 import {Module} from '@nestjs/common';
 
 import {BuildingZoneResolver} from './building-zone.resolver';
-import {BuildingZoneService} from './building-zone.service';
+import {BuildingZoneService} from './service/building-zone.service';
 
 import {AuthModule} from '@warp-core/auth';
 import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
 import {DatabaseModule} from '@warp-core/database/database.module';
-import {BuildingZoneHandler} from '@warp-core/user/building-zone/exchange/query/building-zone.handler';
-import {FirstHabitatCreatedSubscriber} from '@warp-core/user/building-zone/subscriber/first-habitat-created.subscriber';
-import {NewHabitatCreatedSubscriber} from '@warp-core/user/building-zone/subscriber/new-habitat-created.subscriber';
+import {BuildingZoneSubscriber} from '@warp-core/user/building-zone/exchange/subscriber/building-zone.subscriber';
+import {NewHabitatSubscriber} from '@warp-core/user/building-zone/exchange/subscriber/new-habitat.subscriber';
+import {FirstHabitatCreatedService} from '@warp-core/user/building-zone/service/first-habitat-created.service';
+import {NewHabitatCreatedService} from '@warp-core/user/building-zone/service/new-habitat-created.service';
 
 @Module({
 	providers: [
 		BuildingZoneService,
 		BuildingZoneResolver,
-		NewHabitatCreatedSubscriber,
-		FirstHabitatCreatedSubscriber,
-		BuildingZoneHandler,
+		NewHabitatCreatedService,
+		FirstHabitatCreatedService,
+		BuildingZoneSubscriber,
+		NewHabitatSubscriber,
 	],
 	imports: [DatabaseModule, CoreConfigModule, AuthModule],
 	exports: [BuildingZoneService],
