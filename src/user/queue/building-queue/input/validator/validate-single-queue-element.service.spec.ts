@@ -1,5 +1,3 @@
-import {ArgumentMetadata} from '@nestjs/common';
-import {EventEmitter2} from '@nestjs/event-emitter';
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
@@ -7,47 +5,37 @@ import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingModel} from '@warp-core/database/model/building.model';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {BuildingZoneEmitter} from '@warp-core/user/building-zone';
-import {QueueInputValidationEvent} from '@warp-core/user/queue/building-queue/event/queue-input-validation.event';
 import {QueueValidationError} from '@warp-core/user/queue/building-queue/exception/queue-validation.error';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
-import {AddToQueueValidator} from '@warp-core/user/queue/building-queue/input/validator/add-to-queue.validator';
+import {ValidateSingleQueueElementService} from '@warp-core/user/queue/building-queue/input/validator/validate-single-queue-element.service';
 
 jest.mock('@warp-core/global/building/exchange/query/building-query.emitter');
 jest.mock('@warp-core/user/building-zone/exchange/query/building-zone.emitter');
 
-describe('Add to queue validator', () => {
-	let addToQueueValidator: AddToQueueValidator;
+describe('Validate single queue element service', () => {
+	let validateSingleQueueElementService: ValidateSingleQueueElementService;
 	let buildingService: jest.Mocked<BuildingQueryEmitter>;
 	let buildingZoneService: jest.Mocked<BuildingZoneEmitter>;
-	let eventEmitter: EventEmitter2;
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
-
-		// for some reason related to Jest it is not possible to mock that EventEmitter through  `jest.mock` function
-		// because it triggers strange `decorator is not a function` error not connected to anything...
-		eventEmitter = {
-			emitAsync: jest.fn(),
-		} as unknown as EventEmitter2;
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				BuildingQueryEmitter,
 				BuildingZoneEmitter,
-				AddToQueueValidator,
-				{
-					provide: EventEmitter2,
-					useValue: eventEmitter,
-				},
+				ValidateSingleQueueElementService,
 			],
 		}).compile();
 
-		addToQueueValidator = module.get(AddToQueueValidator);
+		validateSingleQueueElementService = module.get(
+			ValidateSingleQueueElementService,
+		);
 		buildingZoneService = module.get(BuildingZoneEmitter);
 		buildingService = module.get(BuildingQueryEmitter);
 	});
 
-	describe('validate', () => {
+	describe('validateQueueItem', () => {
 		it('should throw error when provided building zone does not exists', async () => {
 			const addToQueue: AddToQueueInput = {
 				localBuildingZoneId: 1000,
@@ -60,9 +48,10 @@ describe('Add to queue validator', () => {
 				.mockResolvedValue({data: null, error: undefined});
 
 			try {
-				await addToQueueValidator.transform(addToQueue, {
-					metatype: AddToQueueInput,
-				} as ArgumentMetadata);
+				await validateSingleQueueElementService.validateQueueItem({
+					addToQueueInput: addToQueue,
+					validators: [],
+				});
 			} catch (e) {
 				expect(e).toBeInstanceOf(QueueValidationError);
 				expect(e.message).toContain('Queue Validation Error');
@@ -91,9 +80,10 @@ describe('Add to queue validator', () => {
 				});
 
 			try {
-				await addToQueueValidator.transform(addToQueue, {
-					metatype: AddToQueueInput,
-				} as ArgumentMetadata);
+				await validateSingleQueueElementService.validateQueueItem({
+					addToQueueInput: addToQueue,
+					validators: [],
+				});
 			} catch (e) {
 				expect(e).toBeInstanceOf(QueueValidationError);
 				expect(e.message).toContain('Queue Validation Error');
@@ -128,9 +118,10 @@ describe('Add to queue validator', () => {
 				.mockResolvedValue({data: null, error: undefined});
 
 			try {
-				await addToQueueValidator.transform(addToQueue, {
-					metatype: AddToQueueInput,
-				} as ArgumentMetadata);
+				await validateSingleQueueElementService.validateQueueItem({
+					addToQueueInput: addToQueue,
+					validators: [],
+				});
 			} catch (e) {
 				expect(e).toBeInstanceOf(QueueValidationError);
 				expect(e.message).toContain('Queue Validation Error');
@@ -170,22 +161,11 @@ describe('Add to queue validator', () => {
 				.calledWith(addToQueue.buildingId as string)
 				.mockResolvedValue({data: building, error: undefined});
 
-			when(eventEmitter.emitAsync)
-				.calledWith(
-					expect.stringMatching('building_queue.validating.add_to_queue'),
-					expect.any(QueueInputValidationEvent),
-				)
-				.mockImplementation(
-					async (event, queueValidatorEvent: QueueInputValidationEvent) => {
-						queueValidatorEvent.addError('test', 'test error');
-						return [event, queueValidatorEvent];
-					},
-				);
-
 			try {
-				await addToQueueValidator.transform(addToQueue, {
-					metatype: AddToQueueInput,
-				} as ArgumentMetadata);
+				await validateSingleQueueElementService.validateQueueItem({
+					addToQueueInput: addToQueue,
+					validators: [],
+				});
 			} catch (e) {
 				expect(e).toBeInstanceOf(QueueValidationError);
 				expect(e.message).toContain('Queue Validation Error');
@@ -223,16 +203,12 @@ describe('Add to queue validator', () => {
 				.calledWith(addToQueue.buildingId as string)
 				.mockResolvedValue({data: building, error: undefined});
 
-			when(eventEmitter.emitAsync).calledWith(
-				expect.stringMatching('building_queue.validating.add_to_queue'),
-				expect.any(QueueInputValidationEvent),
-			);
-
 			await expect(
-				addToQueueValidator.transform(addToQueue, {
-					metatype: AddToQueueInput,
-				} as ArgumentMetadata),
-			).resolves.toEqual(addToQueue);
+				validateSingleQueueElementService.validateQueueItem({
+					addToQueueInput: addToQueue,
+					validators: [],
+				}),
+			).resolves.toEqual(true);
 		});
 	});
 });
