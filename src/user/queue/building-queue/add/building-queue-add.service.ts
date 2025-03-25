@@ -1,12 +1,10 @@
 import {Injectable} from '@nestjs/common';
-import {EventEmitter2} from '@nestjs/event-emitter';
 
 import {ProcessAndConsumeResourcesServiceInterface} from '@warp-core/core/utils';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {PrepareSingleBuildingQueueElementService} from '@warp-core/user/queue/building-queue/add/prepare-single-building-queue-element.service';
-import {QueueElementAfterProcessingEvent} from '@warp-core/user/queue/building-queue/event/queue-element-after-processing.event';
-import {QueueElementBeforeProcessingEvent} from '@warp-core/user/queue/building-queue/event/queue-element-before-processing.event';
+import {BuildingQueueAddEmitter} from '@warp-core/user/queue/building-queue/exchange/emit/building-queue-add.emitter';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 
 @Injectable()
@@ -16,7 +14,7 @@ export class BuildingQueueAddService
 	constructor(
 		private readonly prepareQueueElement: PrepareSingleBuildingQueueElementService,
 		protected readonly buildingQueueRepository: BuildingQueueRepository,
-		private readonly eventEmitter: EventEmitter2,
+		private readonly buildingQueueAddEmitter: BuildingQueueAddEmitter,
 	) {}
 
 	public async processAndConsumeResources(
@@ -25,10 +23,9 @@ export class BuildingQueueAddService
 		const draftQueueElement =
 			await this.prepareQueueElement.getQueueElement(addToQueueElement);
 
-		await this.eventEmitter.emitAsync(
-			'building_queue.adding.before_processing_element',
-			new QueueElementBeforeProcessingEvent(draftQueueElement),
-		);
+		await this.buildingQueueAddEmitter.beforeAddingElement({
+			queueElement: draftQueueElement,
+		});
 
 		await this.buildingQueueRepository.startTransaction();
 
@@ -36,10 +33,7 @@ export class BuildingQueueAddService
 			const queueElement =
 				await this.buildingQueueRepository.save(draftQueueElement);
 
-			await this.eventEmitter.emitAsync(
-				'building_queue.adding.after_processing_element',
-				new QueueElementAfterProcessingEvent(queueElement),
-			);
+			await this.buildingQueueAddEmitter.afterAddingElement({queueElement});
 
 			await this.buildingQueueRepository.commitTransaction();
 

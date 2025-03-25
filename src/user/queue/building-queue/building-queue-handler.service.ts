@@ -1,5 +1,4 @@
 import {Injectable, Logger} from '@nestjs/common';
-import {EventEmitter2} from '@nestjs/event-emitter';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
@@ -7,8 +6,7 @@ import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
-import {QueueElementAfterProcessingEvent} from '@warp-core/user/queue/building-queue/event/queue-element-after-processing.event';
-import {QueueElementBeforeProcessingEvent} from '@warp-core/user/queue/building-queue/event/queue-element-before-processing.event';
+import {BuildingQueueProcessingEmitter} from '@warp-core/user/queue/building-queue/exchange/emit/building-queue-processing.emitter';
 
 @Injectable()
 export class BuildingQueueHandlerService {
@@ -18,7 +16,7 @@ export class BuildingQueueHandlerService {
 		private readonly buildingQueueRepository: BuildingQueueRepository,
 		private readonly buildingZoneRepository: BuildingZoneRepository,
 		private readonly habitatModel: AuthorizedHabitatModel,
-		private readonly eventEmitter: EventEmitter2,
+		private readonly buildingQueueEmitter: BuildingQueueProcessingEmitter,
 	) {}
 
 	public getQueueItemsForHabitat(): Promise<BuildingQueueElementModel[]> {
@@ -93,10 +91,7 @@ export class BuildingQueueHandlerService {
 			HabitatResourceModel,
 		]);
 
-		await this.eventEmitter.emitAsync(
-			'building_queue.resolving.before_processing_element',
-			new QueueElementBeforeProcessingEvent(queueElement),
-		);
+		await this.buildingQueueEmitter.beforeProcessing({queueElement});
 
 		await this.buildingZoneRepository.update(buildingZoneToProcess.id, {
 			buildingId: buildingZoneToProcess.buildingId,
@@ -106,10 +101,7 @@ export class BuildingQueueHandlerService {
 			isConsumed: queueElement.isConsumed,
 		});
 
-		await this.eventEmitter.emitAsync(
-			'building_queue.resolving.after_processing_element',
-			new QueueElementAfterProcessingEvent(queueElement),
-		);
+		await this.buildingQueueEmitter.afterProcessing({queueElement});
 
 		this.buildingQueueRepository.enableEntityListeners([
 			BuildingZoneModel,

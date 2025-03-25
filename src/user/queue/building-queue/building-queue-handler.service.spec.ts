@@ -11,8 +11,7 @@ import {BuildingZoneRepository} from '@warp-core/database/repository/building-zo
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 import {BuildingQueueHandlerService} from '@warp-core/user/queue/building-queue/building-queue-handler.service';
 import {default as queueItemsElements} from '@warp-core/user/queue/building-queue/datasets/building-queue-handler-resolve-queue-data';
-import {QueueElementAfterProcessingEvent} from '@warp-core/user/queue/building-queue/event/queue-element-after-processing.event';
-import {QueueElementBeforeProcessingEvent} from '@warp-core/user/queue/building-queue/event/queue-element-before-processing.event';
+import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue/exchange';
 
 jest.mock('@warp-core/database/repository/building-queue.repository');
 jest.mock('@warp-core/database/repository/building-zone.repository');
@@ -66,7 +65,7 @@ describe('Building queue handler service test', () => {
 				expect.stringMatching(
 					'building_queue.resolving.before_processing_element',
 				),
-				expect.objectContaining<QueueElementBeforeProcessingEvent>({
+				expect.objectContaining<BuildingQueueProcessing>({
 					queueElement: singleQueueElement,
 				}),
 			);
@@ -76,7 +75,7 @@ describe('Building queue handler service test', () => {
 				expect.stringMatching(
 					'building_queue.resolving.after_processing_element',
 				),
-				expect.objectContaining<QueueElementAfterProcessingEvent>({
+				expect.objectContaining<BuildingQueueProcessing>({
 					queueElement: singleQueueElement,
 				}),
 			);
