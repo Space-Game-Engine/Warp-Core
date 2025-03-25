@@ -6,14 +6,13 @@ import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {ResourceRepository} from '@warp-core/database/repository/resource.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
-import {HabitatCreatedEvent} from '@warp-core/user/habitat';
-import {CreateResourcesPerHabitat} from '@warp-core/user/resources/subscriber/create-resources-per-habitat.subscriber';
+import {CreateResourcesPerHabitatService} from '@warp-core/user/resources/service/create-resources-per-habitat.service';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
 jest.mock('@warp-core/database/repository/resource.repository');
 
 describe('Create resources per habitat service tests', () => {
-	let createResourcesPerHabitat: CreateResourcesPerHabitat;
+	let createResourcesPerHabitat: CreateResourcesPerHabitatService;
 	let habitatResourceRepository: jest.Mocked<HabitatResourceRepository>;
 	let resourceRepository: jest.Mocked<ResourceRepository>;
 
@@ -25,14 +24,14 @@ describe('Create resources per habitat service tests', () => {
 		jest.clearAllMocks();
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
-				CreateResourcesPerHabitat,
+				CreateResourcesPerHabitatService,
 				HabitatResourceRepository,
 				ResourceRepository,
 			],
 		}).compile();
 
-		createResourcesPerHabitat = module.get<CreateResourcesPerHabitat>(
-			CreateResourcesPerHabitat,
+		createResourcesPerHabitat = module.get<CreateResourcesPerHabitatService>(
+			CreateResourcesPerHabitatService,
 		);
 		habitatResourceRepository = module.get(HabitatResourceRepository);
 		resourceRepository = module.get(ResourceRepository);
@@ -47,9 +46,7 @@ describe('Create resources per habitat service tests', () => {
 
 			resourceRepository.find.mockResolvedValue(resourcesList);
 
-			await createResourcesPerHabitat.createResourcesPerHabitat(
-				new HabitatCreatedEvent(habitat),
-			);
+			await createResourcesPerHabitat.createResourcesPerHabitat({habitat});
 		});
 
 		it('should save one habitat resource when there is one resource to be saved', async () => {
@@ -64,9 +61,7 @@ describe('Create resources per habitat service tests', () => {
 
 			resourceRepository.find.mockResolvedValue(resourcesList);
 
-			await createResourcesPerHabitat.createResourcesPerHabitat(
-				new HabitatCreatedEvent(habitat),
-			);
+			await createResourcesPerHabitat.createResourcesPerHabitat({habitat});
 
 			expect(habitatResourceRepository.insert).toBeCalledTimes(1);
 			expect(habitatResourceRepository.insert).toHaveBeenCalledWith(
@@ -97,9 +92,7 @@ describe('Create resources per habitat service tests', () => {
 
 			resourceRepository.find.mockResolvedValue(resourcesList);
 
-			await createResourcesPerHabitat.createResourcesPerHabitat(
-				new HabitatCreatedEvent(habitat),
-			);
+			await createResourcesPerHabitat.createResourcesPerHabitat({habitat});
 
 			expect(habitatResourceRepository.insert).toBeCalledTimes(1);
 			expect(habitatResourceRepository.insert).toHaveBeenCalledWith(

@@ -10,16 +10,16 @@ import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.m
 import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
-import {ResourceCalculatorService} from '@warp-core/user/resources/calculate/resource-calculator.service';
-import {CalculateResourceStorageService} from '@warp-core/user/resources/calculate/warehouse-storage/calculate-resource-storage.service';
-import {default as multipleBuildingZonesAndSingleResourceCases} from '@warp-core/user/resources/datasets/calculate/multiple-building-zones-and-single-resource';
-import {default as singleBuildingZonesAndOneResourceCases} from '@warp-core/user/resources/datasets/calculate/single-building-zone-and-single-resource';
-import {default as singleBuildingZonesAndOneResourceCasesWithWarehouseLimit} from '@warp-core/user/resources/datasets/calculate/single-building-zone-and-single-resource-with-warehouse-limit';
+import {default as multipleBuildingZonesAndSingleResourceCases} from '@warp-core/user/resources/datasets-for-tests/service/calculate/multiple-building-zones-and-single-resource';
+import {default as singleBuildingZonesAndOneResourceCases} from '@warp-core/user/resources/datasets-for-tests/service/calculate/single-building-zone-and-single-resource';
+import {default as singleBuildingZonesAndOneResourceCasesWithWarehouseLimit} from '@warp-core/user/resources/datasets-for-tests/service/calculate/single-building-zone-and-single-resource-with-warehouse-limit';
+import {ResourceCalculatorService} from '@warp-core/user/resources/service/calculate/resource-calculator.service';
+import {CalculateResourceStorageService} from '@warp-core/user/resources/service/calculate/warehouse-storage/calculate-resource-storage.service';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
 jest.mock('@warp-core/database/repository/building-zone.repository');
 jest.mock(
-	'@warp-core/user/resources/calculate/warehouse-storage/calculate-resource-storage.service',
+	'@warp-core/user/resources/service/calculate/warehouse-storage/calculate-resource-storage.service',
 );
 
 describe('Resources calculator service test', () => {

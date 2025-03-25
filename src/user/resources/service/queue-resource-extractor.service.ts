@@ -1,11 +1,10 @@
 import {BadRequestException, Injectable} from '@nestjs/common';
-import {OnEvent} from '@nestjs/event-emitter';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
-import {QueueElementProcessedEvent} from '@warp-core/user/queue/building-queue';
+import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
 import {InsufficientResourceType} from '@warp-core/user/resources/exception/insufficient-resource.type';
 import {InsufficientResourcesException} from '@warp-core/user/resources/exception/Insufficient-resources.exception';
 
@@ -16,9 +15,8 @@ export class QueueResourceExtractorService {
 		private readonly habitatResourceRepository: HabitatResourceRepository,
 	) {}
 
-	@OnEvent('building_queue.adding.after_processing_element')
 	public async useResourcesOnQueueUpdate(
-		queueProcessingEvent: QueueElementProcessedEvent,
+		queueProcessingEvent: BuildingQueueProcessing,
 	): Promise<void> {
 		const queueElement = queueProcessingEvent.queueElement;
 		const requiredResources = await this.getRequiredResourcesFromHabitat(

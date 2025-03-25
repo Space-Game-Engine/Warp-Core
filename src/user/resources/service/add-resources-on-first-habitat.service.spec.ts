@@ -7,13 +7,14 @@ import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
-import {AddResourcesOnFirstHabitatSubscriber} from '@warp-core/user/resources/subscriber/add-resources-on-first-habitat.subscriber';
+import {AddResourcesOnFirstHabitatService} from '@warp-core/user/resources/service/add-resources-on-first-habitat.service';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
+
 describe('Add resources on first user habitat', () => {
 	let runtimeConfig: RuntimeConfig;
 	let habitatResourceRepository: jest.Mocked<HabitatResourceRepository>;
-	let addResourcesOnFirstHabitat: AddResourcesOnFirstHabitatSubscriber;
+	let addResourcesOnFirstHabitat: AddResourcesOnFirstHabitatService;
 
 	beforeAll(() => {
 		prepareRepositoryMock(HabitatResourceRepository);
@@ -24,15 +25,13 @@ describe('Add resources on first user habitat', () => {
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
-				AddResourcesOnFirstHabitatSubscriber,
+				AddResourcesOnFirstHabitatService,
 				HabitatResourceRepository,
 				coreConfigMock,
 			],
 		}).compile();
 
-		addResourcesOnFirstHabitat = module.get(
-			AddResourcesOnFirstHabitatSubscriber,
-		);
+		addResourcesOnFirstHabitat = module.get(AddResourcesOnFirstHabitatService);
 		runtimeConfig = module.get(RuntimeConfig);
 		habitatResourceRepository = module.get(HabitatResourceRepository);
 	});

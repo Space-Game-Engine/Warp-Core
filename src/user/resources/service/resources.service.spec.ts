@@ -7,7 +7,7 @@ import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.m
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
-import {ResourcesService} from '@warp-core/user/resources/resources.service';
+import {ResourcesService} from '@warp-core/user/resources/service/resources.service';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');
@@ -51,7 +51,7 @@ describe('Resources service', () => {
 			).resolves.toBeNull();
 		});
 
-		it('should return mapped resource model when resource was found', async () => {
+		it('should return mapped resource type when resource was found', async () => {
 			const resourceId = 'wood';
 			authorizedHabitatModel.id = 5;
 

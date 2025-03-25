@@ -6,10 +6,10 @@ import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.m
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
-import {QueueElementProcessedEvent} from '@warp-core/user/queue/building-queue';
+import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
 import {InsufficientResourceType} from '@warp-core/user/resources/exception/insufficient-resource.type';
 import {InsufficientResourcesException} from '@warp-core/user/resources/exception/Insufficient-resources.exception';
-import {QueueResourceExtractorService} from '@warp-core/user/resources/queue-resource-extractor.service';
+import {QueueResourceExtractorService} from '@warp-core/user/resources/service/queue-resource-extractor.service';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
 
@@ -74,7 +74,7 @@ describe('Resource extraction service', () => {
 			await expect(
 				resourceExtractorService.useResourcesOnQueueUpdate({
 					queueElement: {costs: costs},
-				} as QueueElementProcessedEvent),
+				} as BuildingQueueProcessing),
 			).rejects.toThrowError(
 				'Requested resources from queue does not equal resources from habitat',
 			);
@@ -205,7 +205,7 @@ describe('Resource extraction service', () => {
 					try {
 						await resourceExtractorService.useResourcesOnQueueUpdate({
 							queueElement: {costs: costs},
-						} as QueueElementProcessedEvent);
+						} as BuildingQueueProcessing);
 					} catch (e) {
 						expect(e).toBeInstanceOf(InsufficientResourcesException);
 						expect(e.insufficientResources).toHaveLength(
@@ -294,7 +294,7 @@ describe('Resource extraction service', () => {
 
 			await resourceExtractorService.useResourcesOnQueueUpdate({
 				queueElement: {costs: costs},
-			} as QueueElementProcessedEvent);
+			} as BuildingQueueProcessing);
 
 			expect(habitatResources[0].currentAmount).toEqual(0);
 			expect(habitatResources[1].currentAmount).toEqual(0);

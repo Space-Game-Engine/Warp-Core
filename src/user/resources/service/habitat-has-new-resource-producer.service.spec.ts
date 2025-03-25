@@ -7,7 +7,7 @@ import {BuildingQueueElementModel} from '@warp-core/database/model/building-queu
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
-import {HabitatHasNewResourceProducerSubscriber} from '@warp-core/user/resources/subscriber/habitat-has-new-resource-producer.subscriber';
+import {HabitatHasNewResourceProducerService} from '@warp-core/user/resources/service/habitat-has-new-resource-producer.service';
 
 jest.mock('@warp-core/database/repository/building.repository');
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
@@ -16,7 +16,7 @@ describe('Add last calculation date for new resource producers', () => {
 	let buildingRepository: jest.Mocked<BuildingRepository>;
 	let habitatResourceRepository: jest.Mocked<HabitatResourceRepository>;
 	let authorizedHabitatModel: AuthorizedHabitatModel;
-	let habitatHasNewResourceProducerSubscriber: HabitatHasNewResourceProducerSubscriber;
+	let habitatHasNewResourceProducerSubscriber: HabitatHasNewResourceProducerService;
 
 	beforeAll(() => {
 		prepareRepositoryMock(HabitatResourceRepository);
@@ -30,7 +30,7 @@ describe('Add last calculation date for new resource producers', () => {
 				BuildingRepository,
 				HabitatResourceRepository,
 				AuthorizedHabitatModel,
-				HabitatHasNewResourceProducerSubscriber,
+				HabitatHasNewResourceProducerService,
 			],
 		}).compile();
 
@@ -38,7 +38,7 @@ describe('Add last calculation date for new resource producers', () => {
 		habitatResourceRepository = module.get(HabitatResourceRepository);
 		authorizedHabitatModel = module.get(AuthorizedHabitatModel);
 		habitatHasNewResourceProducerSubscriber = module.get(
-			HabitatHasNewResourceProducerSubscriber,
+			HabitatHasNewResourceProducerService,
 		);
 	});
 

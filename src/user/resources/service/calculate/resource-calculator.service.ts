@@ -1,5 +1,4 @@
 import {Injectable, Logger} from '@nestjs/common';
-import {OnEvent} from '@nestjs/event-emitter';
 import {DateTime} from 'luxon';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
@@ -7,8 +6,8 @@ import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
-import {QueueElementProcessedEvent} from '@warp-core/user/queue/building-queue';
-import {CalculateResourceStorageService} from '@warp-core/user/resources/calculate/warehouse-storage/calculate-resource-storage.service';
+import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
+import {CalculateResourceStorageService} from '@warp-core/user/resources/service/calculate/warehouse-storage/calculate-resource-storage.service';
 
 @Injectable()
 export class ResourceCalculatorService {
@@ -50,9 +49,8 @@ export class ResourceCalculatorService {
 		);
 	}
 
-	@OnEvent('building_queue.resolving.before_processing_element')
 	public async addResourcesOnQueueUpdate(
-		queueProcessingEvent: QueueElementProcessedEvent,
+		queueProcessingEvent: BuildingQueueProcessing,
 	): Promise<void> {
 		const buildingQueueElement = queueProcessingEvent.queueElement;
 
@@ -77,9 +75,8 @@ export class ResourceCalculatorService {
 		await this.habitatResourceRepository.save(habitatResources);
 	}
 
-	@OnEvent('building_queue.resolving.after_processing_element')
 	public async setLastCalculationTimeForNewResources(
-		queueProcessingEvent: QueueElementProcessedEvent,
+		queueProcessingEvent: BuildingQueueProcessing,
 	): Promise<void> {
 		const buildingQueueElement = queueProcessingEvent.queueElement;
 		this.logger.debug(
