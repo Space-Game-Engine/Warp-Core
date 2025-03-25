@@ -3,14 +3,14 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
-import {BuildingZoneService} from '@warp-core/user/building-zone/building-zone.service';
-import {NewHabitatCreatedSubscriber} from '@warp-core/user/building-zone/subscriber/new-habitat-created.subscriber';
+import {BuildingZoneService} from '@warp-core/user/building-zone/service/building-zone.service';
+import {NewHabitatCreatedService} from '@warp-core/user/building-zone/service/new-habitat-created.service';
 
-jest.mock('@warp-core/user/building-zone/building-zone.service');
+jest.mock('@warp-core/user/building-zone/service/building-zone.service');
 describe('New habitat created - subscriber', () => {
 	let runtimeConfig: RuntimeConfig;
 	let buildingZoneService: jest.Mocked<BuildingZoneService>;
-	let newHabitatCreated: NewHabitatCreatedSubscriber;
+	let newHabitatCreated: NewHabitatCreatedService;
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
@@ -18,14 +18,14 @@ describe('New habitat created - subscriber', () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				BuildingZoneService,
-				NewHabitatCreatedSubscriber,
+				NewHabitatCreatedService,
 				coreConfigMock,
 			],
 		}).compile();
 
 		runtimeConfig = module.get(RuntimeConfig);
 		buildingZoneService = module.get(BuildingZoneService);
-		newHabitatCreated = module.get(NewHabitatCreatedSubscriber);
+		newHabitatCreated = module.get(NewHabitatCreatedService);
 	});
 
 	describe('createBuildingZoneOnNewHabitatCreation', () => {

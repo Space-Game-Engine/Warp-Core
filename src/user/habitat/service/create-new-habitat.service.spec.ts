@@ -2,12 +2,12 @@ import {EventEmitter2} from '@nestjs/event-emitter';
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {RegisterUserEvent} from '@warp-core/auth';
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
+import {CreateFirstUserHabitatInput} from '@warp-core/user/habitat';
 import {NewHabitatInput} from '@warp-core/user/habitat/input/new-habitat.input';
-import {CreateNewHabitatService} from '@warp-core/user/habitat/subscriber/create/create-new-habitat.service';
+import {CreateNewHabitatService} from '@warp-core/user/habitat/service/create-new-habitat.service';
 
 jest.mock('@warp-core/database/repository/habitat.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');
@@ -89,7 +89,7 @@ describe('Habitat service tests', () => {
 				isMain: true,
 				buildingZones: [],
 			} as unknown as HabitatModel;
-			const payload = new RegisterUserEvent(userId);
+			const input: CreateFirstUserHabitatInput = {userId};
 
 			when(habitatRepository.getHabitatsByUserId)
 				.expectCalledWith(userId)
@@ -99,7 +99,7 @@ describe('Habitat service tests', () => {
 				.expectCalledWith(expect.objectContaining({userId: userId}))
 				.mockReturnValueOnce(habitatModel as never);
 
-			await createNewHabitatService.createHabitatOnUserRegistration(payload);
+			await createNewHabitatService.createHabitatOnUserRegistration(input);
 
 			expect(habitatRepository.save).toHaveBeenCalledWith(habitatModel);
 			expect(eventEmitter.emitAsync).toBeCalledTimes(2);
@@ -111,7 +111,7 @@ describe('Habitat service tests', () => {
 				expect.stringMatching('habitat.created.after_registration'),
 				expect.objectContaining({habitat: habitatModel}),
 			);
-			expect(payload.getHabitatId()).toBe(habitatModel.id);
+			expect(input.userId).toBe(habitatModel.id);
 		});
 
 		it('should not create new habitat when there for provided user id habitats exists', async () => {
@@ -123,16 +123,16 @@ describe('Habitat service tests', () => {
 				isMain: true,
 				buildingZones: [],
 			} as unknown as HabitatModel;
-			const payload = new RegisterUserEvent(userId);
+			const input: CreateFirstUserHabitatInput = {userId};
 
 			when(habitatRepository.getHabitatsByUserId)
 				.expectCalledWith(userId)
 				.mockResolvedValueOnce([habitatModel]);
 
-			await createNewHabitatService.createHabitatOnUserRegistration(payload);
+			await createNewHabitatService.createHabitatOnUserRegistration(input);
 			expect(habitatRepository.manager.save).toBeCalledTimes(0);
 			expect(eventEmitter.emitAsync).toBeCalledTimes(0);
-			expect(payload.getHabitatId()).toBe(habitatModel.id);
+			expect(input.userId).toBe(habitatModel.id);
 		});
 	});
 });

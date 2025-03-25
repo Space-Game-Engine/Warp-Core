@@ -9,10 +9,10 @@ import {BuildingZoneRepository} from '@warp-core/database/repository/building-zo
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
-import {BuildingZoneService} from '@warp-core/user/building-zone/building-zone.service';
-import {FirstHabitatCreatedSubscriber} from '@warp-core/user/building-zone/subscriber/first-habitat-created.subscriber';
+import {BuildingZoneService} from '@warp-core/user/building-zone/service/building-zone.service';
+import {FirstHabitatCreatedService} from '@warp-core/user/building-zone/service/first-habitat-created.service';
 
-jest.mock('@warp-core/user/building-zone/building-zone.service');
+jest.mock('@warp-core/user/building-zone/service/building-zone.service');
 jest.mock('@warp-core/database/repository/building-zone.repository');
 jest.mock('@warp-core/database/repository/building.repository');
 describe('First habitat created subscriber', () => {
@@ -20,7 +20,7 @@ describe('First habitat created subscriber', () => {
 	let buildingZoneService: jest.Mocked<BuildingZoneService>;
 	let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
 	let buildingRepository: jest.Mocked<BuildingRepository>;
-	let firstHabitatCreated: FirstHabitatCreatedSubscriber;
+	let firstHabitatCreated: FirstHabitatCreatedService;
 
 	beforeAll(() => {
 		prepareRepositoryMock(BuildingZoneRepository);
@@ -34,7 +34,7 @@ describe('First habitat created subscriber', () => {
 				BuildingZoneService,
 				BuildingZoneRepository,
 				BuildingRepository,
-				FirstHabitatCreatedSubscriber,
+				FirstHabitatCreatedService,
 				coreConfigMock,
 			],
 		}).compile();
@@ -43,7 +43,7 @@ describe('First habitat created subscriber', () => {
 		buildingZoneService = module.get(BuildingZoneService);
 		buildingZoneRepository = module.get(BuildingZoneRepository);
 		buildingRepository = module.get(BuildingRepository);
-		firstHabitatCreated = module.get(FirstHabitatCreatedSubscriber);
+		firstHabitatCreated = module.get(FirstHabitatCreatedService);
 	});
 
 	describe('addBuildingsOnFirstHabitatCreation', () => {
