@@ -3,7 +3,7 @@ import {DataSource, EntitySubscriberInterface, EventSubscriber} from 'typeorm';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
-import {ResourceCalculatorService} from '@warp-core/user/resources/calculate/resource-calculator.service';
+import {ResourceCalculatorService} from '@warp-core/user/resources/service/calculate/resource-calculator.service';
 
 @Injectable()
 @EventSubscriber()
