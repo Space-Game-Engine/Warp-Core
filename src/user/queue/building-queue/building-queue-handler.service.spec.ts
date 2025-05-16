@@ -1,4 +1,3 @@
-import {EventEmitter2} from '@nestjs/event-emitter';
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
@@ -12,18 +11,21 @@ import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare
 import {BuildingQueueHandlerService} from '@warp-core/user/queue/building-queue/building-queue-handler.service';
 import {default as queueItemsElements} from '@warp-core/user/queue/building-queue/datasets/building-queue-handler-resolve-queue-data';
 import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue/exchange';
+import {BuildingQueueProcessingEmitter} from '@warp-core/user/queue/building-queue/exchange/emit/building-queue-processing.emitter';
 
 jest.mock('@warp-core/database/repository/building-queue.repository');
 jest.mock('@warp-core/database/repository/building-zone.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');
-jest.mock('@nestjs/event-emitter');
+jest.mock(
+	'@warp-core/user/queue/building-queue/exchange/emit/building-queue-processing.emitter',
+);
 
 describe('Building queue handler service test', () => {
 	let buildingQueueHandlerService: BuildingQueueHandlerService;
 	let buildingQueueRepository: jest.Mocked<BuildingQueueRepository>;
 	let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
 	let authorizedHabitatModel: AuthorizedHabitatModel;
-	let eventEmitter: jest.Mocked<EventEmitter2>;
+	let eventEmitter: jest.Mocked<BuildingQueueProcessingEmitter>;
 
 	beforeAll(() => {
 		prepareRepositoryMock(BuildingQueueRepository);
@@ -38,7 +40,7 @@ describe('Building queue handler service test', () => {
 				BuildingQueueRepository,
 				BuildingZoneRepository,
 				AuthorizedHabitatModel,
-				EventEmitter2,
+				BuildingQueueProcessingEmitter,
 			],
 		}).compile();
 
@@ -48,7 +50,7 @@ describe('Building queue handler service test', () => {
 		buildingQueueRepository = module.get(BuildingQueueRepository);
 		buildingZoneRepository = module.get(BuildingZoneRepository);
 		authorizedHabitatModel = module.get(AuthorizedHabitatModel);
-		eventEmitter = module.get(EventEmitter2);
+		eventEmitter = module.get(BuildingQueueProcessingEmitter);
 
 		authorizedHabitatModel.buildingZones = [];
 	});
@@ -56,25 +58,22 @@ describe('Building queue handler service test', () => {
 	function expectEventToBeCalled(
 		queueElements: BuildingQueueElementModel[],
 	): void {
-		expect(eventEmitter.emitAsync).toBeCalledTimes(queueElements.length * 2);
+		expect(eventEmitter.beforeProcessing).toBeCalledTimes(queueElements.length);
+		expect(eventEmitter.afterProcessing).toBeCalledTimes(queueElements.length);
 
 		let counter = 0;
 		for (const singleQueueElement of queueElements) {
-			expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
-				++counter,
-				expect.stringMatching(
-					'building_queue.resolving.before_processing_element',
-				),
+			counter++;
+
+			expect(eventEmitter.beforeProcessing).toHaveBeenNthCalledWith(
+				counter,
 				expect.objectContaining<BuildingQueueProcessing>({
 					queueElement: singleQueueElement,
 				}),
 			);
 
-			expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
-				++counter,
-				expect.stringMatching(
-					'building_queue.resolving.after_processing_element',
-				),
+			expect(eventEmitter.afterProcessing).toHaveBeenNthCalledWith(
+				counter,
 				expect.objectContaining<BuildingQueueProcessing>({
 					queueElement: singleQueueElement,
 				}),
@@ -83,7 +82,7 @@ describe('Building queue handler service test', () => {
 	}
 
 	describe('resolveQueue', () => {
-		it('should not process any queue items as building queue repository not fetch any data', async () => {
+		it('should not process any queue items as building queue repository does not fetch any data', async () => {
 			const habitatId = 1;
 
 			authorizedHabitatModel.id = habitatId;
@@ -95,7 +94,8 @@ describe('Building queue handler service test', () => {
 
 			expectEventToBeCalled([]);
 			expect(buildingQueueRepository.update).not.toBeCalled();
-			expect(eventEmitter.emitAsync).not.toBeCalled();
+			expect(eventEmitter.beforeProcessing).not.toBeCalled();
+			expect(eventEmitter.afterProcessing).not.toBeCalled();
 		});
 
 		describe.each(queueItemsElements)(

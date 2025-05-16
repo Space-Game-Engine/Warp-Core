@@ -1,6 +1,7 @@
-import {EventEmitter2} from '@nestjs/event-emitter';
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
+
+import {NewHabitatEmitter} from '../exchange/emit/new-habitat.emitter';
 
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
@@ -11,10 +12,11 @@ import {CreateNewHabitatService} from '@warp-core/user/habitat/service/create-ne
 
 jest.mock('@warp-core/database/repository/habitat.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');
+jest.mock('@warp-core/user/habitat/exchange/emit/new-habitat.emitter');
 
 describe('Habitat service tests', () => {
 	let createNewHabitatService: CreateNewHabitatService;
-	let eventEmitter: EventEmitter2;
+	let eventEmitter: jest.Mocked<NewHabitatEmitter>;
 	let habitatRepository: jest.Mocked<HabitatRepository>;
 
 	beforeAll(() => {
@@ -24,18 +26,11 @@ describe('Habitat service tests', () => {
 	beforeEach(async () => {
 		jest.clearAllMocks();
 
-		eventEmitter = {
-			emitAsync: jest.fn(),
-		} as unknown as EventEmitter2;
-
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
 				CreateNewHabitatService,
 				HabitatRepository,
-				{
-					provide: EventEmitter2,
-					useValue: eventEmitter,
-				},
+				NewHabitatEmitter,
 			],
 		}).compile();
 
@@ -43,6 +38,7 @@ describe('Habitat service tests', () => {
 			CreateNewHabitatService,
 		);
 		habitatRepository = module.get(HabitatRepository);
+		eventEmitter = module.get(NewHabitatEmitter);
 	});
 
 	describe('createNewHabitat', () => {
@@ -70,12 +66,12 @@ describe('Habitat service tests', () => {
 
 			expect(returnedHabitatModel).toEqual(habitatModel);
 			expect(habitatRepository.save).toHaveBeenCalledWith(habitatModel);
-			expect(eventEmitter.emitAsync).toBeCalledTimes(1);
-			expect(eventEmitter.emitAsync).toHaveBeenNthCalledWith(
+			expect(eventEmitter.newHabitatCreatedAfterSave).toBeCalledTimes(1);
+			expect(eventEmitter.newHabitatCreatedAfterSave).toHaveBeenNthCalledWith(
 				1,
-				expect.stringMatching('habitat.created.after_save'),
-				expect.objectContaining({habitat: habitatModel}),
+				{habitat: habitatModel},
 			);
+			expect(eventEmitter.newHabitatAfterRegistration).toBeCalledTimes(0);
 		});
 	});
 
@@ -102,16 +98,17 @@ describe('Habitat service tests', () => {
 			await createNewHabitatService.createHabitatOnUserRegistration(input);
 
 			expect(habitatRepository.save).toHaveBeenCalledWith(habitatModel);
-			expect(eventEmitter.emitAsync).toBeCalledTimes(2);
-			expect(eventEmitter.emitAsync).toBeCalledWith(
-				expect.stringMatching('habitat.created.after_save'),
-				expect.objectContaining({habitat: habitatModel}),
+			expect(eventEmitter.newHabitatCreatedAfterSave).toBeCalledTimes(1);
+			expect(eventEmitter.newHabitatCreatedAfterSave).toHaveBeenNthCalledWith(
+				1,
+				{habitat: habitatModel},
 			);
-			expect(eventEmitter.emitAsync).toBeCalledWith(
-				expect.stringMatching('habitat.created.after_registration'),
-				expect.objectContaining({habitat: habitatModel}),
+			expect(eventEmitter.newHabitatAfterRegistration).toBeCalledTimes(1);
+			expect(eventEmitter.newHabitatAfterRegistration).toHaveBeenNthCalledWith(
+				1,
+				{habitat: habitatModel},
 			);
-			expect(input.userId).toBe(habitatModel.id);
+			expect(input.userId).toBe(habitatModel.userId);
 		});
 
 		it('should not create new habitat when there for provided user id habitats exists', async () => {
@@ -131,8 +128,9 @@ describe('Habitat service tests', () => {
 
 			await createNewHabitatService.createHabitatOnUserRegistration(input);
 			expect(habitatRepository.manager.save).toBeCalledTimes(0);
-			expect(eventEmitter.emitAsync).toBeCalledTimes(0);
-			expect(input.userId).toBe(habitatModel.id);
+			expect(eventEmitter.newHabitatAfterRegistration).toBeCalledTimes(0);
+			expect(eventEmitter.newHabitatCreatedAfterSave).toBeCalledTimes(0);
+			expect(input.userId).toBe(habitatModel.userId);
 		});
 	});
 });

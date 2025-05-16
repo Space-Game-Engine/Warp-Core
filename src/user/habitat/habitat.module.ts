@@ -1,5 +1,4 @@
 import {Module} from '@nestjs/common';
-import {EventEmitterModule} from '@nestjs/event-emitter';
 
 import {AuthModule} from '@warp-core/auth';
 import {DatabaseModule} from '@warp-core/database/database.module';
@@ -19,6 +18,6 @@ import {ResourcesQueryEmitter} from '@warp-core/user/resources';
 		CreateNewHabitatService,
 		NewHabitatSubscriber,
 	],
-	imports: [EventEmitterModule, DatabaseModule, AuthModule],
+	imports: [DatabaseModule, AuthModule],
 })
 export class HabitatModule {}
