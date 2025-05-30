@@ -1,6 +1,6 @@
 import {Parent, Query, ResolveField, Resolver} from '@nestjs/graphql';
 
-import {HabitatService} from './habitat.service';
+import {HabitatService} from './service/habitat.service';
 
 import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';

@@ -19,6 +19,7 @@ import {LocalStrategy} from '@warp-core/auth/strategy/local.strategy';
 import {HabitatValidatorService} from '@warp-core/auth/strategy/validator/habitat-validator.service';
 import {DatabaseModule} from '@warp-core/database/database.module';
 import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
+import {HabitatEmitter} from '@warp-core/user/habitat';
 
 const jwtFactory = {
 	useFactory: async (
@@ -52,6 +53,7 @@ const jwtFactory = {
 			provide: APP_GUARD,
 			useClass: GqlAuthGuard,
 		},
+		HabitatEmitter,
 	],
 	imports: [
 		PassportModule,
