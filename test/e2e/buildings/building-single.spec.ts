@@ -1,25 +1,18 @@
 import {HttpStatus, INestApplication} from '@nestjs/common';
 
-import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';
-import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/e2e-module';
 import {requestGraphQL} from '@warp-core/test/e2e/utils/graphql-request-test';
 import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
+import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/setup-tests';
 
 describe('Get single building with details', () => {
-	let app: INestApplication;
 	let requestTest: GraphqlRequestTest;
-
-	beforeAll(async () => {
-		app = await createNestApplicationE2E();
-
-		requestTest = requestGraphQL(app.getHttpServer());
-	});
+	let app: INestApplication;
 
 	beforeEach(async () => {
-		await requestTest.authenticate({
-			userId: 1,
-			habitatId: 1,
-		} as LoginParameters);
+		app = await createNestApplicationE2E();
+		requestTest = requestGraphQL(app.getHttpServer());
+
+		return requestTest.registerAndAuthenticate(1);
 	});
 
 	it('should return single building when user is authenticated', async () => {

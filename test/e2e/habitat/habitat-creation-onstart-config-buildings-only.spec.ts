@@ -1,22 +1,34 @@
 import {HttpStatus, INestApplication} from '@nestjs/common';
+import {DateTime} from 'luxon';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
 import {requestGraphQL} from '@warp-core/test/e2e/utils/graphql-request-test';
 import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
 import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/setup-tests';
 
-describe('Habitat Creation when onStart config is empty', () => {
+describe('Habitat Creation when onStart config contains buildings', () => {
+	let app: INestApplication;
 	let requestTest: GraphqlRequestTest;
 	let config: RuntimeConfig;
-	let app: INestApplication;
 
 	beforeEach(async () => {
 		app = await createNestApplicationE2E();
 		requestTest = requestGraphQL(app.getHttpServer());
+
 		config = app.get(RuntimeConfig);
-		config.habitat.onStart.buildings = [];
+		config.habitat.onStart.buildings = [
+			{
+				id: 'warehouse',
+				level: 1,
+				localBuildingZoneId: 1,
+			},
+			{
+				id: 'coal_mine',
+				level: 1,
+				localBuildingZoneId: 2,
+			},
+		];
 		config.habitat.onStart.resources = [];
 
 		return requestTest.registerAndAuthenticate(2);
@@ -54,12 +66,12 @@ describe('Habitat Creation when onStart config is empty', () => {
 		);
 	});
 
-	it('should not have any pre-build buildings on building zones', async () => {
+	it('should have pre-build buildings on building zones', async () => {
 		const response = await requestTest
 			.query({
 				root: 'buildingZone_getAll',
 				fields: {
-					fields: ['localBuildingZoneId'],
+					fields: ['localBuildingZoneId', 'level'],
 					building: {
 						fields: ['id'],
 					},
@@ -68,11 +80,20 @@ describe('Habitat Creation when onStart config is empty', () => {
 			.send()
 			.expect(HttpStatus.OK);
 
-		response.body.data.buildingZone_getAll.forEach(
-			(buildingZone: Partial<BuildingZoneModel>) => {
-				expect(buildingZone.building).toBeNull();
-			},
-		);
+		for (const buildingZone of response.body.data.buildingZone_getAll) {
+			switch (buildingZone.localBuildingZoneId) {
+				case 1:
+					expect(await buildingZone.building!.id).toEqual('warehouse');
+					expect(buildingZone.level).toEqual(1);
+					break;
+				case 2:
+					expect(await buildingZone.building!.id).toEqual('coal_mine');
+					expect(buildingZone.level).toEqual(1);
+					break;
+				default:
+					expect(buildingZone.building).toBeNull();
+			}
+		}
 	});
 
 	it('should have empty building queue', async () => {
@@ -87,5 +108,35 @@ describe('Habitat Creation when onStart config is empty', () => {
 			.expect(HttpStatus.OK);
 
 		expect(response.body.data.buildingQueue_getAll).toHaveLength(0);
+	});
+
+	describe('See habitat resources after some time when coal mine produces resources', () => {
+		beforeEach(() => {
+			jest.setSystemTime(DateTime.now().plus({minutes: 10}).toJSDate());
+		});
+
+		it('should have resources after 10 minutes', async () => {
+			const response = await requestTest
+				.query({
+					root: 'resource_get',
+					fields: {
+						fields: ['id', 'currentAmount'],
+					},
+					variables: {
+						id: {
+							value: 'coal',
+							type: 'ID',
+						},
+					},
+				})
+				.send()
+				.expect(HttpStatus.OK);
+
+			expect(response.body.data.resource_get.currentAmount).toEqual(100);
+		});
+
+		afterEach(() => {
+			jest.useRealTimers();
+		});
 	});
 });

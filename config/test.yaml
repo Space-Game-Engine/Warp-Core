@@ -5,8 +5,7 @@ database:
   username: ''
   password: ''
   database: 'test_db.db'
-  synchronize: true
-  migrations:
-    - 'test/e2e/migrations/*.ts'
+  synchronize: false
+  migrations: false
   cli:
     "migrationsDir": "test/e2e/migrations"

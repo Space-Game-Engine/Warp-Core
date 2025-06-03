@@ -3,9 +3,9 @@ import {HttpStatus, INestApplication} from '@nestjs/common';
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
-import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/e2e-module';
 import {requestGraphQL} from '@warp-core/test/e2e/utils/graphql-request-test';
 import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
+import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/setup-tests';
 
 describe('Habitat Creation when onStart config contains resources', () => {
 	let app: INestApplication;
@@ -14,8 +14,8 @@ describe('Habitat Creation when onStart config contains resources', () => {
 
 	beforeEach(async () => {
 		app = await createNestApplicationE2E();
-
 		requestTest = requestGraphQL(app.getHttpServer());
+
 		config = app.get(RuntimeConfig);
 		config.habitat.onStart.buildings = [];
 		config.habitat.onStart.resources = [

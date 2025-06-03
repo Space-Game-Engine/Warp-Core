@@ -25,10 +25,9 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "npm run typeorm:test_migrations && NODE_ENV=test jest --config test/e2e/jest-e2e.json --runInBand",
-    "test:e2e-ci": "npm run typeorm:test_migrations && NODE_ENV=test jest --config test/e2e/jest-e2e.json --ci --reporters='github-actions'",
+    "test:e2e": "NODE_ENV=test INSTALLATION_DIRECTORY=\"test/e2e/test-install-files\" jest --config test/e2e/jest-e2e.json --runInBand --detectOpenHandles --forceExit",
+    "test:e2e-ci": "NODE_ENV=test INSTALLATION_DIRECTORY=\"test/e2e/test-install-files\" jest --config test/e2e/jest-e2e.json --ci --reporters='github-actions'",
     "typeorm": "typeorm-ts-node-commonjs",
-    "typeorm:test_migrations": "test/prepare_database.sh",
     "install-game": "nestjs-command install"
   },
   "dependencies": {

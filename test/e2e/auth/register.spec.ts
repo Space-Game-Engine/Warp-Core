@@ -3,15 +3,14 @@ import * as request from 'supertest';
 
 import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/e2e-module';
+import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/setup-tests';
 
 describe('register', () => {
-	let app: INestApplication;
 	let config: RuntimeConfig;
+	let app: INestApplication;
 
-	beforeAll(async () => {
+	beforeEach(async () => {
 		app = await createNestApplicationE2E();
-
 		config = app.get(RuntimeConfig);
 	});
 
