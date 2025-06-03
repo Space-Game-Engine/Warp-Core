@@ -1,31 +1,25 @@
 import {Injectable} from '@nestjs/common';
-import {OnEvent} from '@nestjs/event-emitter';
 
-import {QueueInputValidationEvent} from '@warp-core/user/queue/building-queue/event/queue-input-validation.event';
-import {QueueError} from '@warp-core/user/queue/building-queue/exception/queue.error';
+import {QueueItemValidatorInterface} from '@warp-core/user/queue/building-queue/input/validator/queue-item-validator.interface';
+import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/validator/type';
 
 @Injectable()
-export class EndLevelValidator {
-	constructor() {}
-
-	@OnEvent('building_queue.validating.add_to_queue')
-	@OnEvent('building_queue.validating.draft_queue_element')
-	public async validate(
-		queueValidationEvent: QueueInputValidationEvent,
-	): Promise<void> {
-		const addToQueue = queueValidationEvent.addToQueueInput;
-		const buildingZone = queueValidationEvent.buildingZone;
-		const building = queueValidationEvent.building;
-
-		if (addToQueue.endLevel < buildingZone.level) {
-			queueValidationEvent.addError(
+export class EndLevelValidator implements QueueItemValidatorInterface {
+	public async validate({
+		addToQueueInput,
+		buildingZone,
+		building,
+		validationError,
+	}: QueueInputValidation): Promise<void> {
+		if (addToQueueInput.endLevel < buildingZone.level) {
+			validationError.addError(
 				'endLevel',
 				'End level should not be lower than existing level.',
 			);
 			return;
 		}
-		if (addToQueue.endLevel === buildingZone.level) {
-			queueValidationEvent.addError(
+		if (addToQueueInput.endLevel === buildingZone.level) {
+			validationError.addError(
 				'endLevel',
 				'End level should not equal existing level.',
 			);
@@ -37,13 +31,15 @@ export class EndLevelValidator {
 		).at(-1);
 
 		if (!lastPossibleUpdate) {
-			throw new QueueError(
+			validationError.addError(
+				'endLevel',
 				`Last possible update value for building ${building.id} does not exists`,
 			);
+			return;
 		}
 
-		if (addToQueue.endLevel > lastPossibleUpdate.level) {
-			queueValidationEvent.addError(
+		if (addToQueueInput.endLevel > lastPossibleUpdate.level) {
+			validationError.addError(
 				'endLevel',
 				'You cannot update higher than it is possible. Check Building update details.',
 			);

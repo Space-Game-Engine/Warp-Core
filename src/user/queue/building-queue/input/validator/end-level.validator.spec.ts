@@ -2,9 +2,10 @@ import {Test, TestingModule} from '@nestjs/testing';
 
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingModel} from '@warp-core/database/model/building.model';
-import {QueueInputValidationEvent} from '@warp-core/user/queue/building-queue/event/queue-input-validation.event';
+import {QueueValidationError} from '@warp-core/user/queue/building-queue/exception/queue-validation.error';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 import {EndLevelValidator} from '@warp-core/user/queue/building-queue/input/validator/end-level.validator';
+import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/validator/type';
 
 describe('End Level building queue validator', () => {
 	let endLevelValidator: EndLevelValidator;
@@ -19,7 +20,7 @@ describe('End Level building queue validator', () => {
 
 	describe('validate', () => {
 		it('should add error to event when building zone level is higher than add to queue input level', async () => {
-			const addToQueue: AddToQueueInput = {
+			const addToQueueInput: AddToQueueInput = {
 				localBuildingZoneId: 1,
 				buildingId: 'test',
 				endLevel: 1,
@@ -35,21 +36,24 @@ describe('End Level building queue validator', () => {
 				id: 'test',
 			} as BuildingModel;
 
-			const queueValidationEvent = new QueueInputValidationEvent(
-				addToQueue,
+			const validationError = new QueueValidationError();
+
+			const queueValidationInput: QueueInputValidation = {
+				addToQueueInput,
 				building,
 				buildingZone,
-			);
-			await endLevelValidator.validate(queueValidationEvent);
+				validationError,
+			};
+			await endLevelValidator.validate(queueValidationInput);
 
-			expect(queueValidationEvent.hasError()).toBe(true);
-			expect(queueValidationEvent.queueErrors).toEqual({
+			expect(validationError.hasErrors()).toBe(true);
+			expect(validationError.getResponse()).toEqual({
 				endLevel: ['End level should not be lower than existing level.'],
 			});
 		});
 
 		it('should add error to event when building zone level equals queue end level', async () => {
-			const addToQueue: AddToQueueInput = {
+			const addToQueueInput: AddToQueueInput = {
 				localBuildingZoneId: 1,
 				buildingId: 'test',
 				endLevel: 10,
@@ -65,21 +69,24 @@ describe('End Level building queue validator', () => {
 				id: 'test',
 			} as BuildingModel;
 
-			const queueValidationEvent = new QueueInputValidationEvent(
-				addToQueue,
+			const validationError = new QueueValidationError();
+
+			const queueValidationInput: QueueInputValidation = {
+				addToQueueInput,
 				building,
 				buildingZone,
-			);
-			await endLevelValidator.validate(queueValidationEvent);
+				validationError,
+			};
+			await endLevelValidator.validate(queueValidationInput);
 
-			expect(queueValidationEvent.hasError()).toBe(true);
-			expect(queueValidationEvent.queueErrors).toEqual({
+			expect(validationError.hasErrors()).toBe(true);
+			expect(validationError.getResponse()).toEqual({
 				endLevel: ['End level should not equal existing level.'],
 			});
 		});
 
 		it('should add error to event when add to queue level is higher than possible to update', async () => {
-			const addToQueue: AddToQueueInput = {
+			const addToQueueInput: AddToQueueInput = {
 				localBuildingZoneId: 1,
 				buildingId: 'test',
 				endLevel: 100,
@@ -100,15 +107,18 @@ describe('End Level building queue validator', () => {
 				],
 			} as BuildingModel;
 
-			const queueValidationEvent = new QueueInputValidationEvent(
-				addToQueue,
+			const validationError = new QueueValidationError();
+
+			const queueValidationInput: QueueInputValidation = {
+				addToQueueInput,
 				building,
 				buildingZone,
-			);
-			await endLevelValidator.validate(queueValidationEvent);
+				validationError,
+			};
+			await endLevelValidator.validate(queueValidationInput);
 
-			expect(queueValidationEvent.hasError()).toBe(true);
-			expect(queueValidationEvent.queueErrors).toEqual({
+			expect(validationError.hasErrors()).toBe(true);
+			expect(validationError.getResponse()).toEqual({
 				endLevel: [
 					'You cannot update higher than it is possible. Check Building update details.',
 				],
@@ -116,7 +126,7 @@ describe('End Level building queue validator', () => {
 		});
 
 		it('should be correct level settings for queue', async () => {
-			const addToQueue: AddToQueueInput = {
+			const addToQueueInput: AddToQueueInput = {
 				localBuildingZoneId: 1,
 				buildingId: 'test',
 				endLevel: 10,
@@ -137,14 +147,17 @@ describe('End Level building queue validator', () => {
 				],
 			} as BuildingModel;
 
-			const queueValidationEvent = new QueueInputValidationEvent(
-				addToQueue,
+			const validationError = new QueueValidationError();
+
+			const queueValidationInput: QueueInputValidation = {
+				addToQueueInput,
 				building,
 				buildingZone,
-			);
-			await endLevelValidator.validate(queueValidationEvent);
+				validationError,
+			};
+			await endLevelValidator.validate(queueValidationInput);
 
-			expect(queueValidationEvent.hasError()).toBe(false);
+			expect(validationError.hasErrors()).toBe(false);
 		});
 	});
 });

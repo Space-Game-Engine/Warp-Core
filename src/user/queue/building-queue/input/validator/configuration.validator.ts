@@ -1,45 +1,40 @@
 import {Injectable} from '@nestjs/common';
-import {OnEvent} from '@nestjs/event-emitter';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
-import {QueueInputValidationEvent} from '@warp-core/user/queue/building-queue/event/queue-input-validation.event';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
+import {QueueItemValidatorInterface} from '@warp-core/user/queue/building-queue/input/validator/queue-item-validator.interface';
+import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/validator/type';
 
 @Injectable()
-export class ConfigurationValidator {
+export class ConfigurationValidator implements QueueItemValidatorInterface {
 	constructor(
 		private readonly buildingQueueRepository: BuildingQueueRepository,
 		private readonly runtimeConfig: RuntimeConfig,
 	) {}
 
-	@OnEvent('building_queue.validating.add_to_queue')
-	@OnEvent('building_queue.validating.draft_queue_element')
-	public async validate(
-		queueValidationEvent: QueueInputValidationEvent,
-	): Promise<void> {
-		const addToQueueElement = queueValidationEvent.addToQueueInput;
-		const buildingZone = queueValidationEvent.buildingZone;
-
-		if (
-			this.runtimeConfig.habitat.buildingQueue.allowMultipleLevelUpdate === true
-		) {
+	public async validate({
+		addToQueueInput,
+		buildingZone,
+		validationError,
+	}: QueueInputValidation): Promise<void> {
+		if (this.runtimeConfig.habitat.buildingQueue.allowMultipleLevelUpdate) {
 			const errorMessage = await this.isPossibleToQueueElementByMultipleLevels(
-				addToQueueElement,
+				addToQueueInput,
 				buildingZone,
 			);
 			if (errorMessage) {
-				queueValidationEvent.addError('endLevel', errorMessage);
+				validationError.addError('endLevel', errorMessage);
 			}
 		} else {
-			if (
-				(await this.isPossibleToQueueElementByOneLevel(
-					addToQueueElement,
+			const isPossibleToQueueElementByOneLevel =
+				await this.isPossibleToQueueElementByOneLevel(
+					addToQueueInput,
 					buildingZone,
-				)) === false
-			) {
-				queueValidationEvent.addError(
+				);
+			if (!isPossibleToQueueElementByOneLevel) {
+				validationError.addError(
 					'endLevel',
 					'You can only upgrade a building by one level at a time',
 				);

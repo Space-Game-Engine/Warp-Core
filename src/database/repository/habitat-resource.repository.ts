@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {DataSource, In} from 'typeorm';
+import {DataSource, In, UpdateResult} from 'typeorm';
 
 import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
 import {BuildingModel} from '@warp-core/database/model/building.model';
@@ -60,11 +60,12 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
 		resourceIds: string[],
 		habitatId: number,
 		lastCalculationTime: Date,
-	): void {
-		this.createQueryBuilder()
+	): Promise<UpdateResult> {
+		return this.createQueryBuilder()
 			.update(HabitatResourceModel)
 			.set({lastCalculationTime: lastCalculationTime})
 			.where('resourceId in :resourceIds', {resourceIds: resourceIds})
-			.andWhere('habitatId = :habitatId', {habitatId: habitatId});
+			.andWhere('habitatId = :habitatId', {habitatId: habitatId})
+			.execute();
 	}
 }

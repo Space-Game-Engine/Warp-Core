@@ -18,7 +18,6 @@ jest.mock('@warp-core/database/repository/building-zone.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');
 jest.mock('@warp-core/global/building/exchange/query/building-query.emitter');
 jest.mock('@nestjs/config');
-jest.mock('@nestjs/event-emitter');
 
 describe('Prepare single building queue element tests', () => {
 	let prepareBuildingQueueElement: PrepareSingleBuildingQueueElementService;
