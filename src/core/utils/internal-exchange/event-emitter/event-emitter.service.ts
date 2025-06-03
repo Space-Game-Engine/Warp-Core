@@ -47,6 +47,8 @@ export class EventEmitterService extends InternalExchangeEmitter {
 	}
 
 	public async emit(request: QueryExchangeRequest): Promise<void> {
-		await this.eventEmitter.emitAsync(request.eventName, request.requestData);
+		await this.eventEmitter.emitAsync(request.eventName, {
+			data: request.requestData,
+		});
 	}
 }
