@@ -7,6 +7,7 @@ import {BuildingQueueElementModel} from '@warp-core/database/model/building-queu
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingModel} from '@warp-core/database/model/building.model';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
@@ -62,6 +63,7 @@ describe('Resources calculator service test', () => {
 				resource: {
 					id: 'different resource',
 				},
+				habitat: authorizedHabitatModel as HabitatModel,
 			} as HabitatResourceModel;
 
 			authorizedHabitatModel.id = 5;
@@ -91,6 +93,7 @@ describe('Resources calculator service test', () => {
 						resource: {
 							id: 'wood',
 						},
+						habitat: authorizedHabitatModel as HabitatModel,
 					} as HabitatResourceModel;
 
 					const buildingZone = {
@@ -140,6 +143,7 @@ describe('Resources calculator service test', () => {
 						resource: {
 							id: 'wood',
 						},
+						habitat: authorizedHabitatModel as HabitatModel,
 					} as HabitatResourceModel;
 
 					const buildingZone = {
@@ -194,6 +198,7 @@ describe('Resources calculator service test', () => {
 						resource: {
 							id: 'stone',
 						},
+						habitat: authorizedHabitatModel as HabitatModel,
 					} as HabitatResourceModel;
 
 					const buildingZones = buildingZoneResource.buildingZones.map(
@@ -242,24 +247,6 @@ describe('Resources calculator service test', () => {
 			const lastCalculationTime = DateTime.now()
 				.minus({second: secondsToCalculate})
 				.toJSDate();
-			const queueElement = {
-				startLevel: 1,
-				endLevel: 2,
-				endTime: new Date(),
-				building: {
-					id: 'test',
-				},
-			} as BuildingQueueElementModel;
-
-			const habitatResource = {
-				id: '1',
-				currentAmount: 10,
-				lastCalculationTime: lastCalculationTime,
-				resource: {
-					id: 'wood',
-				},
-			} as HabitatResourceModel;
-
 			const buildingZone = {
 				id: 1,
 				level: 1,
@@ -275,7 +262,28 @@ describe('Resources calculator service test', () => {
 						},
 					],
 				},
+				habitat: authorizedHabitatModel as HabitatModel,
 			} as BuildingZoneModel;
+
+			const queueElement = {
+				startLevel: 1,
+				endLevel: 2,
+				endTime: new Date(),
+				building: {
+					id: 'test',
+				},
+				buildingZone,
+			} as BuildingQueueElementModel;
+
+			const habitatResource = {
+				id: '1',
+				currentAmount: 10,
+				lastCalculationTime: lastCalculationTime,
+				resource: {
+					id: 'wood',
+				},
+				habitat: authorizedHabitatModel as HabitatModel,
+			} as HabitatResourceModel;
 
 			authorizedHabitatModel.id = 5;
 
@@ -303,7 +311,7 @@ describe('Resources calculator service test', () => {
 				lastCalculationTime.getTime(),
 			);
 
-			expect(habitatResourceRepository.save).toBeCalledTimes(1);
+			expect(habitatResourceRepository.save).toHaveBeenCalledTimes(1);
 		});
 
 		it('should update resource on queue update for building zone with multiple resources', async () => {
@@ -318,6 +326,9 @@ describe('Resources calculator service test', () => {
 				building: {
 					id: 'test',
 				},
+				buildingZone: {
+					habitat: authorizedHabitatModel as HabitatModel,
+				} as BuildingZoneModel,
 			} as BuildingQueueElementModel;
 
 			const habitatResource1 = {
@@ -327,6 +338,7 @@ describe('Resources calculator service test', () => {
 				resource: {
 					id: 'wood',
 				},
+				habitat: authorizedHabitatModel as HabitatModel,
 			} as HabitatResourceModel;
 
 			const habitatResource2 = {
@@ -336,6 +348,7 @@ describe('Resources calculator service test', () => {
 				resource: {
 					id: 'steel',
 				},
+				habitat: authorizedHabitatModel as HabitatModel,
 			} as HabitatResourceModel;
 
 			const buildingZoneForWood = {
@@ -354,6 +367,7 @@ describe('Resources calculator service test', () => {
 						},
 					],
 				},
+				habitat: authorizedHabitatModel as HabitatModel,
 			} as BuildingZoneModel;
 
 			const buildingZoneForSteel = {
@@ -372,6 +386,7 @@ describe('Resources calculator service test', () => {
 						},
 					],
 				},
+				habitat: authorizedHabitatModel as HabitatModel,
 			} as BuildingZoneModel;
 
 			authorizedHabitatModel.id = 5;
@@ -403,7 +418,7 @@ describe('Resources calculator service test', () => {
 				lastCalculationTime.getTime(),
 			);
 
-			expect(habitatResourceRepository.save).toBeCalledTimes(1);
+			expect(habitatResourceRepository.save).toHaveBeenCalledTimes(1);
 		});
 	});
 });

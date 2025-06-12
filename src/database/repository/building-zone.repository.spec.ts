@@ -61,7 +61,7 @@ describe('Building zone repository test', () => {
 				await buildingZoneRepository.getAllBuildingZonesByHabitatId(habitatId);
 
 			expect(returnedBuildingZones).toEqual(buildingZones);
-			expect(findBuildingZoneSpy).toBeCalledWith(
+			expect(findBuildingZoneSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					where: {
 						habitat: {
@@ -91,7 +91,7 @@ describe('Building zone repository test', () => {
 				);
 
 			expect(returnedBuildingZone).toEqual(buildingZone);
-			expect(findOneBuildingZoneSpy).toBeCalledWith(
+			expect(findOneBuildingZoneSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					where: {
 						localBuildingZoneId: buildingZone.localBuildingZoneId,
@@ -118,7 +118,7 @@ describe('Building zone repository test', () => {
 				await buildingZoneRepository.getSingleBuildingZoneById(buildingZone.id);
 
 			expect(returnedBuildingZone).toEqual(buildingZone);
-			expect(findOneBuildingZoneSpy).toBeCalledWith(
+			expect(findOneBuildingZoneSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					where: {
 						id: buildingZone.id,

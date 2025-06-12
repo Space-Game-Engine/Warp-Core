@@ -39,11 +39,11 @@ describe('New habitat created - subscriber', () => {
 				habitat: newHabitat,
 			});
 
-			expect(buildingZoneService.createNewBuildingZone).toBeCalledTimes(
+			expect(buildingZoneService.createNewBuildingZone).toHaveBeenCalledTimes(
 				runtimeConfig.habitat.buildingZones.counterForNewHabitat,
 			);
 
-			expect(buildingZoneService.createNewBuildingZone).toBeCalledWith(
+			expect(buildingZoneService.createNewBuildingZone).toHaveBeenCalledWith(
 				newHabitat,
 			);
 		});

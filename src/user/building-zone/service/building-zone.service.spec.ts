@@ -50,7 +50,7 @@ describe('Building Zone Service', () => {
 				id: habitatId,
 			} as HabitatModel);
 
-			expect(buildingZoneRepository.save).toBeCalledWith(
+			expect(buildingZoneRepository.save).toHaveBeenCalledWith(
 				expect.objectContaining({
 					localBuildingZoneId: 1,
 					habitatId: habitatId,
@@ -69,7 +69,7 @@ describe('Building Zone Service', () => {
 				id: habitatId,
 			} as HabitatModel);
 
-			expect(buildingZoneRepository.save).toBeCalledWith(
+			expect(buildingZoneRepository.save).toHaveBeenCalledWith(
 				expect.objectContaining({
 					localBuildingZoneId: 2,
 					habitatId: habitatId,

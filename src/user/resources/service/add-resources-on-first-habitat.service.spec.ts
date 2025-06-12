@@ -50,16 +50,18 @@ describe('Add resources on first user habitat', () => {
 
 			expect(
 				habitatResourceRepository.getHabitatResourcesByIds,
-			).toBeCalledTimes(0);
+			).toHaveBeenCalledTimes(0);
 		});
 
-		it('should set basic amount of resources without setting lastCalculationTime', async () => {
+		it('should set basic amount of resources without changing lastCalculationTime', async () => {
 			runtimeConfig.habitat.onStart.resources = [
 				{
 					id: 'wood',
 					amount: 100,
 				},
 			];
+
+			const lastCalculationTime = new Date();
 
 			const newHabitat = {
 				id: 1,
@@ -69,7 +71,7 @@ describe('Add resources on first user habitat', () => {
 				{
 					resourceId: 'wood',
 					currentAmount: 0,
-					lastCalculationTime: null,
+					lastCalculationTime,
 				},
 			] as HabitatResourceModel[];
 
@@ -82,10 +84,12 @@ describe('Add resources on first user habitat', () => {
 			});
 
 			expect(habitatResources[0].currentAmount).toEqual(100);
-			expect(habitatResources[0].lastCalculationTime).toEqual(null);
+			expect(habitatResources[0].lastCalculationTime).toEqual(
+				lastCalculationTime,
+			);
 
-			expect(habitatResourceRepository.update).toBeCalledTimes(1);
-			expect(habitatResourceRepository.update).toBeCalledWith(
+			expect(habitatResourceRepository.update).toHaveBeenCalledTimes(1);
+			expect(habitatResourceRepository.update).toHaveBeenCalledWith(
 				habitatResources[0].id,
 				{currentAmount: 100},
 			);

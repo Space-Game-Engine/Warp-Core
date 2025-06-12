@@ -198,7 +198,7 @@ describe('Prepare single building queue element tests', () => {
 					.expectCalledWith(addToQueueInput.buildingId as string)
 					.mockResolvedValue({data: building, error: undefined});
 			} else {
-				expect(buildingService.getBuildingById).toBeCalledTimes(0);
+				expect(buildingService.getBuildingById).toHaveBeenCalledTimes(0);
 			}
 			when(resourcesCalculator.calculateResourcesCosts)
 				.expectCalledWith(addToQueueInput, buildingZone, building)

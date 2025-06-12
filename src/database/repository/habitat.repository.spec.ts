@@ -51,8 +51,8 @@ describe('Habitat repository test', () => {
 			);
 
 			expect(returnedHabitatModel).toEqual(habitatModel);
-			expect(findOneHabitatSpy).toBeCalledTimes(1);
-			expect(findOneHabitatSpy).toBeCalledWith(
+			expect(findOneHabitatSpy).toHaveBeenCalledTimes(1);
+			expect(findOneHabitatSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					where: {
 						id: habitatModel.id,
@@ -79,8 +79,8 @@ describe('Habitat repository test', () => {
 			);
 
 			expect(returnedHabitatModels).toEqual([habitatModel]);
-			expect(findHabitatSpy).toBeCalledTimes(1);
-			expect(findHabitatSpy).toBeCalledWith(
+			expect(findHabitatSpy).toHaveBeenCalledTimes(1);
+			expect(findHabitatSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					where: {
 						userId: habitatModel.userId,
