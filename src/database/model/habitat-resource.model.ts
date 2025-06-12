@@ -37,8 +37,8 @@ export class HabitatResourceModel {
 	@Column('int')
 	public currentAmount: number = 0;
 
-	@Column({type: 'datetime', nullable: true})
-	public lastCalculationTime: Date | null = null;
+	@Column({type: 'datetime', nullable: false})
+	public lastCalculationTime: Date;
 
 	@Field(() => ResourceModel, {description: 'Get connected resource details'})
 	@ValidateNested()

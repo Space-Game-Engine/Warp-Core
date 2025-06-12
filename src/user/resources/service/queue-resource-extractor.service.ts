@@ -92,10 +92,7 @@ export class QueueResourceExtractorService {
 
 			await this.habitatResourceRepository.update(singleRequiredResource.id, {
 				currentAmount: singleRequiredResource.currentAmount,
-				lastCalculationTime:
-					singleRequiredResource.lastCalculationTime === null
-						? null
-						: new Date(),
+				lastCalculationTime: singleRequiredResource.lastCalculationTime,
 			});
 		}
 	}
