@@ -24,7 +24,7 @@ describe('Habitat Creation when onStart config contains buildings', () => {
 				localBuildingZoneId: 1,
 			},
 			{
-				id: 'coal_mine',
+				id: 'lumber_mill',
 				level: 1,
 				localBuildingZoneId: 2,
 			},
@@ -87,7 +87,7 @@ describe('Habitat Creation when onStart config contains buildings', () => {
 					expect(buildingZone.level).toEqual(1);
 					break;
 				case 2:
-					expect(await buildingZone.building!.id).toEqual('coal_mine');
+					expect(await buildingZone.building!.id).toEqual('lumber_mill');
 					expect(buildingZone.level).toEqual(1);
 					break;
 				default:
@@ -112,10 +112,11 @@ describe('Habitat Creation when onStart config contains buildings', () => {
 
 	describe('See habitat resources after some time when coal mine produces resources', () => {
 		beforeEach(() => {
-			jest.setSystemTime(DateTime.now().plus({minutes: 10}).toJSDate());
+			jest.useFakeTimers();
 		});
 
-		it('should have resources after 10 minutes', async () => {
+		it('should have resources after 30 seconds', async () => {
+			jest.setSystemTime(DateTime.now().plus({second: 30}).toJSDate());
 			const response = await requestTest
 				.query({
 					root: 'resource_get',
@@ -124,7 +125,28 @@ describe('Habitat Creation when onStart config contains buildings', () => {
 					},
 					variables: {
 						id: {
-							value: 'coal',
+							value: 'wood',
+							type: 'ID',
+						},
+					},
+				})
+				.send()
+				.expect(HttpStatus.OK);
+
+			expect(response.body.data.resource_get.currentAmount).toEqual(30);
+		});
+
+		it('should have resources after 10 minutes, but limited to warehouse capacity', async () => {
+			jest.setSystemTime(DateTime.now().plus({minutes: 10}).toJSDate());
+			const response = await requestTest
+				.query({
+					root: 'resource_get',
+					fields: {
+						fields: ['id', 'currentAmount'],
+					},
+					variables: {
+						id: {
+							value: 'wood',
 							type: 'ID',
 						},
 					},
