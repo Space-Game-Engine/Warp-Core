@@ -1,7 +1,6 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {DateTime} from 'luxon';
 
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
@@ -17,7 +16,6 @@ export class ResourceCalculatorService {
 		private readonly buildingZoneRepository: BuildingZoneRepository,
 		private readonly habitatResourceRepository: HabitatResourceRepository,
 		private readonly calculateResourceStorage: CalculateResourceStorageService,
-		private readonly habitatModel: AuthorizedHabitatModel,
 	) {}
 
 	public async calculateSingleResource(
@@ -25,14 +23,15 @@ export class ResourceCalculatorService {
 		calculationEndTime: Date = new Date(),
 	): Promise<void> {
 		const resource = await habitatResource.resource;
+		const habitat = await habitatResource.habitat;
 
 		this.logger.debug(
-			`Calculate resource ${resource.id} for habitat ${this.habitatModel.id}`,
+			`Calculate resource ${resource.id} for habitat ${habitat.id}`,
 		);
 
 		const buildingZones =
 			await this.buildingZoneRepository.getBuildingZoneProducersForSingleResource(
-				this.habitatModel,
+				habitat,
 				resource,
 			);
 
@@ -45,7 +44,7 @@ export class ResourceCalculatorService {
 		}
 
 		this.logger.debug(
-			`Resource ${resource.id} for habitat ${this.habitatModel.id} is calculated`,
+			`Resource ${resource.id} for habitat ${habitat.id} is calculated`,
 		);
 	}
 
@@ -53,6 +52,7 @@ export class ResourceCalculatorService {
 		queueProcessingEvent: BuildingQueueProcessing,
 	): Promise<void> {
 		const buildingQueueElement = queueProcessingEvent.queueElement;
+		const habitat = await (await buildingQueueElement.buildingZone).habitat;
 
 		this.logger.debug(
 			`Calculating resource on queue update for building zone ${buildingQueueElement.buildingZoneId}`,
@@ -61,7 +61,7 @@ export class ResourceCalculatorService {
 			await this.habitatResourceRepository.getHabitatResourceByBuildingAndLevel(
 				await buildingQueueElement.building!,
 				buildingQueueElement.startLevel,
-				this.habitatModel.id,
+				habitat.id,
 			);
 
 		for (const singleHabitatResource of habitatResources) {
@@ -79,6 +79,7 @@ export class ResourceCalculatorService {
 		queueProcessingEvent: BuildingQueueProcessing,
 	): Promise<void> {
 		const buildingQueueElement = queueProcessingEvent.queueElement;
+		const habitat = await (await buildingQueueElement.buildingZone).habitat;
 		this.logger.debug(
 			'Setting last calculation time for newly processed queue element',
 		);
@@ -86,7 +87,7 @@ export class ResourceCalculatorService {
 			await this.habitatResourceRepository.getHabitatResourceByBuildingAndLevel(
 				await buildingQueueElement.building!,
 				buildingQueueElement.endLevel,
-				this.habitatModel.id,
+				habitat.id,
 			);
 
 		for (const singleHabitatResource of habitatResources) {
