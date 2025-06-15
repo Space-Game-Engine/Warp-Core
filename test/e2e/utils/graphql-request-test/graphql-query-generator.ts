@@ -1,6 +1,6 @@
 export type GraphQLQueryVariableDetails = {
 	value: unknown;
-	type: 'Int' | 'Float' | 'ID' | 'string';
+	type: 'Int' | 'Float' | 'ID' | 'string' | string;
 };
 
 export type GraphQLQueryVariables = {
