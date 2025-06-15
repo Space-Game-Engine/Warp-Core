@@ -41,6 +41,7 @@ export class BuildingQueueElementModel implements DraftModelInterface {
 	@Column('datetime')
 	public endTime: Date;
 
+	@Field({description: 'Is a queued item consumed already?'})
 	@IsBoolean()
 	@Column('boolean')
 	public isConsumed: boolean = false;
