@@ -5,7 +5,7 @@ import {requestGraphQL} from '@warp-core/test/e2e/utils/graphql-request-test';
 import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
 import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/setup-tests';
 
-describe('Building queue with single item on queue', () => {
+describe('Building queue with multiple level update not allowed', () => {
 	let app: INestApplication;
 	let requestTest: GraphqlRequestTest;
 	let config: RuntimeConfig;
@@ -15,7 +15,7 @@ describe('Building queue with single item on queue', () => {
 		requestTest = requestGraphQL(app.getHttpServer());
 
 		config = app.get(RuntimeConfig);
-		config.habitat.buildingQueue.maxElementsInQueue = 1;
+		config.habitat.buildingQueue.allowMultipleLevelUpdate = false;
 
 		return requestTest.registerAndAuthenticate(2);
 	});
@@ -46,8 +46,37 @@ describe('Building queue with single item on queue', () => {
 		expect(response.body.data.buildingQueue_add.isConsumed).toEqual(false);
 	});
 
-	it('should throw error on adding multiple item on queue', async () => {
-		const firstQueueItemResponse = await requestTest
+	it('should throw error when user wants to update by multiple levels when update is possible', async () => {
+		const response = await requestTest
+			.mutation({
+				root: 'buildingQueue_add',
+				operationName: 'AddToQueue',
+				fields: {
+					fields: ['startLevel', 'endLevel', 'isConsumed'],
+				},
+				variables: {
+					addToQueue: {
+						type: 'AddToQueueInput',
+						value: {
+							localBuildingZoneId: 2,
+							endLevel: 4,
+						},
+					},
+				},
+			})
+			.send()
+			.expect(HttpStatus.OK);
+
+		expect(response.body.errors).toHaveLength(1);
+		expect(response.body.errors[0].message).toBe('Queue Validation Error');
+		expect(response.body.errors[0].validationError.endLevel).toHaveLength(1);
+		expect(response.body.errors[0].validationError.endLevel).toContain(
+			'You can only upgrade a building by one level at a time',
+		);
+	});
+
+	it('should throw error when user wants to update by multiple levels and when update for that level is not possible', async () => {
+		const response = await requestTest
 			.mutation({
 				root: 'buildingQueue_add',
 				operationName: 'AddToQueue',
@@ -59,7 +88,7 @@ describe('Building queue with single item on queue', () => {
 						type: 'AddToQueueInput',
 						value: {
 							localBuildingZoneId: 1,
-							endLevel: 2,
+							endLevel: 4,
 						},
 					},
 				},
@@ -67,45 +96,14 @@ describe('Building queue with single item on queue', () => {
 			.send()
 			.expect(HttpStatus.OK);
 
-		expect(
-			firstQueueItemResponse.body.data.buildingQueue_add.startLevel,
-		).toEqual(1);
-		expect(firstQueueItemResponse.body.data.buildingQueue_add.endLevel).toEqual(
-			2,
+		expect(response.body.errors).toHaveLength(1);
+		expect(response.body.errors[0].message).toBe('Queue Validation Error');
+		expect(response.body.errors[0].validationError.endLevel).toHaveLength(2);
+		expect(response.body.errors[0].validationError.endLevel).toContain(
+			'You can only upgrade a building by one level at a time',
 		);
-		expect(
-			firstQueueItemResponse.body.data.buildingQueue_add.isConsumed,
-		).toEqual(false);
-
-		const secondQueueItemResponse = await requestTest
-			.mutation({
-				root: 'buildingQueue_add',
-				operationName: 'AddToQueue',
-				fields: {
-					fields: ['startLevel'],
-				},
-				variables: {
-					addToQueue: {
-						type: 'AddToQueueInput',
-						value: {
-							localBuildingZoneId: 2,
-							endLevel: 2,
-						},
-					},
-				},
-			})
-			.send()
-			.expect(HttpStatus.OK);
-
-		expect(secondQueueItemResponse.body.errors).toHaveLength(1);
-		expect(secondQueueItemResponse.body.errors[0].message).toBe(
-			'Queue Validation Error',
+		expect(response.body.errors[0].validationError.endLevel).toContain(
+			'You cannot update higher than it is possible. Check Building update details.',
 		);
-		expect(
-			secondQueueItemResponse.body.errors[0].validationError.queueInput,
-		).toHaveLength(1);
-		expect(
-			secondQueueItemResponse.body.errors[0].validationError.queueInput,
-		).toContain('Max queue count (1) has been reached');
 	});
 });
