@@ -26,7 +26,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "NODE_ENV=test INSTALLATION_DIRECTORY=\"test/e2e/test-install-files\" jest --config test/e2e/jest-e2e.json --runInBand --detectOpenHandles --forceExit",
-    "test:e2e-ci": "NODE_ENV=test INSTALLATION_DIRECTORY=\"test/e2e/test-install-files\" jest --config test/e2e/jest-e2e.json --ci --reporters='github-actions'",
+    "test:e2e-ci": "NODE_ENV=test INSTALLATION_DIRECTORY=\"test/e2e/test-install-files\" jest --config test/e2e/jest-e2e.json --runInBand --detectOpenHandles --forceExit --ci --reporters='github-actions'",
     "typeorm": "typeorm-ts-node-commonjs",
     "install-game": "nestjs-command install"
   },
