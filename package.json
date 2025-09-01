@@ -20,8 +20,8 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "lint:ci": "eslint \"{src,apps,libs,test}/**/*.ts\"",
-    "test": "jest",
-    "test:ci": "jest --ci --reporters='github-actions'",
+    "test:unit": "jest",
+    "test:unit-ci": "jest --ci --reporters='github-actions'",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
@@ -125,10 +125,7 @@
     "moduleNameMapper": {
       "@warp-core/test/(.*)": "<rootDir>../test/$1",
       "@warp-core/(.*)": "<rootDir>/$1"
-    },
-    "setupFilesAfterEnv": [
-      "<rootDir>../test/setupTests.ts"
-    ]
+    }
   },
   "main": "index.js",
   "directories": {
