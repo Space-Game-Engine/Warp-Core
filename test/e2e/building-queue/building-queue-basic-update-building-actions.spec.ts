@@ -6,7 +6,7 @@ import {requestGraphQL} from '@warp-core/test/e2e/utils/graphql-request-test';
 import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
 import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/setup-tests';
 
-describe('Building queue - basic actions', () => {
+describe('Building queue - basic update building actions', () => {
 	let app: INestApplication;
 	let requestTest: GraphqlRequestTest;
 
@@ -56,7 +56,7 @@ describe('Building queue - basic actions', () => {
 					let amountToExpect = 0;
 					switch (singleResource.id) {
 						case 'wood':
-							amountToExpect = 30;
+							amountToExpect = 10;
 							break;
 						case 'stone_granite':
 							amountToExpect = 0;
