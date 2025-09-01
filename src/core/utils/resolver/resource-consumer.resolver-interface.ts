@@ -6,5 +6,5 @@ export interface ResourceConsumerResolverInterface {
 	 */
 	getDraft(inputData: object): Promise<DraftModelInterface>;
 
-	processAndConsumeResources(inputData: object): Promise<DraftModelInterface>;
+	saveQueueElement(inputData: object): Promise<DraftModelInterface>;
 }
