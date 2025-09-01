@@ -17,7 +17,7 @@ export class QueueProcessingSubscriber {
 		private readonly queueExtractor: QueueResourceExtractorService,
 	) {}
 
-	@InternalExchangeEmitListener(BuildingQueueNames.BeforeProcessingElement)
+	@InternalExchangeEmitListener(BuildingQueueNames.BeforeAddingElement)
 	public addResourcesOnQueueUpdate(
 		input: BuildingQueueProcessing,
 	): Promise<void> {
@@ -29,7 +29,7 @@ export class QueueProcessingSubscriber {
 		]).then();
 	}
 
-	@InternalExchangeEmitListener(BuildingQueueNames.AfterProcessingElement)
+	@InternalExchangeEmitListener(BuildingQueueNames.AfterAddingElement)
 	public setLastCalculationTimeForNewResources(
 		input: BuildingQueueProcessing,
 	): Promise<void> {
