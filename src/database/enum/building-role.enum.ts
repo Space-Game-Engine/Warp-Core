@@ -12,17 +12,16 @@ registerEnumType(BuildingRoleEnum, {
 	description: 'What kind of buildings are available?',
 	valuesMap: {
 		RESOURCE_PRODUCTION: {
-			description: 'Creates one or more types of resource',
+			description: 'Produces one or more types of resources',
 		},
 		TECHNOLOGY_PRODUCTION: {
-			description: 'Develop some kind of technology',
+			description: 'Enables technological development',
 		},
 		UNIT_PRODUCTION: {
-			description: 'Recruit units for your army',
+			description: 'recruits units for the army',
 		},
 		WAREHOUSE_ONLY: {
-			description:
-				"That building only stores some resources, don't have any other role.",
+			description: 'Store some resources according to their type',
 		},
 	},
 });

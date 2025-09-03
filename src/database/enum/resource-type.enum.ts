@@ -11,14 +11,13 @@ registerEnumType(ResourceTypeEnum, {
 	description: 'What kind of resources are possible to create?',
 	valuesMap: {
 		CONSTRUCTION_RESOURCE: {
-			description: 'Thanks to that resources, you can build',
+			description: 'Resources used for build buildings',
 		},
 		ENERGY_RESOURCE: {
-			description:
-				'Energy resource will be used for buildings and to gain technology',
+			description: 'Resources used to power buildings and unlock technology',
 		},
 		TECHNOLOGY_RESOURCE: {
-			description: 'Every technology created is stored here',
+			description: 'Resources used in technological actions',
 		},
 	},
 });
