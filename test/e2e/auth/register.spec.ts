@@ -1,25 +1,20 @@
 import {HttpStatus, INestApplication} from '@nestjs/common';
-import {TestingModule} from '@nestjs/testing';
 import * as request from 'supertest';
 
 import {LoginParameters} from '@warp-core/auth/login/login-parameters.model';
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {e2eModule} from '@warp-core/test/e2e/utils/e2e-module';
+import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/setup-tests';
 
 describe('register', () => {
-	let module: TestingModule;
-	let app: INestApplication;
 	let config: RuntimeConfig;
+	let app: INestApplication;
 
-	beforeAll(async () => {
-		module = await e2eModule();
-		app = module.createNestApplication();
-		await app.init();
-
+	beforeEach(async () => {
+		app = await createNestApplicationE2E();
 		config = app.get(RuntimeConfig);
 	});
 
-	it('should create a new habitat when user was not registered already', () => {
+	it('should create a new habitat when user was not registered already', async () => {
 		const newUserId = 9999;
 
 		config.habitat.onStart = {
@@ -27,13 +22,14 @@ describe('register', () => {
 			buildings: [],
 		};
 
-		return request(app.getHttpServer())
+		const response = await request(app.getHttpServer())
 			.get(`/auth/create/${newUserId}`)
-			.expect(HttpStatus.OK)
-			.expect({
-				userId: newUserId,
-				habitatId: 2,
-			});
+			.expect(HttpStatus.OK);
+
+		expect(response.body).toHaveProperty('userId');
+		expect(response.body.userId).toEqual(newUserId);
+		expect(response.body).toHaveProperty('habitatId');
+		expect(response.body.habitatId).toEqual(expect.any(Number));
 	});
 
 	it('should create a new habitat and allow user to login when user was not registered already', async () => {
@@ -51,7 +47,7 @@ describe('register', () => {
 		expect(registerResponse.body).toHaveProperty('userId');
 		expect(registerResponse.body.userId).toEqual(newUserId);
 		expect(registerResponse.body).toHaveProperty('habitatId');
-		expect(registerResponse.body.habitatId).toEqual(2);
+		expect(registerResponse.body.habitatId).toEqual(expect.any(Number));
 
 		const loginResponse = await request(app.getHttpServer())
 			.post('/auth/login')

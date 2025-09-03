@@ -63,7 +63,7 @@ describe('Create resources per habitat service tests', () => {
 
 			await createResourcesPerHabitat.createResourcesPerHabitat({habitat});
 
-			expect(habitatResourceRepository.insert).toBeCalledTimes(1);
+			expect(habitatResourceRepository.insert).toHaveBeenCalledTimes(1);
 			expect(habitatResourceRepository.insert).toHaveBeenCalledWith(
 				expect.arrayContaining<HabitatResourceModel>([
 					expect.objectContaining({
@@ -94,7 +94,7 @@ describe('Create resources per habitat service tests', () => {
 
 			await createResourcesPerHabitat.createResourcesPerHabitat({habitat});
 
-			expect(habitatResourceRepository.insert).toBeCalledTimes(1);
+			expect(habitatResourceRepository.insert).toHaveBeenCalledTimes(1);
 			expect(habitatResourceRepository.insert).toHaveBeenCalledWith(
 				expect.arrayContaining<HabitatResourceModel>([
 					expect.objectContaining({

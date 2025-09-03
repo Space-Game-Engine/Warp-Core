@@ -66,12 +66,12 @@ describe('Habitat service tests', () => {
 
 			expect(returnedHabitatModel).toEqual(habitatModel);
 			expect(habitatRepository.save).toHaveBeenCalledWith(habitatModel);
-			expect(eventEmitter.newHabitatCreatedAfterSave).toBeCalledTimes(1);
+			expect(eventEmitter.newHabitatCreatedAfterSave).toHaveBeenCalledTimes(1);
 			expect(eventEmitter.newHabitatCreatedAfterSave).toHaveBeenNthCalledWith(
 				1,
 				{habitat: habitatModel},
 			);
-			expect(eventEmitter.newHabitatAfterRegistration).toBeCalledTimes(0);
+			expect(eventEmitter.newHabitatAfterRegistration).toHaveBeenCalledTimes(0);
 		});
 	});
 
@@ -98,12 +98,12 @@ describe('Habitat service tests', () => {
 			await createNewHabitatService.createHabitatOnUserRegistration(input);
 
 			expect(habitatRepository.save).toHaveBeenCalledWith(habitatModel);
-			expect(eventEmitter.newHabitatCreatedAfterSave).toBeCalledTimes(1);
+			expect(eventEmitter.newHabitatCreatedAfterSave).toHaveBeenCalledTimes(1);
 			expect(eventEmitter.newHabitatCreatedAfterSave).toHaveBeenNthCalledWith(
 				1,
 				{habitat: habitatModel},
 			);
-			expect(eventEmitter.newHabitatAfterRegistration).toBeCalledTimes(1);
+			expect(eventEmitter.newHabitatAfterRegistration).toHaveBeenCalledTimes(1);
 			expect(eventEmitter.newHabitatAfterRegistration).toHaveBeenNthCalledWith(
 				1,
 				{habitat: habitatModel},
@@ -127,9 +127,9 @@ describe('Habitat service tests', () => {
 				.mockResolvedValueOnce([habitatModel]);
 
 			await createNewHabitatService.createHabitatOnUserRegistration(input);
-			expect(habitatRepository.manager.save).toBeCalledTimes(0);
-			expect(eventEmitter.newHabitatAfterRegistration).toBeCalledTimes(0);
-			expect(eventEmitter.newHabitatCreatedAfterSave).toBeCalledTimes(0);
+			expect(habitatRepository.manager.save).toHaveBeenCalledTimes(0);
+			expect(eventEmitter.newHabitatAfterRegistration).toHaveBeenCalledTimes(0);
+			expect(eventEmitter.newHabitatCreatedAfterSave).toHaveBeenCalledTimes(0);
 			expect(input.userId).toBe(habitatModel.userId);
 		});
 	});

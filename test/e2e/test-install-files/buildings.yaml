@@ -62,6 +62,9 @@ buildings:
         productionRate:
           - resourceId: wood
             productionRate: 1
+        requirements:
+          - resourceId: wood
+            cost: 10
       - level: 2
         timeToUpdateBuildingInSeconds: 30
         productionRate:

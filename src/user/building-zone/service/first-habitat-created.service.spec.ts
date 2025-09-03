@@ -57,8 +57,8 @@ describe('First habitat created subscriber', () => {
 				habitat: habitat,
 			});
 
-			expect(buildingRepository.getBuildingsByIds).toBeCalledTimes(0);
-			expect(buildingZoneRepository.manager.update).toBeCalledTimes(0);
+			expect(buildingRepository.getBuildingsByIds).toHaveBeenCalledTimes(0);
+			expect(buildingZoneRepository.manager.update).toHaveBeenCalledTimes(0);
 		});
 
 		it('should add building into building zone when there is building in config', async () => {
@@ -101,8 +101,8 @@ describe('First habitat created subscriber', () => {
 
 			expect(buildingZoneToChange.level).toBe(1);
 			expect(buildingZoneToChange.buildingId).toBe(buildingToSet.id);
-			expect(buildingZoneRepository.update).toBeCalledTimes(1);
-			expect(buildingZoneRepository.update).toBeCalledWith(
+			expect(buildingZoneRepository.update).toHaveBeenCalledTimes(1);
+			expect(buildingZoneRepository.update).toHaveBeenCalledWith(
 				buildingZoneToChange.id,
 				expect.objectContaining({
 					buildingId: buildingToSet.id,

@@ -10,8 +10,8 @@ export class BuildingQuerySubscriber {
 	constructor(private readonly buildingService: BuildingService) {}
 
 	@InternalExchangeQuery(BuildingQueryNames.GetBuildingById)
-	public getBuildingById(buildingId: string): Promise<BuildingModel | null> {
-		return this.buildingService.getBuildingById(buildingId);
+	public getBuildingById({id}: {id: string}): Promise<BuildingModel | null> {
+		return this.buildingService.getBuildingById(id);
 	}
 
 	@InternalExchangeQuery(

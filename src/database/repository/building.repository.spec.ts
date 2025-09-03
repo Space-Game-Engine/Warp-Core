@@ -51,8 +51,8 @@ describe('Building repository test', () => {
 			);
 
 			expect(returnedBuilding).toEqual(buildingModel);
-			expect(findOneBuildingSpy).toBeCalledTimes(1);
-			expect(findOneBuildingSpy).toBeCalledWith(
+			expect(findOneBuildingSpy).toHaveBeenCalledTimes(1);
+			expect(findOneBuildingSpy).toHaveBeenCalledWith(
 				expect.objectContaining({
 					where: {
 						id: buildingModel.id,
@@ -76,7 +76,7 @@ describe('Building repository test', () => {
 			const returnedBuilding = await buildingRepository.getAllBuildings();
 
 			expect(returnedBuilding).toEqual([buildingModel]);
-			expect(findBuildingSpy).toBeCalledTimes(1);
+			expect(findBuildingSpy).toHaveBeenCalledTimes(1);
 		});
 	});
 });

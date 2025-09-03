@@ -299,7 +299,7 @@ describe('Resource extraction service', () => {
 			expect(habitatResources[0].currentAmount).toEqual(0);
 			expect(habitatResources[1].currentAmount).toEqual(0);
 
-			expect(habitatResourceRepository.update).toBeCalledTimes(2);
+			expect(habitatResourceRepository.update).toHaveBeenCalledTimes(2);
 		});
 	});
 });

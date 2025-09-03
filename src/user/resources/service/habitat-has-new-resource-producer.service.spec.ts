@@ -65,7 +65,7 @@ describe('Add last calculation date for new resource producers', () => {
 
 			expect(
 				habitatResourceRepository.updateLastCalculationDateForManyResources,
-			).toBeCalledTimes(0);
+			).toHaveBeenCalledTimes(0);
 		});
 
 		it('should update habitat resource when building produce resources', async () => {
@@ -97,7 +97,7 @@ describe('Add last calculation date for new resource producers', () => {
 
 			expect(
 				habitatResourceRepository.updateLastCalculationDateForManyResources,
-			).toBeCalledTimes(1);
+			).toHaveBeenCalledTimes(1);
 		});
 	});
 });

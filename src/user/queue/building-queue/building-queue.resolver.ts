@@ -33,10 +33,10 @@ export class BuildingQueueResolver
 		description: 'Add to element queue and consume related resources',
 		name: 'buildingQueue_add',
 	})
-	public processAndConsumeResources(
+	public saveQueueElement(
 		@Args('addToQueue', AddToQueueValidator) addToQueue: AddToQueueInput,
 	): Promise<BuildingQueueElementModel> {
-		return this.buildingQueueAddService.processAndConsumeResources(addToQueue);
+		return this.buildingQueueAddService.saveQueueElement(addToQueue);
 	}
 
 	@Mutation(() => BuildingQueueElementModel, {

@@ -17,7 +17,7 @@ export class BuildingQueueAddService
 		private readonly buildingQueueAddEmitter: BuildingQueueAddEmitter,
 	) {}
 
-	public async processAndConsumeResources(
+	public async saveQueueElement(
 		addToQueueElement: AddToQueueInput,
 	): Promise<BuildingQueueElementModel> {
 		const draftQueueElement =

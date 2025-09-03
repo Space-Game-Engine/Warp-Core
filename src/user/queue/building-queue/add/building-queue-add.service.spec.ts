@@ -47,7 +47,7 @@ describe('Building queue add', () => {
 		buildingQueueAddEmitter = module.get(BuildingQueueAddEmitter);
 	});
 
-	describe('processAndConsumeResources', () => {
+	describe('saveQueueElement', () => {
 		it('should save a queue element and commit transaction', async () => {
 			const addToQueueElement = {
 				localBuildingZoneId: 1,
@@ -67,18 +67,22 @@ describe('Building queue add', () => {
 				.mockResolvedValue(savedQueueElement);
 
 			const processedQueueElement =
-				await buildingQueueAddElement.processAndConsumeResources(
-					addToQueueElement,
-				);
+				await buildingQueueAddElement.saveQueueElement(addToQueueElement);
 
 			expect(processedQueueElement).toEqual(savedQueueElement);
-			expect(buildingQueueRepository.commitTransaction).toBeCalledTimes(1);
-			expect(buildingQueueAddEmitter.beforeAddingElement).toBeCalledTimes(1);
-			expect(buildingQueueAddEmitter.beforeAddingElement).toBeCalledWith({
+			expect(buildingQueueRepository.commitTransaction).toHaveBeenCalledTimes(
+				1,
+			);
+			expect(buildingQueueAddEmitter.beforeAddingElement).toHaveBeenCalledTimes(
+				1,
+			);
+			expect(buildingQueueAddEmitter.beforeAddingElement).toHaveBeenCalledWith({
 				queueElement: savedQueueElement,
 			});
-			expect(buildingQueueAddEmitter.afterAddingElement).toBeCalledTimes(1);
-			expect(buildingQueueAddEmitter.afterAddingElement).toBeCalledWith({
+			expect(buildingQueueAddEmitter.afterAddingElement).toHaveBeenCalledTimes(
+				1,
+			);
+			expect(buildingQueueAddEmitter.afterAddingElement).toHaveBeenCalledWith({
 				queueElement: savedQueueElement,
 			});
 		});
@@ -105,8 +109,8 @@ describe('Building queue add', () => {
 			);
 
 			await expect(
-				buildingQueueAddElement.processAndConsumeResources(addToQueueElement),
-			).rejects.toThrowError('something went wrong');
+				buildingQueueAddElement.saveQueueElement(addToQueueElement),
+			).rejects.toThrow('something went wrong');
 		});
 	});
 });

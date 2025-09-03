@@ -58,8 +58,12 @@ describe('Building queue handler service test', () => {
 	function expectEventToBeCalled(
 		queueElements: BuildingQueueElementModel[],
 	): void {
-		expect(eventEmitter.beforeProcessing).toBeCalledTimes(queueElements.length);
-		expect(eventEmitter.afterProcessing).toBeCalledTimes(queueElements.length);
+		expect(eventEmitter.beforeProcessing).toHaveBeenCalledTimes(
+			queueElements.length,
+		);
+		expect(eventEmitter.afterProcessing).toHaveBeenCalledTimes(
+			queueElements.length,
+		);
 
 		let counter = 0;
 		for (const singleQueueElement of queueElements) {
@@ -93,9 +97,9 @@ describe('Building queue handler service test', () => {
 			await buildingQueueHandlerService.resolveQueue();
 
 			expectEventToBeCalled([]);
-			expect(buildingQueueRepository.update).not.toBeCalled();
-			expect(eventEmitter.beforeProcessing).not.toBeCalled();
-			expect(eventEmitter.afterProcessing).not.toBeCalled();
+			expect(buildingQueueRepository.update).not.toHaveBeenCalled();
+			expect(eventEmitter.beforeProcessing).not.toHaveBeenCalled();
+			expect(eventEmitter.afterProcessing).not.toHaveBeenCalled();
 		});
 
 		describe.each(queueItemsElements)(
@@ -166,16 +170,16 @@ describe('Building queue handler service test', () => {
 
 					await buildingQueueHandlerService.resolveQueue();
 
-					expect(buildingQueueRepository.update).toBeCalledTimes(
+					expect(buildingQueueRepository.update).toHaveBeenCalledTimes(
 						queueElementsToBeConsumed.length,
 					);
-					expect(buildingZoneRepository.update).toBeCalledTimes(
+					expect(buildingZoneRepository.update).toHaveBeenCalledTimes(
 						queueElementsToBeConsumed.length,
 					);
 					let buildingQueueRepositoryCallCounter = 0;
 					let buildingZoneRepositoryCallCounter = 0;
 					for (const singleQueueElement of queueElementsToBeConsumed) {
-						expect(buildingZoneRepository.update).nthCalledWith(
+						expect(buildingZoneRepository.update).toHaveBeenNthCalledWith(
 							++buildingZoneRepositoryCallCounter,
 							buildingZone.id,
 							{
@@ -183,7 +187,7 @@ describe('Building queue handler service test', () => {
 								level: singleQueueElement.endLevel,
 							},
 						);
-						expect(buildingQueueRepository.update).nthCalledWith(
+						expect(buildingQueueRepository.update).toHaveBeenNthCalledWith(
 							++buildingQueueRepositoryCallCounter,
 							singleQueueElement.id,
 							{isConsumed: true},
