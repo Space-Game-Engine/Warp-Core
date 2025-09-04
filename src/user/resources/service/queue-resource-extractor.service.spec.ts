@@ -75,7 +75,7 @@ describe('Resource extraction service', () => {
 				resourceExtractorService.useResourcesOnQueueUpdate({
 					queueElement: {costs: costs},
 				} as BuildingQueueProcessing),
-			).rejects.toThrowError(
+			).rejects.toThrow(
 				'Requested resources from queue does not equal resources from habitat',
 			);
 		});

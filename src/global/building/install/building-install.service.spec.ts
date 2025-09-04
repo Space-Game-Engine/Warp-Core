@@ -30,7 +30,7 @@ describe('BuildingInstallService', () => {
 
 			expect(() =>
 				buildingInstallService.loadModels({buildings: [buildingModel]}),
-			).toThrowError('Validation error, see logs');
+			).toThrow('Validation error, see logs');
 		});
 
 		it('should add items from array to install', async () => {
