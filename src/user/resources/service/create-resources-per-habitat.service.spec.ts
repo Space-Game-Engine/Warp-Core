@@ -67,8 +67,8 @@ describe('Create resources per habitat service tests', () => {
 			expect(habitatResourceRepository.insert).toHaveBeenCalledWith(
 				expect.arrayContaining<HabitatResourceModel>([
 					expect.objectContaining({
-						habitat: habitat,
-						resource: resourcesList[0],
+						habitatId: habitat.id,
+						resourceId: resourcesList[0].id,
 					}),
 				]),
 			);
@@ -98,16 +98,16 @@ describe('Create resources per habitat service tests', () => {
 			expect(habitatResourceRepository.insert).toHaveBeenCalledWith(
 				expect.arrayContaining<HabitatResourceModel>([
 					expect.objectContaining({
-						habitat: habitat,
-						resource: resourcesList[0],
+						habitatId: habitat.id,
+						resourceId: resourcesList[0].id,
 					}),
 					expect.objectContaining({
-						habitat: habitat,
-						resource: resourcesList[1],
+						habitatId: habitat.id,
+						resourceId: resourcesList[1].id,
 					}),
 					expect.objectContaining({
-						habitat: habitat,
-						resource: resourcesList[2],
+						habitatId: habitat.id,
+						resourceId: resourcesList[2].id,
 					}),
 				]),
 			);
