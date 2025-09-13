@@ -30,7 +30,7 @@ import {UserModule} from '@warp-core/user/user.module';
 		InternalExchangeModule,
 		ClsModule.forRoot({
 			global: true,
-			middleware: {mount: true, generateId: true},
+			middleware: {mount: true, generateId: true, saveReq: true},
 		}),
 		EventEmitterModule.forRoot({
 			wildcard: true,
