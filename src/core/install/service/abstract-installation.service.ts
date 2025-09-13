@@ -1,6 +1,7 @@
 import {Logger, Type} from '@nestjs/common';
 import {plainToInstance} from 'class-transformer';
 import {validateSync} from 'class-validator';
+import {EntityManager} from 'typeorm';
 
 import {InstallValidationError} from '@warp-core/core/install/exception/install-validation.error';
 import {LoadedConfig} from '@warp-core/core/install/service/load-config.service';
@@ -11,7 +12,13 @@ export abstract class AbstractInstallationService<T extends object>
 {
 	protected static readonly logger: Logger = new Logger('installation');
 
+	protected entityManager: EntityManager | undefined;
+
 	protected modelsList: T[] = [];
+
+	public setEntityManager(entityManager: EntityManager): void {
+		this.entityManager = entityManager;
+	}
 
 	public loadModels(loadedConfig: LoadedConfig): T[] {
 		const arrayToInstall = this.parseConfig(loadedConfig);
@@ -21,11 +28,7 @@ export abstract class AbstractInstallationService<T extends object>
 				continue;
 			}
 			const elementsToInstall = arrayToInstall[key];
-			const modelToSave = plainToInstance(
-				this.modelType(),
-				elementsToInstall,
-			) as T;
-
+			const modelToSave = this.prepareModel(elementsToInstall);
 			this.preValidationObject(modelToSave);
 
 			this.isModelValid(modelToSave);
@@ -36,6 +39,17 @@ export abstract class AbstractInstallationService<T extends object>
 		}
 
 		return this.modelsList;
+	}
+
+	protected prepareModel(elementsToInstall: T): T {
+		if (this.entityManager) {
+			return this.entityManager.create(
+				this.modelType(),
+				elementsToInstall,
+			) as T;
+		} else {
+			return plainToInstance(this.modelType(), elementsToInstall) as T;
+		}
 	}
 
 	protected isModelValid(model: object): boolean {

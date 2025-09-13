@@ -8,7 +8,7 @@ class ConfigParser {
 
 	public getConfig(): CoreConfig {
 		if (!this.loadedConfig) {
-			// eslint-disable-next-line @typescript-eslint/no-var-requires
+			// eslint-disable-next-line @typescript-eslint/no-require-imports
 			const config = require('config');
 			this.loadedConfig = plainToInstance(CoreConfig, config);
 

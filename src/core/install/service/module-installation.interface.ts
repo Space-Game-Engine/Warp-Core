@@ -1,4 +1,5 @@
 import {Type} from '@nestjs/common';
+import {EntityManager} from 'typeorm';
 
 import {LoadedConfig} from '@warp-core/core/install/service/load-config.service';
 
@@ -9,6 +10,8 @@ export interface ModuleInstallationInterface<T> {
 	 * @param {LoadedConfig} loadedConfig
 	 */
 	loadModels(loadedConfig: LoadedConfig): T[];
+
+	setEntityManager(entityManager: EntityManager): void;
 }
 
 export type ModuleInstallationInterfaceType = Type<

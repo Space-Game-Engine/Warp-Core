@@ -62,6 +62,7 @@ export class GameInstallerService {
 			this.mainProgressBar.increment({
 				step_name: `Loading models from ${singleInstaller.constructor.name}`,
 			});
+			singleInstaller.setEntityManager(this.dataSource.manager);
 			models.push(...singleInstaller.loadModels(loadedConfig));
 		}
 

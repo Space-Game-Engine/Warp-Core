@@ -24,26 +24,16 @@ export class CreateNewHabitatService {
 			return currentHabitats.pop()!;
 		}
 
-		await this.habitatRepository.startTransaction();
+		const newHabitat = await this.createNewHabitat({
+			userId,
+			isMain: true,
+			name: 'New habitat',
+		});
+		await this.newHabitatEmitter.newHabitatAfterRegistration({
+			habitat: newHabitat,
+		});
 
-		try {
-			const newHabitat = await this.createNewHabitat({
-				userId,
-				isMain: true,
-				name: 'New habitat',
-			});
-			await this.newHabitatEmitter.newHabitatAfterRegistration({
-				habitat: newHabitat,
-			});
-
-			await this.habitatRepository.commitTransaction();
-
-			return newHabitat;
-		} catch (e) {
-			await this.habitatRepository.rollbackTransaction();
-
-			throw e;
-		}
+		return newHabitat;
 	}
 
 	public async createNewHabitat(

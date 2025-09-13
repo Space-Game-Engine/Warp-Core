@@ -29,7 +29,7 @@ describe('ResourcesInstallService', () => {
 
 			expect(() =>
 				resourcesInstallService.loadModels({resources: [resourceModel]}),
-			).toThrowError('Validation error, see logs');
+			).toThrow('Validation error, see logs');
 		});
 
 		it('should add items from array to install', async () => {

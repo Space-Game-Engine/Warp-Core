@@ -61,6 +61,7 @@ const jwtFactory = {
 		ConfigModule,
 		DatabaseModule,
 		ClsModule.forFeatureAsync({
+			global: true,
 			provide: AuthorizedHabitatModel,
 			imports: [DatabaseModule, JwtModule],
 			inject: [CLS_REQ, HabitatRepository, JwtService],
