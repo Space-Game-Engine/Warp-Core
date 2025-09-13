@@ -20,8 +20,8 @@ export class CreateResourcesPerHabitatService {
 
 		for (const singleResource of resourcesList) {
 			const habitatResource = new HabitatResourceModel();
-			habitatResource.habitat = newHabitatEvent.habitat;
-			habitatResource.resource = singleResource;
+			habitatResource.habitatId = newHabitatEvent.habitat.id;
+			habitatResource.resourceId = singleResource.id;
 			habitatResource.lastCalculationTime = new Date();
 
 			habitatResourcesToSave.push(habitatResource);
