@@ -7,7 +7,7 @@ import {HabitatModel} from '@warp-core/database/model/habitat.model';
 @ObjectType({description: 'Single habitat that belongs to user'})
 export class HabitatWithResources extends HabitatModel {
 	@Field(() => [HabitatResourceCombined])
-	public habitatResources:
+	declare public habitatResources:
 		| HabitatResourceModel[]
 		| Promise<HabitatResourceModel[]>;
 }
