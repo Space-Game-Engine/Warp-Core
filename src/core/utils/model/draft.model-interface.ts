@@ -1,1 +1,1 @@
-export interface DraftModelInterface {}
+export type DraftModelInterface = object;
