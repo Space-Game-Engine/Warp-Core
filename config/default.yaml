@@ -31,3 +31,6 @@ runtime:
         - id: 'university'
           localBuildingZoneId: 2
           level: 1
+  mechanics:
+    resources:
+      calculation: 'simple'
