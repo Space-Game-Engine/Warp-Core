@@ -14,5 +14,5 @@ export class RuntimeConfig {
 
 	@Type(() => MechanicsConfig)
 	@ValidateNested()
-	public mechanic: MechanicsConfig;
+	public mechanics: MechanicsConfig;
 }

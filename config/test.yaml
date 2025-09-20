@@ -33,3 +33,4 @@ runtime:
   mechanics:
     resources:
       calculation: 'simple'
+      warehouse: 'enabled_base'

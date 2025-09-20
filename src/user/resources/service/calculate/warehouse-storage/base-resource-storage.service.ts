@@ -1,22 +1,29 @@
 import {Injectable} from '@nestjs/common';
 
-import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {AddMechanic} from '@warp-core/core/utils/mechanics';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
+import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 
 @Injectable()
-export class CalculateResourceStorageService {
+@AddMechanic(WarehouseStorageCalculationMechanic, 'enabled_base')
+export class BaseResourceStorageService
+	implements WarehouseStorageCalculationMechanic
+{
 	constructor(
 		private readonly buildingZoneRepository: BuildingZoneRepository,
-		private readonly habitatModel: AuthorizedHabitatModel,
 	) {}
 
-	public async calculateStorage(resource: ResourceModel): Promise<number> {
+	public async calculateStorage(
+		resource: ResourceModel,
+		habitat: HabitatModel,
+	): Promise<number> {
 		let storagePerResource = 0;
 		const warehouses =
 			await this.buildingZoneRepository.getWarehouseForResourceAndHabitat(
 				resource,
-				this.habitatModel.id,
+				habitat.id,
 			);
 
 		for (const warehouse of warehouses) {
