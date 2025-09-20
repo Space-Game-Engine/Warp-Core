@@ -34,9 +34,6 @@ export class QueueProcessingSubscriber {
 		input: BuildingQueueProcessing,
 	): Promise<void> {
 		return Promise.allSettled([
-			this.resourceCalculatorService.setLastCalculationTimeForNewResources(
-				input,
-			),
 			this.queueExtractor.useResourcesOnQueueUpdate(input),
 		]).then();
 	}

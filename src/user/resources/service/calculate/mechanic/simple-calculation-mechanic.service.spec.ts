@@ -9,12 +9,11 @@ import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {SimpleCalculationMechanicService} from '@warp-core/user/resources/service/calculate/mechanic/simple-calculation-mechanic.service';
-import {CalculateResourceStorageService} from '@warp-core/user/resources/service/calculate/warehouse-storage/calculate-resource-storage.service';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
 jest.mock('@warp-core/database/repository/building-zone.repository');
 jest.mock(
-	'@warp-core/user/resources/service/calculate/warehouse-storage/calculate-resource-storage.service',
+	'@warp-core/user/resources/service/calculate/warehouse-storage/base-resource-storage.service',
 );
 
 const testCases: {
@@ -183,11 +182,7 @@ describe.each(testCases)(
 		beforeEach(async () => {
 			jest.clearAllMocks();
 			const module: TestingModule = await Test.createTestingModule({
-				providers: [
-					SimpleCalculationMechanicService,
-					BuildingZoneRepository,
-					CalculateResourceStorageService,
-				],
+				providers: [SimpleCalculationMechanicService, BuildingZoneRepository],
 			}).compile();
 
 			resourcesCalculator = module.get<SimpleCalculationMechanicService>(

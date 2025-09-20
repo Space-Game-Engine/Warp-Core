@@ -6,21 +6,22 @@ import {BuildingQueueElementModel} from '@warp-core/database/model/building-queu
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingModel} from '@warp-core/database/model/building.model';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/mechanic/calculation-mechanic.interface';
 import {ResourceCalculatorService} from '@warp-core/user/resources/service/calculate/resource-calculator.service';
-import {CalculateResourceStorageService} from '@warp-core/user/resources/service/calculate/warehouse-storage/calculate-resource-storage.service';
+import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
 jest.mock(
-	'@warp-core/user/resources/service/calculate/warehouse-storage/calculate-resource-storage.service',
+	'@warp-core/user/resources/service/calculate/warehouse-storage/base-resource-storage.service',
 );
 
 describe('Resources calculator service test', () => {
 	let resourcesCalculator: ResourceCalculatorService;
 	let habitatResourceRepository: jest.Mocked<HabitatResourceRepository>;
-	let calculateResourceStorage: jest.Mocked<CalculateResourceStorageService>;
+	let warehouseStorage: jest.Mocked<WarehouseStorageCalculationMechanic>;
 	let calculateMechanic: jest.Mocked<CalculationMechanic>;
 
 	beforeEach(async () => {
@@ -29,7 +30,12 @@ describe('Resources calculator service test', () => {
 			providers: [
 				ResourceCalculatorService,
 				HabitatResourceRepository,
-				CalculateResourceStorageService,
+				{
+					provide: WarehouseStorageCalculationMechanic,
+					useValue: {
+						calculateStorage: jest.fn(),
+					} as WarehouseStorageCalculationMechanic,
+				},
 				{
 					provide: CalculationMechanic,
 					useValue: {
@@ -44,10 +50,10 @@ describe('Resources calculator service test', () => {
 			ResourceCalculatorService,
 		);
 		habitatResourceRepository = module.get(HabitatResourceRepository);
-		calculateResourceStorage = module.get(CalculateResourceStorageService);
+		warehouseStorage = module.get(WarehouseStorageCalculationMechanic);
 		calculateMechanic = module.get(CalculationMechanic);
 
-		when(calculateResourceStorage.calculateStorage).defaultResolvedValue(
+		when(warehouseStorage.calculateStorage).defaultResolvedValue(
 			Number.MAX_VALUE,
 		);
 	});
@@ -62,7 +68,7 @@ describe('Resources calculator service test', () => {
 			} as HabitatResourceModel;
 
 			calculateMechanic.calculateCurrentResourceValue.mockResolvedValue(0);
-			calculateResourceStorage.calculateStorage.mockResolvedValue(100);
+			warehouseStorage.calculateStorage.mockResolvedValue(100);
 
 			await resourcesCalculator.calculateSingleResource(habitatResource);
 
@@ -78,7 +84,7 @@ describe('Resources calculator service test', () => {
 			} as HabitatResourceModel;
 
 			calculateMechanic.calculateCurrentResourceValue.mockResolvedValue(10);
-			calculateResourceStorage.calculateStorage.mockResolvedValue(100);
+			warehouseStorage.calculateStorage.mockResolvedValue(100);
 
 			await resourcesCalculator.calculateSingleResource(habitatResource);
 
@@ -94,7 +100,7 @@ describe('Resources calculator service test', () => {
 			} as HabitatResourceModel;
 
 			calculateMechanic.calculateCurrentResourceValue.mockResolvedValue(200);
-			calculateResourceStorage.calculateStorage.mockResolvedValue(100);
+			warehouseStorage.calculateStorage.mockResolvedValue(100);
 
 			await resourcesCalculator.calculateSingleResource(habitatResource);
 
@@ -104,9 +110,14 @@ describe('Resources calculator service test', () => {
 
 	describe('addResourcesOnQueueUpdate', () => {
 		it('should update resource on queue update for building zone with single resource', async () => {
+			const habitatModel = {id: 5} as HabitatModel;
 			const now = new Date();
 			const building = {id: 'mine'} as BuildingModel;
-			const buildingZone = {id: 1, habitatId: 5} as BuildingZoneModel;
+			const buildingZone = {
+				id: 1,
+				habitatId: habitatModel.id,
+				habitat: habitatModel,
+			} as BuildingZoneModel;
 			const buildingQueueElement = {
 				building,
 				buildingZone,
@@ -120,7 +131,8 @@ describe('Resources calculator service test', () => {
 				id: '1',
 				currentAmount: 0,
 				resourceId: 'wood',
-				habitatId: 5,
+				habitatId: habitatModel.id,
+				habitat: habitatModel,
 				lastCalculationTime: DateTime.now().minus(10000).toJSDate(),
 				resource,
 			} as HabitatResourceModel;
@@ -136,8 +148,8 @@ describe('Resources calculator service test', () => {
 			when(calculateMechanic.calculateCurrentResourceValue)
 				.calledWith(habitatResource, expect.any(Number))
 				.mockResolvedValue(20);
-			when(calculateResourceStorage.calculateStorage)
-				.calledWith(resource)
+			when(warehouseStorage.calculateStorage)
+				.calledWith(resource, habitatModel)
 				.mockResolvedValue(100);
 
 			await resourcesCalculator.addResourcesOnQueueUpdate({

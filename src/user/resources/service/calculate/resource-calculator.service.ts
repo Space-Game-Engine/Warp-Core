@@ -5,7 +5,7 @@ import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.m
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
 import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/mechanic/calculation-mechanic.interface';
-import {CalculateResourceStorageService} from '@warp-core/user/resources/service/calculate/warehouse-storage/calculate-resource-storage.service';
+import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 
 @Injectable()
 export class ResourceCalculatorService {
@@ -13,7 +13,7 @@ export class ResourceCalculatorService {
 
 	constructor(
 		private readonly habitatResourceRepository: HabitatResourceRepository,
-		private readonly calculateResourceStorage: CalculateResourceStorageService,
+		private readonly calculateResourceStorage: WarehouseStorageCalculationMechanic,
 		private readonly calculationMechanic: CalculationMechanic,
 	) {}
 
@@ -41,6 +41,7 @@ export class ResourceCalculatorService {
 		const currentMaxStorage =
 			await this.calculateResourceStorage.calculateStorage(
 				await habitatResource.resource,
+				await habitatResource.habitat,
 			);
 
 		const currentAmount =

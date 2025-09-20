@@ -16,6 +16,8 @@ import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/m
 import {SimpleCalculationMechanicService} from '@warp-core/user/resources/service/calculate/mechanic/simple-calculation-mechanic.service';
 import {ResourceCalculatorService} from '@warp-core/user/resources/service/calculate/resource-calculator.service';
 import {BaseResourceStorageService} from '@warp-core/user/resources/service/calculate/warehouse-storage/base-resource-storage.service';
+import {DisabledWarehouseStorageService} from '@warp-core/user/resources/service/calculate/warehouse-storage/disabled-warehouse-storage.service';
+import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 import {CreateResourcesPerHabitatService} from '@warp-core/user/resources/service/create-resources-per-habitat.service';
 import {HabitatHasNewResourceProducerService} from '@warp-core/user/resources/service/habitat-has-new-resource-producer.service';
 import {QueueResourceExtractorService} from '@warp-core/user/resources/service/queue-resource-extractor.service';
@@ -31,6 +33,7 @@ import {ResourcesService} from '@warp-core/user/resources/service/resources.serv
 		QueueResourceExtractorService,
 		ResourcesResolver,
 		BaseResourceStorageService,
+		DisabledWarehouseStorageService,
 		AddResourcesOnFirstHabitatService,
 		ResourcesInstallService,
 		ResourcesQuerySubscriber,
@@ -40,6 +43,10 @@ import {ResourcesService} from '@warp-core/user/resources/service/resources.serv
 		RegisterMechanic.forFeature(
 			CalculationMechanic,
 			'runtime.mechanics.resources.calculation',
+		),
+		RegisterMechanic.forFeature(
+			WarehouseStorageCalculationMechanic,
+			'runtime.mechanics.resources.warehouse',
 		),
 	],
 	imports: [DatabaseModule, AuthModule, CoreConfigModule],
