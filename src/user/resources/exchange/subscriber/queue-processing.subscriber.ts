@@ -18,26 +18,19 @@ export class QueueProcessingSubscriber {
 	) {}
 
 	@InternalExchangeEmitListener(BuildingQueueNames.BeforeAddingElement)
-	public addResourcesOnQueueUpdate(
+	public async addResourcesOnQueueUpdate(
 		input: BuildingQueueProcessing,
 	): Promise<void> {
-		return Promise.allSettled([
-			this.resourceCalculatorService.addResourcesOnQueueUpdate(input),
-			this.newResourcesProducer.updateLastCalculationDateOnHabitatResource(
-				input,
-			),
-		]).then();
+		await this.resourceCalculatorService.addResourcesOnQueueUpdate(input);
+		await this.newResourcesProducer.updateLastCalculationDateOnHabitatResource(
+			input,
+		);
 	}
 
 	@InternalExchangeEmitListener(BuildingQueueNames.AfterAddingElement)
 	public setLastCalculationTimeForNewResources(
 		input: BuildingQueueProcessing,
 	): Promise<void> {
-		return Promise.allSettled([
-			this.resourceCalculatorService.setLastCalculationTimeForNewResources(
-				input,
-			),
-			this.queueExtractor.useResourcesOnQueueUpdate(input),
-		]).then();
+		return this.queueExtractor.useResourcesOnQueueUpdate(input);
 	}
 }

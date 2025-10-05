@@ -30,3 +30,7 @@ runtime:
         - id: 'university'
           localBuildingZoneId: 2
           level: 1
+  mechanics:
+    resources:
+      calculation: 'no-distance-simple-multiply'
+      warehouse: 'base-resource-summary'

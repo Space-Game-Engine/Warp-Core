@@ -64,7 +64,7 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
 		return this.createQueryBuilder()
 			.update(HabitatResourceModel)
 			.set({lastCalculationTime: lastCalculationTime})
-			.where('resourceId in :resourceIds', {resourceIds: resourceIds})
+			.where('resourceId IN (:...resourceIds)', {resourceIds: resourceIds})
 			.andWhere('habitatId = :habitatId', {habitatId: habitatId})
 			.execute();
 	}

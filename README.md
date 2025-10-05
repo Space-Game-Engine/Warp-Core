@@ -34,6 +34,10 @@ $ npm run start:prod
 $ npm run test
 ```
 
+## Documentation
+
+* [mechanics](./docs/mechanics.md)
+
 ## Support
 
 Warp Core and other parts of Space Game Engine are an MIT-licensed open source project.

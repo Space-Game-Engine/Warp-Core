@@ -17,7 +17,7 @@ export class HabitatResourceRecalculateSubscriber
 		private readonly dataSource: DataSource,
 		private readonly resourceCalculator: ResourceCalculatorService,
 	) {
-		dataSource.subscribers.push(this);
+		this.dataSource.subscribers.push(this);
 	}
 
 	public listenTo(): typeof HabitatResourceModel {

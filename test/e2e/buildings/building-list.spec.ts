@@ -46,7 +46,7 @@ describe('Get list of all buildings', () => {
 				.send()
 				.expect(HttpStatus.OK);
 
-			expect(response.body.data.building_getAll).toHaveLength(5);
+			expect(response.body.data.building_getAll).toHaveLength(6);
 		});
 
 		it('should return buildings with building details at certain level when user is authenticated', async () => {
@@ -68,9 +68,10 @@ describe('Get list of all buildings', () => {
 				buildingDetailsAtCertainLevel: expect.any(Array),
 			});
 
-			expect(response.body.data.building_getAll).toHaveLength(5);
+			expect(response.body.data.building_getAll).toHaveLength(6);
 			expect(response.body.data.building_getAll).toEqual(
 				expect.arrayContaining([
+					expectSingleBuildingContent,
 					expectSingleBuildingContent,
 					expectSingleBuildingContent,
 					expectSingleBuildingContent,
