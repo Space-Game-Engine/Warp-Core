@@ -35,4 +35,9 @@ export class ResourcesResolver {
 	): AuthorizedHabitatModel {
 		return this.habitatModel;
 	}
+
+	@ResolveField('productionRate', ()=>Number)
+	public async productionRate(){
+		return 5;
+	}
 }
