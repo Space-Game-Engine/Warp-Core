@@ -1,7 +1,6 @@
 import {HttpStatus, INestApplication} from '@nestjs/common';
 import {DateTime} from 'luxon';
 
-import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
 import {requestGraphQL} from '@warp-core/test/e2e/utils/graphql-request-test';
 import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
 import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/setup-tests';
@@ -51,26 +50,20 @@ describe('Building queue - basic update building actions', () => {
 				.send()
 				.expect(HttpStatus.OK);
 
-			response.body.data.resource_getAll.forEach(
-				(singleResource: Partial<HabitatResourceCombined>) => {
-					let amountToExpect = 0;
-					switch (singleResource.id) {
-						case 'wood':
-							amountToExpect = 10;
-							break;
-						case 'stone_granite':
-							amountToExpect = 0;
-							break;
-						case 'coal':
-							amountToExpect = 5;
-							break;
-						default:
-							amountToExpect = 0;
-					}
+			const resourcesFromResponse = response.body.data.resource_getAll;
 
-					expect(singleResource.currentAmount).toEqual(amountToExpect);
-				},
-			);
+			expect(resourcesFromResponse).toHaveResourceWithValue({
+				resourceId: 'wood',
+				value: 10,
+			});
+			expect(resourcesFromResponse).toHaveResourceWithValue({
+				resourceId: 'stone_granite',
+				value: 0,
+			});
+			expect(resourcesFromResponse).toHaveResourceWithValue({
+				resourceId: 'coal',
+				value: 5,
+			});
 		});
 
 		it('should not change building level before any change', async () => {

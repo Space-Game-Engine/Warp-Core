@@ -6,14 +6,12 @@ buildings:
       - level: 1
         timeToUpdateBuildingInSeconds: 10
         warehouse:
-          - warehouseType: by_resource_type
-            resourceType: construction
+          - warehouseType: any
             amount: 100
       - level: 2
         timeToUpdateBuildingInSeconds: 30
         warehouse:
-          - warehouseType: by_resource_type
-            resourceType: construction
+          - warehouseType: any
             amount: 200
         requirements:
           - resourceId: wood
@@ -115,3 +113,12 @@ buildings:
         timeToUpdateBuildingInSeconds: 60
       - level: 4
         timeToUpdateBuildingInSeconds: 80
+  - role: technology
+    name: Really expensive building
+    id: expensive_building
+    buildingDetailsAtCertainLevel:
+      - level: 1
+        timeToUpdateBuildingInSeconds: 10
+        requirements:
+          - resourceId: wood
+            cost: 999999

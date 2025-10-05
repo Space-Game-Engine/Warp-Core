@@ -9,7 +9,7 @@ import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.m
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
-import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/mechanic/calculation-mechanic.interface';
+import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/resource-calculation/calculation-mechanic.interface';
 import {ResourceCalculatorService} from '@warp-core/user/resources/service/calculate/resource-calculator.service';
 import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 

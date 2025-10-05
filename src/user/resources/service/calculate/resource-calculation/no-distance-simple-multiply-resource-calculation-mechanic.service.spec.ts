@@ -8,7 +8,7 @@ import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.m
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
-import {SimpleCalculationMechanicService} from '@warp-core/user/resources/service/calculate/mechanic/simple-calculation-mechanic.service';
+import {NoDistanceSimpleMultiplyResourceCalculationMechanicService} from '@warp-core/user/resources/service/calculate/resource-calculation/no-distance-simple-multiply-resource-calculation-mechanic.service';
 
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
 jest.mock('@warp-core/database/repository/building-zone.repository');
@@ -172,9 +172,9 @@ const testCases: {
 ];
 
 describe.each(testCases)(
-	'Simple resources calculator mechanic service test',
+	'No distance simple multiply resource calculation mechanic service',
 	singleTestCase => {
-		let resourcesCalculator: SimpleCalculationMechanicService;
+		let resourcesCalculator: NoDistanceSimpleMultiplyResourceCalculationMechanicService;
 		let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
 
 		let habitatResource: HabitatResourceModel;
@@ -182,12 +182,16 @@ describe.each(testCases)(
 		beforeEach(async () => {
 			jest.clearAllMocks();
 			const module: TestingModule = await Test.createTestingModule({
-				providers: [SimpleCalculationMechanicService, BuildingZoneRepository],
+				providers: [
+					NoDistanceSimpleMultiplyResourceCalculationMechanicService,
+					BuildingZoneRepository,
+				],
 			}).compile();
 
-			resourcesCalculator = module.get<SimpleCalculationMechanicService>(
-				SimpleCalculationMechanicService,
-			);
+			resourcesCalculator =
+				module.get<NoDistanceSimpleMultiplyResourceCalculationMechanicService>(
+					NoDistanceSimpleMultiplyResourceCalculationMechanicService,
+				);
 			buildingZoneRepository = module.get(BuildingZoneRepository);
 
 			const parameters = singleTestCase.parameters;

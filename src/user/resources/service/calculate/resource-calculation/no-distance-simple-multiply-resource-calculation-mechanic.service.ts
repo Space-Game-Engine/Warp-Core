@@ -4,11 +4,13 @@ import {AddMechanic} from '@warp-core/core/utils/mechanics';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
-import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/mechanic/calculation-mechanic.interface';
+import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/resource-calculation/calculation-mechanic.interface';
 
 @Injectable()
-@AddMechanic(CalculationMechanic, 'simple')
-export class SimpleCalculationMechanicService implements CalculationMechanic {
+@AddMechanic(CalculationMechanic, 'no-distance-simple-multiply')
+export class NoDistanceSimpleMultiplyResourceCalculationMechanicService
+	implements CalculationMechanic
+{
 	constructor(
 		private readonly buildingZoneRepository: BuildingZoneRepository,
 	) {}

@@ -4,7 +4,7 @@ import {DateTime} from 'luxon';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
-import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/mechanic/calculation-mechanic.interface';
+import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/resource-calculation/calculation-mechanic.interface';
 import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 
 @Injectable()

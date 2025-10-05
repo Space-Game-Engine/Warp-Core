@@ -52,6 +52,38 @@ describe('Building queue basic errors', () => {
 		);
 	});
 
+	it('should throw error when building is too expensive to build', async () => {
+		const response = await requestTest
+			.mutation({
+				root: 'buildingQueue_add',
+				operationName: 'AddToQueue',
+				fields: {
+					fields: ['startLevel', 'endLevel', 'isConsumed'],
+				},
+				variables: {
+					addToQueue: {
+						type: 'AddToQueueInput',
+						value: {
+							localBuildingZoneId: 10,
+							endLevel: 1,
+							buildingId: 'expensive_building',
+						},
+					},
+				},
+			})
+			.send()
+			.expect(HttpStatus.OK);
+
+		expect(response.body.errors).toHaveLength(1);
+		expect(response.body.errors[0].message).toBe(
+			'Insufficient Resources Exception',
+		);
+		expect(response.body.errors[0].validationError.resource).toHaveLength(1);
+		expect(response.body.errors[0].validationError.resource[0].resourceId).toBe(
+			'wood',
+		);
+	});
+
 	it('should throw error when user wants to update by lower level than currently is built', async () => {
 		const response = await requestTest
 			.mutation({

@@ -31,7 +31,11 @@ export class QueueResourceExtractorService {
 			throw new InsufficientResourcesException(errors);
 		}
 
-		await this.extractResources(queueElement.costs, requiredResources);
+		await this.extractResources(
+			queueElement.costs,
+			requiredResources,
+			queueElement.endTime,
+		);
 	}
 
 	private async getRequiredResourcesFromHabitat(
@@ -82,6 +86,7 @@ export class QueueResourceExtractorService {
 	private async extractResources(
 		queueCost: QueueElementCostModel[],
 		requiredResources: HabitatResourceModel[],
+		lastCalculationTime: Date,
 	): Promise<void> {
 		for (const singleRequiredResource of requiredResources) {
 			const queueCostPerResource = queueCost.find(
@@ -92,7 +97,7 @@ export class QueueResourceExtractorService {
 
 			await this.habitatResourceRepository.update(singleRequiredResource.id, {
 				currentAmount: singleRequiredResource.currentAmount,
-				lastCalculationTime: singleRequiredResource.lastCalculationTime,
+				lastCalculationTime,
 			});
 		}
 	}

@@ -2,7 +2,6 @@ import {HttpStatus, INestApplication} from '@nestjs/common';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
 import {requestGraphQL} from '@warp-core/test/e2e/utils/graphql-request-test';
 import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
 import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/setup-tests';
@@ -32,6 +31,7 @@ describe('Habitat Creation when onStart config contains resources', () => {
 				amount: 50,
 			},
 		];
+		config.mechanics.resources.warehouse = 'disabled';
 
 		return requestTest.registerAndAuthenticate(2);
 	});
@@ -96,25 +96,19 @@ describe('Habitat Creation when onStart config contains resources', () => {
 			.send()
 			.expect(HttpStatus.OK);
 
-		response.body.data.resource_getAll.forEach(
-			(singleResource: Partial<HabitatResourceCombined>) => {
-				let amountToExpect = 0;
-				switch (singleResource.id) {
-					case 'wood':
-						amountToExpect = 100;
-						break;
-					case 'stone_granite':
-						amountToExpect = 200;
-						break;
-					case 'coal':
-						amountToExpect = 50;
-						break;
-					default:
-						amountToExpect = 0;
-				}
+		const resourcesFromResponse = response.body.data.resource_getAll;
 
-				expect(singleResource.currentAmount).toEqual(amountToExpect);
-			},
-		);
+		expect(resourcesFromResponse).toHaveResourceWithValue({
+			resourceId: 'wood',
+			value: 100,
+		});
+		expect(resourcesFromResponse).toHaveResourceWithValue({
+			resourceId: 'stone_granite',
+			value: 200,
+		});
+		expect(resourcesFromResponse).toHaveResourceWithValue({
+			resourceId: 'coal',
+			value: 50,
+		});
 	});
 });

@@ -32,5 +32,5 @@ runtime:
           level: 1
   mechanics:
     resources:
-      calculation: 'simple'
+      calculation: 'no-distance-simple-multiply'
       warehouse: 'enabled_base'

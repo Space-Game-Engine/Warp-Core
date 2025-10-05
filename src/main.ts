@@ -29,7 +29,7 @@ async function bootstrap(): Promise<void> {
 			url: 'https://github.com/Space-Game-Engine/Warp-Core/blob/main/docs/install/installation.md',
 			description: 'GitHub installation instructions',
 		})
-		.build();
+		.ad.build();
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup(localDocUrl, app, document);
 
