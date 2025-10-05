@@ -5,5 +5,5 @@ export class ResourcesMechanicsConfig {
 	public calculation: string = 'simple';
 
 	@IsString()
-	public warehouse: string = 'enabled_base';
+	public warehouse: string = 'base-resource-summary';
 }

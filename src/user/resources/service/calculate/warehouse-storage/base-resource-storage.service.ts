@@ -7,7 +7,7 @@ import {BuildingZoneRepository} from '@warp-core/database/repository/building-zo
 import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 
 @Injectable()
-@AddMechanic(WarehouseStorageCalculationMechanic, 'enabled_base')
+@AddMechanic(WarehouseStorageCalculationMechanic, 'base-resource-summary')
 export class BaseResourceStorageService
 	implements WarehouseStorageCalculationMechanic
 {

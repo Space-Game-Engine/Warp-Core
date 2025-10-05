@@ -33,4 +33,4 @@ runtime:
   mechanics:
     resources:
       calculation: 'no-distance-simple-multiply'
-      warehouse: 'enabled_base'
+      warehouse: 'base-resource-summary'
