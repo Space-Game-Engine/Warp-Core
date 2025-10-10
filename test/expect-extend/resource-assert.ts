@@ -1,15 +1,29 @@
-import CustomMatcher = jest.CustomMatcher;
+import CustomMatcherResult = jest.CustomMatcherResult;
 import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
 
 export type ResourceCheck = {
 	resourceId: string;
 	value: number;
 };
+export type ResourceWithCustomPropertyCheck = {
+	resourceId: string;
+	property: string;
+	value: number;
+};
 
-export const toHaveResourceWithValue: CustomMatcher = (
+function getResourceFromReceivedResources(
+	received: HabitatResourceCombined[],
+	resourceId: string,
+): undefined | Partial<HabitatResourceCombined> {
+	return received.find(singleResource => {
+		return singleResource.id === resourceId;
+	});
+}
+
+export function toHaveResource(
 	received: unknown,
-	actual: ResourceCheck,
-) => {
+	actual: {resourceId: string},
+): CustomMatcherResult {
 	if (!received) {
 		return {
 			pass: false,
@@ -24,11 +38,12 @@ export const toHaveResourceWithValue: CustomMatcher = (
 		};
 	}
 
-	const {resourceId, value} = actual;
+	const {resourceId} = actual;
 
-	const resourceToCheck = received.find(singleResource => {
-		return singleResource.id === resourceId;
-	}) as undefined | Partial<HabitatResourceCombined>;
+	const resourceToCheck = getResourceFromReceivedResources(
+		received,
+		resourceId,
+	);
 
 	if (!resourceToCheck) {
 		return {
@@ -46,8 +61,55 @@ export const toHaveResourceWithValue: CustomMatcher = (
 	}
 
 	return {
+		pass: true,
+		message: () => '',
+	};
+}
+
+export function toHaveResourceWithValue(
+	received: unknown,
+	actual: ResourceCheck,
+): CustomMatcherResult {
+	const resourceAssert = toHaveResource(received, actual);
+
+	if (!resourceAssert.pass) {
+		return resourceAssert;
+	}
+
+	const {resourceId, value} = actual;
+
+	const resourceToCheck = getResourceFromReceivedResources(
+		received as HabitatResourceCombined[],
+		resourceId,
+	)!;
+
+	return {
 		pass: value === resourceToCheck.currentAmount,
 		message: () =>
 			`Resource "${resourceId}" amount should be ${value}, actual value is ${resourceToCheck.currentAmount}`,
 	};
-};
+}
+
+export function toHaveResourceWithCustomProperty(
+	received: unknown,
+	actual: ResourceWithCustomPropertyCheck,
+): CustomMatcherResult {
+	const resourceAssert = toHaveResource(received, actual);
+
+	if (!resourceAssert.pass) {
+		return resourceAssert;
+	}
+
+	const {resourceId, value, property} = actual;
+
+	const resourceToCheck = getResourceFromReceivedResources(
+		received as HabitatResourceCombined[],
+		resourceId,
+	)!;
+
+	return {
+		pass: value === resourceToCheck[property],
+		message: () =>
+			`Resource "${resourceId}" for field "${property}" should be ${value}, actual value is ${resourceToCheck[property]}`,
+	};
+}

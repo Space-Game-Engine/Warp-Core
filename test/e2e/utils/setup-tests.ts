@@ -7,9 +7,17 @@ import {DataSource} from 'typeorm';
 import {AppModule} from '@warp-core/app.module';
 import {InstallCommand} from '@warp-core/core/install/install.command';
 import {InstallModule} from '@warp-core/core/install/install.module';
-import {toHaveResourceWithValue} from '@warp-core/test/expect-extend/resource-assert';
+import {
+	toHaveResource,
+	toHaveResourceWithCustomProperty,
+	toHaveResourceWithValue,
+} from '@warp-core/test/expect-extend/resource-assert';
 
-expect.extend({toHaveResourceWithValue});
+expect.extend({
+	toHaveResource,
+	toHaveResourceWithValue,
+	toHaveResourceWithCustomProperty,
+});
 
 export async function createNestApplicationE2E(): Promise<INestApplication> {
 	const module = await Test.createTestingModule({

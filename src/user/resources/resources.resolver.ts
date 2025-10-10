@@ -18,7 +18,10 @@ export class ResourcesResolver {
 	public resource(
 		@Args('id', {type: () => ID}) id: string,
 	): Promise<HabitatResourceCombined | null> {
-		return this.resourcesService.getSingleResourceById(id);
+		return this.resourcesService.getSingleResourceById(
+			this.habitatModel.id,
+			id,
+		);
 	}
 
 	@Query(() => [HabitatResourceCombined], {
@@ -26,7 +29,9 @@ export class ResourcesResolver {
 		name: 'resource_getAll',
 	})
 	public allResources(): Promise<HabitatResourceCombined[]> {
-		return this.resourcesService.getAllResourcesForHabitat();
+		return this.resourcesService.getAllResourcesForHabitat(
+			this.habitatModel.id,
+		);
 	}
 
 	@ResolveField()
@@ -34,5 +39,12 @@ export class ResourcesResolver {
 		@Parent() resource: HabitatResourceCombined,
 	): AuthorizedHabitatModel {
 		return this.habitatModel;
+	}
+
+	@ResolveField('productionRate', () => Number)
+	public async productionRate(
+		@Parent() habitatResource: HabitatResourceCombined,
+	): Promise<number> {
+		return this.resourcesService.getProductionRateForResource(habitatResource);
 	}
 }

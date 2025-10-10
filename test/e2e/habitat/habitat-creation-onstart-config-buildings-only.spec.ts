@@ -53,17 +53,25 @@ describe('Habitat Creation when onStart config contains buildings', () => {
 			.query({
 				root: 'resource_getAll',
 				fields: {
-					fields: ['id', 'currentAmount'],
+					fields: ['id', 'currentAmount', 'productionRate'],
 				},
 			})
 			.send()
 			.expect(HttpStatus.OK);
 
-		response.body.data.resource_getAll.forEach(
+		const resourcesFromResponse = response.body.data.resource_getAll;
+
+		resourcesFromResponse.forEach(
 			(singleResource: Partial<HabitatResourceCombined>) => {
 				expect(singleResource.currentAmount).toEqual(0);
 			},
 		);
+
+		expect(resourcesFromResponse).toHaveResourceWithCustomProperty({
+			resourceId: 'wood',
+			property: 'productionRate',
+			value: 1,
+		});
 	});
 
 	it('should have pre-build buildings on building zones', async () => {

@@ -90,7 +90,7 @@ describe('Habitat Creation when onStart config contains resources', () => {
 			.query({
 				root: 'resource_getAll',
 				fields: {
-					fields: ['id', 'currentAmount'],
+					fields: ['id', 'currentAmount', 'productionRate'],
 				},
 			})
 			.send()
@@ -102,13 +102,28 @@ describe('Habitat Creation when onStart config contains resources', () => {
 			resourceId: 'wood',
 			value: 100,
 		});
+		expect(resourcesFromResponse).toHaveResourceWithCustomProperty({
+			resourceId: 'wood',
+			property: 'productionRate',
+			value: 0,
+		});
 		expect(resourcesFromResponse).toHaveResourceWithValue({
 			resourceId: 'stone_granite',
 			value: 200,
 		});
+		expect(resourcesFromResponse).toHaveResourceWithCustomProperty({
+			resourceId: 'stone_granite',
+			property: 'productionRate',
+			value: 0,
+		});
 		expect(resourcesFromResponse).toHaveResourceWithValue({
 			resourceId: 'coal',
 			value: 50,
+		});
+		expect(resourcesFromResponse).toHaveResourceWithCustomProperty({
+			resourceId: 'coal',
+			property: 'productionRate',
+			value: 0,
 		});
 	});
 });
