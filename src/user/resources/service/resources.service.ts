@@ -1,25 +1,40 @@
 import {Injectable} from '@nestjs/common';
 
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
-import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
+import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/resource-calculation/calculation-mechanic.interface';
 
 @Injectable()
 export class ResourcesService {
 	constructor(
 		private readonly habitatResourceRepository: HabitatResourceRepository,
-		private readonly habitatModel: AuthorizedHabitatModel,
+		private readonly calculationMechanic: CalculationMechanic,
 	) {}
 
+	public async getProductionRateForResource(
+		habitatResource: HabitatResourceCombined,
+	): Promise<number> {
+		const resource = await this.getHabitatResource(
+			habitatResource.habitatId,
+			habitatResource.id,
+		);
+
+		if (!resource) {
+			return 0;
+		}
+
+		return this.calculationMechanic.getProductionRate(resource);
+	}
+
 	public async getSingleResourceById(
-		id: string,
+		habitatId: number,
+		resourceId: string,
 	): Promise<HabitatResourceCombined | null> {
-		const habitatResource = await this.habitatResourceRepository.findOneBy({
-			habitatId: this.habitatModel.id,
-			resourceId: id,
-		});
+		const habitatResource = await this.getHabitatResource(
+			habitatId,
+			resourceId,
+		);
 
 		if (!habitatResource) {
 			return null;
@@ -29,19 +44,8 @@ export class ResourcesService {
 	}
 
 	public async getAllResourcesForHabitat(
-		habitatModelOrId: HabitatModel | number | null = null,
+		habitatId: number,
 	): Promise<HabitatResourceCombined[]> {
-		let habitatId: number;
-		if (habitatModelOrId) {
-			if (habitatModelOrId instanceof HabitatModel) {
-				habitatId = habitatModelOrId.id;
-			} else {
-				habitatId = habitatModelOrId;
-			}
-		} else {
-			habitatId = this.habitatModel.id;
-		}
-
 		const habitatResources = await this.habitatResourceRepository.findBy({
 			habitatId,
 		});
@@ -67,5 +71,15 @@ export class ResourcesService {
 		);
 
 		return mappedResource;
+	}
+
+	private getHabitatResource(
+		habitatId: number,
+		resourceId: string,
+	): Promise<HabitatResourceModel | null> {
+		return this.habitatResourceRepository.findOneBy({
+			habitatId,
+			resourceId,
+		});
 	}
 }
