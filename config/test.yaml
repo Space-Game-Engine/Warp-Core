@@ -9,6 +9,10 @@ database:
   migrations: false
   cli:
     "migrationsDir": "test/e2e/migrations"
+jwt:
+  secret: 'secret_code'
+  expiresIn: 3600
+  ignoreExpiration: false
 security:
   headerTokenToLogin: null
   whitelistedIp: null

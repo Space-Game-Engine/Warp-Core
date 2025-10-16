@@ -16,7 +16,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		});
 	}
 
-	public validate(payload: PayloadInterface): AuthModelInterface {
-		return payload.dbModel;
+	public validate(
+		payload: PayloadInterface & {
+			iat: number;
+			exp: number;
+		},
+	): AuthModelInterface & {
+		iat: number;
+		exp: number;
+	} {
+		return {...payload.dbModel, iat: payload.iat, exp: payload.exp};
 	}
 }
