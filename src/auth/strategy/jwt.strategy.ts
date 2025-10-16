@@ -8,7 +8,7 @@ import {PayloadInterface} from '@warp-core/auth/interface/payload.interface';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-	constructor(private readonly configService: ConfigService) {
+	constructor(configService: ConfigService) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			ignoreExpiration: configService.get('jwt.ignoreExpiration'),

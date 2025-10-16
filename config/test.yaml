@@ -9,6 +9,9 @@ database:
   migrations: false
   cli:
     "migrationsDir": "test/e2e/migrations"
+security:
+  headerTokenToLogin: null
+  whitelistedIp: null
 runtime:
   habitat:
     buildingZones:

@@ -5,7 +5,7 @@ export class AccessToken {
 		type: 'string',
 		description:
 			'Holds access token that allows to log in into application later',
-		example: 'Bearer JWT_TOKEN',
+		example: 'JWT_TOKEN',
 	})
 	public readonly access_token: string;
 }
