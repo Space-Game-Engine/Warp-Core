@@ -19,7 +19,7 @@ export class LoginByHabitatService implements LoginInterface {
 		} as PayloadInterface;
 
 		return {
-			access_token: `Bearer ${this.jwtService.sign(payload)}`,
+			access_token: `${this.jwtService.sign(payload)}`,
 		} as AccessToken;
 	}
 }

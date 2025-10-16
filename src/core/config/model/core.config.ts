@@ -4,6 +4,7 @@ import {ValidateNested} from 'class-validator';
 import {JwtConfig} from './jwt.config';
 
 import {DatabaseConfig} from '@warp-core/core/config/model/database.config';
+import {SecurityConfig} from '@warp-core/core/config/model/security.config';
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 
 export class CoreConfig {
@@ -14,6 +15,10 @@ export class CoreConfig {
 	@Type(() => JwtConfig)
 	@ValidateNested()
 	public jwt: JwtConfig;
+
+	@Type(() => SecurityConfig)
+	@ValidateNested()
+	public security: SecurityConfig;
 
 	@Type(() => RuntimeConfig)
 	@ValidateNested()

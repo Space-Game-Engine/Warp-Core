@@ -58,6 +58,8 @@ describe('register', () => {
 			.expect(HttpStatus.CREATED);
 
 		expect(loginResponse.body).toHaveProperty('access_token');
-		expect(loginResponse.body.access_token).toContain('Bearer');
+		expect(loginResponse.body.access_token).toMatch(
+			/(^[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*\.[A-Za-z0-9-_]*$)/,
+		);
 	});
 });

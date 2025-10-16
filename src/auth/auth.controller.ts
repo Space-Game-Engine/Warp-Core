@@ -10,15 +10,19 @@ import {
 	ParseIntPipe,
 } from '@nestjs/common';
 import {
+	ApiBearerAuth,
 	ApiBody,
 	ApiCreatedResponse,
+	ApiHeader,
 	ApiOkResponse,
 	ApiQuery,
 	ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import {Response} from 'express';
 
+import {loginAuthHeaderKey} from '@warp-core/auth/constants';
 import {Public} from '@warp-core/auth/decorator/public-path.decorator';
+import {InternalLoginAuthGuard} from '@warp-core/auth/guard/internal-login-auth.guard';
 import {JwtAuthGuard} from '@warp-core/auth/guard/jwt-auth.guard';
 import {LocalAuthGuard} from '@warp-core/auth/guard/local-auth.guard';
 import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
@@ -36,6 +40,7 @@ export class AuthController {
 	) {}
 
 	@Public()
+	@UseGuards(InternalLoginAuthGuard)
 	@Get('create/:id')
 	@ApiQuery({
 		name: 'id',
@@ -48,6 +53,13 @@ export class AuthController {
 			'New habitat for provided user was created. You can reuse response in login request to fetch jwt token',
 		type: LoginParameters,
 	})
+	@ApiHeader({
+		allowEmptyValue: true,
+		description:
+			'It may lock this EP from being used by unknown sources. Based on game configuration it may be required or not',
+		name: loginAuthHeaderKey,
+		required: false,
+	})
 	public async createHabitat(
 		@Param('id', new ParseIntPipe()) id: number,
 		@Res() res: Response,
@@ -58,7 +70,7 @@ export class AuthController {
 	}
 
 	@Public()
-	@UseGuards(LocalAuthGuard)
+	@UseGuards(InternalLoginAuthGuard, LocalAuthGuard)
 	@Post('login')
 	@ApiBody({
 		type: LoginParameters,
@@ -72,6 +84,13 @@ export class AuthController {
 		description:
 			'Provided credentials are wrong, check again your UserId and HabitatId. Maybe try to create new habitat first?',
 	})
+	@ApiHeader({
+		allowEmptyValue: true,
+		description:
+			'It may lock this EP from being used by unknown sources. Based on game configuration it may be required or not',
+		name: loginAuthHeaderKey,
+		required: false,
+	})
 	public login(
 		@Request() req: {user: AuthModelInterface},
 	): Promise<AccessToken> {
@@ -80,6 +99,7 @@ export class AuthController {
 
 	@UseGuards(JwtAuthGuard)
 	@Get('profile')
+	@ApiBearerAuth()
 	public getProfile(@Request() req): AuthModelInterface {
 		return req.user;
 	}

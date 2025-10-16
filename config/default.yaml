@@ -10,6 +10,9 @@ jwt:
   secret: 'secret_code'
   expiresIn: 3600
   ignoreExpiration: false
+security:
+  headerTokenToLogin: 'secret_header_token'
+  whitelistedIp: null
 runtime:
   habitat:
     buildingZones:

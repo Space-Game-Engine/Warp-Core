@@ -36,7 +36,8 @@ $ npm run test
 
 ## Documentation
 
-* [mechanics](./docs/mechanics.md)
+* [Mechanics](./docs/mechanics.md)
+* [Security](./docs/security.md)
 
 ## Support
 

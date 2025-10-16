@@ -80,7 +80,7 @@ export class GraphqlRequestTest {
 
 	private prepareAuthHeader(): string {
 		if (this.loginToken) {
-			return this.loginToken;
+			return `Bearer ${this.loginToken}`;
 		}
 
 		return '';
