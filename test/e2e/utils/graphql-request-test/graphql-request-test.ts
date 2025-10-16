@@ -23,7 +23,7 @@ export class GraphqlRequestTest {
 		return registerResponse.body;
 	}
 
-	public async authenticate(loginParameters: LoginParameters): Promise<this> {
+	public async authenticate(loginParameters: LoginParameters): Promise<string> {
 		const loginResponse = await this.supertest
 			.post('/auth/login')
 			.send(loginParameters)
@@ -31,7 +31,7 @@ export class GraphqlRequestTest {
 
 		this.loginToken = loginResponse.body.access_token;
 
-		return this;
+		return this.loginToken;
 	}
 
 	public async registerAndAuthenticate(userId: number): Promise<this> {
@@ -78,7 +78,7 @@ export class GraphqlRequestTest {
 		return generateGraphQLQuery(this.operationName, this.queryParameters);
 	}
 
-	private prepareAuthHeader(): string {
+	public prepareAuthHeader(): string {
 		if (this.loginToken) {
 			return `Bearer ${this.loginToken}`;
 		}

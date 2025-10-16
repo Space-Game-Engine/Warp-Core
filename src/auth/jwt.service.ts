@@ -22,7 +22,7 @@ export class JwtService {
 
 	public sign(payload: PayloadInterface): AccessToken {
 		return {
-			access_token: this.nestJwtService.sign(payload as PayloadInterface),
+			access_token: this.nestJwtService.sign(payload),
 		};
 	}
 
