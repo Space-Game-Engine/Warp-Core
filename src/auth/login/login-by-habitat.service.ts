@@ -1,10 +1,10 @@
 import {Injectable} from '@nestjs/common';
-import {JwtService} from '@nestjs/jwt';
 
 import {AccessToken} from './access-token.model';
 import {LoginInterface} from './login.interface';
 
 import {PayloadInterface} from '@warp-core/auth/interface/payload.interface';
+import {JwtService} from '@warp-core/auth/jwt.service';
 import {AuthorizedHabitatModel} from '@warp-core/auth/payload/model/habitat.model';
 
 @Injectable()
@@ -18,8 +18,6 @@ export class LoginByHabitatService implements LoginInterface {
 			currentHabitatId: habitat.id,
 		} as PayloadInterface;
 
-		return {
-			access_token: `${this.jwtService.sign(payload)}`,
-		} as AccessToken;
+		return this.jwtService.sign(payload);
 	}
 }

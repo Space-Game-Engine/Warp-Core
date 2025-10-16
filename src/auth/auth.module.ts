@@ -1,16 +1,15 @@
 import {Module} from '@nestjs/common';
 import {ConfigModule, ConfigService} from '@nestjs/config';
 import {APP_GUARD} from '@nestjs/core';
-import {JwtModule, JwtService} from '@nestjs/jwt';
+import {JwtModule} from '@nestjs/jwt';
 import {JwtModuleOptions} from '@nestjs/jwt/dist/interfaces/jwt-module-options.interface';
 import {PassportModule} from '@nestjs/passport';
 import {Request} from 'express';
 import {CLS_REQ, ClsModule} from 'nestjs-cls';
-import {ExtractJwt} from 'passport-jwt';
 
 import {AuthController} from '@warp-core/auth/auth.controller';
 import {GqlAuthGuard} from '@warp-core/auth/guard/gql-auth.guard';
-import {PayloadInterface} from '@warp-core/auth/interface/payload.interface';
+import {JwtService} from '@warp-core/auth/jwt.service';
 import {LoginByHabitatService} from '@warp-core/auth/login/login-by-habitat.service';
 import {AuthorizedHabitatModel} from '@warp-core/auth/payload/model/habitat.model';
 import {RegisterService} from '@warp-core/auth/register/register.service';
@@ -49,6 +48,7 @@ const jwtFactory = {
 		},
 		LocalStrategy,
 		JwtStrategy,
+		JwtService,
 		{
 			provide: APP_GUARD,
 			useClass: GqlAuthGuard,
@@ -63,17 +63,14 @@ const jwtFactory = {
 		ClsModule.forFeatureAsync({
 			global: true,
 			provide: AuthorizedHabitatModel,
-			imports: [DatabaseModule, JwtModule],
+			imports: [DatabaseModule, AuthModule],
 			inject: [CLS_REQ, HabitatRepository, JwtService],
 			useFactory: async (
 				req: Request,
 				habitatRepository: HabitatRepository,
 				jwtService: JwtService,
 			) => {
-				const extractJwt = ExtractJwt.fromAuthHeaderAsBearerToken();
-				const payload = jwtService.decode(
-					extractJwt(req) ?? '',
-				) as PayloadInterface;
+				const payload = jwtService.decode(req);
 
 				if (!payload) {
 					return null;
@@ -87,6 +84,6 @@ const jwtFactory = {
 		}),
 	],
 	controllers: [AuthController],
-	exports: [ClsModule],
+	exports: [ClsModule, JwtService],
 })
 export class AuthModule {}

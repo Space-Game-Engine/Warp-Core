@@ -103,4 +103,11 @@ export class AuthController {
 	public getProfile(@Request() req): AuthModelInterface {
 		return req.user;
 	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get('refreshToken')
+	@ApiBearerAuth()
+	public refreshToken(@Request() req): Promise<AccessToken> {
+		return this.loginService.login(req.user);
+	}
 }
