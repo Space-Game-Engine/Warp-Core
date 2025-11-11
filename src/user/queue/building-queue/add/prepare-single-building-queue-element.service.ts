@@ -111,6 +111,9 @@ export class PrepareSingleBuildingQueueElementService {
 		if (error) {
 			throw new InternalEmitterError(error.message);
 		}
-		return startTime.plus({second: upgradeTime ?? 0}).toJSDate();
+		return startTime
+			.plus({second: upgradeTime ?? 0})
+			.toUTC()
+			.toJSDate();
 	}
 }
