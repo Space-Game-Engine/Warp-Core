@@ -4,11 +4,17 @@ import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import {useContainer} from 'class-validator';
 
 import {AppModule} from '@warp-core/app.module';
+import {HttpExceptionFilter} from '@warp-core/exception.filter';
 
 async function bootstrap(): Promise<void> {
 	const appURL = '/graphql';
 	const localDocUrl = '/doc';
-	const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create(AppModule, {
+		cors: {
+			origin: false,
+		},
+	});
+	app.useGlobalFilters(new HttpExceptionFilter());
 	app.useGlobalPipes(new ValidationPipe());
 
 	useContainer(app.select(AppModule), {fallbackOnErrors: true});
