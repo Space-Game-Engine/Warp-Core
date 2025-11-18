@@ -4,6 +4,7 @@ import {DataSource, In, UpdateResult} from 'typeorm';
 import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
 import {BuildingModel} from '@warp-core/database/model/building.model';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()
@@ -44,6 +45,15 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
 			});
 
 		return queryBuilder.getMany();
+	}
+
+	public getHabitatResourcesByQueueCostItems(
+		queueCost: QueueElementCostModel[],
+		habitatId: number,
+	): Promise<HabitatResourceModel[]> {
+		const requiredResourcesIds = queueCost.map(cost => cost.resource.id);
+
+		return this.getHabitatResourcesByIds(requiredResourcesIds, habitatId);
 	}
 
 	public getHabitatResourcesByIds(

@@ -1,7 +1,6 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingModel} from '@warp-core/database/model/building.model';
@@ -19,7 +18,6 @@ jest.mock('@nestjs/config');
 
 describe('max queue elements count validator', () => {
 	let buildingQueueRepository: jest.Mocked<BuildingQueueRepository>;
-	let habitatMock: jest.Mocked<AuthorizedHabitatModel>;
 	let runtimeConfig: jest.Mocked<RuntimeConfig>;
 	let maxQueueCountValidator: MaxQueueCountValidator;
 
@@ -28,30 +26,29 @@ describe('max queue elements count validator', () => {
 
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
-				BuildingQueueRepository,
-				AuthorizedHabitatModel,
 				MaxQueueCountValidator,
+				BuildingQueueRepository,
 				coreConfigMock,
 			],
 		}).compile();
 		buildingQueueRepository = module.get(BuildingQueueRepository);
 		runtimeConfig = module.get(RuntimeConfig);
-		habitatMock = module.get(AuthorizedHabitatModel);
 		maxQueueCountValidator = module.get(MaxQueueCountValidator);
 	});
 
 	describe('validate', () => {
 		it('should add error when queue count equals max elements in queue from config', async () => {
-			habitatMock.id = 5;
 			const maxQueueElements = 10;
 			const queueValidationInput: QueueInputValidation = {
 				addToQueueInput: {} as AddToQueueInput,
 				building: {} as BuildingModel,
-				buildingZone: {} as BuildingZoneModel,
+				buildingZone: {
+					habitatId: 5,
+				} as BuildingZoneModel,
 				validationError: new QueueValidationError(),
 			};
 			when(buildingQueueRepository.countActiveBuildingQueueElementsForHabitat)
-				.calledWith(habitatMock.id)
+				.calledWith(5)
 				.mockResolvedValue(maxQueueElements);
 
 			runtimeConfig.habitat.buildingQueue.maxElementsInQueue = maxQueueElements;
@@ -65,17 +62,18 @@ describe('max queue elements count validator', () => {
 		});
 
 		it('should pass validation when queue elements count does not reach max queue elements from config', async () => {
-			habitatMock.id = 5;
 			const maxQueueElements = 10;
 			const queueValidationInput: QueueInputValidation = {
 				addToQueueInput: {} as AddToQueueInput,
 				building: {} as BuildingModel,
-				buildingZone: {} as BuildingZoneModel,
+				buildingZone: {
+					habitatId: 5,
+				} as BuildingZoneModel,
 				validationError: new QueueValidationError(),
 			};
 
 			when(buildingQueueRepository.countActiveBuildingQueueElementsForHabitat)
-				.calledWith(habitatMock.id)
+				.calledWith(5)
 				.mockResolvedValue(3);
 
 			runtimeConfig.habitat.buildingQueue.maxElementsInQueue = maxQueueElements;
