@@ -1,4 +1,4 @@
-import {Module} from '@nestjs/common';
+import {MiddlewareConsumer, Module, NestModule} from '@nestjs/common';
 
 import {AuthModule} from '@warp-core/auth';
 import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
@@ -11,7 +11,6 @@ import {SimpleCalculationService} from '@warp-core/user/queue/building-queue/add
 import {PrepareSingleBuildingQueueElementService} from '@warp-core/user/queue/building-queue/add/prepare-single-building-queue-element.service';
 import {BuildingQueueHandlerService} from '@warp-core/user/queue/building-queue/building-queue-handler.service';
 import {BuildingQueueResolver} from '@warp-core/user/queue/building-queue/building-queue.resolver';
-import {BuildingZoneUpdateByQueueSubscriber} from '@warp-core/user/queue/building-queue/entity-subscriber/building-zone-update-by-queue.subscriber';
 import {BuildingQueueAddEmitter} from '@warp-core/user/queue/building-queue/exchange/emit/building-queue-add.emitter';
 import {BuildingQueueProcessingEmitter} from '@warp-core/user/queue/building-queue/exchange/emit/building-queue-processing.emitter';
 import {AddToQueueValidator} from '@warp-core/user/queue/building-queue/input/validator/add-to-queue.validator';
@@ -20,6 +19,7 @@ import {DraftQueueElementValidator} from '@warp-core/user/queue/building-queue/i
 import {EndLevelValidator} from '@warp-core/user/queue/building-queue/input/validator/end-level.validator';
 import {MaxQueueCountValidator} from '@warp-core/user/queue/building-queue/input/validator/max-queue-count.validator';
 import {ValidateSingleQueueElementService} from '@warp-core/user/queue/building-queue/input/validator/validate-single-queue-element.service';
+import {QueueConsumerMiddleware} from '@warp-core/user/queue/building-queue/queue-consumer.middleware';
 
 @Module({
 	providers: [
@@ -31,7 +31,6 @@ import {ValidateSingleQueueElementService} from '@warp-core/user/queue/building-
 		BuildingQueueHandlerService,
 		PrepareSingleBuildingQueueElementService,
 		BuildingQueueResolver,
-		BuildingZoneUpdateByQueueSubscriber,
 		AddToQueueValidator,
 		DraftQueueElementValidator,
 		EndLevelValidator,
@@ -40,6 +39,7 @@ import {ValidateSingleQueueElementService} from '@warp-core/user/queue/building-
 		BuildingQueueAddEmitter,
 		BuildingQueueProcessingEmitter,
 		ValidateSingleQueueElementService,
+		QueueConsumerMiddleware,
 		{
 			provide: 'QUEUE_ADD_CALCULATION',
 			useClass: SimpleCalculationService,
@@ -47,4 +47,8 @@ import {ValidateSingleQueueElementService} from '@warp-core/user/queue/building-
 	],
 	imports: [DatabaseModule, CoreConfigModule, AuthModule],
 })
-export class BuildingQueueModule {}
+export class BuildingQueueModule implements NestModule {
+	public configure(consumer: MiddlewareConsumer): void {
+		consumer.apply(QueueConsumerMiddleware).forRoutes('graphql');
+	}
+}

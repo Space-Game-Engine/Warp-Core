@@ -3,7 +3,6 @@ import {Injectable, Logger} from '@nestjs/common';
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {BuildingQueueProcessingEmitter} from '@warp-core/user/queue/building-queue/exchange/emit/building-queue-processing.emitter';
@@ -86,11 +85,6 @@ export class BuildingQueueHandlerService {
 			`Queue element processed/consumed for building zone with id ${queueElement.buildingZoneId}`,
 		);
 
-		this.buildingQueueRepository.disableEntityListeners([
-			BuildingZoneModel,
-			HabitatResourceModel,
-		]);
-
 		await this.buildingQueueEmitter.beforeProcessing({queueElement});
 
 		await this.buildingZoneRepository.update(buildingZoneToProcess.id, {
@@ -102,10 +96,5 @@ export class BuildingQueueHandlerService {
 		});
 
 		await this.buildingQueueEmitter.afterProcessing({queueElement});
-
-		this.buildingQueueRepository.enableEntityListeners([
-			BuildingZoneModel,
-			HabitatResourceModel,
-		]);
 	}
 }

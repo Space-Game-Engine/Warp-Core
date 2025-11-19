@@ -20,6 +20,7 @@ import {DisabledWarehouseStorageService} from '@warp-core/user/resources/service
 import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 import {CreateResourcesPerHabitatService} from '@warp-core/user/resources/service/create-resources-per-habitat.service';
 import {QueueResourceExtractorService} from '@warp-core/user/resources/service/queue-resource-extractor.service';
+import {RecalculateResourcesOnQueueUpdate} from '@warp-core/user/resources/service/recalculate-resources-on-queue-update.service';
 import {ResourcesService} from '@warp-core/user/resources/service/resources.service';
 import {ValidateQueueResourcesService} from '@warp-core/user/resources/service/validate-queue-resources.service';
 
@@ -40,6 +41,7 @@ import {ValidateQueueResourcesService} from '@warp-core/user/resources/service/v
 		QueueProcessingSubscriber,
 		NoDistanceSimpleMultiplyResourceCalculationMechanicService,
 		ValidateQueueResourcesService,
+		RecalculateResourcesOnQueueUpdate,
 		RegisterMechanic.forFeature(
 			CalculationMechanic,
 			'runtime.mechanics.resources.calculation',

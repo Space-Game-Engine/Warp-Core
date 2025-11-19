@@ -1,10 +1,18 @@
 import CustomMatcherResult = jest.CustomMatcherResult;
 import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
 
-export type ResourceCheck = {
-	resourceId: string;
+type ExactResourceCheck = {
 	value: number;
 };
+
+type RangeResourceCheck = {
+	minValue: number;
+	maxValue: number;
+};
+
+export type ResourceCheck = {
+	resourceId: string;
+} & (ExactResourceCheck | RangeResourceCheck);
 export type ResourceWithCustomPropertyCheck = {
 	resourceId: string;
 	property: string;
@@ -76,17 +84,47 @@ export function toHaveResourceWithValue(
 		return resourceAssert;
 	}
 
-	const {resourceId, value} = actual;
+	const {resourceId} = actual;
 
 	const resourceToCheck = getResourceFromReceivedResources(
 		received as HabitatResourceCombined[],
 		resourceId,
 	)!;
 
+	if ('value' in actual) {
+		return checkExactResourceValue(resourceToCheck, actual.value);
+	}
+
+	return checkResourceValueInRange(
+		resourceToCheck,
+		actual.minValue,
+		actual.maxValue,
+	);
+}
+
+function checkExactResourceValue(
+	resourceToCheck: Partial<HabitatResourceCombined>,
+	exactValue: number,
+): CustomMatcherResult {
 	return {
-		pass: value === resourceToCheck.currentAmount,
+		pass: exactValue === resourceToCheck.currentAmount,
 		message: () =>
-			`Resource "${resourceId}" amount should be ${value}, actual value is ${resourceToCheck.currentAmount}`,
+			`Resource "${resourceToCheck.resourceId}" amount should be ${exactValue}, actual value is ${resourceToCheck.currentAmount}`,
+	};
+}
+
+function checkResourceValueInRange(
+	resourceToCheck: Partial<HabitatResourceCombined>,
+	minValue: number,
+	maxValue: number,
+): CustomMatcherResult {
+	const currentAmount = resourceToCheck.currentAmount ?? 0;
+	const minValuePass = minValue <= currentAmount;
+	const maxValuePass = maxValue >= currentAmount;
+	return {
+		pass: minValuePass === maxValuePass,
+		message: () =>
+			`Resource "${resourceToCheck.resourceId}" amount should be between ${minValue} and ${maxValue}, actual value is ${resourceToCheck.currentAmount}`,
 	};
 }
 

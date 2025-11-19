@@ -2,7 +2,6 @@ import {Injectable, Logger} from '@nestjs/common';
 import {DateTime} from 'luxon';
 
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
-import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/resource-calculation/calculation-mechanic.interface';
 import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 
@@ -11,7 +10,6 @@ export class ResourceCalculatorService {
 	private readonly logger = new Logger(ResourceCalculatorService.name);
 
 	constructor(
-		private readonly habitatResourceRepository: HabitatResourceRepository,
 		private readonly calculateResourceStorage: WarehouseStorageCalculationMechanic,
 		private readonly calculationMechanic: CalculationMechanic,
 	) {}
