@@ -11,7 +11,7 @@ async function bootstrap(): Promise<void> {
 	const localDocUrl = '/doc';
 	const app = await NestFactory.create(AppModule, {
 		cors: {
-			origin: false,
+			origin: '*',
 		},
 	});
 	app.useGlobalFilters(new HttpExceptionFilter());
@@ -39,7 +39,7 @@ async function bootstrap(): Promise<void> {
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup(localDocUrl, app, document);
 
-	await app.listen(3000);
+	await app.listen(process.env.PORT ?? 3000);
 	console.log(`App is loaded at ${await app.getUrl()}${appURL} URL`);
 	console.log(`See documentation at ${await app.getUrl()}${localDocUrl} URL`);
 }
