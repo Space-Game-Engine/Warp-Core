@@ -18,10 +18,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
 		this.logger.error(exception);
 
-		response.status(status).json({
-			statusCode: status,
-			timestamp: new Date().toISOString(),
-			path: request.url,
-		});
+		if (Object.hasOwn(response, 'status')) {
+			response.status(status).json({
+				statusCode: status,
+				timestamp: new Date().toISOString(),
+				path: request.url,
+			});
+		}
 	}
 }
