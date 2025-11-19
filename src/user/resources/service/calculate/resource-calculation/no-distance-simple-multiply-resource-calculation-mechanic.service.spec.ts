@@ -234,7 +234,7 @@ describe.each(testCases)(
 			}) as BuildingZoneModel[];
 
 			when(buildingZoneRepository.getBuildingZoneProducersForSingleResource)
-				.expectCalledWith(habitat, resource)
+				.expectCalledWith(habitat.id, resource)
 				.mockResolvedValue(buildingZones);
 		});
 

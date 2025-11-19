@@ -23,7 +23,7 @@ export class NoDistanceSimpleMultiplyResourceCalculationMechanicService
 
 		const buildingZones =
 			await this.buildingZoneRepository.getBuildingZoneProducersForSingleResource(
-				habitat,
+				habitat.id,
 				resource,
 			);
 
