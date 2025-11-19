@@ -2,7 +2,6 @@ import {Injectable} from '@nestjs/common';
 import {DataSource, FindOptionsUtils} from 'typeorm';
 
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {ResourceModel} from '@warp-core/database/model/resource.model';
 import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
@@ -64,17 +63,9 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 	}
 
 	public getBuildingZoneProducersForSingleResource(
-		habitat: HabitatModel | number,
+		habitatId: number,
 		resourceType: ResourceModel,
 	): Promise<BuildingZoneModel[]> {
-		let habitatId: number;
-
-		if (habitat instanceof HabitatModel) {
-			habitatId = habitat.id;
-		} else {
-			habitatId = habitat;
-		}
-
 		const queryBuilder = this.createQueryBuilder('buildingZone');
 		FindOptionsUtils.joinEagerRelations(
 			queryBuilder,
