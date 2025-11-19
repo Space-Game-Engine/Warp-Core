@@ -41,3 +41,5 @@ runtime:
     resources:
       calculation: 'no-distance-simple-multiply'
       warehouse: 'base-resource-summary'
+    queue:
+      resourceConsumer: 'simple-resource-consumer'

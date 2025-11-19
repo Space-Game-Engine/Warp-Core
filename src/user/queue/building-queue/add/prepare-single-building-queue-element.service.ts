@@ -1,4 +1,4 @@
-import {Inject, Injectable} from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {DateTime} from 'luxon';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
@@ -9,15 +9,14 @@ import {BuildingModel} from '@warp-core/database/model/building.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
-import {ResourcesCalculatorInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/resources-calculator.interface';
+import {BuildingQueueResourceConsumerInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/building-queue-resource-consumer.interface';
 import {QueueError} from '@warp-core/user/queue/building-queue/exception/queue.error';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 
 @Injectable()
 export class PrepareSingleBuildingQueueElementService {
 	constructor(
-		@Inject('QUEUE_ADD_CALCULATION')
-		protected readonly calculationService: ResourcesCalculatorInterface,
+		protected readonly calculationService: BuildingQueueResourceConsumerInterface,
 		protected readonly buildingQueueRepository: BuildingQueueRepository,
 		protected readonly buildingZoneRepository: BuildingZoneRepository,
 		protected readonly buildingService: BuildingQueryEmitter,
