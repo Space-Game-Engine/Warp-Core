@@ -1,9 +1,10 @@
 import {Injectable} from '@nestjs/common';
-import {DataSource, In, UpdateResult} from 'typeorm';
+import {DataSource, In} from 'typeorm';
 
 import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
 import {BuildingModel} from '@warp-core/database/model/building.model';
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()
@@ -46,6 +47,15 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
 		return queryBuilder.getMany();
 	}
 
+	public getHabitatResourcesByQueueCostItems(
+		queueCost: QueueElementCostModel[],
+		habitatId: number,
+	): Promise<HabitatResourceModel[]> {
+		const requiredResourcesIds = queueCost.map(cost => cost.resource.id);
+
+		return this.getHabitatResourcesByIds(requiredResourcesIds, habitatId);
+	}
+
 	public getHabitatResourcesByIds(
 		resourcesIds: string[],
 		habitatId: number,
@@ -54,18 +64,5 @@ export class HabitatResourceRepository extends AbstractRepository<HabitatResourc
 			resourceId: In(resourcesIds),
 			habitatId: habitatId,
 		});
-	}
-
-	public updateLastCalculationDateForManyResources(
-		resourceIds: string[],
-		habitatId: number,
-		lastCalculationTime: Date,
-	): Promise<UpdateResult> {
-		return this.createQueryBuilder()
-			.update(HabitatResourceModel)
-			.set({lastCalculationTime: lastCalculationTime})
-			.where('resourceId IN (:...resourceIds)', {resourceIds: resourceIds})
-			.andWhere('habitatId = :habitatId', {habitatId: habitatId})
-			.execute();
 	}
 }

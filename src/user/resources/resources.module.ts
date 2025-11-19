@@ -19,15 +19,15 @@ import {BaseResourceStorageService} from '@warp-core/user/resources/service/calc
 import {DisabledWarehouseStorageService} from '@warp-core/user/resources/service/calculate/warehouse-storage/disabled-warehouse-storage.service';
 import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 import {CreateResourcesPerHabitatService} from '@warp-core/user/resources/service/create-resources-per-habitat.service';
-import {HabitatHasNewResourceProducerService} from '@warp-core/user/resources/service/habitat-has-new-resource-producer.service';
 import {QueueResourceExtractorService} from '@warp-core/user/resources/service/queue-resource-extractor.service';
+import {RecalculateResourcesOnQueueUpdate} from '@warp-core/user/resources/service/recalculate-resources-on-queue-update.service';
 import {ResourcesService} from '@warp-core/user/resources/service/resources.service';
+import {ValidateQueueResourcesService} from '@warp-core/user/resources/service/validate-queue-resources.service';
 
 @Module({
 	providers: [
 		CreateResourcesPerHabitatService,
 		HabitatResourceRecalculateSubscriber,
-		HabitatHasNewResourceProducerService,
 		ResourcesService,
 		ResourceCalculatorService,
 		QueueResourceExtractorService,
@@ -40,6 +40,8 @@ import {ResourcesService} from '@warp-core/user/resources/service/resources.serv
 		NewHabitatSubscriber,
 		QueueProcessingSubscriber,
 		NoDistanceSimpleMultiplyResourceCalculationMechanicService,
+		ValidateQueueResourcesService,
+		RecalculateResourcesOnQueueUpdate,
 		RegisterMechanic.forFeature(
 			CalculationMechanic,
 			'runtime.mechanics.resources.calculation',

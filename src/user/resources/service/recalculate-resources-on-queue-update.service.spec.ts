@@ -1,22 +1,26 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
-import {HabitatHasNewResourceProducerService} from '@warp-core/user/resources/service/habitat-has-new-resource-producer.service';
+import {ResourceCalculatorService} from '@warp-core/user/resources/service/calculate/resource-calculator.service';
+import {RecalculateResourcesOnQueueUpdate} from '@warp-core/user/resources/service/recalculate-resources-on-queue-update.service';
 
 jest.mock('@warp-core/database/repository/building.repository');
 jest.mock('@warp-core/database/repository/habitat-resource.repository');
+jest.mock(
+	'@warp-core/user/resources/service/calculate/resource-calculator.service',
+);
 
 describe('Add last calculation date for new resource producers', () => {
 	let buildingRepository: jest.Mocked<BuildingRepository>;
 	let habitatResourceRepository: jest.Mocked<HabitatResourceRepository>;
-	let authorizedHabitatModel: AuthorizedHabitatModel;
-	let habitatHasNewResourceProducerSubscriber: HabitatHasNewResourceProducerService;
+	let resourceCalculatorService: jest.Mocked<ResourceCalculatorService>;
+	let habitatHasNewResourceProducerSubscriber: RecalculateResourcesOnQueueUpdate;
 
 	beforeAll(() => {
 		prepareRepositoryMock(HabitatResourceRepository);
@@ -29,25 +33,28 @@ describe('Add last calculation date for new resource producers', () => {
 			providers: [
 				BuildingRepository,
 				HabitatResourceRepository,
-				AuthorizedHabitatModel,
-				HabitatHasNewResourceProducerService,
+				RecalculateResourcesOnQueueUpdate,
+				ResourceCalculatorService,
 			],
 		}).compile();
 
 		buildingRepository = module.get(BuildingRepository);
 		habitatResourceRepository = module.get(HabitatResourceRepository);
-		authorizedHabitatModel = module.get(AuthorizedHabitatModel);
+		resourceCalculatorService = module.get(ResourceCalculatorService);
 		habitatHasNewResourceProducerSubscriber = module.get(
-			HabitatHasNewResourceProducerService,
+			RecalculateResourcesOnQueueUpdate,
 		);
 	});
 
 	describe('updateLastCalculationDateOnHabitatResource', () => {
 		it('should do nothing when building does not produce anything ad selected level', async () => {
-			authorizedHabitatModel.id = 5;
+			const habitatId = 5;
 			const queueElement = {
 				endLevel: 5,
 				buildingId: 'test',
+				buildingZone: {
+					habitatId,
+				},
 			} as BuildingQueueElementModel;
 
 			const productionRateModels = [] as BuildingProductionRateModel[];
@@ -63,16 +70,22 @@ describe('Add last calculation date for new resource producers', () => {
 				{queueElement: queueElement},
 			);
 
+			expect(habitatResourceRepository.save).toHaveBeenCalledTimes(0);
+
 			expect(
-				habitatResourceRepository.updateLastCalculationDateForManyResources,
+				resourceCalculatorService.calculateSingleResource,
 			).toHaveBeenCalledTimes(0);
 		});
 
 		it('should update habitat resource when building produce resources', async () => {
-			authorizedHabitatModel.id = 5;
+			const habitatId = 5;
 			const queueElement = {
 				endLevel: 5,
 				buildingId: 'test',
+				endTime: new Date(),
+				buildingZone: {
+					habitatId,
+				},
 			} as BuildingQueueElementModel;
 
 			const productionRateModels = [
@@ -84,6 +97,17 @@ describe('Add last calculation date for new resource producers', () => {
 				},
 			] as BuildingProductionRateModel[];
 
+			const resources = [
+				{
+					resourceId: 'wood',
+					lastCalculationTime: new Date(),
+				},
+				{
+					resourceId: 'coal',
+					lastCalculationTime: new Date(),
+				},
+			] as HabitatResourceModel[];
+
 			when(buildingRepository.getProductionRateForProvidedLevel)
 				.expectCalledWith(
 					queueElement.buildingId as string,
@@ -91,13 +115,22 @@ describe('Add last calculation date for new resource producers', () => {
 				)
 				.mockResolvedValue(productionRateModels);
 
+			when(habitatResourceRepository.getHabitatResourcesByIds)
+				.expectCalledWith(
+					productionRateModels.map(productionRate => productionRate.resourceId),
+					habitatId,
+				)
+				.mockResolvedValue(resources);
+
 			await habitatHasNewResourceProducerSubscriber.updateLastCalculationDateOnHabitatResource(
 				{queueElement: queueElement},
 			);
 
+			expect(habitatResourceRepository.save).toHaveBeenCalledTimes(1);
+
 			expect(
-				habitatResourceRepository.updateLastCalculationDateForManyResources,
-			).toHaveBeenCalledTimes(1);
+				resourceCalculatorService.calculateSingleResource,
+			).toHaveBeenCalledTimes(2);
 		});
 	});
 });

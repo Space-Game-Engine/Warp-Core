@@ -1,22 +1,20 @@
 import {Injectable, Logger} from '@nestjs/common';
 
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
+import {ResourceCalculatorService} from '@warp-core/user/resources/service/calculate/resource-calculator.service';
 
 @Injectable()
-export class HabitatHasNewResourceProducerService {
-	private readonly logger = new Logger(
-		HabitatHasNewResourceProducerService.name,
-	);
+export class RecalculateResourcesOnQueueUpdate {
+	private readonly logger = new Logger(RecalculateResourcesOnQueueUpdate.name);
 
 	constructor(
 		private readonly buildingRepository: BuildingRepository,
 		private readonly habitatResourceRepository: HabitatResourceRepository,
-		private readonly habitatModel: AuthorizedHabitatModel,
+		private readonly resourceCalculatorService: ResourceCalculatorService,
 	) {}
 
 	public async updateLastCalculationDateOnHabitatResource(
@@ -36,13 +34,23 @@ export class HabitatHasNewResourceProducerService {
 
 		this.logger.debug('Updating last calculation date if needed');
 
-		await this.habitatResourceRepository.updateLastCalculationDateForManyResources(
-			buildingProduction.map(
-				singleBuildingProduction => singleBuildingProduction.resourceId,
-			),
-			this.habitatModel.id,
-			queueElement.endTime,
-		);
+		const resources =
+			await this.habitatResourceRepository.getHabitatResourcesByIds(
+				buildingProduction.map(
+					singleBuildingProduction => singleBuildingProduction.resourceId,
+				),
+				(await queueElement.buildingZone).habitatId,
+			);
+
+		for (const resource of resources) {
+			await this.resourceCalculatorService.calculateSingleResource(
+				resource,
+				queueElement.endTime,
+			);
+			resource.lastCalculationTime = queueElement.endTime;
+		}
+
+		await this.habitatResourceRepository.save(resources);
 
 		this.logger.debug('Last calculation time from habitat resources updated');
 	}

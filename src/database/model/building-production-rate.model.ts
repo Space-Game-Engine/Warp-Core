@@ -46,8 +46,10 @@ export class BuildingProductionRateModel {
 
 	@Column({name: 'resourceId'})
 	public resourceId: string;
+
 	@Field({description: 'Current level production rate in seconds'})
 	@IsNumber()
 	@Column()
+	@Column({type: 'float', precision: 10, scale: 4})
 	public productionRate: number;
 }

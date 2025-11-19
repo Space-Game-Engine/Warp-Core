@@ -1,6 +1,5 @@
 import {Injectable} from '@nestjs/common';
 
-import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {QueueItemValidatorInterface} from '@warp-core/user/queue/building-queue/input/validator/queue-item-validator.interface';
@@ -11,15 +10,15 @@ export class MaxQueueCountValidator implements QueueItemValidatorInterface {
 	constructor(
 		private readonly buildingQueueRepository: BuildingQueueRepository,
 		private readonly runtimeConfig: RuntimeConfig,
-		private readonly habitatModel: AuthorizedHabitatModel,
 	) {}
 
 	public async validate({
 		validationError,
+		buildingZone,
 	}: QueueInputValidation): Promise<void> {
 		const queueCounter =
 			await this.buildingQueueRepository.countActiveBuildingQueueElementsForHabitat(
-				this.habitatModel.id,
+				buildingZone.habitatId,
 			);
 		const maxElementsInQueue =
 			this.runtimeConfig.habitat.buildingQueue.maxElementsInQueue;

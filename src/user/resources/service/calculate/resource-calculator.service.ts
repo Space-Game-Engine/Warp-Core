@@ -2,8 +2,6 @@ import {Injectable, Logger} from '@nestjs/common';
 import {DateTime} from 'luxon';
 
 import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
-import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
-import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
 import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/resource-calculation/calculation-mechanic.interface';
 import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 
@@ -12,7 +10,6 @@ export class ResourceCalculatorService {
 	private readonly logger = new Logger(ResourceCalculatorService.name);
 
 	constructor(
-		private readonly habitatResourceRepository: HabitatResourceRepository,
 		private readonly calculateResourceStorage: WarehouseStorageCalculationMechanic,
 		private readonly calculationMechanic: CalculationMechanic,
 	) {}
@@ -54,33 +51,6 @@ export class ResourceCalculatorService {
 		this.logger.debug(
 			`Resource ${resourceId} for habitat ${habitatId} is calculated`,
 		);
-	}
-
-	public async addResourcesOnQueueUpdate({
-		queueElement: buildingQueueElement,
-	}: BuildingQueueProcessing): Promise<void> {
-		const {habitatId} = await buildingQueueElement.buildingZone;
-
-		this.logger.debug(
-			`Calculating resource on queue update for building zone ${buildingQueueElement.buildingZoneId}`,
-		);
-
-		const habitatResources =
-			await this.habitatResourceRepository.getHabitatResourceByBuildingAndLevel(
-				await buildingQueueElement.building!,
-				buildingQueueElement.startLevel,
-				habitatId,
-			);
-
-		for (const singleHabitatResource of habitatResources) {
-			await this.calculateSingleResource(
-				singleHabitatResource,
-				buildingQueueElement.endTime,
-			);
-			singleHabitatResource.lastCalculationTime = buildingQueueElement.endTime;
-		}
-
-		await this.habitatResourceRepository.save(habitatResources);
 	}
 
 	private calculateTimeToProcessResources(
