@@ -2,11 +2,13 @@ import {MiddlewareConsumer, Module, NestModule} from '@nestjs/common';
 
 import {AuthModule} from '@warp-core/auth';
 import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
+import {RegisterMechanic} from '@warp-core/core/utils/mechanics';
 import {DatabaseModule} from '@warp-core/database/database.module';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {BuildingZoneEmitter} from '@warp-core/user/building-zone/exchange';
 import {BuildingQueueAddService} from '@warp-core/user/queue/building-queue/add/building-queue-add.service';
 import {BuildingQueueDraftService} from '@warp-core/user/queue/building-queue/add/building-queue-draft.service';
+import {BuildingQueueResourceConsumerInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/building-queue-resource-consumer.interface';
 import {SimpleCalculationService} from '@warp-core/user/queue/building-queue/add/calculate-resources/simple-calculation.service';
 import {PrepareSingleBuildingQueueElementService} from '@warp-core/user/queue/building-queue/add/prepare-single-building-queue-element.service';
 import {BuildingQueueHandlerService} from '@warp-core/user/queue/building-queue/building-queue-handler.service';
@@ -40,10 +42,11 @@ import {QueueConsumerMiddleware} from '@warp-core/user/queue/building-queue/queu
 		BuildingQueueProcessingEmitter,
 		ValidateSingleQueueElementService,
 		QueueConsumerMiddleware,
-		{
-			provide: 'QUEUE_ADD_CALCULATION',
-			useClass: SimpleCalculationService,
-		},
+		SimpleCalculationService,
+		RegisterMechanic.forFeature(
+			BuildingQueueResourceConsumerInterface,
+			'runtime.mechanics.queue.resourceConsumer',
+		),
 	],
 	imports: [DatabaseModule, CoreConfigModule, AuthModule],
 })

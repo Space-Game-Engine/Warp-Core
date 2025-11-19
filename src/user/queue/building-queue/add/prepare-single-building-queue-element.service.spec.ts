@@ -9,7 +9,7 @@ import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cos
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
-import {ResourcesCalculatorInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/resources-calculator.interface';
+import {BuildingQueueResourceConsumerInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/building-queue-resource-consumer.interface';
 import {PrepareSingleBuildingQueueElementService} from '@warp-core/user/queue/building-queue/add/prepare-single-building-queue-element.service';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 
@@ -25,7 +25,7 @@ describe('Prepare single building queue element tests', () => {
 	let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
 	let buildingService: jest.Mocked<BuildingQueryEmitter>;
 	let habitatMock: jest.Mocked<AuthorizedHabitatModel>;
-	let resourcesCalculator: ResourcesCalculatorInterface;
+	let resourcesCalculator: BuildingQueueResourceConsumerInterface;
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
@@ -42,7 +42,7 @@ describe('Prepare single building queue element tests', () => {
 				BuildingQueryEmitter,
 				AuthorizedHabitatModel,
 				{
-					provide: 'QUEUE_ADD_CALCULATION',
+					provide: BuildingQueueResourceConsumerInterface,
 					useValue: resourcesCalculator,
 				},
 			],

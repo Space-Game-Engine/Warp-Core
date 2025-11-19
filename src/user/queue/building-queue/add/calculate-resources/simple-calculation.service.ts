@@ -1,15 +1,18 @@
 import {Injectable} from '@nestjs/common';
 
-import {ResourceTypeEnum} from '@warp-core/database/enum/resource-type.enum';
+import {AddMechanic} from '@warp-core/core/utils/mechanics';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingModel} from '@warp-core/database/model/building.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {ResourceModel} from '@warp-core/database/model/resource.model';
-import {ResourcesCalculatorInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/resources-calculator.interface';
+import {BuildingQueueResourceConsumerInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/building-queue-resource-consumer.interface';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 
 @Injectable()
-export class SimpleCalculationService implements ResourcesCalculatorInterface {
+@AddMechanic(BuildingQueueResourceConsumerInterface, 'simple-resource-consumer')
+export class SimpleCalculationService
+	implements BuildingQueueResourceConsumerInterface
+{
 	public async calculateResourcesCosts(
 		addToQueueElement: AddToQueueInput,
 		buildingZone: BuildingZoneModel,
@@ -33,10 +36,6 @@ export class SimpleCalculationService implements ResourcesCalculatorInterface {
 
 			for (const buildingUpdateCost of buildingUpdateCosts) {
 				const resource = await buildingUpdateCost.resource;
-
-				if (resource.type !== ResourceTypeEnum.CONSTRUCTION_RESOURCE) {
-					continue;
-				}
 				this.addToQueueCost(queueCost, resource, buildingUpdateCost.cost);
 			}
 		}
