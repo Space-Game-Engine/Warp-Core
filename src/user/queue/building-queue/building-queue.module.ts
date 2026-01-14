@@ -45,7 +45,7 @@ import {QueueConsumerMiddleware} from '@warp-core/user/queue/building-queue/queu
 		SimpleCalculationService,
 		RegisterMechanic.forFeature(
 			BuildingQueueResourceConsumerInterface,
-			'runtime.mechanics.queue.resourceConsumer',
+			'runtime.mechanics.queue.building.resourceConsumer',
 		),
 	],
 	imports: [DatabaseModule, CoreConfigModule, AuthModule],
