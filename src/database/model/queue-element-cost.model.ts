@@ -1,6 +1,6 @@
 import {Field, ObjectType} from '@nestjs/graphql';
 
-import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 
 @ObjectType({
 	description: 'Detailed information with resources required be used in queue.',

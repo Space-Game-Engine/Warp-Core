@@ -2,9 +2,9 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {BuildingModel} from '@warp-core/database/model/building.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';

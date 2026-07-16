@@ -1,12 +1,12 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';
-import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
+import {BuildingProductionRateModel} from '@warp-core/database/model/building/building-production-rate.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
-import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-details/details-at-certain-level.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
+import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {NoDistanceSimpleMultiplyResourceCalculationMechanicService} from '@warp-core/user/resources/service/calculate/resource-calculation/no-distance-simple-multiply-resource-calculation-mechanic.service';
 
@@ -228,7 +228,7 @@ describe.each(testCases)(
 										) as BuildingProductionRateModel[],
 									};
 								},
-							) as BuildingDetailsAtCertainLevelModel[],
+							) as DetailsAtCertainLevelModel[],
 					},
 				};
 			}) as BuildingZoneModel[];

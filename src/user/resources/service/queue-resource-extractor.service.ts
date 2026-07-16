@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
 

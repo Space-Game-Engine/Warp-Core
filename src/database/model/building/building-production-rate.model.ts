@@ -8,8 +8,8 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';
-import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building/building-details-at-certain-level.model';
+import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 
 @ObjectType({
 	description:

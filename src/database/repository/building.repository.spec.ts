@@ -2,7 +2,7 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {DataSource} from 'typeorm';
 
 import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
-import {BuildingModel} from '@warp-core/database/model/building.model';
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
 jest.mock('../transaction-manager.service');

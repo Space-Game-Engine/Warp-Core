@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {DataSource, FindOptionsUtils} from 'typeorm';
 
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 

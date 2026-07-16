@@ -5,7 +5,7 @@ import {HabitatService} from './service/habitat.service';
 import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
+import {HabitatResourceCombined} from '@warp-core/database/model/resource/habitat-resource.mapped.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {HabitatWithResources} from '@warp-core/user/habitat/habitat-with-resources.model';
 import {ResourcesQueryEmitter} from '@warp-core/user/resources';

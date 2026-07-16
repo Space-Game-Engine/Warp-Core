@@ -3,7 +3,7 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {BuildingInstallService} from './building-install.service';
 
 import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
-import {BuildingModel} from '@warp-core/database/model/building.model';
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 
 describe('BuildingInstallService', () => {
 	let buildingInstallService: BuildingInstallService;
@@ -42,7 +42,7 @@ describe('BuildingInstallService', () => {
 					{
 						id: 1,
 						level: 1,
-						timeToUpdateBuildingInSeconds: 10,
+						timeToUpdateInSeconds: 10,
 					},
 				],
 			} as BuildingModel;

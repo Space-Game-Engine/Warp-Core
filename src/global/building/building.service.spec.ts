@@ -4,7 +4,7 @@ import {when} from 'jest-when';
 import {BuildingService} from './building.service';
 
 import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
-import {BuildingModel} from '@warp-core/database/model/building.model';
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 
 jest.mock('@warp-core/database/repository/building.repository');
@@ -82,15 +82,15 @@ describe('Building service test', () => {
 				buildingDetailsAtCertainLevel: [
 					{
 						level: 1,
-						timeToUpdateBuildingInSeconds: 1,
+						timeToUpdateInSeconds: 1,
 					},
 					{
 						level: 2,
-						timeToUpdateBuildingInSeconds: 10,
+						timeToUpdateInSeconds: 10,
 					},
 					{
 						level: 3,
-						timeToUpdateBuildingInSeconds: 100,
+						timeToUpdateInSeconds: 100,
 					},
 				],
 			} as BuildingModel;
@@ -120,15 +120,15 @@ describe('Building service test', () => {
 				buildingDetailsAtCertainLevel: [
 					{
 						level: 1,
-						timeToUpdateBuildingInSeconds: 1,
+						timeToUpdateInSeconds: 1,
 					},
 					{
 						level: 2,
-						timeToUpdateBuildingInSeconds: 10,
+						timeToUpdateInSeconds: 10,
 					},
 					{
 						level: 3,
-						timeToUpdateBuildingInSeconds: 100,
+						timeToUpdateInSeconds: 100,
 					},
 				],
 			} as BuildingModel;
@@ -158,15 +158,15 @@ describe('Building service test', () => {
 				buildingDetailsAtCertainLevel: [
 					{
 						level: 1,
-						timeToUpdateBuildingInSeconds: 1,
+						timeToUpdateInSeconds: 1,
 					},
 					{
 						level: 2,
-						timeToUpdateBuildingInSeconds: 10,
+						timeToUpdateInSeconds: 10,
 					},
 					{
 						level: 3,
-						timeToUpdateBuildingInSeconds: 100,
+						timeToUpdateInSeconds: 100,
 					},
 				],
 			} as BuildingModel;

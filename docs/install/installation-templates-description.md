@@ -30,7 +30,6 @@ Example:
  * `type` _[enum]_ must match one of the following values:
    * `construction` resources used for build buildings, such as steel or wood.
    * `energy` resources used to power buildings and unlock technology, such as coal or electrical units.
-   * `technology` resources used in technological actions, such as enhancing knowledge or creating units
 
 ## Buildings
 

@@ -2,8 +2,8 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';

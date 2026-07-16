@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 
-import {BuildingModel} from '@warp-core/database/model/building.model';
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 
 @Injectable()
@@ -36,15 +36,15 @@ export class BuildingService {
 		}
 
 		for (const buildingDetails of await building.buildingDetailsAtCertainLevel) {
-			if (buildingDetails.level <= startLevel) {
+			if (buildingDetails.details.level <= startLevel) {
 				continue;
 			}
 
-			if (buildingDetails.level > endLevel) {
+			if (buildingDetails.details.level > endLevel) {
 				break;
 			}
 
-			secondsToUpgrade += buildingDetails.timeToUpdateBuildingInSeconds;
+			secondsToUpgrade += buildingDetails.details.timeToUpdateInSeconds;
 		}
 
 		return secondsToUpgrade;

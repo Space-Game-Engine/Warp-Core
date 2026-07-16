@@ -19,7 +19,7 @@ import {
 } from 'typeorm';
 
 import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
-import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';
+import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building/building-details-at-certain-level.model';
 
 @ObjectType({description: 'Single building type, describes its role in game'})
 @Entity({name: 'building'})

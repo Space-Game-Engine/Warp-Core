@@ -18,8 +18,8 @@ import {
 
 import {ResourceTypeEnum} from '@warp-core/database/enum/resource-type.enum';
 import {WarehouseTypeEnum} from '@warp-core/database/enum/warehouse-type.enum';
-import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';
-import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building/building-details-at-certain-level.model';
+import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 
 @ObjectType({description: 'Stores resources and other stuff'})
 @Entity({name: 'warehouse-details'})

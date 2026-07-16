@@ -1,9 +1,9 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
-import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {HabitatResourceCombined} from '@warp-core/database/model/resource/habitat-resource.mapped.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
+import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/resource-calculation/calculation-mechanic.interface';
 import {ResourcesService} from '@warp-core/user/resources/service/resources.service';

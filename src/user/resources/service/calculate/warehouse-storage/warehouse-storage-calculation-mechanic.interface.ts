@@ -1,5 +1,5 @@
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
-import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 
 export abstract class WarehouseStorageCalculationMechanic {
 	/**

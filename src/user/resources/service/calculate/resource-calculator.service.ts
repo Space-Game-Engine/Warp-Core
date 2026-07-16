@@ -1,7 +1,7 @@
 import {Injectable, Logger} from '@nestjs/common';
 import {DateTime} from 'luxon';
 
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/resource-calculation/calculation-mechanic.interface';
 import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/service/calculate/warehouse-storage/warehouse-storage-calculation-mechanic.interface';
 

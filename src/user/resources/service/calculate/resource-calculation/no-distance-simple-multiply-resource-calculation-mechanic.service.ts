@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 
 import {AddMechanic} from '@warp-core/core/utils/mechanics';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/resource-calculation/calculation-mechanic.interface';
 
@@ -76,7 +76,7 @@ export class NoDistanceSimpleMultiplyResourceCalculationMechanicService
 		const buildingDetailsAtCertainLevel =
 			await building.buildingDetailsAtCertainLevel;
 		const productionRateModels = await buildingDetailsAtCertainLevel.find(
-			buildingDetails => buildingDetails.level === buildingZone.level,
+			buildingDetails => buildingDetails.details.level === buildingZone.level,
 		)?.productionRate;
 
 		if (!productionRateModels || productionRateModels.length === 0) {

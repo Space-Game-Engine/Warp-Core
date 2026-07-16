@@ -1,4 +1,4 @@
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 
 export abstract class CalculationMechanic {
 	/**

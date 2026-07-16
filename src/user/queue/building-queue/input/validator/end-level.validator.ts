@@ -38,7 +38,7 @@ export class EndLevelValidator implements QueueItemValidatorInterface {
 			return;
 		}
 
-		if (addToQueueInput.endLevel > lastPossibleUpdate.level) {
+		if (addToQueueInput.endLevel > lastPossibleUpdate.details.level) {
 			validationError.addError(
 				'endLevel',
 				'You cannot update higher than it is possible. Check Building update details.',

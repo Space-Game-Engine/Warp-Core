@@ -10,9 +10,9 @@ import {
 } from 'typeorm';
 
 import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
-import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';
+import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building/building-details-at-certain-level.model';
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
-import {BuildingModel} from '@warp-core/database/model/building.model';
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
 
 @ObjectType({
@@ -105,7 +105,7 @@ export class BuildingZoneModel {
 
 		this.currentLevelBuildingDetails =
 			(await building.buildingDetailsAtCertainLevel).find(
-				details => details.level === this.level,
+				buildingDetails => buildingDetails.details.level === this.level,
 			) ?? null;
 
 		return this.currentLevelBuildingDetails;

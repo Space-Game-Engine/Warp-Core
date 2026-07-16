@@ -1,7 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
 
 import {ResourceTypeEnum} from '@warp-core/database/enum/resource-type.enum';
-import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 import {ResourcesInstallService} from '@warp-core/user/resources/install/resources-install.service';
 
 describe('ResourcesInstallService', () => {

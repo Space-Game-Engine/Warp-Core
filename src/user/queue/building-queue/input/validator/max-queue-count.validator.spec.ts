@@ -2,8 +2,8 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {BuildingModel} from '@warp-core/database/model/building.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
 import {QueueValidationError} from '@warp-core/user/queue/building-queue/exception/queue-validation.error';

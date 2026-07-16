@@ -1,5 +1,5 @@
 import CustomMatcherResult = jest.CustomMatcherResult;
-import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
+import {HabitatResourceCombined} from '@warp-core/database/model/resource/habitat-resource.mapped.model';
 
 type ExactResourceCheck = {
 	value: number;
