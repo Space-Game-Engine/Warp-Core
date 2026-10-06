@@ -1,15 +1,15 @@
 import {IsBoolean, IsNumber, Min} from 'class-validator';
 
-export class BuildingQueueConfig {
+export class QueueConfig {
 	/**
-	 * How many elements can be there in single building queue?
+	 * How many elements can be there in a single queue?
 	 */
 	@Min(1)
 	@IsNumber()
 	public maxElementsInQueue: number;
 
 	/**
-	 * Can user update single buildings by multiple levels?
+	 * Can user update a single entity by multiple levels?
 	 */
 	@IsBoolean()
 	public allowMultipleLevelUpdate: boolean;

@@ -1,5 +1,4 @@
 import {Injectable} from '@nestjs/common';
-import {DateTime} from 'luxon';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
@@ -10,20 +9,26 @@ import {BuildingQueueRepository} from '@warp-core/database/repository/building-q
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {BuildingQueueResourceConsumerInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/building-queue-resource-consumer.interface';
-import {QueueError} from '@warp-core/user/queue/building-queue/exception/queue.error';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
+import {AbstractPrepareQueueElementService} from '@warp-core/user/queue/core';
+import {QueueError} from '@warp-core/user/queue/core/exception/queue.error';
 
 @Injectable()
-export class PrepareSingleBuildingQueueElementService {
+export class PrepareSingleBuildingQueueElementService extends AbstractPrepareQueueElementService<
+	AddToQueueInput,
+	BuildingQueueElementModel
+> {
 	constructor(
 		protected readonly calculationService: BuildingQueueResourceConsumerInterface,
 		protected readonly buildingQueueRepository: BuildingQueueRepository,
 		protected readonly buildingZoneRepository: BuildingZoneRepository,
 		protected readonly buildingService: BuildingQueryEmitter,
 		protected readonly habitatModel: AuthorizedHabitatModel,
-	) {}
+	) {
+		super(buildingQueueRepository);
+	}
 
-	public async getQueueElement(
+	protected async createDraftQueueElement(
 		addToQueueElement: AddToQueueInput,
 	): Promise<BuildingQueueElementModel> {
 		const buildingZone =
@@ -35,19 +40,7 @@ export class PrepareSingleBuildingQueueElementService {
 		let building = await buildingZone.building;
 
 		if (!building) {
-			const {data, error} = await this.buildingService.getBuildingById(
-				addToQueueElement.buildingId!,
-			);
-
-			if (error) {
-				throw new InternalEmitterError(error.message);
-			}
-
-			if (!data) {
-				throw new QueueError('Failed to get building');
-			}
-
-			building = data;
+			building = await this.getBuildingById(addToQueueElement.buildingId!);
 		}
 
 		const resourceCost = await this.calculationService.calculateResourcesCosts(
@@ -56,63 +49,48 @@ export class PrepareSingleBuildingQueueElementService {
 			building,
 		);
 
-		const startTime = await this.prepareStartTimeForQueueElement(buildingZone);
-		const queueElement: BuildingQueueElementModel = {
+		return this.buildingQueueRepository.create({
 			id: null,
 			buildingId: building.id,
 			buildingZone: buildingZone,
 			buildingZoneId: buildingZone.id,
-			startTime: startTime,
+			startTime: new Date(),
 			startLevel: buildingZone.level,
 			endLevel: addToQueueElement.endLevel,
 			endTime: new Date(),
 			isConsumed: false,
 			costs: resourceCost,
-		};
-
-		queueElement.endTime = await this.prepareEndTimeForQueueElement(
-			queueElement,
-			building,
-		);
-
-		return queueElement;
+		});
 	}
 
-	protected async prepareStartTimeForQueueElement(
-		buildingZone: BuildingZoneModel,
-	): Promise<Date> {
-		const currentBuildingQueue =
-			await this.buildingQueueRepository.getCurrentBuildingQueueForHabitat(
-				buildingZone.habitatId,
-			);
-
-		if (currentBuildingQueue.length === 0) {
-			return new Date();
-		}
-
-		const lastBuildingQueueElement = currentBuildingQueue.at(-1)!;
-
-		return lastBuildingQueueElement.endTime;
-	}
-
-	protected async prepareEndTimeForQueueElement(
+	protected async calculateUpgradeTimeInSeconds(
 		queueElement: BuildingQueueElementModel,
-		building: BuildingModel,
-	): Promise<Date> {
-		const startTime = DateTime.fromJSDate(queueElement.startTime);
+	): Promise<number> {
 		const {data: upgradeTime, error} =
 			await this.buildingService.calculateTimeInSecondsToUpgradeBuilding({
 				startLevel: queueElement.startLevel,
 				endLevel: queueElement.endLevel,
-				buildingId: building.id,
+				buildingId: queueElement.buildingId!,
 			});
 
 		if (error) {
 			throw new InternalEmitterError(error.message);
 		}
-		return startTime
-			.plus({second: upgradeTime ?? 0})
-			.toUTC()
-			.toJSDate();
+
+		return upgradeTime ?? 0;
+	}
+
+	private async getBuildingById(buildingId: string): Promise<BuildingModel> {
+		const {data, error} = await this.buildingService.getBuildingById(buildingId);
+
+		if (error) {
+			throw new InternalEmitterError(error.message);
+		}
+
+		if (!data) {
+			throw new QueueError('Failed to get building');
+		}
+
+		return data;
 	}
 }

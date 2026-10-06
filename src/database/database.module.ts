@@ -17,13 +17,17 @@ import {ResearchNodeDetailsAtCertainLevelModel} from '@warp-core/database/model/
 import {ResearchNodeModel} from '@warp-core/database/model/research-node/research-node.model';
 import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
+import {ResearchQueueElementModel} from '@warp-core/database/model/research-queue-element.model';
 import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
+import {HabitatResearchNodeRepository} from '@warp-core/database/repository/habitat-research-node.repository';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
 import {InstallationDetailsRepository} from '@warp-core/database/repository/installation-details.repository';
+import {ResearchNodeRepository} from '@warp-core/database/repository/research-node.repository';
+import {ResearchQueueRepository} from '@warp-core/database/repository/research-queue.repository';
 import {ResourceRepository} from '@warp-core/database/repository/resource.repository';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
 
@@ -33,7 +37,10 @@ import {TransactionManagerService} from '@warp-core/database/transaction-manager
 		BuildingZoneRepository,
 		BuildingQueueRepository,
 		HabitatRepository,
+		HabitatResearchNodeRepository,
 		HabitatResourceRepository,
+		ResearchNodeRepository,
+		ResearchQueueRepository,
 		ResourceRepository,
 		InstallationDetailsRepository,
 		TransactionManagerService,
@@ -46,7 +53,10 @@ import {TransactionManagerService} from '@warp-core/database/transaction-manager
 		BuildingZoneRepository,
 		BuildingQueueRepository,
 		HabitatRepository,
+		HabitatResearchNodeRepository,
 		HabitatResourceRepository,
+		ResearchNodeRepository,
+		ResearchQueueRepository,
 		ResourceRepository,
 		InstallationDetailsRepository,
 	],
@@ -66,6 +76,7 @@ export class DatabaseModule {
 			HabitatResourceModel,
 			ResourceModel,
 			BuildingQueueElementModel,
+			ResearchQueueElementModel,
 			BuildingZoneModel,
 			HabitatModel,
 			InstallationDetailsModel,

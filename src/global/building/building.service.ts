@@ -1,5 +1,6 @@
 import {Injectable} from '@nestjs/common';
 
+import {calculateUpgradeTimeInSeconds} from '@warp-core/core/utils';
 import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 
@@ -20,7 +21,6 @@ export class BuildingService {
 		endLevel: number;
 		buildingId: string;
 	}): Promise<number> {
-		const {startLevel, endLevel} = inputData;
 		const building = await this.buildingRepository.getBuildingById(
 			inputData.buildingId,
 		);
@@ -29,24 +29,12 @@ export class BuildingService {
 			throw new Error('Building does not exists');
 		}
 
-		let secondsToUpgrade = 0;
+		const buildingDetails = await building.buildingDetailsAtCertainLevel;
 
-		if (startLevel === endLevel) {
-			return secondsToUpgrade;
-		}
-
-		for (const buildingDetails of await building.buildingDetailsAtCertainLevel) {
-			if (buildingDetails.details.level <= startLevel) {
-				continue;
-			}
-
-			if (buildingDetails.details.level > endLevel) {
-				break;
-			}
-
-			secondsToUpgrade += buildingDetails.details.timeToUpdateInSeconds;
-		}
-
-		return secondsToUpgrade;
+		return calculateUpgradeTimeInSeconds(
+			buildingDetails.map(singleDetails => singleDetails.details),
+			inputData.startLevel,
+			inputData.endLevel,
+		);
 	}
 }

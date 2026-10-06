@@ -5,6 +5,10 @@ import {
 	BuildingQueueNames,
 	BuildingQueueProcessing,
 } from '@warp-core/user/queue/building-queue';
+import {
+	ResearchQueueNames,
+	ResearchQueueProcessing,
+} from '@warp-core/user/queue/research-queue';
 import {QueueResourceExtractorService} from '@warp-core/user/resources/service/queue-resource-extractor.service';
 import {RecalculateResourcesOnQueueUpdate} from '@warp-core/user/resources/service/recalculate-resources-on-queue-update.service';
 import {ValidateQueueResourcesService} from '@warp-core/user/resources/service/validate-queue-resources.service';
@@ -38,5 +42,19 @@ export class QueueProcessingSubscriber {
 		return this.habitatHasNewResourceProducerService.updateLastCalculationDateOnHabitatResource(
 			input,
 		);
+	}
+
+	@InternalExchangeEmitListener(ResearchQueueNames.BeforeAddingElement)
+	public async validateResourcesToBeConsumedByResearchQueue(
+		input: ResearchQueueProcessing,
+	): Promise<void> {
+		await this.validateQueueResourcesService.validate(input);
+	}
+
+	@InternalExchangeEmitListener(ResearchQueueNames.AfterAddingElement)
+	public consumeResourcesOnResearchQueue(
+		input: ResearchQueueProcessing,
+	): Promise<void> {
+		return this.queueExtractor.useResourcesOnQueueUpdate(input);
 	}
 }

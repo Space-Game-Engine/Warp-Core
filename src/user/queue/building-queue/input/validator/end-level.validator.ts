@@ -1,10 +1,12 @@
 import {Injectable} from '@nestjs/common';
 
-import {QueueItemValidatorInterface} from '@warp-core/user/queue/building-queue/input/validator/queue-item-validator.interface';
 import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/validator/type';
+import {QueueItemValidatorInterface} from '@warp-core/user/queue/core';
 
 @Injectable()
-export class EndLevelValidator implements QueueItemValidatorInterface {
+export class EndLevelValidator
+	implements QueueItemValidatorInterface<QueueInputValidation>
+{
 	public async validate({
 		addToQueueInput,
 		buildingZone,

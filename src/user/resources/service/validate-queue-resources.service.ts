@@ -3,7 +3,7 @@ import {BadRequestException, Injectable} from '@nestjs/common';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
-import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
+import {QueueProcessing} from '@warp-core/user/queue/core';
 import {InsufficientResourceType} from '@warp-core/user/resources/exception/insufficient-resource.type';
 import {InsufficientResourcesException} from '@warp-core/user/resources/exception/Insufficient-resources.exception';
 
@@ -13,13 +13,11 @@ export class ValidateQueueResourcesService {
 		private readonly habitatResourceRepository: HabitatResourceRepository,
 	) {}
 
-	public async validate({
-		queueElement,
-	}: BuildingQueueProcessing): Promise<void> {
+	public async validate({queueElement}: QueueProcessing): Promise<void> {
 		const requiredResources =
 			await this.habitatResourceRepository.getHabitatResourcesByQueueCostItems(
 				queueElement.costs,
-				(await queueElement.buildingZone).habitatId,
+				await queueElement.getHabitatId(),
 			);
 
 		if (requiredResources.length !== queueElement.costs.length) {

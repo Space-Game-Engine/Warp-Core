@@ -31,3 +31,11 @@ Group of mechanics that decides how to consume resources on building queue chang
 #### `'simple-resource-consumer'`
 
 Fetches all resources related to the newly added building (or draft) and summarize them in a loop.
+
+### `queue.research.resourceConsumer`
+
+Group of mechanics that decides how to consume resources on research queue change. Based on this mechanic, queue cost calculates. That group is independent of the building queue mechanics, so each queue can use a different resource consumer.
+
+#### `'simple-resource-consumer'`
+
+Fetches all resources related to the newly added research node (or draft) and summarize them in a loop.

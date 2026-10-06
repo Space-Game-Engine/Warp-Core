@@ -39,7 +39,7 @@ export class RecalculateResourcesOnQueueUpdate {
 				buildingProduction.map(
 					singleBuildingProduction => singleBuildingProduction.resourceId,
 				),
-				(await queueElement.buildingZone).habitatId,
+				await queueElement.getHabitatId(),
 			);
 
 		for (const resource of resources) {

@@ -4,23 +4,27 @@ import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {BuildingZoneEmitter} from '@warp-core/user/building-zone';
-import {QueueValidationError} from '@warp-core/user/queue/building-queue/exception/queue-validation.error';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
-import {QueueItemValidatorInterface} from '@warp-core/user/queue/building-queue/input/validator/queue-item-validator.interface';
+import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/validator/type';
+import {AbstractValidateQueueElementService} from '@warp-core/user/queue/core';
+import {QueueValidationError} from '@warp-core/user/queue/core/exception/queue-validation.error';
 
 @Injectable()
-export class ValidateSingleQueueElementService {
+export class ValidateSingleQueueElementService extends AbstractValidateQueueElementService<
+	AddToQueueInput,
+	QueueInputValidation
+> {
 	constructor(
 		protected readonly buildingZoneService: BuildingZoneEmitter,
 		protected readonly buildingService: BuildingQueryEmitter,
-	) {}
+	) {
+		super();
+	}
 
-	public async validateQueueItem(input: {
-		addToQueueInput: AddToQueueInput;
-		validators: QueueItemValidatorInterface[];
-	}): Promise<true | never> {
-		const {addToQueueInput, validators} = input;
-		const validationError = new QueueValidationError();
+	protected async buildValidationContext(
+		addToQueueInput: AddToQueueInput,
+		validationError: QueueValidationError,
+	): Promise<QueueInputValidation> {
 		const buildingZone = await this.getBuildingZone(
 			addToQueueInput,
 			validationError,
@@ -31,22 +35,12 @@ export class ValidateSingleQueueElementService {
 			validationError,
 		);
 
-		await Promise.all(
-			validators.map(singleValidator =>
-				singleValidator.validate({
-					addToQueueInput,
-					building,
-					buildingZone,
-					validationError,
-				}),
-			),
-		);
-
-		if (validationError.hasErrors()) {
-			throw validationError;
-		}
-
-		return true;
+		return {
+			addToQueueInput,
+			building,
+			buildingZone,
+			validationError,
+		};
 	}
 
 	protected async getBuildingZone(

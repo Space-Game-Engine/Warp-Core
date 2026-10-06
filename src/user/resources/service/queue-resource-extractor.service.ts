@@ -3,7 +3,7 @@ import {Injectable} from '@nestjs/common';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
-import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
+import {QueueProcessing} from '@warp-core/user/queue/core';
 
 @Injectable()
 export class QueueResourceExtractorService {
@@ -12,13 +12,13 @@ export class QueueResourceExtractorService {
 	) {}
 
 	public async useResourcesOnQueueUpdate(
-		queueProcessingEvent: BuildingQueueProcessing,
+		queueProcessingEvent: QueueProcessing,
 	): Promise<void> {
 		const queueElement = queueProcessingEvent.queueElement;
 		const requiredResources =
 			await this.habitatResourceRepository.getHabitatResourcesByQueueCostItems(
 				queueElement.costs,
-				(await queueElement.buildingZone).habitatId,
+				await queueElement.getHabitatId(),
 			);
 		const now = new Date();
 

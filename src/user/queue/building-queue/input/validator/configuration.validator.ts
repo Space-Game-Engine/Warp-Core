@@ -4,11 +4,13 @@ import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
-import {QueueItemValidatorInterface} from '@warp-core/user/queue/building-queue/input/validator/queue-item-validator.interface';
 import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/validator/type';
+import {QueueItemValidatorInterface} from '@warp-core/user/queue/core';
 
 @Injectable()
-export class ConfigurationValidator implements QueueItemValidatorInterface {
+export class ConfigurationValidator
+	implements QueueItemValidatorInterface<QueueInputValidation>
+{
 	constructor(
 		private readonly buildingQueueRepository: BuildingQueueRepository,
 		private readonly runtimeConfig: RuntimeConfig,

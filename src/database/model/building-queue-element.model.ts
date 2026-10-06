@@ -8,14 +8,14 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {DraftModelInterface} from '@warp-core/core/utils';
+import {QueueElementModelInterface} from '@warp-core/core/utils';
 import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 
 @ObjectType({description: 'Defines one pending item in building queue'})
 @Entity({name: 'building-queue-element'})
-export class BuildingQueueElementModel implements DraftModelInterface {
+export class BuildingQueueElementModel implements QueueElementModelInterface {
 	@Field(() => ID)
 	@IsNumber()
 	@PrimaryGeneratedColumn()
@@ -80,4 +80,8 @@ export class BuildingQueueElementModel implements DraftModelInterface {
 	})
 	@Column('simple-json')
 	public costs: QueueElementCostModel[];
+
+	public async getHabitatId(): Promise<number> {
+		return (await this.buildingZone).habitatId;
+	}
 }
