@@ -11,10 +11,9 @@ export class QueueResourceExtractorService {
 		private readonly habitatResourceRepository: HabitatResourceRepository,
 	) {}
 
-	public async useResourcesOnQueueUpdate(
-		queueProcessingEvent: QueueProcessing,
-	): Promise<void> {
-		const queueElement = queueProcessingEvent.queueElement;
+	public async useResourcesOnQueueUpdate({
+		queueElement,
+	}: QueueProcessing): Promise<void> {
 		const requiredResources =
 			await this.habitatResourceRepository.getHabitatResourcesByQueueCostItems(
 				queueElement.costs,

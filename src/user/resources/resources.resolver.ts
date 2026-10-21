@@ -35,9 +35,7 @@ export class ResourcesResolver {
 	}
 
 	@ResolveField()
-	public habitat(
-		@Parent() resource: HabitatResourceCombined,
-	): AuthorizedHabitatModel {
+	public habitat(): AuthorizedHabitatModel {
 		return this.habitatModel;
 	}
 

@@ -17,6 +17,10 @@ export class BuildingQueueAddService extends AbstractQueueAddService<
 		buildingQueueRepository: BuildingQueueRepository,
 		buildingQueueAddEmitter: BuildingQueueAddEmitter,
 	) {
-		super(prepareQueueElement, buildingQueueRepository, buildingQueueAddEmitter);
+		super(
+			prepareQueueElement,
+			buildingQueueRepository,
+			buildingQueueAddEmitter,
+		);
 	}
 }

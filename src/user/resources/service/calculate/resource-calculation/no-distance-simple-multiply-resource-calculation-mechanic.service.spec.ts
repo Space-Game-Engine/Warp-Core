@@ -1,10 +1,10 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
+import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building/building-details-at-certain-level.model';
 import {BuildingProductionRateModel} from '@warp-core/database/model/building/building-production-rate.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
-import {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-details/details-at-certain-level.model';
 import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
@@ -214,7 +214,7 @@ describe.each(testCases)(
 							singleBuildingZone.building.buildingDetailsAtCertainLevel.map(
 								levelDetails => {
 									return {
-										level: levelDetails.level,
+										details: {level: levelDetails.level},
 										productionRate: levelDetails.productionRate.map(
 											parameterProductionRate => {
 												return {
@@ -228,10 +228,10 @@ describe.each(testCases)(
 										) as BuildingProductionRateModel[],
 									};
 								},
-							) as DetailsAtCertainLevelModel[],
+							) as unknown as BuildingDetailsAtCertainLevelModel[],
 					},
 				};
-			}) as BuildingZoneModel[];
+			}) as unknown as BuildingZoneModel[];
 
 			when(buildingZoneRepository.getBuildingZoneProducersForSingleResource)
 				.expectCalledWith(habitat.id, resource)

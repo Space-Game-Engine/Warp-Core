@@ -4,11 +4,6 @@ import {QueueElementModelInterface} from '@warp-core/core/utils';
 import {AbstractQueueElementRepository} from '@warp-core/database/repository/abstract-queue-element.repository';
 import {PrepareQueueElementServiceInterface} from '@warp-core/user/queue/core/service/prepare-queue-element-service.interface';
 
-/**
- * Common flow of preparing a single queue element.
- * Entity related services provide a draft with costs and levels,
- * while this class manages start and end time of a queue element.
- */
 export abstract class AbstractPrepareQueueElementService<
 	TInput extends object,
 	TQueueElement extends QueueElementModelInterface,

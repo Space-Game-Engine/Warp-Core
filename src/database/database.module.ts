@@ -15,9 +15,9 @@ import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cos
 import {HabitatResearchNodeModel} from '@warp-core/database/model/research-node/habitat-research-node.model';
 import {ResearchNodeDetailsAtCertainLevelModel} from '@warp-core/database/model/research-node/research-node-details-at-certain-level.model';
 import {ResearchNodeModel} from '@warp-core/database/model/research-node/research-node.model';
+import {ResearchQueueElementModel} from '@warp-core/database/model/research-queue-element.model';
 import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
-import {ResearchQueueElementModel} from '@warp-core/database/model/research-queue-element.model';
 import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';

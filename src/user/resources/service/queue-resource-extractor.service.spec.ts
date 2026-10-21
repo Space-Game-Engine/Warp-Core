@@ -47,14 +47,12 @@ describe('Resource extraction service', () => {
 				},
 			] as QueueElementCostModel[];
 
-			const queueElement = {
+			const queueElementEvent = {
 				queueElement: {
+					getHabitatId: (): number => 1,
 					costs,
-					buildingZone: {
-						habitatId: 1,
-					},
 				},
-			} as BuildingQueueProcessing;
+			} as unknown as BuildingQueueProcessing;
 
 			const habitatResources = [
 				{
@@ -71,7 +69,9 @@ describe('Resource extraction service', () => {
 				.expectCalledWith(costs, 1)
 				.mockResolvedValue(habitatResources);
 
-			await resourceExtractorService.useResourcesOnQueueUpdate(queueElement);
+			await resourceExtractorService.useResourcesOnQueueUpdate(
+				queueElementEvent,
+			);
 
 			expect(habitatResources[0].currentAmount).toEqual(0);
 			expect(habitatResources[1].currentAmount).toEqual(0);

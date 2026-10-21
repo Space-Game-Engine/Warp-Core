@@ -5,9 +5,9 @@ import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {BuildingZoneEmitter} from '@warp-core/user/building-zone';
-import {QueueValidationError} from '@warp-core/user/queue/building-queue/exception/queue-validation.error';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 import {ValidateSingleQueueElementService} from '@warp-core/user/queue/building-queue/input/validator/validate-single-queue-element.service';
+import {QueueValidationError} from '@warp-core/user/queue/core';
 
 jest.mock('@warp-core/global/building/exchange/query/building-query.emitter');
 jest.mock('@warp-core/user/building-zone/exchange/query/building-zone.emitter');
@@ -148,7 +148,7 @@ describe('Validate single queue element service', () => {
 				id: 'test',
 				buildingDetailsAtCertainLevel: [
 					{
-						level: 10,
+						details: {level: 10},
 					},
 				],
 			} as BuildingModel;
@@ -190,7 +190,7 @@ describe('Validate single queue element service', () => {
 				id: 'test',
 				buildingDetailsAtCertainLevel: [
 					{
-						level: 10,
+						details: {level: 10},
 					},
 				],
 			} as BuildingModel;

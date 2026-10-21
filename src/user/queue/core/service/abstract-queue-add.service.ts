@@ -6,10 +6,6 @@ import {AbstractQueueElementRepository} from '@warp-core/database/repository/abs
 import {AbstractQueueAddEmitter} from '@warp-core/user/queue/core/exchange/abstract-queue-add.emitter';
 import {PrepareQueueElementServiceInterface} from '@warp-core/user/queue/core/service/prepare-queue-element-service.interface';
 
-/**
- * Common flow of adding new element to a queue:
- * prepare a draft, emit events and save it within a transaction.
- */
 export abstract class AbstractQueueAddService<
 	TInput extends object,
 	TQueueElement extends QueueElementModelInterface,

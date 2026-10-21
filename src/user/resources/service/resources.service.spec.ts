@@ -17,7 +17,6 @@ jest.mock(
 describe('Resources service', () => {
 	let resourcesService: ResourcesService;
 	let habitatResourceRepository: jest.Mocked<HabitatResourceRepository>;
-	let calculationMechanic: jest.Mocked<CalculationMechanic>;
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
@@ -36,7 +35,6 @@ describe('Resources service', () => {
 
 		resourcesService = module.get<ResourcesService>(ResourcesService);
 		habitatResourceRepository = module.get(HabitatResourceRepository);
-		calculationMechanic = module.get(CalculationMechanic);
 	});
 
 	describe('getSingleResourceById', () => {

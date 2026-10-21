@@ -1,9 +1,9 @@
 import {Injectable} from '@nestjs/common';
 
 import {AddMechanic} from '@warp-core/core/utils/mechanics';
+import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {HabitatResearchNodeModel} from '@warp-core/database/model/research-node/habitat-research-node.model';
 import {ResearchNodeModel} from '@warp-core/database/model/research-node/research-node.model';
-import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {AbstractQueueCostCalculationService} from '@warp-core/user/queue/core';
 import {ResearchQueueResourceConsumerInterface} from '@warp-core/user/queue/research-queue/add/calculate-resources/research-queue-resource-consumer.interface';
 import {AddResearchToQueueInput} from '@warp-core/user/queue/research-queue/input/add-research-to-queue.input';

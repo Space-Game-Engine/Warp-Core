@@ -1,5 +1,6 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
+import {DeepPartial} from 'typeorm';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {BuildingModel} from '@warp-core/database/model/building/building.model';
@@ -56,6 +57,11 @@ describe('Prepare single building queue element tests', () => {
 		buildingZoneRepository = module.get(BuildingZoneRepository);
 		buildingService = module.get(BuildingQueryEmitter);
 		habitatMock = module.get(AuthorizedHabitatModel);
+
+		(buildingQueueRepository.create as jest.Mock).mockImplementation(
+			(entity: DeepPartial<BuildingQueueElementModel>) =>
+				Object.assign(new BuildingQueueElementModel(), entity),
+		);
 	});
 
 	const testCases = [
@@ -203,7 +209,7 @@ describe('Prepare single building queue element tests', () => {
 			when(resourcesCalculator.calculateResourcesCosts)
 				.expectCalledWith(addToQueueInput, buildingZone, building)
 				.mockResolvedValue(resourcesCosts);
-			when(buildingQueueRepository.getCurrentBuildingQueueForHabitat)
+			when(buildingQueueRepository.getCurrentQueueForHabitat)
 				.expectCalledWith(habitatMock.id)
 				.mockResolvedValue(existingQueue);
 			when(buildingService.calculateTimeInSecondsToUpgradeBuilding)

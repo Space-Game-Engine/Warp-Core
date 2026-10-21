@@ -47,9 +47,7 @@ export class HabitatResolver {
 	public buildingQueue(
 		@Parent() habitat: HabitatWithResources,
 	): Promise<BuildingQueueElementModel[]> {
-		return this.buildingQueueRepository.getCurrentQueueForHabitat(
-			habitat.id,
-		);
+		return this.buildingQueueRepository.getCurrentQueueForHabitat(habitat.id);
 	}
 
 	@ResolveField(() => [HabitatResourceCombined])

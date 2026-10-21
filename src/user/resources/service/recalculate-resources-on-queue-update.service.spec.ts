@@ -52,9 +52,7 @@ describe('Add last calculation date for new resource producers', () => {
 			const queueElement = {
 				endLevel: 5,
 				buildingId: 'test',
-				buildingZone: {
-					habitatId,
-				},
+				getHabitatId: async (): Promise<number> => habitatId,
 			} as BuildingQueueElementModel;
 
 			const productionRateModels = [] as BuildingProductionRateModel[];
@@ -83,9 +81,7 @@ describe('Add last calculation date for new resource producers', () => {
 				endLevel: 5,
 				buildingId: 'test',
 				endTime: new Date(),
-				buildingZone: {
-					habitatId,
-				},
+				getHabitatId: async (): Promise<number> => habitatId,
 			} as BuildingQueueElementModel;
 
 			const productionRateModels = [

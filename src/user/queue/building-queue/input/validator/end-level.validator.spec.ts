@@ -2,10 +2,10 @@ import {Test, TestingModule} from '@nestjs/testing';
 
 import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {QueueValidationError} from '@warp-core/user/queue/building-queue/exception/queue-validation.error';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 import {EndLevelValidator} from '@warp-core/user/queue/building-queue/input/validator/end-level.validator';
 import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/validator/type';
+import {QueueValidationError} from '@warp-core/user/queue/core';
 
 describe('End Level building queue validator', () => {
 	let endLevelValidator: EndLevelValidator;
@@ -102,7 +102,9 @@ describe('End Level building queue validator', () => {
 				id: 'test',
 				buildingDetailsAtCertainLevel: [
 					{
-						level: 10,
+						details: {
+							level: 10,
+						},
 					},
 				],
 			} as BuildingModel;
@@ -142,7 +144,9 @@ describe('End Level building queue validator', () => {
 				id: 'test',
 				buildingDetailsAtCertainLevel: [
 					{
-						level: 10,
+						details: {
+							level: 10,
+						},
 					},
 				],
 			} as BuildingModel;

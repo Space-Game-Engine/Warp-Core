@@ -1,11 +1,6 @@
 import {QueueValidationError} from '@warp-core/user/queue/core/exception/queue-validation.error';
 import {QueueItemValidatorInterface} from '@warp-core/user/queue/core/input/validator/queue-item-validator.interface';
 
-/**
- * Common flow of validating a single queue element input.
- * Entity related services build a validation context (subject of the queue,
- * its current state etc.) that is passed to provided validators.
- */
 export abstract class AbstractValidateQueueElementService<
 	TInput extends object,
 	TValidationContext,

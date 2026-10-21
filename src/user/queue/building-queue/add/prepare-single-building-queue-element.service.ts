@@ -81,7 +81,8 @@ export class PrepareSingleBuildingQueueElementService extends AbstractPrepareQue
 	}
 
 	private async getBuildingById(buildingId: string): Promise<BuildingModel> {
-		const {data, error} = await this.buildingService.getBuildingById(buildingId);
+		const {data, error} =
+			await this.buildingService.getBuildingById(buildingId);
 
 		if (error) {
 			throw new InternalEmitterError(error.message);

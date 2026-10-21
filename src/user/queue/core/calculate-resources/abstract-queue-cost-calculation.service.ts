@@ -2,10 +2,6 @@ import {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-detail
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 
-/**
- * Shared logic of summarizing resource requirements
- * defined in level details of a queued entity.
- */
 export abstract class AbstractQueueCostCalculationService {
 	protected async sumRequirementsForLevels(
 		levelDetails: DetailsAtCertainLevelModel[],

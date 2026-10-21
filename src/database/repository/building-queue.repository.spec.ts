@@ -6,7 +6,7 @@ import {BuildingQueueElementModel} from '@warp-core/database/model/building-queu
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
-jest.mock('../transaction-manager.service');
+jest.mock('@warp-core/database/transaction-manager.service');
 
 describe('Building queue repository test', () => {
 	let buildingQueueRepository: BuildingQueueRepository;
@@ -40,7 +40,7 @@ describe('Building queue repository test', () => {
 		expect(buildingQueueRepository).toBeDefined();
 	});
 
-	describe('getCurrentBuildingQueueForHabitat', () => {
+	describe('getCurrentQueueForHabitat', () => {
 		it('should load all elements for building queue from single habitat', async () => {
 			const habitatId = 5;
 			const buildingQueueElements = [
@@ -66,9 +66,7 @@ describe('Building queue repository test', () => {
 				.mockResolvedValue(buildingQueueElements);
 
 			const returnedBuildingZones =
-				await buildingQueueRepository.getCurrentBuildingQueueForHabitat(
-					habitatId,
-				);
+				await buildingQueueRepository.getCurrentQueueForHabitat(habitatId);
 
 			expect(returnedBuildingZones).toEqual(buildingQueueElements);
 		});
@@ -137,7 +135,7 @@ describe('Building queue repository test', () => {
 		});
 	});
 
-	describe('countActiveBuildingQueueElementsForHabitat', () => {
+	describe('countActiveQueueElementsForHabitat', () => {
 		it('should return all single queue element by its id', async () => {
 			const habitatId = 5;
 			const buildingQueueElements = 2;
@@ -156,7 +154,7 @@ describe('Building queue repository test', () => {
 				.mockResolvedValue(buildingQueueElements);
 
 			const returnedBuildingZonesCount =
-				await buildingQueueRepository.countActiveBuildingQueueElementsForHabitat(
+				await buildingQueueRepository.countActiveQueueElementsForHabitat(
 					habitatId,
 				);
 

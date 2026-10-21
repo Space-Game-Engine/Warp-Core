@@ -48,7 +48,7 @@ export class BuildingDetailsAtCertainLevelModel {
 
 	@Field(() => [BuildingProductionRateModel], {
 		description:
-			'Production rate for single entity. There is possibility that single entity can produce more than one resource.',
+			'Production rate for single building. There is possibility that single building can produce more than one resource.',
 		nullable: true,
 	})
 	@ValidateNested()

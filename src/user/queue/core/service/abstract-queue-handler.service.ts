@@ -5,11 +5,6 @@ import {QueueElementModelInterface} from '@warp-core/core/utils';
 import {AbstractQueueElementRepository} from '@warp-core/database/repository/abstract-queue-element.repository';
 import {AbstractQueueProcessingEmitter} from '@warp-core/user/queue/core/exchange/abstract-queue-processing.emitter';
 
-/**
- * Common flow of resolving queue elements that already ended.
- * Entity related services define how a consumed queue element
- * changes the state of its subject.
- */
 export abstract class AbstractQueueHandlerService<
 	TQueueElement extends QueueElementModelInterface,
 > {

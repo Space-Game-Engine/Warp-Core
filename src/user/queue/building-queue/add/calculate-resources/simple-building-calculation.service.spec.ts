@@ -1,24 +1,32 @@
 import {Test, TestingModule} from '@nestjs/testing';
+import {DeepPartial} from 'typeorm';
 
 import {ResourceTypeEnum} from '@warp-core/database/enum/resource-type.enum';
 import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {SimpleCalculationService} from '@warp-core/user/queue/building-queue/add/calculate-resources/simple-calculation.service';
+import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
+import {SimpleBuildingCalculationService} from '@warp-core/user/queue/building-queue/add/calculate-resources/simple-building-calculation.service';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 
 describe('Simple calculation of resources for queue element', () => {
-	let simpleCalculationService: SimpleCalculationService;
+	let simpleCalculationService: SimpleBuildingCalculationService;
 	beforeEach(async () => {
 		jest.clearAllMocks();
 
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [SimpleCalculationService],
+			providers: [SimpleBuildingCalculationService],
 		}).compile();
 
-		simpleCalculationService = module.get(SimpleCalculationService);
+		simpleCalculationService = module.get(SimpleBuildingCalculationService);
 	});
 
-	const inputsToCalculateResources = [
+	const inputsToCalculateResources: {
+		name: string;
+		addToQueue: Partial<AddToQueueInput>;
+		buildingZone: Partial<BuildingZoneModel>;
+		building: DeepPartial<BuildingModel>;
+		queueCosts: DeepPartial<QueueElementCostModel>[];
+	}[] = [
 		{
 			name: 'empty queue cost when there were no building details to update',
 			addToQueue: {
@@ -43,18 +51,20 @@ describe('Simple calculation of resources for queue element', () => {
 			building: {
 				buildingDetailsAtCertainLevel: [
 					{
-						level: 1,
+						details: {level: 1},
 					},
 					{
-						level: 2,
-						requirements: [
-							{
-								resource: {
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+						details: {
+							level: 2,
+							requirements: [
+								{
+									resource: {
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 5,
 								},
-								cost: 5,
-							},
-						],
+							],
+						},
 					},
 				],
 			},
@@ -78,26 +88,28 @@ describe('Simple calculation of resources for queue element', () => {
 			building: {
 				buildingDetailsAtCertainLevel: [
 					{
-						level: 1,
+						details: {level: 1},
 					},
 					{
-						level: 2,
-						requirements: [
-							{
-								resource: {
-									id: 'coal',
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+						details: {
+							level: 2,
+							requirements: [
+								{
+									resource: {
+										id: 'coal',
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 5,
 								},
-								cost: 5,
-							},
-							{
-								resource: {
-									id: 'wood',
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+								{
+									resource: {
+										id: 'wood',
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 10,
 								},
-								cost: 10,
-							},
-						],
+							],
+						},
 					},
 				],
 			},
@@ -129,26 +141,28 @@ describe('Simple calculation of resources for queue element', () => {
 			building: {
 				buildingDetailsAtCertainLevel: [
 					{
-						level: 1,
+						details: {level: 1},
 					},
 					{
-						level: 2,
-						requirements: [
-							{
-								resource: {
-									id: 'wood',
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+						details: {
+							level: 2,
+							requirements: [
+								{
+									resource: {
+										id: 'wood',
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 5,
 								},
-								cost: 5,
-							},
-							{
-								resource: {
-									id: 'coal',
-									type: ResourceTypeEnum.ENERGY_RESOURCE,
+								{
+									resource: {
+										id: 'coal',
+										type: ResourceTypeEnum.ENERGY_RESOURCE,
+									},
+									cost: 10,
 								},
-								cost: 10,
-							},
-						],
+							],
+						},
 					},
 				],
 			},
@@ -180,31 +194,35 @@ describe('Simple calculation of resources for queue element', () => {
 			building: {
 				buildingDetailsAtCertainLevel: [
 					{
-						level: 1,
+						details: {level: 1},
 					},
 					{
-						level: 2,
-						requirements: [
-							{
-								resource: {
-									id: 'coal',
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+						details: {
+							level: 2,
+							requirements: [
+								{
+									resource: {
+										id: 'coal',
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 5,
 								},
-								cost: 5,
-							},
-						],
+							],
+						},
 					},
 					{
-						level: 3,
-						requirements: [
-							{
-								resource: {
-									id: 'coal',
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+						details: {
+							level: 3,
+							requirements: [
+								{
+									resource: {
+										id: 'coal',
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 10,
 								},
-								cost: 10,
-							},
-						],
+							],
+						},
 					},
 				],
 			},
@@ -229,69 +247,77 @@ describe('Simple calculation of resources for queue element', () => {
 			building: {
 				buildingDetailsAtCertainLevel: [
 					{
-						level: 1,
+						details: {level: 1},
 					},
 					{
-						level: 2,
-						requirements: [
-							{
-								resource: {
-									id: 'coal',
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+						details: {
+							level: 2,
+							requirements: [
+								{
+									resource: {
+										id: 'coal',
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 5,
 								},
-								cost: 5,
-							},
-						],
+							],
+						},
 					},
 					{
-						level: 3,
-						requirements: [
-							{
-								resource: {
-									id: 'coal',
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+						details: {
+							level: 3,
+							requirements: [
+								{
+									resource: {
+										id: 'coal',
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 10,
 								},
-								cost: 10,
-							},
-							{
-								resource: {
-									id: 'wood',
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+								{
+									resource: {
+										id: 'wood',
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 5,
 								},
-								cost: 5,
-							},
-						],
+							],
+						},
 					},
 					{
-						level: 4,
-						requirements: [
-							{
-								resource: {
-									id: 'coal',
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+						details: {
+							level: 4,
+							requirements: [
+								{
+									resource: {
+										id: 'coal',
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 30,
 								},
-								cost: 30,
-							},
-							{
-								resource: {
-									id: 'wood',
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+								{
+									resource: {
+										id: 'wood',
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 50,
 								},
-								cost: 50,
-							},
-						],
+							],
+						},
 					},
 					{
-						level: 5,
-						requirements: [
-							{
-								resource: {
-									id: 'wood',
-									type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+						details: {
+							level: 5,
+							requirements: [
+								{
+									resource: {
+										id: 'wood',
+										type: ResourceTypeEnum.CONSTRUCTION_RESOURCE,
+									},
+									cost: 75,
 								},
-								cost: 75,
-							},
-						],
+							],
+						},
 					},
 				],
 			},

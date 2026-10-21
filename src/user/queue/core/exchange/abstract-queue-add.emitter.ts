@@ -2,10 +2,6 @@ import {QueueElementModelInterface} from '@warp-core/core/utils';
 import {InternalExchangeEmitter} from '@warp-core/core/utils/internal-exchange';
 import {QueueProcessing} from '@warp-core/user/queue/core/exchange/queue-processing.type';
 
-/**
- * Emits events on adding new element to a queue.
- * Queue for each entity type provides its own event names.
- */
 export abstract class AbstractQueueAddEmitter<
 	T extends QueueElementModelInterface,
 > {

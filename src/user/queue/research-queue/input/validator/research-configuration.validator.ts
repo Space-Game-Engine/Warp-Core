@@ -24,9 +24,8 @@ export class ResearchConfigurationValidator
 		validationError,
 	}: ResearchQueueInputValidation): Promise<void> {
 		if (this.runtimeConfig.habitat.researchQueue.allowMultipleLevelUpdate) {
-			const errorMessage = await this.isPossibleToQueueElementByMultipleLevels(
-				addToQueueInput,
-			);
+			const errorMessage =
+				await this.isPossibleToQueueElementByMultipleLevels(addToQueueInput);
 			if (errorMessage) {
 				validationError.addError('endLevel', errorMessage);
 			}

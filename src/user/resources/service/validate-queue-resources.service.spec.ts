@@ -52,9 +52,7 @@ describe('Validate queue resources', () => {
 			const queueElement = {
 				queueElement: {
 					costs,
-					buildingZone: {
-						habitatId: 1,
-					},
+					getHabitatId: async (): Promise<number> => 1,
 				},
 			} as BuildingQueueProcessing;
 
@@ -186,9 +184,7 @@ describe('Validate queue resources', () => {
 					const queueElement = {
 						queueElement: {
 							costs,
-							buildingZone: {
-								habitatId: 1,
-							},
+							getHabitatId: async (): Promise<number> => 1,
 						},
 					} as BuildingQueueProcessing;
 

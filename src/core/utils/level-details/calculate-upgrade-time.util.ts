@@ -1,9 +1,5 @@
 import type {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-details/details-at-certain-level.model';
 
-/**
- * Sums time needed to upgrade an entity between provided levels
- * using its level details definitions.
- */
 export function calculateUpgradeTimeInSeconds(
 	levelDetails: DetailsAtCertainLevelModel[],
 	startLevel: number,

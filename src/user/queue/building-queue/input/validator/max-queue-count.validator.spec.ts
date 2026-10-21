@@ -6,10 +6,10 @@ import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
-import {QueueValidationError} from '@warp-core/user/queue/building-queue/exception/queue-validation.error';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 import {MaxQueueCountValidator} from '@warp-core/user/queue/building-queue/input/validator/max-queue-count.validator';
 import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/validator/type';
+import {QueueValidationError} from '@warp-core/user/queue/core';
 
 jest.mock('@warp-core/database/repository/building-queue.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');
@@ -47,7 +47,7 @@ describe('max queue elements count validator', () => {
 				} as BuildingZoneModel,
 				validationError: new QueueValidationError(),
 			};
-			when(buildingQueueRepository.countActiveBuildingQueueElementsForHabitat)
+			when(buildingQueueRepository.countActiveQueueElementsForHabitat)
 				.calledWith(5)
 				.mockResolvedValue(maxQueueElements);
 
@@ -72,7 +72,7 @@ describe('max queue elements count validator', () => {
 				validationError: new QueueValidationError(),
 			};
 
-			when(buildingQueueRepository.countActiveBuildingQueueElementsForHabitat)
+			when(buildingQueueRepository.countActiveQueueElementsForHabitat)
 				.calledWith(5)
 				.mockResolvedValue(3);
 

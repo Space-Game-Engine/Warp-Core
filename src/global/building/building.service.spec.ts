@@ -80,20 +80,11 @@ describe('Building service test', () => {
 				role: BuildingRoleEnum.RESOURCE_PRODUCTION,
 				name: 'Test building',
 				buildingDetailsAtCertainLevel: [
-					{
-						level: 1,
-						timeToUpdateInSeconds: 1,
-					},
-					{
-						level: 2,
-						timeToUpdateInSeconds: 10,
-					},
-					{
-						level: 3,
-						timeToUpdateInSeconds: 100,
-					},
+					{details: {level: 1, timeToUpdateInSeconds: 1}},
+					{details: {level: 2, timeToUpdateInSeconds: 10}},
+					{details: {level: 3, timeToUpdateInSeconds: 100}},
 				],
-			} as BuildingModel;
+			} as unknown as BuildingModel;
 
 			when(buildingRepository.getBuildingById)
 				.expectCalledWith(buildingId)
@@ -118,20 +109,11 @@ describe('Building service test', () => {
 				role: BuildingRoleEnum.RESOURCE_PRODUCTION,
 				name: 'Test building',
 				buildingDetailsAtCertainLevel: [
-					{
-						level: 1,
-						timeToUpdateInSeconds: 1,
-					},
-					{
-						level: 2,
-						timeToUpdateInSeconds: 10,
-					},
-					{
-						level: 3,
-						timeToUpdateInSeconds: 100,
-					},
+					{details: {level: 1, timeToUpdateInSeconds: 1}},
+					{details: {level: 2, timeToUpdateInSeconds: 10}},
+					{details: {level: 3, timeToUpdateInSeconds: 100}},
 				],
-			} as BuildingModel;
+			} as unknown as BuildingModel;
 
 			when(buildingRepository.getBuildingById)
 				.expectCalledWith(buildingId)
@@ -156,20 +138,11 @@ describe('Building service test', () => {
 				role: BuildingRoleEnum.RESOURCE_PRODUCTION,
 				name: 'Test building',
 				buildingDetailsAtCertainLevel: [
-					{
-						level: 1,
-						timeToUpdateInSeconds: 1,
-					},
-					{
-						level: 2,
-						timeToUpdateInSeconds: 10,
-					},
-					{
-						level: 3,
-						timeToUpdateInSeconds: 100,
-					},
+					{details: {level: 1, timeToUpdateInSeconds: 1}},
+					{details: {level: 2, timeToUpdateInSeconds: 10}},
+					{details: {level: 3, timeToUpdateInSeconds: 100}},
 				],
-			} as BuildingModel;
+			} as unknown as BuildingModel;
 
 			when(buildingRepository.getBuildingById)
 				.expectCalledWith(buildingId)

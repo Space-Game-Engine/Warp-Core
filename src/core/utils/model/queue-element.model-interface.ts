@@ -14,8 +14,5 @@ export interface QueueElementModelInterface extends DraftModelInterface {
 	isConsumed: boolean;
 	costs: QueueElementCostModel[];
 
-	/**
-	 * Resolves id of a habitat that owns that queue element.
-	 */
 	getHabitatId(): Promise<number>;
 }

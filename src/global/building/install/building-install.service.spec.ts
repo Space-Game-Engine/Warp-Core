@@ -45,7 +45,7 @@ describe('BuildingInstallService', () => {
 						timeToUpdateInSeconds: 10,
 					},
 				],
-			} as BuildingModel;
+			} as unknown as BuildingModel;
 
 			const models = buildingInstallService.loadModels({
 				buildings: [buildingModel],
