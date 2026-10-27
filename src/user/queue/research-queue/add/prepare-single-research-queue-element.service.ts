@@ -40,6 +40,11 @@ export class PrepareSingleResearchQueueElementService extends AbstractPrepareQue
 				researchNode.id,
 			);
 
+		const startLevel = await this.getStartLevel(
+			researchNode.id,
+			habitatResearchNode?.currentLevel ?? 0,
+		);
+
 		const resourceCost = await this.calculationService.calculateResourcesCosts(
 			addToQueueElement,
 			habitatResearchNode,
@@ -52,7 +57,7 @@ export class PrepareSingleResearchQueueElementService extends AbstractPrepareQue
 			researchNodeId: researchNode.id,
 			habitatId: this.habitatModel.id,
 			startTime: new Date(),
-			startLevel: habitatResearchNode?.currentLevel ?? 0,
+			startLevel: startLevel,
 			endLevel: addToQueueElement.endLevel,
 			endTime: new Date(),
 			isConsumed: false,
@@ -77,6 +82,19 @@ export class PrepareSingleResearchQueueElementService extends AbstractPrepareQue
 		}
 
 		return upgradeTime ?? 0;
+	}
+
+	private async getStartLevel(
+		researchNodeId: string,
+		currentLevel: number,
+	): Promise<number> {
+		const currentResearchQueue =
+			await this.researchQueueRepository.getCurrentResearchQueueForResearchNode(
+				researchNodeId,
+				this.habitatModel.id,
+			);
+
+		return currentResearchQueue.at(-1)?.endLevel ?? currentLevel;
 	}
 
 	private async getResearchNodeById(

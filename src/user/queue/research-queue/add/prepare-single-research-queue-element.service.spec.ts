@@ -95,6 +95,9 @@ describe('Prepare single research queue element', () => {
 			when(habitatResearchNodeRepository.getForHabitatAndResearchNode)
 				.expectCalledWith(5, 'basic_research')
 				.mockResolvedValueOnce(null);
+			when(researchQueueRepository.getCurrentResearchQueueForResearchNode)
+				.expectCalledWith('basic_research', 5)
+				.mockResolvedValueOnce([]);
 			when(resourcesCalculator.calculateResourcesCosts)
 				.expectCalledWith(addToQueueInput, null, researchNode)
 				.mockResolvedValueOnce(resourcesCosts);
@@ -138,6 +141,9 @@ describe('Prepare single research queue element', () => {
 			when(habitatResearchNodeRepository.getForHabitatAndResearchNode)
 				.expectCalledWith(5, 'basic_research')
 				.mockResolvedValueOnce(habitatResearchNode);
+			when(researchQueueRepository.getCurrentResearchQueueForResearchNode)
+				.expectCalledWith('basic_research', 5)
+				.mockResolvedValueOnce([]);
 			when(resourcesCalculator.calculateResourcesCosts)
 				.expectCalledWith(addToQueueInput, habitatResearchNode, researchNode)
 				.mockResolvedValueOnce(resourcesCosts);
@@ -163,6 +169,39 @@ describe('Prepare single research queue element', () => {
 			expect(queueElement.endTime).toEqual(
 				new Date(lastQueueElementEndTime.getTime() + 60 * 1000),
 			);
+		});
+
+		it('should start from end level of last queue element when research node is already queued', async () => {
+			const habitatResearchNode = {
+				currentLevel: 1,
+			} as HabitatResearchNodeModel;
+
+			mockResearchNodeFound();
+			when(habitatResearchNodeRepository.getForHabitatAndResearchNode)
+				.expectCalledWith(5, 'basic_research')
+				.mockResolvedValueOnce(habitatResearchNode);
+			when(researchQueueRepository.getCurrentResearchQueueForResearchNode)
+				.expectCalledWith('basic_research', 5)
+				.mockResolvedValueOnce([{endLevel: 2}] as ResearchQueueElementModel[]);
+			when(resourcesCalculator.calculateResourcesCosts)
+				.expectCalledWith(addToQueueInput, habitatResearchNode, researchNode)
+				.mockResolvedValueOnce(resourcesCosts);
+			when(researchQueueRepository.getCurrentQueueForHabitat)
+				.expectCalledWith(5)
+				.mockResolvedValueOnce([]);
+			when(researchNodeQueryEmitter.calculateTimeInSecondsToUpgradeResearchNode)
+				.expectCalledWith({
+					startLevel: 2,
+					endLevel: 3,
+					researchNodeId: 'basic_research',
+				})
+				.mockResolvedValueOnce({data: 30, error: undefined});
+
+			const queueElement =
+				await prepareResearchQueueElement.getQueueElement(addToQueueInput);
+
+			expect(queueElement.startLevel).toBe(2);
+			expect(queueElement.costs).toEqual(resourcesCosts);
 		});
 
 		it('should throw queue error when research node does not exist', async () => {
@@ -194,6 +233,9 @@ describe('Prepare single research queue element', () => {
 			mockResearchNodeFound();
 			habitatResearchNodeRepository.getForHabitatAndResearchNode.mockResolvedValueOnce(
 				null,
+			);
+			researchQueueRepository.getCurrentResearchQueueForResearchNode.mockResolvedValueOnce(
+				[],
 			);
 			resourcesCalculator.calculateResourcesCosts.mockResolvedValueOnce([]);
 			researchQueueRepository.getCurrentQueueForHabitat.mockResolvedValueOnce(
