@@ -5,6 +5,7 @@ import {AddResearchToQueueInput} from '@warp-core/user/queue/research-queue/inpu
 import {ResearchConfigurationValidator} from '@warp-core/user/queue/research-queue/input/validator/research-configuration.validator';
 import {ResearchEndLevelValidator} from '@warp-core/user/queue/research-queue/input/validator/research-end-level.validator';
 import {ResearchMaxQueueCountValidator} from '@warp-core/user/queue/research-queue/input/validator/research-max-queue-count.validator';
+import {ResearchPrerequisitesValidator} from '@warp-core/user/queue/research-queue/input/validator/research-prerequisites.validator';
 import {ValidateSingleResearchQueueElementService} from '@warp-core/user/queue/research-queue/input/validator/validate-single-research-queue-element.service';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class AddResearchToQueueValidator extends CustomValidator<AddResearchToQu
 		private readonly configurationValidator: ResearchConfigurationValidator,
 		private readonly endLevelValidator: ResearchEndLevelValidator,
 		private readonly maxQueueCount: ResearchMaxQueueCountValidator,
+		private readonly prerequisitesValidator: ResearchPrerequisitesValidator,
 	) {
 		super();
 	}
@@ -27,6 +29,7 @@ export class AddResearchToQueueValidator extends CustomValidator<AddResearchToQu
 				this.configurationValidator,
 				this.endLevelValidator,
 				this.maxQueueCount,
+				this.prerequisitesValidator,
 			],
 		});
 	}

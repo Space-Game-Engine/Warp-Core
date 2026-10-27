@@ -17,8 +17,10 @@ import {DraftResearchQueueElementValidator} from '@warp-core/user/queue/research
 import {ResearchConfigurationValidator} from '@warp-core/user/queue/research-queue/input/validator/research-configuration.validator';
 import {ResearchEndLevelValidator} from '@warp-core/user/queue/research-queue/input/validator/research-end-level.validator';
 import {ResearchMaxQueueCountValidator} from '@warp-core/user/queue/research-queue/input/validator/research-max-queue-count.validator';
+import {ResearchPrerequisitesValidator} from '@warp-core/user/queue/research-queue/input/validator/research-prerequisites.validator';
 import {ValidateSingleResearchQueueElementService} from '@warp-core/user/queue/research-queue/input/validator/validate-single-research-queue-element.service';
 import {ResearchQueueHandlerService} from '@warp-core/user/queue/research-queue/research-queue-handler.service';
+import {ResearchQueueResolver} from '@warp-core/user/queue/research-queue/research-queue.resolver';
 
 @Module({
 	providers: [
@@ -27,11 +29,13 @@ import {ResearchQueueHandlerService} from '@warp-core/user/queue/research-queue/
 		ResearchQueueDraftService,
 		ResearchQueueHandlerService,
 		PrepareSingleResearchQueueElementService,
+		ResearchQueueResolver,
 		AddResearchToQueueValidator,
 		DraftResearchQueueElementValidator,
 		ResearchEndLevelValidator,
 		ResearchConfigurationValidator,
 		ResearchMaxQueueCountValidator,
+		ResearchPrerequisitesValidator,
 		ResearchQueueAddEmitter,
 		ResearchQueueProcessingEmitter,
 		ValidateSingleResearchQueueElementService,

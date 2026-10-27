@@ -5,6 +5,7 @@ import {AddResearchToQueueInput} from '@warp-core/user/queue/research-queue/inpu
 import {DraftResearchQueueElementValidator} from '@warp-core/user/queue/research-queue/input/validator/draft-research-queue-element.validator';
 import {ResearchConfigurationValidator} from '@warp-core/user/queue/research-queue/input/validator/research-configuration.validator';
 import {ResearchEndLevelValidator} from '@warp-core/user/queue/research-queue/input/validator/research-end-level.validator';
+import {ResearchPrerequisitesValidator} from '@warp-core/user/queue/research-queue/input/validator/research-prerequisites.validator';
 import {ValidateSingleResearchQueueElementService} from '@warp-core/user/queue/research-queue/input/validator/validate-single-research-queue-element.service';
 
 jest.mock(
@@ -16,12 +17,16 @@ jest.mock(
 jest.mock(
 	'@warp-core/user/queue/research-queue/input/validator/research-end-level.validator',
 );
+jest.mock(
+	'@warp-core/user/queue/research-queue/input/validator/research-prerequisites.validator',
+);
 
 describe('Draft research queue element validator', () => {
 	let draftResearchQueueElementValidator: DraftResearchQueueElementValidator;
 	let validateQueueItem: jest.Mocked<ValidateSingleResearchQueueElementService>;
 	let configurationValidator: ResearchConfigurationValidator;
 	let endLevelValidator: ResearchEndLevelValidator;
+	let prerequisitesValidator: ResearchPrerequisitesValidator;
 
 	const metadata = {
 		type: 'body',
@@ -37,6 +42,7 @@ describe('Draft research queue element validator', () => {
 				ValidateSingleResearchQueueElementService,
 				ResearchConfigurationValidator,
 				ResearchEndLevelValidator,
+				ResearchPrerequisitesValidator,
 			],
 		}).compile();
 
@@ -46,10 +52,11 @@ describe('Draft research queue element validator', () => {
 		validateQueueItem = module.get(ValidateSingleResearchQueueElementService);
 		configurationValidator = module.get(ResearchConfigurationValidator);
 		endLevelValidator = module.get(ResearchEndLevelValidator);
+		prerequisitesValidator = module.get(ResearchPrerequisitesValidator);
 	});
 
 	describe('transform', () => {
-		it('should validate queue item with configuration and end level validators only when input is valid', async () => {
+		it('should validate queue item with configuration, end level and prerequisites validators when input is valid', async () => {
 			const input = {researchNodeId: 'basic_research', endLevel: 1};
 			validateQueueItem.validateQueueItem.mockResolvedValueOnce(true);
 
@@ -58,7 +65,11 @@ describe('Draft research queue element validator', () => {
 			).toBe(input);
 			expect(validateQueueItem.validateQueueItem).toHaveBeenCalledWith({
 				addToQueueInput: expect.objectContaining(input),
-				validators: [configurationValidator, endLevelValidator],
+				validators: [
+					configurationValidator,
+					endLevelValidator,
+					prerequisitesValidator,
+				],
 			});
 		});
 
