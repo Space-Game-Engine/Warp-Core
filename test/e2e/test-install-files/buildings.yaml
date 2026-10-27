@@ -3,51 +3,57 @@ buildings:
     name: Warehouse
     id: warehouse
     buildingDetailsAtCertainLevel:
-      - level: 1
-        timeToUpdateBuildingInSeconds: 10
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
         warehouse:
           - warehouseType: any
             amount: 100
-      - level: 2
-        timeToUpdateBuildingInSeconds: 30
+      - details:
+          level: 2
+          timeToUpdateInSeconds: 30
+          requirements:
+            - resourceId: wood
+              cost: 20
         warehouse:
           - warehouseType: any
             amount: 200
-        requirements:
-          - resourceId: wood
-            cost: 20
   - role: resource
     name: Coal Mine
     id: coal_mine
     buildingDetailsAtCertainLevel:
-      - level: 1
-        timeToUpdateBuildingInSeconds: 10
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+          requirements:
+            - resourceId: wood
+              cost: 20
         productionRate:
           - resourceId: coal
             productionRate: 1
-        requirements:
-          - resourceId: wood
-            cost: 20
-      - level: 2
-        timeToUpdateBuildingInSeconds: 30
+      - details:
+          level: 2
+          timeToUpdateInSeconds: 30
+          requirements:
+            - resourceId: wood
+              cost: 100
         productionRate:
           - resourceId: coal
             productionRate: 3
-        requirements:
-          - resourceId: wood
-            cost: 100
-      - level: 3
-        timeToUpdateBuildingInSeconds: 60
+      - details:
+          level: 3
+          timeToUpdateInSeconds: 60
+          requirements:
+            - resourceId: wood
+              cost: 300
+            - resourceId: stone_granite
+              cost: 50
         productionRate:
           - resourceId: coal
             productionRate: 4
-        requirements:
-          - resourceId: wood
-            cost: 300
-          - resourceId: stone_granite
-            cost: 50
-      - level: 4
-        timeToUpdateBuildingInSeconds: 80
+      - details:
+          level: 4
+          timeToUpdateInSeconds: 80
         productionRate:
           - resourceId: coal
             productionRate: 5
@@ -55,70 +61,83 @@ buildings:
     name: Lumber mill
     id: lumber_mill
     buildingDetailsAtCertainLevel:
-      - level: 1
-        timeToUpdateBuildingInSeconds: 10
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+          requirements:
+            - resourceId: wood
+              cost: 10
         productionRate:
           - resourceId: wood
             productionRate: 1
-        requirements:
-          - resourceId: wood
-            cost: 10
-      - level: 2
-        timeToUpdateBuildingInSeconds: 30
+      - details:
+          level: 2
+          timeToUpdateInSeconds: 30
+          requirements:
+            - resourceId: wood
+              cost: 50
         productionRate:
           - resourceId: wood
             productionRate: 1
-        requirements:
-          - resourceId: wood
-            cost: 50
-      - level: 3
-        timeToUpdateBuildingInSeconds: 60
+      - details:
+          level: 3
+          timeToUpdateInSeconds: 60
+          requirements:
+            - resourceId: wood
+              cost: 300
         productionRate:
           - resourceId: wood
             productionRate: 1
-        requirements:
-          - resourceId: wood
-            cost: 300
-      - level: 4
-        timeToUpdateBuildingInSeconds: 80
+      - details:
+          level: 4
+          timeToUpdateInSeconds: 80
+          requirements:
+            - resourceId: wood
+              cost: 500
+            - resourceId: stone_granite
+              cost: 50
         productionRate:
           - resourceId: wood
             productionRate: 1
-        requirements:
-          - resourceId: wood
-            cost: 500
-          - resourceId: stone_granite
-            cost: 50
   - role: technology
     name: University of Nothingness
     id: university
     buildingDetailsAtCertainLevel:
-      - level: 1
-        timeToUpdateBuildingInSeconds: 10
-      - level: 2
-        timeToUpdateBuildingInSeconds: 30
-      - level: 3
-        timeToUpdateBuildingInSeconds: 60
-      - level: 4
-        timeToUpdateBuildingInSeconds: 80
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+      - details:
+          level: 2
+          timeToUpdateInSeconds: 30
+      - details:
+          level: 3
+          timeToUpdateInSeconds: 60
+      - details:
+          level: 4
+          timeToUpdateInSeconds: 80
   - role: unit
     name: Train factory
     id: train_factory
     buildingDetailsAtCertainLevel:
-      - level: 1
-        timeToUpdateBuildingInSeconds: 10
-      - level: 2
-        timeToUpdateBuildingInSeconds: 30
-      - level: 3
-        timeToUpdateBuildingInSeconds: 60
-      - level: 4
-        timeToUpdateBuildingInSeconds: 80
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+      - details:
+          level: 2
+          timeToUpdateInSeconds: 30
+      - details:
+          level: 3
+          timeToUpdateInSeconds: 60
+      - details:
+          level: 4
+          timeToUpdateInSeconds: 80
   - role: technology
     name: Really expensive building
     id: expensive_building
     buildingDetailsAtCertainLevel:
-      - level: 1
-        timeToUpdateBuildingInSeconds: 10
-        requirements:
-          - resourceId: wood
-            cost: 999999
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+          requirements:
+            - resourceId: wood
+              cost: 999999

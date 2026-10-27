@@ -129,3 +129,32 @@ Example (mine):
     * `resourceId` _[string] (optional)_ the id of the stored resource. Required if `warehouseType` is `by_resource_id`.
     * `resourceType` _[string] (optional)_ the type of resource from the resource enum. Required if `warehouseType` is `by_resource_type`.
     * `amount` _[number]_ the quantity of resources stored.
+
+## Research nodes
+
+Research nodes are defined in a file with the `researchNodes` key. See `install/research-nodes.template.yaml`. The key is optional: if it is missing, no research nodes are installed.
+
+```yaml
+researchNodes:
+  - id: advanced_metallurgy
+    name: Advanced metallurgy
+    researchNodeDetailsAtCertainLevel:
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 300
+          requirements:
+            - resourceId: wood
+              cost: 50
+            - researchNodeId: basic_metallurgy
+              researchNodeLevel: 2
+```
+
+### Keys description
+* `id` _[string]_ must be unique across all research nodes.
+* `name` _[string]_ a descriptive name. It does not need to be unique.
+* `researchNodeDetailsAtCertainLevel` _[array]_ defines each level of the research node. It cannot be empty.
+  * `details.level` _[number]_ the level corresponding to this entry, starting from 1.
+  * `details.timeToUpdateInSeconds` _[number]_ the time in seconds required to develop that level.
+  * `details.requirements` _[array] (optional)_ what is needed to develop that level. Each entry is either a resource cost or a required research node:
+    * `resourceId` _[string]_ and `cost` _[number]_ the resource and the amount consumed when the level is queued.
+    * `researchNodeId` _[string]_ and `researchNodeLevel` _[number]_ a research node that must already be **developed** (not only queued) to at least that level.

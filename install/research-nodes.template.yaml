@@ -1,0 +1,27 @@
+researchNodes:
+  - id: basic_metallurgy
+    name: Basic metallurgy
+    researchNodeDetailsAtCertainLevel:
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 60
+          requirements:
+            - resourceId: wood
+              cost: 10
+      - details:
+          level: 2
+          timeToUpdateInSeconds: 180
+          requirements:
+            - resourceId: wood
+              cost: 30
+  - id: advanced_metallurgy
+    name: Advanced metallurgy
+    researchNodeDetailsAtCertainLevel:
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 300
+          requirements:
+            - resourceId: wood
+              cost: 50
+            - researchNodeId: basic_metallurgy
+              researchNodeLevel: 2

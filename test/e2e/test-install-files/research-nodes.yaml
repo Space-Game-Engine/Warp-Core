@@ -1,0 +1,62 @@
+researchNodes:
+  - id: basic_metallurgy
+    name: Basic metallurgy
+    researchNodeDetailsAtCertainLevel:
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+          requirements:
+            - resourceId: wood
+              cost: 10
+      - details:
+          level: 2
+          timeToUpdateInSeconds: 30
+          requirements:
+            - resourceId: wood
+              cost: 10
+      - details:
+          level: 3
+          timeToUpdateInSeconds: 60
+          requirements:
+            - resourceId: wood
+              cost: 1000
+  - id: free_research
+    name: Free research
+    researchNodeDetailsAtCertainLevel:
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+      - details:
+          level: 2
+          timeToUpdateInSeconds: 20
+  - id: expensive_research
+    name: Expensive research
+    researchNodeDetailsAtCertainLevel:
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+          requirements:
+            - resourceId: wood
+              cost: 1000
+  - id: advanced_metallurgy
+    name: Advanced metallurgy
+    researchNodeDetailsAtCertainLevel:
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+          requirements:
+            - resourceId: wood
+              cost: 5
+            - researchNodeId: basic_metallurgy
+              researchNodeLevel: 1
+  - id: steel_engineering
+    name: Steel engineering
+    researchNodeDetailsAtCertainLevel:
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+          requirements:
+            - researchNodeId: basic_metallurgy
+              researchNodeLevel: 2
+            - researchNodeId: advanced_metallurgy
+              researchNodeLevel: 1
