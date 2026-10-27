@@ -364,7 +364,8 @@ Jest has two projects in `jest.config.ts`: `unit` (`src/**/*.spec.ts`) and `e2e`
 - **Every concrete `*.service.ts` must have its own colocated `*.spec.ts`.**
   - Abstract base classes are covered through the specs of their concrete subclasses.
   - When you touch a service that has no spec, add one.
-  - Validators and repositories follow the same pattern.
+  - Validators follow the same pattern.
+  - **Repositories do not require spec files.** Their queries are covered by e2e tests.
 - Auto-mock dependencies with `jest.mock('@warp-core/...')`. Provide the **real classes** in `Test.createTestingModule({providers})` so Nest injects the auto-mocks. Type them as `jest.Mocked<T>`.
 - Call `jest.clearAllMocks()` at the start of `beforeEach`.
 - Stub with `jest-when`: `when(mock.fn).expectCalledWith(args).mockResolvedValueOnce(value)`.
@@ -372,7 +373,7 @@ Jest has two projects in `jest.config.ts`: `unit` (`src/**/*.spec.ts`) and `e2e`
 - `RuntimeConfig`: add `coreConfigMock` (`test/core-config-mock.ts`) to `providers` and mutate values in the test.
 - **Fixtures are minimal.** Objects passed into the class under test contain **only the properties that code path actually reads**, cast with `as XModel` / `as unknown as XModel[]`. Don't build full entities, factories or builders.
 - Structure: a top-level `describe('<Readable class name>')`, a nested `describe('<methodName>')`, and `it('should ... when ...')`. Use `describe.each(testCases)` for case tables.
-- Repository specs provide `{provide: DataSource, useValue: {createEntityManager: () => {}}}`, `jest.spyOn(repo, 'find')`, and assert the query shape with `expect.objectContaining({where: ...})`.
+- If you do write a repository spec (optional), provide `{provide: DataSource, useValue: {createEntityManager: () => {}}}`, `jest.spyOn(repo, 'find')`, and assert the query shape with `expect.objectContaining({where: ...})`.
 
 ```ts
 jest.mock('@warp-core/database/repository/habitat.repository');

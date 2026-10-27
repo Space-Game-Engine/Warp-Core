@@ -56,7 +56,9 @@ describe('Get list of all buildings', () => {
 					fields: {
 						fields: ['name'],
 						buildingDetailsAtCertainLevel: {
-							fields: ['level'],
+							details: {
+								fields: ['level'],
+							},
 						},
 					},
 				})
