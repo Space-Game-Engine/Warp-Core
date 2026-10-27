@@ -77,10 +77,14 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 			.innerJoinAndSelect('buildingZone.building', 'building')
 			.innerJoinAndSelect(
 				'building.buildingDetailsAtCertainLevel',
-				'details',
-				'buildingZone.level = details.level',
+				'buildingDetails',
 			)
-			.innerJoinAndSelect('details.productionRate', 'productionRate')
+			.innerJoinAndSelect(
+				'buildingDetails.details',
+				'levelDetails',
+				'buildingZone.level = levelDetails.level',
+			)
+			.innerJoinAndSelect('buildingDetails.productionRate', 'productionRate')
 			.where('buildingZone.habitatId = :habitatId', {habitatId: habitatId})
 			.andWhere('productionRate.resourceId = :resourceId', {
 				resourceId: resourceType.id,

@@ -1,5 +1,6 @@
 import {Field, ID, ObjectType} from '@nestjs/graphql';
-import {IsOptional} from 'class-validator';
+import {Type} from 'class-transformer';
+import {IsOptional, ValidateNested} from 'class-validator';
 import {
 	Column,
 	Entity,
@@ -17,7 +18,7 @@ import {ResearchNodeModel} from '@warp-core/database/model/research-node/researc
 })
 @Entity({name: 'research-node-details-at-certain-level'})
 export class ResearchNodeDetailsAtCertainLevelModel {
-	@Field(() => ID)
+	@Field(() => ID, {description: 'Id of research node level details'})
 	@PrimaryGeneratedColumn()
 	public id: number;
 
@@ -28,7 +29,13 @@ export class ResearchNodeDetailsAtCertainLevelModel {
 		cascade: true,
 		eager: true,
 	})
+	@JoinColumn({name: 'detailsId'})
+	@ValidateNested()
+	@Type(() => DetailsAtCertainLevelModel)
 	public details: DetailsAtCertainLevelModel;
+
+	@Column({name: 'detailsId'})
+	public detailsId: number;
 
 	@Field(() => ResearchNodeModel, {
 		description: 'Research node connected to that details',

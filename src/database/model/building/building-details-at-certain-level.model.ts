@@ -4,7 +4,9 @@ import {IsOptional, ValidateNested, ValidatePromise} from 'class-validator';
 import {
 	BeforeInsert,
 	BeforeUpdate,
+	Column,
 	Entity,
+	JoinColumn,
 	ManyToOne,
 	OneToMany,
 	OneToOne,
@@ -21,7 +23,7 @@ import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details
 })
 @Entity({name: 'building-details-at-certain-level'})
 export class BuildingDetailsAtCertainLevelModel {
-	@Field(() => ID)
+	@Field(() => ID, {description: 'Id of building level details'})
 	@PrimaryGeneratedColumn()
 	public id: number;
 
@@ -32,7 +34,13 @@ export class BuildingDetailsAtCertainLevelModel {
 		cascade: true,
 		eager: true,
 	})
+	@JoinColumn({name: 'detailsId'})
+	@ValidateNested()
+	@Type(() => DetailsAtCertainLevelModel)
 	public details: DetailsAtCertainLevelModel;
+
+	@Column({name: 'detailsId'})
+	public detailsId: number;
 
 	@Field(() => BuildingModel, {
 		description: 'Building connected to that details',

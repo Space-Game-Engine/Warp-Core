@@ -1,5 +1,11 @@
-import {Field, ObjectType} from '@nestjs/graphql';
-import {IsNumber, IsOptional, ValidateNested} from 'class-validator';
+import {Field, Int, ObjectType} from '@nestjs/graphql';
+import {
+	IsNumber,
+	IsOptional,
+	IsString,
+	Min,
+	ValidateNested,
+} from 'class-validator';
 import {
 	Column,
 	Entity,
@@ -13,7 +19,8 @@ import {ResearchNodeModel} from '@warp-core/database/model/research-node/researc
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 
 @ObjectType({
-	description: 'Defines what resources are needed to build that entity',
+	description:
+		'Defines what resources or research nodes are needed to upgrade that entity',
 })
 @Entity({name: 'requirements-per-level'})
 export class RequirementsPerLevelModel {
@@ -48,28 +55,42 @@ export class RequirementsPerLevelModel {
 	@IsOptional()
 	public resource?: ResourceModel | Promise<ResourceModel> | null;
 
+	@Field(() => String, {description: 'Id of required resource', nullable: true})
+	@IsString()
+	@IsOptional()
 	@Column({name: 'resourceId', nullable: true})
 	public resourceId?: string | null;
 
 	@Field({description: 'Current level cost', nullable: true})
 	@IsNumber()
-	@Column()
+	@Column({nullable: true})
 	@IsOptional()
 	public cost?: number;
 
 	@Field(() => ResearchNodeModel, {
 		description: 'Required research node',
+		nullable: true,
 	})
 	@ManyToOne(() => ResearchNodeModel, {lazy: true, nullable: true})
 	@JoinColumn({name: 'researchNodeId'})
 	@IsOptional()
 	public researchNode?: ResearchNodeModel | Promise<ResearchNodeModel> | null;
 
+	@Field(() => String, {
+		description: 'Id of required research node',
+		nullable: true,
+	})
+	@IsString()
+	@IsOptional()
 	@Column({name: 'researchNodeId', nullable: true})
 	public researchNodeId?: string | null;
 
-	@Field({description: 'Required level of research node', nullable: true})
+	@Field(() => Int, {
+		description: 'Required level of research node',
+		nullable: true,
+	})
 	@IsNumber()
+	@Min(1)
 	@Column('integer', {nullable: true})
 	@IsOptional()
 	public researchNodeLevel?: number;
