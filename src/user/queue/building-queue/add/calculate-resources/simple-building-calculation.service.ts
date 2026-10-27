@@ -4,6 +4,7 @@ import {AddMechanic} from '@warp-core/core/utils/mechanics';
 import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
+import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingQueueResourceConsumerInterface} from '@warp-core/user/queue/building-queue/add/calculate-resources/building-queue-resource-consumer.interface';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 import {AbstractQueueCostCalculationService} from '@warp-core/user/queue/core';
@@ -14,6 +15,12 @@ export class SimpleBuildingCalculationService
 	extends AbstractQueueCostCalculationService
 	implements BuildingQueueResourceConsumerInterface
 {
+	constructor(
+		private readonly buildingQueueRepository: BuildingQueueRepository,
+	) {
+		super();
+	}
+
 	public async calculateResourcesCosts(
 		addToQueueElement: AddToQueueInput,
 		buildingZone: BuildingZoneModel,
@@ -26,8 +33,23 @@ export class SimpleBuildingCalculationService
 
 		return this.sumRequirementsForLevels(
 			levelDetails,
-			buildingZone.level,
+			await this.getAlreadyPaidLevel(buildingZone),
 			addToQueueElement.endLevel,
 		);
+	}
+
+	/**
+	 * Levels already on queue are paid when they were queued,
+	 * so costs start from end level of last queue element.
+	 */
+	private async getAlreadyPaidLevel(
+		buildingZone: BuildingZoneModel,
+	): Promise<number> {
+		const currentBuildingQueue =
+			await this.buildingQueueRepository.getCurrentBuildingQueueForBuildingZone(
+				buildingZone,
+			);
+
+		return currentBuildingQueue.at(-1)?.endLevel ?? buildingZone.level;
 	}
 }

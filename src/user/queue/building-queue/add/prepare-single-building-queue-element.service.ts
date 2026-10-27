@@ -55,7 +55,7 @@ export class PrepareSingleBuildingQueueElementService extends AbstractPrepareQue
 			buildingZone: buildingZone,
 			buildingZoneId: buildingZone.id,
 			startTime: new Date(),
-			startLevel: buildingZone.level,
+			startLevel: await this.getStartLevel(buildingZone),
 			endLevel: addToQueueElement.endLevel,
 			endTime: new Date(),
 			isConsumed: false,
@@ -78,6 +78,17 @@ export class PrepareSingleBuildingQueueElementService extends AbstractPrepareQue
 		}
 
 		return upgradeTime ?? 0;
+	}
+
+	private async getStartLevel(
+		buildingZone: BuildingZoneModel,
+	): Promise<number> {
+		const currentBuildingQueue =
+			await this.buildingQueueRepository.getCurrentBuildingQueueForBuildingZone(
+				buildingZone,
+			);
+
+		return currentBuildingQueue.at(-1)?.endLevel ?? buildingZone.level;
 	}
 
 	private async getBuildingById(buildingId: string): Promise<BuildingModel> {

@@ -89,6 +89,8 @@ describe('Prepare single building queue element tests', () => {
 				},
 			],
 			existingQueue: [],
+			existingBuildingZoneQueue: [],
+			startLevel: 0,
 			buildingTime: 10,
 		},
 		{
@@ -115,6 +117,8 @@ describe('Prepare single building queue element tests', () => {
 				},
 			],
 			existingQueue: [],
+			existingBuildingZoneQueue: [],
+			startLevel: 0,
 			buildingTime: 10,
 		},
 		{
@@ -141,6 +145,8 @@ describe('Prepare single building queue element tests', () => {
 				},
 			],
 			existingQueue: [],
+			existingBuildingZoneQueue: [],
+			startLevel: 1,
 			buildingTime: 100,
 		},
 		{
@@ -171,7 +177,41 @@ describe('Prepare single building queue element tests', () => {
 					endTime: new Date(Date.now() + 10000),
 				},
 			],
+			existingBuildingZoneQueue: [],
+			startLevel: 1,
 			buildingTime: 100,
+		},
+		{
+			name: 'it is next queue element and same building zone is already in queue',
+			addToQueueInput: {
+				localBuildingZoneId: 1,
+				endLevel: 5,
+				buildingId: 'test',
+			},
+			buildingZone: {
+				id: 1,
+				level: 1,
+				building: {},
+			},
+			building: {
+				id: 'test',
+			},
+			resourcesCosts: [
+				{
+					resource: {
+						id: 'wood',
+					},
+					cost: 200,
+				},
+			],
+			existingQueue: [
+				{
+					endTime: new Date(Date.now() + 10000),
+				},
+			],
+			existingBuildingZoneQueue: [{endLevel: 2}, {endLevel: 3}],
+			startLevel: 3,
+			buildingTime: 50,
 		},
 	];
 
@@ -191,6 +231,8 @@ describe('Prepare single building queue element tests', () => {
 
 			const existingQueue =
 				singleTestCase.existingQueue as BuildingQueueElementModel[];
+			const existingBuildingZoneQueue =
+				singleTestCase.existingBuildingZoneQueue as BuildingQueueElementModel[];
 			const buildingTime = singleTestCase.buildingTime;
 			const resourcesCosts =
 				singleTestCase.resourcesCosts as QueueElementCostModel[];
@@ -209,12 +251,15 @@ describe('Prepare single building queue element tests', () => {
 			when(resourcesCalculator.calculateResourcesCosts)
 				.expectCalledWith(addToQueueInput, buildingZone, building)
 				.mockResolvedValue(resourcesCosts);
+			when(buildingQueueRepository.getCurrentBuildingQueueForBuildingZone)
+				.expectCalledWith(buildingZone)
+				.mockResolvedValue(existingBuildingZoneQueue);
 			when(buildingQueueRepository.getCurrentQueueForHabitat)
 				.expectCalledWith(habitatMock.id)
 				.mockResolvedValue(existingQueue);
 			when(buildingService.calculateTimeInSecondsToUpgradeBuilding)
 				.expectCalledWith({
-					startLevel: buildingZone.level,
+					startLevel: singleTestCase.startLevel,
 					endLevel: addToQueueInput.endLevel,
 					buildingId: building.id,
 				})
@@ -228,7 +273,7 @@ describe('Prepare single building queue element tests', () => {
 			expect(queueDraft.buildingZone).toEqual(buildingZone);
 			expect(queueDraft.buildingZoneId).toEqual(buildingZone.id);
 			expect(queueDraft.startTime).toBeInstanceOf(Date);
-			expect(queueDraft.startLevel).toEqual(buildingZone.level);
+			expect(queueDraft.startLevel).toEqual(singleTestCase.startLevel);
 			expect(queueDraft.endLevel).toEqual(addToQueueInput.endLevel);
 			expect(queueDraft.endTime.getTime()).toEqual(
 				queueDraft.startTime.getTime() + buildingTime * 1000,

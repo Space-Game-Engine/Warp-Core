@@ -1,23 +1,31 @@
 import {Test, TestingModule} from '@nestjs/testing';
+import {when} from 'jest-when';
 import {DeepPartial} from 'typeorm';
 
 import {ResourceTypeEnum} from '@warp-core/database/enum/resource-type.enum';
 import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
+import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {SimpleBuildingCalculationService} from '@warp-core/user/queue/building-queue/add/calculate-resources/simple-building-calculation.service';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 
+jest.mock('@warp-core/database/repository/building-queue.repository');
+
 describe('Simple calculation of resources for queue element', () => {
 	let simpleCalculationService: SimpleBuildingCalculationService;
+	let buildingQueueRepository: jest.Mocked<BuildingQueueRepository>;
+
 	beforeEach(async () => {
 		jest.clearAllMocks();
 
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [SimpleBuildingCalculationService],
+			providers: [SimpleBuildingCalculationService, BuildingQueueRepository],
 		}).compile();
 
 		simpleCalculationService = module.get(SimpleBuildingCalculationService);
+		buildingQueueRepository = module.get(BuildingQueueRepository);
 	});
 
 	const inputsToCalculateResources: {
@@ -25,6 +33,7 @@ describe('Simple calculation of resources for queue element', () => {
 		addToQueue: Partial<AddToQueueInput>;
 		buildingZone: Partial<BuildingZoneModel>;
 		building: DeepPartial<BuildingModel>;
+		existingBuildingZoneQueue?: Partial<BuildingQueueElementModel>[];
 		queueCosts: DeepPartial<QueueElementCostModel>[];
 	}[] = [
 		{
@@ -338,6 +347,36 @@ describe('Simple calculation of resources for queue element', () => {
 				},
 			],
 		},
+		{
+			name: 'costs only above end level of last queue element when building zone is already in queue',
+			addToQueue: {
+				endLevel: 3,
+			},
+			buildingZone: {
+				level: 1,
+			},
+			building: {
+				buildingDetailsAtCertainLevel: [
+					{
+						details: {level: 1},
+					},
+					{
+						details: {
+							level: 2,
+							requirements: [{resource: {id: 'wood'}, cost: 10}],
+						},
+					},
+					{
+						details: {
+							level: 3,
+							requirements: [{resource: {id: 'wood'}, cost: 25}],
+						},
+					},
+				],
+			},
+			existingBuildingZoneQueue: [{endLevel: 2}],
+			queueCosts: [{resource: {id: 'wood'}, cost: 25}],
+		},
 	];
 
 	describe.each(inputsToCalculateResources)(
@@ -347,6 +386,13 @@ describe('Simple calculation of resources for queue element', () => {
 				const addToQueue = singleData.addToQueue as AddToQueueInput;
 				const buildingZone = singleData.buildingZone as BuildingZoneModel;
 				const building = singleData.building as BuildingModel;
+
+				when(buildingQueueRepository.getCurrentBuildingQueueForBuildingZone)
+					.expectCalledWith(buildingZone)
+					.mockResolvedValueOnce(
+						(singleData.existingBuildingZoneQueue ??
+							[]) as BuildingQueueElementModel[],
+					);
 
 				const queueCosts =
 					await simpleCalculationService.calculateResourcesCosts(
