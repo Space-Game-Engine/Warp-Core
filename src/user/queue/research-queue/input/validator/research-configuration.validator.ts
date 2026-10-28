@@ -9,9 +9,7 @@ import {AddResearchToQueueInput} from '@warp-core/user/queue/research-queue/inpu
 import {ResearchQueueInputValidation} from '@warp-core/user/queue/research-queue/input/validator/type';
 
 @Injectable()
-export class ResearchConfigurationValidator
-	implements QueueItemValidatorInterface<ResearchQueueInputValidation>
-{
+export class ResearchConfigurationValidator implements QueueItemValidatorInterface<ResearchQueueInputValidation> {
 	constructor(
 		private readonly researchQueueRepository: ResearchQueueRepository,
 		private readonly runtimeConfig: RuntimeConfig,

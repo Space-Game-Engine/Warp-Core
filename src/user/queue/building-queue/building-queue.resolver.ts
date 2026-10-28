@@ -20,9 +20,7 @@ import {AddToQueueValidator} from '@warp-core/user/queue/building-queue/input/va
 import {DraftQueueElementValidator} from '@warp-core/user/queue/building-queue/input/validator/draft-queue-element.validator';
 
 @Resolver(() => BuildingQueueElementModel)
-export class BuildingQueueResolver
-	implements ResourceConsumerResolverInterface
-{
+export class BuildingQueueResolver implements ResourceConsumerResolverInterface {
 	constructor(
 		private readonly buildingQueueAddService: BuildingQueueAddService,
 		private readonly buildingQueueDraftService: BuildingQueueDraftService,

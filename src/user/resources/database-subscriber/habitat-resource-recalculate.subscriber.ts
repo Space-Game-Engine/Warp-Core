@@ -6,9 +6,7 @@ import {ResourceCalculatorService} from '@warp-core/user/resources/service/calcu
 
 @Injectable()
 @EventSubscriber()
-export class HabitatResourceRecalculateSubscriber
-	implements EntitySubscriberInterface<HabitatResourceModel>
-{
+export class HabitatResourceRecalculateSubscriber implements EntitySubscriberInterface<HabitatResourceModel> {
 	private readonly logger = new Logger(
 		HabitatResourceRecalculateSubscriber.name,
 	);

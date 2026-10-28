@@ -8,9 +8,7 @@ import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/r
 
 @Injectable()
 @AddMechanic(CalculationMechanic, 'no-distance-simple-multiply')
-export class NoDistanceSimpleMultiplyResourceCalculationMechanicService
-	implements CalculationMechanic
-{
+export class NoDistanceSimpleMultiplyResourceCalculationMechanicService implements CalculationMechanic {
 	constructor(
 		private readonly buildingZoneRepository: BuildingZoneRepository,
 	) {}

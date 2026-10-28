@@ -125,9 +125,15 @@ buildings:
       - details:
           level: 2
           timeToUpdateInSeconds: 30
+          requirements:
+            - researchNodeId: basic_metallurgy
+              researchNodeLevel: 1
       - details:
           level: 3
           timeToUpdateInSeconds: 60
+          requirements:
+            - researchNodeId: basic_metallurgy
+              researchNodeLevel: 2
       - details:
           level: 4
           timeToUpdateInSeconds: 80

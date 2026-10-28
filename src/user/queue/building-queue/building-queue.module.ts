@@ -16,11 +16,13 @@ import {BuildingQueueResolver} from '@warp-core/user/queue/building-queue/buildi
 import {BuildingQueueAddEmitter} from '@warp-core/user/queue/building-queue/exchange/emit/building-queue-add.emitter';
 import {BuildingQueueProcessingEmitter} from '@warp-core/user/queue/building-queue/exchange/emit/building-queue-processing.emitter';
 import {AddToQueueValidator} from '@warp-core/user/queue/building-queue/input/validator/add-to-queue.validator';
+import {BuildingRequirementsValidator} from '@warp-core/user/queue/building-queue/input/validator/building-requirements.validator';
 import {ConfigurationValidator} from '@warp-core/user/queue/building-queue/input/validator/configuration.validator';
 import {DraftQueueElementValidator} from '@warp-core/user/queue/building-queue/input/validator/draft-queue-element.validator';
 import {EndLevelValidator} from '@warp-core/user/queue/building-queue/input/validator/end-level.validator';
 import {MaxQueueCountValidator} from '@warp-core/user/queue/building-queue/input/validator/max-queue-count.validator';
 import {ValidateSingleQueueElementService} from '@warp-core/user/queue/building-queue/input/validator/validate-single-queue-element.service';
+import {ValidateQueueRequirementsService} from '@warp-core/user/queue/core';
 
 @Module({
 	providers: [
@@ -36,6 +38,8 @@ import {ValidateSingleQueueElementService} from '@warp-core/user/queue/building-
 		EndLevelValidator,
 		ConfigurationValidator,
 		MaxQueueCountValidator,
+		BuildingRequirementsValidator,
+		ValidateQueueRequirementsService,
 		BuildingQueueAddEmitter,
 		BuildingQueueProcessingEmitter,
 		ValidateSingleQueueElementService,

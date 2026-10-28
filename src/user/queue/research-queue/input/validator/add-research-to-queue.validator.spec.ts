@@ -6,7 +6,7 @@ import {AddResearchToQueueValidator} from '@warp-core/user/queue/research-queue/
 import {ResearchConfigurationValidator} from '@warp-core/user/queue/research-queue/input/validator/research-configuration.validator';
 import {ResearchEndLevelValidator} from '@warp-core/user/queue/research-queue/input/validator/research-end-level.validator';
 import {ResearchMaxQueueCountValidator} from '@warp-core/user/queue/research-queue/input/validator/research-max-queue-count.validator';
-import {ResearchPrerequisitesValidator} from '@warp-core/user/queue/research-queue/input/validator/research-prerequisites.validator';
+import {ResearchRequirementsValidator} from '@warp-core/user/queue/research-queue/input/validator/research-requirements.validator';
 import {ValidateSingleResearchQueueElementService} from '@warp-core/user/queue/research-queue/input/validator/validate-single-research-queue-element.service';
 
 jest.mock(
@@ -22,7 +22,7 @@ jest.mock(
 	'@warp-core/user/queue/research-queue/input/validator/research-max-queue-count.validator',
 );
 jest.mock(
-	'@warp-core/user/queue/research-queue/input/validator/research-prerequisites.validator',
+	'@warp-core/user/queue/research-queue/input/validator/research-requirements.validator',
 );
 
 describe('Add research to queue validator', () => {
@@ -31,7 +31,7 @@ describe('Add research to queue validator', () => {
 	let configurationValidator: ResearchConfigurationValidator;
 	let endLevelValidator: ResearchEndLevelValidator;
 	let maxQueueCountValidator: ResearchMaxQueueCountValidator;
-	let prerequisitesValidator: ResearchPrerequisitesValidator;
+	let requirementsValidator: ResearchRequirementsValidator;
 
 	const metadata = {
 		type: 'body',
@@ -48,7 +48,7 @@ describe('Add research to queue validator', () => {
 				ResearchConfigurationValidator,
 				ResearchEndLevelValidator,
 				ResearchMaxQueueCountValidator,
-				ResearchPrerequisitesValidator,
+				ResearchRequirementsValidator,
 			],
 		}).compile();
 
@@ -57,11 +57,11 @@ describe('Add research to queue validator', () => {
 		configurationValidator = module.get(ResearchConfigurationValidator);
 		endLevelValidator = module.get(ResearchEndLevelValidator);
 		maxQueueCountValidator = module.get(ResearchMaxQueueCountValidator);
-		prerequisitesValidator = module.get(ResearchPrerequisitesValidator);
+		requirementsValidator = module.get(ResearchRequirementsValidator);
 	});
 
 	describe('transform', () => {
-		it('should validate queue item with configuration, end level, max queue count and prerequisites validators when input is valid', async () => {
+		it('should validate queue item with configuration, end level, max queue count and requirements validators when input is valid', async () => {
 			const input = {researchNodeId: 'basic_research', endLevel: 1};
 			validateQueueItem.validateQueueItem.mockResolvedValueOnce(true);
 
@@ -74,7 +74,7 @@ describe('Add research to queue validator', () => {
 					configurationValidator,
 					endLevelValidator,
 					maxQueueCountValidator,
-					prerequisitesValidator,
+					requirementsValidator,
 				],
 			});
 		});

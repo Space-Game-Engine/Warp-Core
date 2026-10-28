@@ -8,9 +8,7 @@ import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/ser
 
 @Injectable()
 @AddMechanic(WarehouseStorageCalculationMechanic, 'base-resource-summary')
-export class BaseResourceStorageService
-	implements WarehouseStorageCalculationMechanic
-{
+export class BaseResourceStorageService implements WarehouseStorageCalculationMechanic {
 	constructor(
 		private readonly buildingZoneRepository: BuildingZoneRepository,
 	) {}

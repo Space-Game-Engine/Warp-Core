@@ -7,8 +7,7 @@ import {PrepareQueueElementServiceInterface} from '@warp-core/user/queue/core/se
 export abstract class AbstractQueueDraftService<
 	TInput extends object,
 	TQueueElement extends QueueElementModelInterface,
-> implements PrepareDraftModelServiceInterface
-{
+> implements PrepareDraftModelServiceInterface {
 	constructor(
 		protected readonly prepareQueueElement: PrepareQueueElementServiceInterface<
 			TInput,

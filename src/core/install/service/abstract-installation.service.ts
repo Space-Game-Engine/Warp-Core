@@ -7,9 +7,9 @@ import {InstallValidationError} from '@warp-core/core/install/exception/install-
 import {LoadedConfig} from '@warp-core/core/install/service/load-config.service';
 import {ModuleInstallationInterface} from '@warp-core/core/install/service/module-installation.interface';
 
-export abstract class AbstractInstallationService<T extends object>
-	implements ModuleInstallationInterface<T>
-{
+export abstract class AbstractInstallationService<
+	T extends object,
+> implements ModuleInstallationInterface<T> {
 	protected static readonly logger: Logger = new Logger('installation');
 
 	protected entityManager: EntityManager | undefined;

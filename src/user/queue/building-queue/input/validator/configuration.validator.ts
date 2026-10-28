@@ -8,9 +8,7 @@ import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/v
 import {QueueItemValidatorInterface} from '@warp-core/user/queue/core';
 
 @Injectable()
-export class ConfigurationValidator
-	implements QueueItemValidatorInterface<QueueInputValidation>
-{
+export class ConfigurationValidator implements QueueItemValidatorInterface<QueueInputValidation> {
 	constructor(
 		private readonly buildingQueueRepository: BuildingQueueRepository,
 		private readonly runtimeConfig: RuntimeConfig,

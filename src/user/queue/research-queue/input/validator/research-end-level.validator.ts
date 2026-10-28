@@ -4,9 +4,7 @@ import {QueueItemValidatorInterface} from '@warp-core/user/queue/core';
 import {ResearchQueueInputValidation} from '@warp-core/user/queue/research-queue/input/validator/type';
 
 @Injectable()
-export class ResearchEndLevelValidator
-	implements QueueItemValidatorInterface<ResearchQueueInputValidation>
-{
+export class ResearchEndLevelValidator implements QueueItemValidatorInterface<ResearchQueueInputValidation> {
 	public async validate({
 		addToQueueInput,
 		researchNode,

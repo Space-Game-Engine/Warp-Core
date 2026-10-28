@@ -1,28 +1,30 @@
 import {Injectable} from '@nestjs/common';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {ResearchNodeModel} from '@warp-core/database/model/research-node/research-node.model';
+import {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-details/details-at-certain-level.model';
 import {HabitatResearchNodeRepository} from '@warp-core/database/repository/habitat-research-node.repository';
-import {QueueItemValidatorInterface} from '@warp-core/user/queue/core';
-import {ResearchQueueInputValidation} from '@warp-core/user/queue/research-queue/input/validator/type';
+import {QueueValidationError} from '@warp-core/user/queue/core/exception/queue-validation.error';
+import {getLevelDetailsForUpgrade} from '@warp-core/user/queue/core/util/level-details.util';
 
 @Injectable()
-export class ResearchPrerequisitesValidator implements QueueItemValidatorInterface<ResearchQueueInputValidation> {
+export class ValidateQueueRequirementsService {
 	constructor(
 		private readonly habitatResearchNodeRepository: HabitatResearchNodeRepository,
 		private readonly habitatModel: AuthorizedHabitatModel,
 	) {}
 
-	public async validate({
-		addToQueueInput,
-		researchNode,
-		habitatResearchNode,
-		validationError,
-	}: ResearchQueueInputValidation): Promise<void> {
+	/**
+	 * Adds error to validation error collector for every research node requirement
+	 * of levels from start level (exclusive) to end level (inclusive) that is not met.
+	 */
+	public async validate(
+		levelDetails: DetailsAtCertainLevelModel[],
+		startLevel: number,
+		endLevel: number,
+		validationError: QueueValidationError,
+	): Promise<void> {
 		const requiredLevels = await this.getRequiredResearchNodeLevels(
-			researchNode,
-			habitatResearchNode?.currentLevel ?? 0,
-			addToQueueInput.endLevel,
+			getLevelDetailsForUpgrade(levelDetails, startLevel, endLevel),
 		);
 
 		if (requiredLevels.size === 0) {
@@ -44,32 +46,20 @@ export class ResearchPrerequisitesValidator implements QueueItemValidatorInterfa
 		for (const [researchNodeId, requiredLevel] of requiredLevels) {
 			if ((developedLevels.get(researchNodeId) ?? 0) < requiredLevel) {
 				validationError.addError(
-					'researchNodeId',
+					'requirements',
 					`Research node ${researchNodeId} at level ${requiredLevel} is required.`,
 				);
 			}
 		}
 	}
 
-	/**
-	 * Returns the highest required level per research node, taken from
-	 * requirements of every level between start (exclusive) and end level.
-	 */
 	private async getRequiredResearchNodeLevels(
-		researchNode: ResearchNodeModel,
-		startLevel: number,
-		endLevel: number,
+		levelDetails: DetailsAtCertainLevelModel[],
 	): Promise<Map<string, number>> {
 		const requiredLevels = new Map<string, number>();
-		const allLevelDetails =
-			await researchNode.researchNodeDetailsAtCertainLevel;
 
-		for (const {details} of allLevelDetails) {
-			if (details.level <= startLevel || details.level > endLevel) {
-				continue;
-			}
-
-			for (const requirement of (await details.requirements) ?? []) {
+		for (const singleLevelDetails of levelDetails) {
+			for (const requirement of (await singleLevelDetails.requirements) ?? []) {
 				if (!requirement.researchNodeId || !requirement.researchNodeLevel) {
 					continue;
 				}

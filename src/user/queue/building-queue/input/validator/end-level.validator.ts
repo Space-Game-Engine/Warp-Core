@@ -4,9 +4,7 @@ import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/v
 import {QueueItemValidatorInterface} from '@warp-core/user/queue/core';
 
 @Injectable()
-export class EndLevelValidator
-	implements QueueItemValidatorInterface<QueueInputValidation>
-{
+export class EndLevelValidator implements QueueItemValidatorInterface<QueueInputValidation> {
 	public async validate({
 		addToQueueInput,
 		buildingZone,

@@ -9,8 +9,7 @@ import {PrepareQueueElementServiceInterface} from '@warp-core/user/queue/core/se
 export abstract class AbstractQueueAddService<
 	TInput extends object,
 	TQueueElement extends QueueElementModelInterface,
-> implements ProcessAndConsumeResourcesServiceInterface
-{
+> implements ProcessAndConsumeResourcesServiceInterface {
 	constructor(
 		protected readonly prepareQueueElement: PrepareQueueElementServiceInterface<
 			TInput,

@@ -59,10 +59,10 @@ describe('Research queue - research node prerequisites', () => {
 
 		expect(response.body.errors).toHaveLength(1);
 		expect(response.body.errors[0].message).toBe('Queue Validation Error');
-		expect(response.body.errors[0].validationError.researchNodeId).toHaveLength(
+		expect(response.body.errors[0].validationError.requirements).toHaveLength(
 			1,
 		);
-		expect(response.body.errors[0].validationError.researchNodeId).toContain(
+		expect(response.body.errors[0].validationError.requirements).toContain(
 			'Research node basic_metallurgy at level 1 is required.',
 		);
 	});
@@ -81,7 +81,7 @@ describe('Research queue - research node prerequisites', () => {
 
 		expect(response.body.errors).toHaveLength(1);
 		expect(response.body.errors[0].message).toBe('Queue Validation Error');
-		expect(response.body.errors[0].validationError.researchNodeId).toContain(
+		expect(response.body.errors[0].validationError.requirements).toContain(
 			'Research node basic_metallurgy at level 1 is required.',
 		);
 	});
@@ -116,13 +116,13 @@ describe('Research queue - research node prerequisites', () => {
 
 		expect(response.body.errors).toHaveLength(1);
 		expect(response.body.errors[0].message).toBe('Queue Validation Error');
-		expect(response.body.errors[0].validationError.researchNodeId).toHaveLength(
+		expect(response.body.errors[0].validationError.requirements).toHaveLength(
 			2,
 		);
-		expect(response.body.errors[0].validationError.researchNodeId).toContain(
+		expect(response.body.errors[0].validationError.requirements).toContain(
 			'Research node basic_metallurgy at level 2 is required.',
 		);
-		expect(response.body.errors[0].validationError.researchNodeId).toContain(
+		expect(response.body.errors[0].validationError.requirements).toContain(
 			'Research node advanced_metallurgy at level 1 is required.',
 		);
 	});
@@ -145,10 +145,10 @@ describe('Research queue - research node prerequisites', () => {
 
 		expect(response.body.errors).toHaveLength(1);
 		expect(response.body.errors[0].message).toBe('Queue Validation Error');
-		expect(response.body.errors[0].validationError.researchNodeId).toHaveLength(
+		expect(response.body.errors[0].validationError.requirements).toHaveLength(
 			1,
 		);
-		expect(response.body.errors[0].validationError.researchNodeId).toContain(
+		expect(response.body.errors[0].validationError.requirements).toContain(
 			'Research node advanced_metallurgy at level 1 is required.',
 		);
 	});
@@ -170,7 +170,7 @@ describe('Research queue - research node prerequisites', () => {
 		).expect(HttpStatus.OK);
 
 		expect(response.body.errors).toHaveLength(1);
-		expect(response.body.errors[0].validationError.researchNodeId).toContain(
+		expect(response.body.errors[0].validationError.requirements).toContain(
 			'Research node basic_metallurgy at level 2 is required.',
 		);
 	});

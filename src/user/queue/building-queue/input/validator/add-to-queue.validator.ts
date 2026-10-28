@@ -2,6 +2,7 @@ import {Injectable} from '@nestjs/common';
 
 import {CustomValidator} from '@warp-core/core';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
+import {BuildingRequirementsValidator} from '@warp-core/user/queue/building-queue/input/validator/building-requirements.validator';
 import {ConfigurationValidator} from '@warp-core/user/queue/building-queue/input/validator/configuration.validator';
 import {EndLevelValidator} from '@warp-core/user/queue/building-queue/input/validator/end-level.validator';
 import {MaxQueueCountValidator} from '@warp-core/user/queue/building-queue/input/validator/max-queue-count.validator';
@@ -14,6 +15,7 @@ export class AddToQueueValidator extends CustomValidator<AddToQueueInput> {
 		private readonly configurationValidator: ConfigurationValidator,
 		private readonly endLevelValidator: EndLevelValidator,
 		private readonly maxQueueCount: MaxQueueCountValidator,
+		private readonly requirementsValidator: BuildingRequirementsValidator,
 	) {
 		super();
 	}
@@ -27,6 +29,7 @@ export class AddToQueueValidator extends CustomValidator<AddToQueueInput> {
 				this.configurationValidator,
 				this.endLevelValidator,
 				this.maxQueueCount,
+				this.requirementsValidator,
 			],
 		});
 	}

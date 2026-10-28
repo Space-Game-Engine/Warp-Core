@@ -7,9 +7,7 @@ import {QueueItemValidatorInterface} from '@warp-core/user/queue/core';
 import {ResearchQueueInputValidation} from '@warp-core/user/queue/research-queue/input/validator/type';
 
 @Injectable()
-export class ResearchMaxQueueCountValidator
-	implements QueueItemValidatorInterface<ResearchQueueInputValidation>
-{
+export class ResearchMaxQueueCountValidator implements QueueItemValidatorInterface<ResearchQueueInputValidation> {
 	constructor(
 		private readonly researchQueueRepository: ResearchQueueRepository,
 		private readonly runtimeConfig: RuntimeConfig,

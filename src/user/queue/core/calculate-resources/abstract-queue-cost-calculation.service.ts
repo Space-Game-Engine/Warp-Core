@@ -1,6 +1,7 @@
 import {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-details/details-at-certain-level.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
+import {getLevelDetailsForUpgrade} from '@warp-core/user/queue/core/util/level-details.util';
 
 export abstract class AbstractQueueCostCalculationService {
 	protected async sumRequirementsForLevels(
@@ -10,12 +11,11 @@ export abstract class AbstractQueueCostCalculationService {
 	): Promise<QueueElementCostModel[]> {
 		const queueCost = new Map<string, QueueElementCostModel>();
 
-		const levelDetailsForUpdate = levelDetails.filter(singleLevelDetails => {
-			return (
-				singleLevelDetails.level > startLevel &&
-				singleLevelDetails.level <= endLevel
-			);
-		});
+		const levelDetailsForUpdate = getLevelDetailsForUpgrade(
+			levelDetails,
+			startLevel,
+			endLevel,
+		);
 
 		for (const singleLevelDetails of levelDetailsForUpdate) {
 			const updateCosts = (await singleLevelDetails.requirements) ?? [];

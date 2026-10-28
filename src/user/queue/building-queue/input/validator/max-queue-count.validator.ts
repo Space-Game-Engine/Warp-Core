@@ -6,9 +6,7 @@ import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/v
 import {QueueItemValidatorInterface} from '@warp-core/user/queue/core';
 
 @Injectable()
-export class MaxQueueCountValidator
-	implements QueueItemValidatorInterface<QueueInputValidation>
-{
+export class MaxQueueCountValidator implements QueueItemValidatorInterface<QueueInputValidation> {
 	constructor(
 		private readonly buildingQueueRepository: BuildingQueueRepository,
 		private readonly runtimeConfig: RuntimeConfig,

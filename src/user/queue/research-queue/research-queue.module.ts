@@ -5,6 +5,7 @@ import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
 import {RegisterMechanic} from '@warp-core/core/utils/mechanics';
 import {DatabaseModule} from '@warp-core/database/database.module';
 import {ResearchNodeQueryEmitter} from '@warp-core/global/research-node';
+import {ValidateQueueRequirementsService} from '@warp-core/user/queue/core';
 import {ResearchQueueResourceConsumerInterface} from '@warp-core/user/queue/research-queue/add/calculate-resources/research-queue-resource-consumer.interface';
 import {SimpleResearchCalculationService} from '@warp-core/user/queue/research-queue/add/calculate-resources/simple-research-calculation.service';
 import {PrepareSingleResearchQueueElementService} from '@warp-core/user/queue/research-queue/add/prepare-single-research-queue-element.service';
@@ -17,7 +18,7 @@ import {DraftResearchQueueElementValidator} from '@warp-core/user/queue/research
 import {ResearchConfigurationValidator} from '@warp-core/user/queue/research-queue/input/validator/research-configuration.validator';
 import {ResearchEndLevelValidator} from '@warp-core/user/queue/research-queue/input/validator/research-end-level.validator';
 import {ResearchMaxQueueCountValidator} from '@warp-core/user/queue/research-queue/input/validator/research-max-queue-count.validator';
-import {ResearchPrerequisitesValidator} from '@warp-core/user/queue/research-queue/input/validator/research-prerequisites.validator';
+import {ResearchRequirementsValidator} from '@warp-core/user/queue/research-queue/input/validator/research-requirements.validator';
 import {ValidateSingleResearchQueueElementService} from '@warp-core/user/queue/research-queue/input/validator/validate-single-research-queue-element.service';
 import {ResearchQueueHandlerService} from '@warp-core/user/queue/research-queue/research-queue-handler.service';
 import {ResearchQueueResolver} from '@warp-core/user/queue/research-queue/research-queue.resolver';
@@ -35,7 +36,8 @@ import {ResearchQueueResolver} from '@warp-core/user/queue/research-queue/resear
 		ResearchEndLevelValidator,
 		ResearchConfigurationValidator,
 		ResearchMaxQueueCountValidator,
-		ResearchPrerequisitesValidator,
+		ResearchRequirementsValidator,
+		ValidateQueueRequirementsService,
 		ResearchQueueAddEmitter,
 		ResearchQueueProcessingEmitter,
 		ValidateSingleResearchQueueElementService,
