@@ -61,6 +61,7 @@ describe('Building queue repository test', () => {
 							},
 							endTime: expect.anything(),
 						},
+						order: {endTime: 'ASC', id: 'ASC'},
 					}),
 				)
 				.mockResolvedValue(buildingQueueElements);
@@ -96,6 +97,7 @@ describe('Building queue repository test', () => {
 							},
 							endTime: expect.anything(),
 						},
+						order: {endTime: 'ASC', id: 'ASC'},
 					}),
 				)
 				.mockResolvedValue(buildingQueueElements);

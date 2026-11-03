@@ -26,11 +26,9 @@ export class EndLevelValidator implements QueueItemValidatorInterface<QueueInput
 			return;
 		}
 
-		const lastPossibleUpdate = (
-			await building.buildingDetailsAtCertainLevel
-		).at(-1);
+		const allBuildingDetails = await building.buildingDetailsAtCertainLevel;
 
-		if (!lastPossibleUpdate) {
+		if (allBuildingDetails.length === 0) {
 			validationError.addError(
 				'endLevel',
 				`Last possible update value for building ${building.id} does not exists`,
@@ -38,7 +36,13 @@ export class EndLevelValidator implements QueueItemValidatorInterface<QueueInput
 			return;
 		}
 
-		if (addToQueueInput.endLevel > lastPossibleUpdate.details.level) {
+		const lastPossibleLevel = Math.max(
+			...allBuildingDetails.map(
+				buildingDetails => buildingDetails.details.level,
+			),
+		);
+
+		if (addToQueueInput.endLevel > lastPossibleLevel) {
 			validationError.addError(
 				'endLevel',
 				'You cannot update higher than it is possible. Check Building update details.',

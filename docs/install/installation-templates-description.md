@@ -30,6 +30,7 @@ Example:
  * `type` _[enum]_ must match one of the following values:
    * `construction` resources used for build buildings, such as steel or wood.
    * `energy` resources used to power buildings and unlock technology, such as coal or electrical units.
+   * `technology item` physical items used to build buildings or develop research nodes, such as circuit boards or gears.
 
 ## Buildings
 
@@ -126,7 +127,7 @@ Example (mine):
   * `warehouse` _[array] (optional)_ defines the resources a building can store. Each entry specifies a resource type or ID and the amount stored. If empty, the building does not store any resources.
     * `warehouseType` _[enum]_ must match one of the following:
       * `any` any type of resource can be stored. Acts as a wildcard.
-      * `by_resource_type` stores all resources of a single type, such as `construction`, `energy`, or `technology`.
+      * `by_resource_type` stores all resources of a single type, such as `construction`, `energy`, or `technology item`.
       * `by_resource_id` stores only a single resource identified by its `id`.
     * `resourceId` _[string] (optional)_ the id of the stored resource. Required if `warehouseType` is `by_resource_id`.
     * `resourceType` _[string] (optional)_ the type of resource from the resource enum. Required if `warehouseType` is `by_resource_type`.

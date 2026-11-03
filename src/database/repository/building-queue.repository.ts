@@ -21,6 +21,7 @@ export class BuildingQueueRepository extends AbstractQueueElementRepository<Buil
 				},
 				endTime: MoreThanOrEqual(new Date()),
 			},
+			order: {endTime: 'ASC', id: 'ASC'},
 		});
 	}
 
@@ -34,6 +35,7 @@ export class BuildingQueueRepository extends AbstractQueueElementRepository<Buil
 				},
 				endTime: MoreThanOrEqual(new Date()),
 			},
+			order: {endTime: 'ASC', id: 'ASC'},
 		});
 	}
 
@@ -63,12 +65,15 @@ export class BuildingQueueRepository extends AbstractQueueElementRepository<Buil
 	public getUnresolvedQueueForHabitat(
 		habitatId: number,
 	): Promise<BuildingQueueElementModel[]> {
-		return this.findBy({
-			isConsumed: false,
-			endTime: LessThanOrEqual(new Date()),
-			buildingZone: {
-				habitatId: habitatId,
+		return this.find({
+			where: {
+				isConsumed: false,
+				endTime: LessThanOrEqual(new Date()),
+				buildingZone: {
+					habitatId: habitatId,
+				},
 			},
+			order: {endTime: 'ASC', id: 'ASC'},
 		});
 	}
 
@@ -81,7 +86,9 @@ export class BuildingQueueRepository extends AbstractQueueElementRepository<Buil
 			.andWhere('endTime <= :date', {date: new Date()})
 			.andWhere('buildingQueue.buildingZoneId = :buildingZoneId', {
 				buildingZoneId: buildingZoneId,
-			});
+			})
+			.orderBy('buildingQueue.endTime', 'ASC')
+			.addOrderBy('buildingQueue.id', 'ASC');
 
 		return queryBuilder.getMany();
 	}

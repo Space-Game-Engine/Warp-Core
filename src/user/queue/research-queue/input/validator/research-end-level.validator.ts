@@ -28,11 +28,10 @@ export class ResearchEndLevelValidator implements QueueItemValidatorInterface<Re
 			return;
 		}
 
-		const lastPossibleUpdate = (
-			await researchNode.researchNodeDetailsAtCertainLevel
-		).at(-1);
+		const allResearchNodeDetails =
+			await researchNode.researchNodeDetailsAtCertainLevel;
 
-		if (!lastPossibleUpdate) {
+		if (allResearchNodeDetails.length === 0) {
 			validationError.addError(
 				'endLevel',
 				`Last possible update value for research node ${researchNode.id} does not exists`,
@@ -40,7 +39,13 @@ export class ResearchEndLevelValidator implements QueueItemValidatorInterface<Re
 			return;
 		}
 
-		if (addToQueueInput.endLevel > lastPossibleUpdate.details.level) {
+		const lastPossibleLevel = Math.max(
+			...allResearchNodeDetails.map(
+				researchNodeDetails => researchNodeDetails.details.level,
+			),
+		);
+
+		if (addToQueueInput.endLevel > lastPossibleLevel) {
 			validationError.addError(
 				'endLevel',
 				'You cannot update higher than it is possible. Check research node update details.',

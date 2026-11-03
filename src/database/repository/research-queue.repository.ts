@@ -18,6 +18,7 @@ export class ResearchQueueRepository extends AbstractQueueElementRepository<Rese
 				habitatId: habitatId,
 				endTime: MoreThanOrEqual(new Date()),
 			},
+			order: {endTime: 'ASC', id: 'ASC'},
 		});
 	}
 
@@ -31,6 +32,7 @@ export class ResearchQueueRepository extends AbstractQueueElementRepository<Rese
 				researchNodeId: researchNodeId,
 				endTime: MoreThanOrEqual(new Date()),
 			},
+			order: {endTime: 'ASC', id: 'ASC'},
 		});
 	}
 
@@ -48,10 +50,13 @@ export class ResearchQueueRepository extends AbstractQueueElementRepository<Rese
 	public getUnresolvedQueueForHabitat(
 		habitatId: number,
 	): Promise<ResearchQueueElementModel[]> {
-		return this.findBy({
-			isConsumed: false,
-			endTime: LessThanOrEqual(new Date()),
-			habitatId: habitatId,
+		return this.find({
+			where: {
+				isConsumed: false,
+				endTime: LessThanOrEqual(new Date()),
+				habitatId: habitatId,
+			},
+			order: {endTime: 'ASC', id: 'ASC'},
 		});
 	}
 }

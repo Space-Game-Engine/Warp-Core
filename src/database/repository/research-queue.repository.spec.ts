@@ -10,7 +10,6 @@ jest.mock('@warp-core/database/transaction-manager.service');
 describe('Research queue repository test', () => {
 	let researchQueueRepository: ResearchQueueRepository;
 	let findSpy: jest.SpyInstance;
-	let findBySpy: jest.SpyInstance;
 	let countSpy: jest.SpyInstance;
 	let saveSpy: jest.SpyInstance;
 
@@ -32,7 +31,6 @@ describe('Research queue repository test', () => {
 
 		researchQueueRepository = module.get(ResearchQueueRepository);
 		findSpy = jest.spyOn(researchQueueRepository, 'find');
-		findBySpy = jest.spyOn(researchQueueRepository, 'findBy');
 		countSpy = jest.spyOn(researchQueueRepository, 'count');
 		saveSpy = jest.spyOn(researchQueueRepository, 'save');
 	});
@@ -51,6 +49,7 @@ describe('Research queue repository test', () => {
 						habitatId: 5,
 						endTime: MoreThanOrEqual(expect.any(Date)),
 					},
+					order: {endTime: 'ASC', id: 'ASC'},
 				}),
 			);
 		});
@@ -75,6 +74,7 @@ describe('Research queue repository test', () => {
 						researchNodeId: 'basic_research',
 						endTime: MoreThanOrEqual(expect.any(Date)),
 					},
+					order: {endTime: 'ASC', id: 'ASC'},
 				}),
 			);
 		});
@@ -102,16 +102,19 @@ describe('Research queue repository test', () => {
 	describe('getUnresolvedQueueForHabitat', () => {
 		it('should load ended and not consumed research queue elements for habitat', async () => {
 			const queueElements = [{id: 10}] as ResearchQueueElementModel[];
-			findBySpy.mockResolvedValue(queueElements);
+			findSpy.mockResolvedValue(queueElements);
 
 			const result =
 				await researchQueueRepository.getUnresolvedQueueForHabitat(5);
 
 			expect(result).toEqual(queueElements);
-			expect(findBySpy).toHaveBeenCalledWith({
-				isConsumed: false,
-				endTime: LessThanOrEqual(expect.any(Date)),
-				habitatId: 5,
+			expect(findSpy).toHaveBeenCalledWith({
+				where: {
+					isConsumed: false,
+					endTime: LessThanOrEqual(expect.any(Date)),
+					habitatId: 5,
+				},
+				order: {endTime: 'ASC', id: 'ASC'},
 			});
 		});
 	});

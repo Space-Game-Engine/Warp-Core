@@ -26,7 +26,8 @@ export abstract class AbstractQueueElementRepository<
 	): Promise<number>;
 
 	/**
-	 * Returns queue elements that already ended but were not consumed yet.
+	 * Returns queue elements that already ended but were not consumed yet,
+	 * oldest first, as every element overwrites the level set by previous one.
 	 */
 	public abstract getUnresolvedQueueForHabitat(habitatId: number): Promise<T[]>;
 

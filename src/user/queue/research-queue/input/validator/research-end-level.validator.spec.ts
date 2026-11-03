@@ -1,6 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
 
 import {HabitatResearchNodeModel} from '@warp-core/database/model/research-node/habitat-research-node.model';
+import {ResearchNodeDetailsAtCertainLevelModel} from '@warp-core/database/model/research-node/research-node-details-at-certain-level.model';
 import {ResearchNodeModel} from '@warp-core/database/model/research-node/research-node.model';
 import {QueueValidationError} from '@warp-core/user/queue/core';
 import {AddResearchToQueueInput} from '@warp-core/user/queue/research-queue/input/add-research-to-queue.input';
@@ -86,6 +87,18 @@ describe('Research end level validator', () => {
 					'You cannot update higher than it is possible. Check research node update details.',
 				],
 			});
+		});
+
+		it('should pass validation when end level equals highest level and level details are out of order', async () => {
+			const input = prepareValidationInput(2, null);
+			input.researchNode.researchNodeDetailsAtCertainLevel = [
+				{details: {level: 2}},
+				{details: {level: 1}},
+			] as ResearchNodeDetailsAtCertainLevelModel[];
+
+			await researchEndLevelValidator.validate(input);
+
+			expect(input.validationError.hasErrors()).toBe(false);
 		});
 
 		it('should pass validation when habitat never researched node and end level is in range', async () => {
