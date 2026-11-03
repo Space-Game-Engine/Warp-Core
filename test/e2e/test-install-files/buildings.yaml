@@ -137,6 +137,9 @@ buildings:
       - details:
           level: 4
           timeToUpdateInSeconds: 80
+          requirements:
+            - buildingId: university
+              buildingLevel: 2
   - role: technology
     name: Really expensive building
     id: expensive_building

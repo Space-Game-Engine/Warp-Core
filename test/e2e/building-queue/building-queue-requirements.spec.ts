@@ -112,4 +112,14 @@ describe('Building queue - level requirements', () => {
 		expect(response.body.data.buildingQueue_add.startLevel).toEqual(0);
 		expect(response.body.data.buildingQueue_add.endLevel).toEqual(2);
 	});
+
+	it('should report building requirement together with research node requirement', async () => {
+		const response = await addBuildingToQueueRequest(4).expect(HttpStatus.OK);
+
+		expect(response.body.errors).toHaveLength(1);
+		expect(response.body.errors[0].validationError.requirements).toEqual([
+			'Research node basic_metallurgy at level 2 is required.',
+			'Building university at level 2 is required.',
+		]);
+	});
 });

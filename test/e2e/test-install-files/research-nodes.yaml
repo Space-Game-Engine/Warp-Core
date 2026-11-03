@@ -60,3 +60,12 @@ researchNodes:
               researchNodeLevel: 2
             - researchNodeId: advanced_metallurgy
               researchNodeLevel: 1
+  - id: academic_studies
+    name: Academic studies
+    researchNodeDetailsAtCertainLevel:
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+          requirements:
+            - buildingId: university
+              buildingLevel: 2

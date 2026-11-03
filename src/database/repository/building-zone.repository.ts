@@ -1,5 +1,5 @@
 import {Injectable} from '@nestjs/common';
-import {DataSource, FindOptionsUtils} from 'typeorm';
+import {DataSource, FindOptionsUtils, In} from 'typeorm';
 
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
@@ -44,6 +44,18 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 		return this.findOne({
 			where: {
 				id: id,
+			},
+		});
+	}
+
+	public getBuildingZonesForHabitatAndBuildings(
+		habitatId: number,
+		buildingIds: string[],
+	): Promise<BuildingZoneModel[]> {
+		return this.find({
+			where: {
+				habitatId: habitatId,
+				buildingId: In(buildingIds),
 			},
 		});
 	}

@@ -27,10 +27,11 @@ describe('Get list of research nodes', () => {
 			.expect(HttpStatus.OK);
 
 		expect(response.body.errors).toBeUndefined();
-		expect(response.body.data.researchNode_getAll).toHaveLength(5);
+		expect(response.body.data.researchNode_getAll).toHaveLength(6);
 		expect(response.body.data.researchNode_getAll).toEqual(
 			expect.arrayContaining([
 				{id: 'basic_metallurgy', name: 'Basic metallurgy'},
+				{id: 'academic_studies', name: 'Academic studies'},
 				{id: 'free_research', name: 'Free research'},
 				{id: 'expensive_research', name: 'Expensive research'},
 				{id: 'advanced_metallurgy', name: 'Advanced metallurgy'},

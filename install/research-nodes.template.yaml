@@ -25,3 +25,5 @@ researchNodes:
               cost: 50
             - researchNodeId: basic_metallurgy
               researchNodeLevel: 2
+            - buildingId: university
+              buildingLevel: 1

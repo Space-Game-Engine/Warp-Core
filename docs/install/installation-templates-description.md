@@ -118,6 +118,8 @@ Example (mine):
   * `requirements` _[array] (optional)_ rules that define what is needed to upgrade a building. A level can have multiple requirements. If empty, no requirements are needed to upgrade to the next level.
     * `resurce` _[string]_ the `id` of the resource required for the building upgrade
     * `cost` _[number]_ the amount of the resource needed.
+    * `researchNodeId` _[string]_ and `researchNodeLevel` _[number]_ a research node that must already be **developed** to at least that level.
+    * `buildingId` _[string]_ and `buildingLevel` _[number]_ a building that must already be **built** (not only queued) in the habitat to at least that level.
   * `productionRate` _[array] (optional)_ describes the production of resources. Each entry specifies what the building produces at this level. If empty, the building produces nothing.
     * `resurce` _[string]_ the `id` of the resource being produced.
     * `productionRate`_[number]_ the amount of the resource produced per second; decimal values are allowed.
@@ -147,6 +149,8 @@ researchNodes:
               cost: 50
             - researchNodeId: basic_metallurgy
               researchNodeLevel: 2
+            - buildingId: university
+              buildingLevel: 1
 ```
 
 ### Keys description
@@ -155,6 +159,7 @@ researchNodes:
 * `researchNodeDetailsAtCertainLevel` _[array]_ defines each level of the research node. It cannot be empty.
   * `details.level` _[number]_ the level corresponding to this entry, starting from 1.
   * `details.timeToUpdateInSeconds` _[number]_ the time in seconds required to develop that level.
-  * `details.requirements` _[array] (optional)_ what is needed to develop that level. Each entry is either a resource cost or a required research node:
+  * `details.requirements` _[array] (optional)_ what is needed to develop that level. Each entry is a resource cost, a required research node or a required building:
     * `resourceId` _[string]_ and `cost` _[number]_ the resource and the amount consumed when the level is queued.
     * `researchNodeId` _[string]_ and `researchNodeLevel` _[number]_ a research node that must already be **developed** (not only queued) to at least that level.
+    * `buildingId` _[string]_ and `buildingLevel` _[number]_ a building that must already be **built** (not only queued) in the habitat to at least that level. Any building zone with that building counts.

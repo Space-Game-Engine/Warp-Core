@@ -14,13 +14,14 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-details/details-at-certain-level.model';
 import {ResearchNodeModel} from '@warp-core/database/model/research-node/research-node.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 
 @ObjectType({
 	description:
-		'Defines what resources or research nodes are needed to upgrade that entity',
+		'Defines what resources, research nodes or buildings are needed to upgrade that entity',
 })
 @Entity({name: 'requirements-per-level'})
 export class RequirementsPerLevelModel {
@@ -94,4 +95,32 @@ export class RequirementsPerLevelModel {
 	@Column('integer', {nullable: true})
 	@IsOptional()
 	public researchNodeLevel?: number;
+
+	@Field(() => BuildingModel, {
+		description: 'Required building',
+		nullable: true,
+	})
+	@ManyToOne(() => BuildingModel, {lazy: true, nullable: true})
+	@JoinColumn({name: 'buildingId'})
+	@IsOptional()
+	public building?: BuildingModel | Promise<BuildingModel> | null;
+
+	@Field(() => String, {
+		description: 'Id of required building',
+		nullable: true,
+	})
+	@IsString()
+	@IsOptional()
+	@Column({name: 'buildingId', nullable: true})
+	public buildingId?: string | null;
+
+	@Field(() => Int, {
+		description: 'Required level of building built in habitat',
+		nullable: true,
+	})
+	@IsNumber()
+	@Min(1)
+	@Column('integer', {nullable: true})
+	@IsOptional()
+	public buildingLevel?: number;
 }
