@@ -35,7 +35,7 @@ export class ResearchNodeModel {
 	public name: string;
 
 	@Field(() => [ResearchNodeDetailsAtCertainLevelModel], {
-		description: 'Details how to upgrade that building',
+		description: 'Details how to upgrade that research to the next level.',
 	})
 	@ValidateNested()
 	@ValidatePromise()
