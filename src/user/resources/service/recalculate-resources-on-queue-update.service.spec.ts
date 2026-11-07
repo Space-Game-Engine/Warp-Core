@@ -1,9 +1,9 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
+import {BuildingProductionRateModel} from '@warp-core/database/model/building/building-production-rate.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
@@ -52,9 +52,7 @@ describe('Add last calculation date for new resource producers', () => {
 			const queueElement = {
 				endLevel: 5,
 				buildingId: 'test',
-				buildingZone: {
-					habitatId,
-				},
+				getHabitatId: async (): Promise<number> => habitatId,
 			} as BuildingQueueElementModel;
 
 			const productionRateModels = [] as BuildingProductionRateModel[];
@@ -83,9 +81,7 @@ describe('Add last calculation date for new resource producers', () => {
 				endLevel: 5,
 				buildingId: 'test',
 				endTime: new Date(),
-				buildingZone: {
-					habitatId,
-				},
+				getHabitatId: async (): Promise<number> => habitatId,
 			} as BuildingQueueElementModel;
 
 			const productionRateModels = [

@@ -1,27 +1,21 @@
 import {Inject, Injectable} from '@nestjs/common';
 
 import {InternalExchangeEmitter} from '@warp-core/core/utils/internal-exchange';
+import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingQueueNames} from '@warp-core/user/queue/building-queue/exchange/emit/building-queue.names';
-import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue/exchange/emit/types/building-queue-processing.type';
+import {AbstractQueueAddEmitter} from '@warp-core/user/queue/core';
 
 @Injectable()
-export class BuildingQueueAddEmitter {
+export class BuildingQueueAddEmitter extends AbstractQueueAddEmitter<BuildingQueueElementModel> {
+	protected readonly beforeAddingEventName =
+		BuildingQueueNames.BeforeAddingElement;
+	protected readonly afterAddingEventName =
+		BuildingQueueNames.AfterAddingElement;
+
 	constructor(
 		@Inject(InternalExchangeEmitter)
-		private readonly emitter: InternalExchangeEmitter,
-	) {}
-
-	public beforeAddingElement(input: BuildingQueueProcessing): Promise<void> {
-		return this.emitter.emit({
-			eventName: BuildingQueueNames.BeforeAddingElement,
-			requestData: input,
-		});
-	}
-
-	public afterAddingElement(input: BuildingQueueProcessing): Promise<void> {
-		return this.emitter.emit({
-			eventName: BuildingQueueNames.AfterAddingElement,
-			requestData: input,
-		});
+		emitter: InternalExchangeEmitter,
+	) {
+		super(emitter);
 	}
 }

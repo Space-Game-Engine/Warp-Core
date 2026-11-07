@@ -3,7 +3,7 @@ import {registerEnumType} from '@nestjs/graphql';
 export enum ResourceTypeEnum {
 	CONSTRUCTION_RESOURCE = 'construction',
 	ENERGY_RESOURCE = 'energy',
-	TECHNOLOGY_RESOURCE = 'technology',
+	TECHNOLOGY_ITEM_RESOURCE = 'technology item',
 }
 
 registerEnumType(ResourceTypeEnum, {
@@ -11,13 +11,16 @@ registerEnumType(ResourceTypeEnum, {
 	description: 'What kind of resources are possible to create?',
 	valuesMap: {
 		CONSTRUCTION_RESOURCE: {
-			description: 'Resources used for build buildings',
+			description:
+				'Resources used for build buildings. Can be a brick, wood, steel etc.',
 		},
 		ENERGY_RESOURCE: {
-			description: 'Resources used to power buildings and unlock technology',
+			description:
+				'Resources used to power buildings and unlock technology. It can be a battery, coal, oil etc.',
 		},
-		TECHNOLOGY_RESOURCE: {
-			description: 'Resources used in technological actions',
+		TECHNOLOGY_ITEM_RESOURCE: {
+			description:
+				'Technology item that can be used for build buildings or in research nodes. Could be defined as circuit board, gear etc.',
 		},
 	},
 });

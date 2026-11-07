@@ -5,7 +5,8 @@ import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {HabitatResearchNodeModel} from '@warp-core/database/model/research-node/habitat-research-node.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 
 @ObjectType({description: 'Single habitat that belongs to user'})
 @Entity({name: 'habitat'})
@@ -45,6 +46,17 @@ export class HabitatModel implements AuthModelInterface {
 	public habitatResources:
 		| HabitatResourceModel[]
 		| Promise<HabitatResourceModel[]>;
+
+	@OneToMany(
+		() => HabitatResearchNodeModel,
+		habitatResearchNode => habitatResearchNode.habitat,
+		{
+			lazy: true,
+		},
+	)
+	public habitatResearchNode:
+		| HabitatResearchNodeModel[]
+		| Promise<HabitatResearchNodeModel[]>;
 
 	@Field(() => [BuildingQueueElementModel])
 	@OneToMany(

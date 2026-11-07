@@ -1,8 +1,8 @@
 import {Injectable} from '@nestjs/common';
-import {DataSource, FindOptionsUtils} from 'typeorm';
+import {DataSource, FindOptionsUtils, In} from 'typeorm';
 
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
@@ -48,6 +48,18 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 		});
 	}
 
+	public getBuildingZonesForHabitatAndBuildings(
+		habitatId: number,
+		buildingIds: string[],
+	): Promise<BuildingZoneModel[]> {
+		return this.find({
+			where: {
+				habitatId: habitatId,
+				buildingId: In(buildingIds),
+			},
+		});
+	}
+
 	public async getMaxOfCounterPerHabitat(habitatId: number): Promise<number> {
 		const allBuildingZones =
 			await this.getAllBuildingZonesByHabitatId(habitatId);
@@ -77,10 +89,14 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 			.innerJoinAndSelect('buildingZone.building', 'building')
 			.innerJoinAndSelect(
 				'building.buildingDetailsAtCertainLevel',
-				'details',
-				'buildingZone.level = details.level',
+				'buildingDetails',
 			)
-			.innerJoinAndSelect('details.productionRate', 'productionRate')
+			.innerJoinAndSelect(
+				'buildingDetails.details',
+				'levelDetails',
+				'buildingZone.level = levelDetails.level',
+			)
+			.innerJoinAndSelect('buildingDetails.productionRate', 'productionRate')
 			.where('buildingZone.habitatId = :habitatId', {habitatId: habitatId})
 			.andWhere('productionRate.resourceId = :resourceId', {
 				resourceId: resourceType.id,

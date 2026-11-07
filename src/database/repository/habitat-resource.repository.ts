@@ -1,10 +1,10 @@
 import {Injectable} from '@nestjs/common';
 import {DataSource, In} from 'typeorm';
 
-import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
-import {BuildingModel} from '@warp-core/database/model/building.model';
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {BuildingProductionRateModel} from '@warp-core/database/model/building/building-production-rate.model';
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()

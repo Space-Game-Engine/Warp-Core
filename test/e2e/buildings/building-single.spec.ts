@@ -42,7 +42,9 @@ describe('Get single building with details', () => {
 				fields: {
 					fields: ['name'],
 					buildingDetailsAtCertainLevel: {
-						fields: ['level'],
+						details: {
+							fields: ['level'],
+						},
 					},
 				},
 				variables: {
@@ -60,10 +62,12 @@ describe('Get single building with details', () => {
 			response.body.data.building_get.buildingDetailsAtCertainLevel.length,
 		).toEqual(2);
 		expect(
-			response.body.data.building_get.buildingDetailsAtCertainLevel[0].level,
+			response.body.data.building_get.buildingDetailsAtCertainLevel[0].details
+				.level,
 		).toEqual(1);
 		expect(
-			response.body.data.building_get.buildingDetailsAtCertainLevel[1].level,
+			response.body.data.building_get.buildingDetailsAtCertainLevel[1].details
+				.level,
 		).toEqual(2);
 	});
 });

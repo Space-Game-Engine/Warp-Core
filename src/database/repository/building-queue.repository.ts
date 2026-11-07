@@ -3,15 +3,15 @@ import {DataSource, LessThanOrEqual, MoreThanOrEqual} from 'typeorm';
 
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
+import {AbstractQueueElementRepository} from '@warp-core/database/repository/abstract-queue-element.repository';
 
 @Injectable()
-export class BuildingQueueRepository extends AbstractRepository<BuildingQueueElementModel> {
+export class BuildingQueueRepository extends AbstractQueueElementRepository<BuildingQueueElementModel> {
 	constructor(private dataSource: DataSource) {
 		super(BuildingQueueElementModel, dataSource.createEntityManager());
 	}
 
-	public getCurrentBuildingQueueForHabitat(
+	public getCurrentQueueForHabitat(
 		habitatId: number,
 	): Promise<BuildingQueueElementModel[]> {
 		return this.find({
@@ -21,6 +21,7 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
 				},
 				endTime: MoreThanOrEqual(new Date()),
 			},
+			order: {endTime: 'ASC', id: 'ASC'},
 		});
 	}
 
@@ -34,6 +35,7 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
 				},
 				endTime: MoreThanOrEqual(new Date()),
 			},
+			order: {endTime: 'ASC', id: 'ASC'},
 		});
 	}
 
@@ -47,7 +49,7 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
 		});
 	}
 
-	public countActiveBuildingQueueElementsForHabitat(
+	public countActiveQueueElementsForHabitat(
 		habitatId: number,
 	): Promise<number> {
 		return this.count({
@@ -63,12 +65,15 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
 	public getUnresolvedQueueForHabitat(
 		habitatId: number,
 	): Promise<BuildingQueueElementModel[]> {
-		return this.findBy({
-			isConsumed: false,
-			endTime: LessThanOrEqual(new Date()),
-			buildingZone: {
-				habitatId: habitatId,
+		return this.find({
+			where: {
+				isConsumed: false,
+				endTime: LessThanOrEqual(new Date()),
+				buildingZone: {
+					habitatId: habitatId,
+				},
 			},
+			order: {endTime: 'ASC', id: 'ASC'},
 		});
 	}
 
@@ -81,7 +86,9 @@ export class BuildingQueueRepository extends AbstractRepository<BuildingQueueEle
 			.andWhere('endTime <= :date', {date: new Date()})
 			.andWhere('buildingQueue.buildingZoneId = :buildingZoneId', {
 				buildingZoneId: buildingZoneId,
-			});
+			})
+			.orderBy('buildingQueue.endTime', 'ASC')
+			.addOrderBy('buildingQueue.id', 'ASC');
 
 		return queryBuilder.getMany();
 	}

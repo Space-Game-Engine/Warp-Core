@@ -12,7 +12,7 @@ describe('Building queue - basic update actions', () => {
 
 	const localBuildingZone = 3;
 
-	const now = DateTime.now();
+	let now: DateTime;
 
 	function addBuildingToQueueRequest(endLevel: number): supertest.Test {
 		return requestTest
@@ -49,6 +49,7 @@ describe('Building queue - basic update actions', () => {
 
 	describe('Create new building - lumber mill', () => {
 		beforeEach(async () => {
+			now = DateTime.now();
 			await addBuildingToQueueRequest(1);
 		});
 

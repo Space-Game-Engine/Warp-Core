@@ -62,7 +62,7 @@ describe('Building queue add', () => {
 				.expectCalledWith(addToQueueElement)
 				.mockResolvedValue(savedQueueElement);
 
-			when(buildingQueueRepository.save)
+			when(buildingQueueRepository.saveQueueElement)
 				.calledWith(savedQueueElement)
 				.mockResolvedValue(savedQueueElement);
 
@@ -101,7 +101,7 @@ describe('Building queue add', () => {
 				.expectCalledWith(addToQueueElement)
 				.mockResolvedValue(draftBuildingQueueElement);
 
-			when(buildingQueueRepository.save)
+			when(buildingQueueRepository.saveQueueElement)
 				.calledWith(draftBuildingQueueElement)
 				.mockResolvedValue(draftBuildingQueueElement);
 			when(buildingQueueAddEmitter.afterAddingElement).mockRejectedValue(

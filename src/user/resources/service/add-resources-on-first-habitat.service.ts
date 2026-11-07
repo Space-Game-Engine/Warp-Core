@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {HabitatCreatedEvent} from '@warp-core/user/habitat';
 
