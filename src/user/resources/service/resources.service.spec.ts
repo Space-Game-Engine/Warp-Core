@@ -1,9 +1,9 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
-import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {HabitatResourceCombined} from '@warp-core/database/model/resource/habitat-resource.mapped.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
+import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {CalculationMechanic} from '@warp-core/user/resources/service/calculate/resource-calculation/calculation-mechanic.interface';
 import {ResourcesService} from '@warp-core/user/resources/service/resources.service';
@@ -17,7 +17,6 @@ jest.mock(
 describe('Resources service', () => {
 	let resourcesService: ResourcesService;
 	let habitatResourceRepository: jest.Mocked<HabitatResourceRepository>;
-	let calculationMechanic: jest.Mocked<CalculationMechanic>;
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
@@ -36,7 +35,6 @@ describe('Resources service', () => {
 
 		resourcesService = module.get<ResourcesService>(ResourcesService);
 		habitatResourceRepository = module.get(HabitatResourceRepository);
-		calculationMechanic = module.get(CalculationMechanic);
 	});
 
 	describe('getSingleResourceById', () => {

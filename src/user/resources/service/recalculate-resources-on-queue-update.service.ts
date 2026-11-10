@@ -1,6 +1,6 @@
 import {Injectable, Logger} from '@nestjs/common';
 
-import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
+import {BuildingProductionRateModel} from '@warp-core/database/model/building/building-production-rate.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
@@ -39,7 +39,7 @@ export class RecalculateResourcesOnQueueUpdate {
 				buildingProduction.map(
 					singleBuildingProduction => singleBuildingProduction.resourceId,
 				),
-				(await queueElement.buildingZone).habitatId,
+				await queueElement.getHabitatId(),
 			);
 
 		for (const resource of resources) {

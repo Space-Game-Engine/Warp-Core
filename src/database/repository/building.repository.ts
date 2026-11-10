@@ -1,8 +1,8 @@
 import {Injectable} from '@nestjs/common';
 import {DataSource, In} from 'typeorm';
 
-import {BuildingProductionRateModel} from '@warp-core/database/model/building-production-rate.model';
-import {BuildingModel} from '@warp-core/database/model/building.model';
+import {BuildingProductionRateModel} from '@warp-core/database/model/building/building-production-rate.model';
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()
@@ -40,7 +40,7 @@ export class BuildingRepository extends AbstractRepository<BuildingModel> {
 
 		const detailsAtSelectedLevel = (
 			await buildingModel.buildingDetailsAtCertainLevel
-		).find(buildingDetails => buildingDetails.level === buildingLevel);
+		).find(buildingDetails => buildingDetails.details.level === buildingLevel);
 
 		return (await detailsAtSelectedLevel!.productionRate) ?? [];
 	}

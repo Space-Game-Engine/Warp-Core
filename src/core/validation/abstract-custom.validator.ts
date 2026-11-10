@@ -6,9 +6,9 @@ import {
 import {plainToInstance} from 'class-transformer';
 import {validate} from 'class-validator';
 
-export abstract class CustomValidator<T extends object>
-	implements PipeTransform<T>
-{
+export abstract class CustomValidator<
+	T extends object,
+> implements PipeTransform<T> {
 	public async transform(value: T, {metatype}: ArgumentMetadata): Promise<T> {
 		if (!metatype || !this.isPossibleToValidate(metatype)) {
 			return value;

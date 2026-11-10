@@ -24,6 +24,9 @@ runtime:
     buildingQueue:
       maxElementsInQueue: 5
       allowMultipleLevelUpdate: true
+    researchQueue:
+      maxElementsInQueue: 5
+      allowMultipleLevelUpdate: true
     onStart:
       resources:
         - id: 'wood'
@@ -43,4 +46,6 @@ runtime:
       warehouse: 'base-resource-summary'
     queue:
       building:
+        resourceConsumer: 'simple-resource-consumer'
+      research:
         resourceConsumer: 'simple-resource-consumer'

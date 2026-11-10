@@ -1,7 +1,7 @@
 import {Args, ID, Parent, Query, ResolveField, Resolver} from '@nestjs/graphql';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
+import {HabitatResourceCombined} from '@warp-core/database/model/resource/habitat-resource.mapped.model';
 import {ResourcesService} from '@warp-core/user/resources/service/resources.service';
 
 @Resolver(() => HabitatResourceCombined)
@@ -35,9 +35,7 @@ export class ResourcesResolver {
 	}
 
 	@ResolveField()
-	public habitat(
-		@Parent() resource: HabitatResourceCombined,
-	): AuthorizedHabitatModel {
+	public habitat(): AuthorizedHabitatModel {
 		return this.habitatModel;
 	}
 

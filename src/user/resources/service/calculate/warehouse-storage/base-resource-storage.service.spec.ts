@@ -2,7 +2,7 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
-import {ResourceModel} from '@warp-core/database/model/resource.model';
+import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {BaseResourceStorageService} from '@warp-core/user/resources/service/calculate/warehouse-storage/base-resource-storage.service';

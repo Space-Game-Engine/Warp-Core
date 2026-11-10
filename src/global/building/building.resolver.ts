@@ -2,8 +2,8 @@ import {Args, ID, Parent, Query, ResolveField, Resolver} from '@nestjs/graphql';
 
 import {BuildingService} from './building.service';
 
-import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building-details-at-certain-level.model';
-import {BuildingModel} from '@warp-core/database/model/building.model';
+import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building/building-details-at-certain-level.model';
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 
 @Resolver(() => BuildingModel)
 export class BuildingResolver {

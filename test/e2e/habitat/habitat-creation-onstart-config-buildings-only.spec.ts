@@ -2,7 +2,7 @@ import {HttpStatus, INestApplication} from '@nestjs/common';
 import {DateTime} from 'luxon';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {HabitatResourceCombined} from '@warp-core/database/model/habitat-resource.mapped.model';
+import {HabitatResourceCombined} from '@warp-core/database/model/resource/habitat-resource.mapped.model';
 import {requestGraphQL} from '@warp-core/test/e2e/utils/graphql-request-test';
 import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
 import {createNestApplicationE2E} from '@warp-core/test/e2e/utils/setup-tests';

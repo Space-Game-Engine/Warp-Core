@@ -5,9 +5,7 @@ import {WarehouseStorageCalculationMechanic} from '@warp-core/user/resources/ser
 
 @Injectable()
 @AddMechanic(WarehouseStorageCalculationMechanic, 'disabled')
-export class DisabledWarehouseStorageService
-	implements WarehouseStorageCalculationMechanic
-{
+export class DisabledWarehouseStorageService implements WarehouseStorageCalculationMechanic {
 	public async calculateStorage(): Promise<number> {
 		return Number.MAX_SAFE_INTEGER;
 	}

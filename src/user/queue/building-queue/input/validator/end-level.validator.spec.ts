@@ -1,11 +1,11 @@
 import {Test, TestingModule} from '@nestjs/testing';
 
+import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {BuildingModel} from '@warp-core/database/model/building.model';
-import {QueueValidationError} from '@warp-core/user/queue/building-queue/exception/queue-validation.error';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 import {EndLevelValidator} from '@warp-core/user/queue/building-queue/input/validator/end-level.validator';
 import {QueueInputValidation} from '@warp-core/user/queue/building-queue/input/validator/type';
+import {QueueValidationError} from '@warp-core/user/queue/core';
 
 describe('End Level building queue validator', () => {
 	let endLevelValidator: EndLevelValidator;
@@ -102,7 +102,9 @@ describe('End Level building queue validator', () => {
 				id: 'test',
 				buildingDetailsAtCertainLevel: [
 					{
-						level: 10,
+						details: {
+							level: 10,
+						},
 					},
 				],
 			} as BuildingModel;
@@ -125,6 +127,39 @@ describe('End Level building queue validator', () => {
 			});
 		});
 
+		it('should pass validation when end level equals highest level and level details are out of order', async () => {
+			const addToQueueInput: AddToQueueInput = {
+				localBuildingZoneId: 1,
+				buildingId: 'test',
+				endLevel: 2,
+			};
+
+			const buildingZone = {
+				id: 1,
+				level: 0,
+				building: null,
+			} as unknown as BuildingZoneModel;
+
+			const building = {
+				id: 'test',
+				buildingDetailsAtCertainLevel: [
+					{details: {level: 2}},
+					{details: {level: 1}},
+				],
+			} as BuildingModel;
+
+			const validationError = new QueueValidationError();
+
+			await endLevelValidator.validate({
+				addToQueueInput,
+				building,
+				buildingZone,
+				validationError,
+			});
+
+			expect(validationError.hasErrors()).toBe(false);
+		});
+
 		it('should be correct level settings for queue', async () => {
 			const addToQueueInput: AddToQueueInput = {
 				localBuildingZoneId: 1,
@@ -142,7 +177,9 @@ describe('End Level building queue validator', () => {
 				id: 'test',
 				buildingDetailsAtCertainLevel: [
 					{
-						level: 10,
+						details: {
+							level: 10,
+						},
 					},
 				],
 			} as BuildingModel;

@@ -1,8 +1,8 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {HabitatResourceModel} from '@warp-core/database/model/habitat-resource.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
+import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
@@ -47,14 +47,12 @@ describe('Resource extraction service', () => {
 				},
 			] as QueueElementCostModel[];
 
-			const queueElement = {
+			const queueElementEvent = {
 				queueElement: {
+					getHabitatId: (): number => 1,
 					costs,
-					buildingZone: {
-						habitatId: 1,
-					},
 				},
-			} as BuildingQueueProcessing;
+			} as unknown as BuildingQueueProcessing;
 
 			const habitatResources = [
 				{
@@ -71,7 +69,9 @@ describe('Resource extraction service', () => {
 				.expectCalledWith(costs, 1)
 				.mockResolvedValue(habitatResources);
 
-			await resourceExtractorService.useResourcesOnQueueUpdate(queueElement);
+			await resourceExtractorService.useResourcesOnQueueUpdate(
+				queueElementEvent,
+			);
 
 			expect(habitatResources[0].currentAmount).toEqual(0);
 			expect(habitatResources[1].currentAmount).toEqual(0);
