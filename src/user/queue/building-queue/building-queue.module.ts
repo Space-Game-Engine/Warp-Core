@@ -22,7 +22,11 @@ import {DraftQueueElementValidator} from '@warp-core/user/queue/building-queue/i
 import {EndLevelValidator} from '@warp-core/user/queue/building-queue/input/validator/end-level.validator';
 import {MaxQueueCountValidator} from '@warp-core/user/queue/building-queue/input/validator/max-queue-count.validator';
 import {ValidateSingleQueueElementService} from '@warp-core/user/queue/building-queue/input/validator/validate-single-queue-element.service';
-import {ValidateQueueRequirementsService} from '@warp-core/user/queue/core';
+import {
+	ValidateBuildingRequirementsService,
+	ValidateQueueRequirementsService,
+	ValidateResearchNodeRequirementsService,
+} from '@warp-core/user/queue/core';
 
 @Module({
 	providers: [
@@ -40,6 +44,8 @@ import {ValidateQueueRequirementsService} from '@warp-core/user/queue/core';
 		MaxQueueCountValidator,
 		BuildingRequirementsValidator,
 		ValidateQueueRequirementsService,
+		ValidateResearchNodeRequirementsService,
+		ValidateBuildingRequirementsService,
 		BuildingQueueAddEmitter,
 		BuildingQueueProcessingEmitter,
 		ValidateSingleQueueElementService,

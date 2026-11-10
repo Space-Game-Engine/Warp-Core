@@ -5,7 +5,11 @@ import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
 import {RegisterMechanic} from '@warp-core/core/utils/mechanics';
 import {DatabaseModule} from '@warp-core/database/database.module';
 import {ResearchNodeQueryEmitter} from '@warp-core/global/research-node';
-import {ValidateQueueRequirementsService} from '@warp-core/user/queue/core';
+import {
+	ValidateBuildingRequirementsService,
+	ValidateQueueRequirementsService,
+	ValidateResearchNodeRequirementsService,
+} from '@warp-core/user/queue/core';
 import {ResearchQueueResourceConsumerInterface} from '@warp-core/user/queue/research-queue/add/calculate-resources/research-queue-resource-consumer.interface';
 import {SimpleResearchCalculationService} from '@warp-core/user/queue/research-queue/add/calculate-resources/simple-research-calculation.service';
 import {PrepareSingleResearchQueueElementService} from '@warp-core/user/queue/research-queue/add/prepare-single-research-queue-element.service';
@@ -38,6 +42,8 @@ import {ResearchQueueResolver} from '@warp-core/user/queue/research-queue/resear
 		ResearchMaxQueueCountValidator,
 		ResearchRequirementsValidator,
 		ValidateQueueRequirementsService,
+		ValidateResearchNodeRequirementsService,
+		ValidateBuildingRequirementsService,
 		ResearchQueueAddEmitter,
 		ResearchQueueProcessingEmitter,
 		ValidateSingleResearchQueueElementService,
