@@ -2,11 +2,13 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
+import {BuildingBlueprintPlayerModel} from '@warp-core/database/model/building/building-blueprint-player.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
+import {BuildingBlueprintQueryEmitter} from '@warp-core/user/blueprint/building-blueprint';
 import {BuildingQueueHandlerService} from '@warp-core/user/queue/building-queue/building-queue-handler.service';
 import {BuildingQueueProcessingEmitter} from '@warp-core/user/queue/building-queue/exchange/emit/building-queue-processing.emitter';
 
@@ -16,6 +18,11 @@ jest.mock('@warp-core/auth/payload/model/habitat.model');
 jest.mock(
 	'@warp-core/user/queue/building-queue/exchange/emit/building-queue-processing.emitter',
 );
+jest.mock(
+	'@warp-core/user/blueprint/building-blueprint/exchange/query/building-blueprint-query.emitter',
+);
+
+const CREATED_PLAYER_BLUEPRINT_ID = 42;
 
 describe('Building queue handler service test', () => {
 	let buildingQueueHandlerService: BuildingQueueHandlerService;
@@ -23,6 +30,7 @@ describe('Building queue handler service test', () => {
 	let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
 	let authorizedHabitatModel: AuthorizedHabitatModel;
 	let eventEmitter: jest.Mocked<BuildingQueueProcessingEmitter>;
+	let buildingBlueprintEmitter: jest.Mocked<BuildingBlueprintQueryEmitter>;
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
@@ -34,6 +42,7 @@ describe('Building queue handler service test', () => {
 				BuildingZoneRepository,
 				AuthorizedHabitatModel,
 				BuildingQueueProcessingEmitter,
+				BuildingBlueprintQueryEmitter,
 			],
 		}).compile();
 
@@ -42,15 +51,26 @@ describe('Building queue handler service test', () => {
 		buildingZoneRepository = module.get(BuildingZoneRepository);
 		authorizedHabitatModel = module.get(AuthorizedHabitatModel);
 		eventEmitter = module.get(BuildingQueueProcessingEmitter);
+		buildingBlueprintEmitter = module.get(BuildingBlueprintQueryEmitter);
 
 		authorizedHabitatModel.id = 1;
+
+		when(buildingBlueprintEmitter.getOrCreateBlueprintPlayer)
+			.calledWith({habitatId: 1, buildingId: 'test'})
+			.mockResolvedValue({
+				data: {
+					id: CREATED_PLAYER_BLUEPRINT_ID,
+					buildingId: 'test',
+				} as BuildingBlueprintPlayerModel,
+				error: undefined,
+			});
 	});
 
 	function prepareQueueElements(
 		buildingZone: BuildingZoneModel,
 		endLevels: number[],
 	): BuildingQueueElementModel[] {
-		const building = {id: 'test'} as BuildingModel;
+		const building = {id: 'test'} as BuildingBlueprintGlobalModel;
 
 		return endLevels.map(
 			(endLevel, index) =>
@@ -58,6 +78,7 @@ describe('Building queue handler service test', () => {
 					id: index + 1,
 					buildingZone,
 					building,
+					buildingId: building.id,
 					endLevel,
 					isConsumed: false,
 				}) as BuildingQueueElementModel,
@@ -67,7 +88,7 @@ describe('Building queue handler service test', () => {
 	function expectQueueElementsToBeProcessed(
 		buildingZone: BuildingZoneModel,
 		queueElements: BuildingQueueElementModel[],
-		expectedBuildingId: string,
+		expectedBlueprintPlayerId: number,
 	): void {
 		expect(buildingZoneRepository.update).toHaveBeenCalledTimes(
 			queueElements.length,
@@ -86,7 +107,10 @@ describe('Building queue handler service test', () => {
 			expect(buildingZoneRepository.update).toHaveBeenNthCalledWith(
 				index + 1,
 				buildingZone.id,
-				{buildingId: expectedBuildingId, level: queueElement.endLevel},
+				{
+					buildingBlueprintPlayerId: expectedBlueprintPlayerId,
+					level: queueElement.endLevel,
+				},
 			);
 			expect(
 				buildingQueueRepository.markElementAsConsumed,
@@ -134,27 +158,51 @@ describe('Building queue handler service test', () => {
 		const testCases = [
 			{
 				name: 'building zone does not have building set',
-				buildingZone: {id: 1, level: 0, buildingId: null},
+				buildingZone: {
+					id: 1,
+					level: 0,
+					habitatId: 1,
+					buildingBlueprintPlayerId: null,
+				},
 				endLevels: [1],
-				expectedBuildingId: 'test',
+				expectedBlueprintPlayerId: CREATED_PLAYER_BLUEPRINT_ID,
+				expectedBlueprintCreations: 1,
 			},
 			{
 				name: 'building zone does not have building set and there are multiple queue items',
-				buildingZone: {id: 1, level: 0, buildingId: null},
+				buildingZone: {
+					id: 1,
+					level: 0,
+					habitatId: 1,
+					buildingBlueprintPlayerId: null,
+				},
 				endLevels: [1, 2, 3],
-				expectedBuildingId: 'test',
+				expectedBlueprintPlayerId: CREATED_PLAYER_BLUEPRINT_ID,
+				expectedBlueprintCreations: 1,
 			},
 			{
 				name: 'building zone have building set and there is single queue item',
-				buildingZone: {id: 1, level: 1, buildingId: 'existing'},
+				buildingZone: {
+					id: 1,
+					level: 1,
+					habitatId: 1,
+					buildingBlueprintPlayerId: 7,
+				},
 				endLevels: [2],
-				expectedBuildingId: 'existing',
+				expectedBlueprintPlayerId: 7,
+				expectedBlueprintCreations: 0,
 			},
 			{
 				name: 'building zone have building set and there are multiple queue items',
-				buildingZone: {id: 1, level: 1, buildingId: 'existing'},
+				buildingZone: {
+					id: 1,
+					level: 1,
+					habitatId: 1,
+					buildingBlueprintPlayerId: 7,
+				},
 				endLevels: [2, 3, 4],
-				expectedBuildingId: 'existing',
+				expectedBlueprintPlayerId: 7,
+				expectedBlueprintCreations: 0,
 			},
 		];
 
@@ -177,11 +225,43 @@ describe('Building queue handler service test', () => {
 				expectQueueElementsToBeProcessed(
 					buildingZone,
 					queueElements,
-					singleTestCase.expectedBuildingId,
+					singleTestCase.expectedBlueprintPlayerId,
 				);
 				expect(buildingZone.level).toBe(singleTestCase.endLevels.at(-1));
-				expect(buildingZone.buildingId).toBe(singleTestCase.expectedBuildingId);
+				expect(buildingZone.buildingBlueprintPlayerId).toBe(
+					singleTestCase.expectedBlueprintPlayerId,
+				);
+				expect(
+					buildingBlueprintEmitter.getOrCreateBlueprintPlayer,
+				).toHaveBeenCalledTimes(singleTestCase.expectedBlueprintCreations);
 			});
+		});
+	});
+
+	describe('applyQueueElement errors', () => {
+		it('should throw internal emitter error when player blueprint cannot be created', async () => {
+			const buildingZone = {
+				id: 1,
+				level: 0,
+				habitatId: 1,
+				buildingBlueprintPlayerId: null,
+			} as unknown as BuildingZoneModel;
+			const queueElements = prepareQueueElements(buildingZone, [1]);
+
+			when(buildingQueueRepository.getUnresolvedQueueForHabitat)
+				.expectCalledWith(1)
+				.mockResolvedValueOnce(queueElements);
+			when(buildingBlueprintEmitter.getOrCreateBlueprintPlayer)
+				.calledWith({habitatId: 1, buildingId: 'test'})
+				.mockResolvedValueOnce({
+					data: undefined,
+					error: {message: 'boom', trace: undefined},
+				});
+
+			await expect(buildingQueueHandlerService.resolveQueue()).rejects.toThrow(
+				'boom',
+			);
+			expect(buildingZoneRepository.update).not.toHaveBeenCalled();
 		});
 	});
 
@@ -190,7 +270,8 @@ describe('Building queue handler service test', () => {
 			const buildingZone = {
 				id: 7,
 				level: 1,
-				buildingId: 'existing',
+				habitatId: 1,
+				buildingBlueprintPlayerId: 3,
 			} as BuildingZoneModel;
 			const queueElements = prepareQueueElements(buildingZone, [2, 3]);
 
@@ -202,7 +283,7 @@ describe('Building queue handler service test', () => {
 				buildingZone,
 			);
 
-			expectQueueElementsToBeProcessed(buildingZone, queueElements, 'existing');
+			expectQueueElementsToBeProcessed(buildingZone, queueElements, 3);
 			expect(
 				buildingQueueRepository.getUnresolvedQueueForHabitat,
 			).not.toHaveBeenCalled();

@@ -1,7 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {BuildingZoneEmitter} from '@warp-core/user/building-zone';
@@ -74,7 +74,7 @@ describe('Validate single queue element service', () => {
 					data: {
 						id: 1,
 						level: 0,
-						building: null,
+						getBuilding: async (): Promise<null> => null,
 					} as unknown as BuildingZoneModel,
 					error: undefined,
 				});
@@ -108,7 +108,7 @@ describe('Validate single queue element service', () => {
 					data: {
 						id: 1,
 						level: 0,
-						building: null,
+						getBuilding: async (): Promise<null> => null,
 					} as unknown as BuildingZoneModel,
 					error: undefined,
 				});
@@ -141,7 +141,7 @@ describe('Validate single queue element service', () => {
 			const buildingZone = {
 				id: 1,
 				level: 0,
-				building: null,
+				getBuilding: async (): Promise<null> => null,
 			} as unknown as BuildingZoneModel;
 
 			const building = {
@@ -151,7 +151,7 @@ describe('Validate single queue element service', () => {
 						details: {level: 10},
 					},
 				],
-			} as BuildingModel;
+			} as BuildingBlueprintGlobalModel;
 
 			when(buildingZoneService.getSingleBuildingZone)
 				.calledWith({localBuildingZoneId: addToQueue.localBuildingZoneId})
@@ -183,7 +183,7 @@ describe('Validate single queue element service', () => {
 			const buildingZone = {
 				id: 1,
 				level: 0,
-				building: null,
+				getBuilding: async (): Promise<null> => null,
 			} as unknown as BuildingZoneModel;
 
 			const building = {
@@ -193,7 +193,7 @@ describe('Validate single queue element service', () => {
 						details: {level: 10},
 					},
 				],
-			} as BuildingModel;
+			} as BuildingBlueprintGlobalModel;
 
 			when(buildingZoneService.getSingleBuildingZone)
 				.calledWith({localBuildingZoneId: addToQueue.localBuildingZoneId})

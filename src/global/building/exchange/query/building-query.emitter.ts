@@ -4,7 +4,7 @@ import {
 	InternalExchangeEmitter,
 	QueryExchangeResponse,
 } from '@warp-core/core/utils/internal-exchange';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingQueryNames} from '@warp-core/global/building/exchange/query/building-query.names';
 
 @Injectable()
@@ -16,8 +16,8 @@ export class BuildingQueryEmitter {
 
 	public getBuildingById(
 		buildingId: string,
-	): Promise<QueryExchangeResponse<BuildingModel | null>> {
-		return this.emitter.query<BuildingModel | null>({
+	): Promise<QueryExchangeResponse<BuildingBlueprintGlobalModel | null>> {
+		return this.emitter.query<BuildingBlueprintGlobalModel | null>({
 			eventName: BuildingQueryNames.GetBuildingById,
 			requestData: {id: buildingId},
 		});

@@ -13,17 +13,20 @@ import {
 	BeforeUpdate,
 	Column,
 	Entity,
-	JoinColumn,
 	OneToMany,
 	PrimaryColumn,
 } from 'typeorm';
 
+import {BlueprintGlobalModelInterface} from '@warp-core/core/utils/model/blueprint-global.model-interface';
 import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
 import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building/building-details-at-certain-level.model';
 
-@ObjectType({description: 'Single building type, describes its role in game'})
-@Entity({name: 'building'})
-export class BuildingModel {
+@ObjectType({
+	description:
+		'Global building blueprint, shared by all habitats. Describes building role and how it behaves on every level.',
+})
+@Entity({name: 'building-blueprint-global'})
+export class BuildingBlueprintGlobalModel implements BlueprintGlobalModelInterface {
 	@Field(() => ID)
 	@IsString()
 	@PrimaryColumn()
@@ -56,7 +59,6 @@ export class BuildingModel {
 			cascade: true,
 		},
 	)
-	@JoinColumn({name: 'buildingDetailsAtCertainLevelId'})
 	@Type(() => BuildingDetailsAtCertainLevelModel)
 	public buildingDetailsAtCertainLevel:
 		| BuildingDetailsAtCertainLevelModel[]

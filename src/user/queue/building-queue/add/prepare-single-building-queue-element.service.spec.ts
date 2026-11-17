@@ -3,7 +3,7 @@ import {when} from 'jest-when';
 import {DeepPartial} from 'typeorm';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
@@ -223,11 +223,11 @@ describe('Prepare single building queue element tests', () => {
 			const buildingZone = singleTestCase.buildingZone as BuildingZoneModel;
 			buildingZone.habitatId = habitatMock.id;
 
-			const building = singleTestCase.building as BuildingModel;
-
-			if (buildingZone.building !== null) {
-				buildingZone.building = building;
-			}
+			const building = singleTestCase.building as BuildingBlueprintGlobalModel;
+			const hasBuildingPlaced = singleTestCase.buildingZone.building !== null;
+			buildingZone.getBuilding =
+				async (): Promise<BuildingBlueprintGlobalModel | null> =>
+					hasBuildingPlaced ? building : null;
 
 			const existingQueue =
 				singleTestCase.existingQueue as BuildingQueueElementModel[];
@@ -241,7 +241,7 @@ describe('Prepare single building queue element tests', () => {
 				.expectCalledWith(addToQueueInput.localBuildingZoneId, habitatMock.id)
 				.mockResolvedValue(buildingZone);
 
-			if (buildingZone.building === null) {
+			if (!hasBuildingPlaced) {
 				when(buildingService.getBuildingById)
 					.expectCalledWith(addToQueueInput.buildingId as string)
 					.mockResolvedValue({data: building, error: undefined});

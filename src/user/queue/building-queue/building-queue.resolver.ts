@@ -9,7 +9,7 @@ import {
 
 import {ResourceConsumerResolverInterface} from '@warp-core/core/utils';
 import {DraftModelInterface} from '@warp-core/core/utils/model';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueueAddService} from '@warp-core/user/queue/building-queue/add/building-queue-add.service';
@@ -61,7 +61,7 @@ export class BuildingQueueResolver implements ResourceConsumerResolverInterface 
 	@ResolveField()
 	public async building(
 		@Parent() buildingQueueElement: BuildingQueueElementModel,
-	): Promise<BuildingModel | null | undefined> {
+	): Promise<BuildingBlueprintGlobalModel | null | undefined> {
 		return buildingQueueElement.building;
 	}
 

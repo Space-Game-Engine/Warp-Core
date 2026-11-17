@@ -9,10 +9,12 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
+import {InstanceModelInterface} from '@warp-core/core/utils/model/instance.model-interface';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
+import {BuildingBlueprintPlayerModel} from '@warp-core/database/model/building/building-blueprint-player.model';
 import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building/building-details-at-certain-level.model';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
+import {CalculatedCapabilitiesModel} from '@warp-core/database/model/capability/calculated-capabilities.model';
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
 
 @ObjectType({
@@ -20,7 +22,7 @@ import {HabitatModel} from '@warp-core/database/model/habitat.model';
 		'Single building zone, you can build here single building and level it up',
 })
 @Entity({name: 'building-zone'})
-export class BuildingZoneModel {
+export class BuildingZoneModel implements InstanceModelInterface<BuildingBlueprintPlayerModel> {
 	/**
 	 * Minimal level with created building on that zone
 	 */
@@ -49,18 +51,40 @@ export class BuildingZoneModel {
 	@Column({name: 'habitatId'})
 	public habitatId: number;
 
-	@Field(() => BuildingModel, {
+	@Field(() => BuildingBlueprintPlayerModel, {
+		nullable: true,
+		description:
+			'Player blueprint of the building placed here. Empty when nothing is built yet.',
+	})
+	@ManyToOne(
+		() => BuildingBlueprintPlayerModel,
+		blueprint => blueprint.buildingZones,
+		{
+			lazy: true,
+			nullable: true,
+		},
+	)
+	@JoinColumn({name: 'buildingBlueprintPlayerId'})
+	public buildingBlueprintPlayer?:
+		| BuildingBlueprintPlayerModel
+		| Promise<BuildingBlueprintPlayerModel>
+		| null;
+
+	@Column({name: 'buildingBlueprintPlayerId', nullable: true})
+	public buildingBlueprintPlayerId?: number | null;
+
+	@Field(() => BuildingBlueprintGlobalModel, {
 		nullable: true,
 		description: 'What kind of building is placed here',
 	})
-	@ManyToOne(() => BuildingModel, {
-		lazy: true,
-	})
-	@JoinColumn({name: 'buildingId'})
-	public building?: BuildingModel | Promise<BuildingModel>;
+	public building?: BuildingBlueprintGlobalModel | null;
 
-	@Column({name: 'buildingId', nullable: true})
-	public buildingId?: string;
+	@Field(() => CalculatedCapabilitiesModel, {
+		nullable: true,
+		description:
+			'Effective capabilities of that building zone: global blueprint capabilities at current level plus player blueprint bonuses',
+	})
+	public capabilities?: CalculatedCapabilitiesModel | null;
 
 	@Field({description: 'What level is that'})
 	@IsNumber()
@@ -92,12 +116,26 @@ export class BuildingZoneModel {
 	private currentLevelBuildingDetails: BuildingDetailsAtCertainLevelModel | null =
 		null;
 
+	public async getPlayerBlueprint(): Promise<BuildingBlueprintPlayerModel | null> {
+		return (await this.buildingBlueprintPlayer) ?? null;
+	}
+
+	public async getBuilding(): Promise<BuildingBlueprintGlobalModel | null> {
+		const playerBlueprint = await this.getPlayerBlueprint();
+
+		if (!playerBlueprint) {
+			return null;
+		}
+
+		return playerBlueprint.getGlobalBlueprint();
+	}
+
 	public async getBuildingLevelDetails(): Promise<BuildingDetailsAtCertainLevelModel | null> {
 		if (this.currentLevelBuildingDetails !== null) {
 			return this.currentLevelBuildingDetails;
 		}
 
-		const building = await this.building;
+		const building = await this.getBuilding();
 
 		if (!building) {
 			return null;
@@ -109,30 +147,5 @@ export class BuildingZoneModel {
 			) ?? null;
 
 		return this.currentLevelBuildingDetails;
-	}
-
-	public async hasWarehouse(): Promise<boolean> {
-		const building = await this.building;
-		if (!building) {
-			return false;
-		}
-
-		if (building.role === BuildingRoleEnum.WAREHOUSE_ONLY) {
-			return true;
-		}
-
-		const buildingDetails = await this.getBuildingLevelDetails();
-
-		if (!buildingDetails) {
-			return false;
-		}
-
-		const warehouses = (await buildingDetails.warehouse) ?? [];
-
-		if (warehouses.length > 0) {
-			return true;
-		}
-
-		return false;
 	}
 }
