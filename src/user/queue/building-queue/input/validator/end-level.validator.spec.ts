@@ -1,6 +1,6 @@
 import {Test, TestingModule} from '@nestjs/testing';
 
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 import {EndLevelValidator} from '@warp-core/user/queue/building-queue/input/validator/end-level.validator';
@@ -34,7 +34,7 @@ describe('End Level building queue validator', () => {
 
 			const building = {
 				id: 'test',
-			} as BuildingModel;
+			} as BuildingBlueprintGlobalModel;
 
 			const validationError = new QueueValidationError();
 
@@ -67,7 +67,7 @@ describe('End Level building queue validator', () => {
 
 			const building = {
 				id: 'test',
-			} as BuildingModel;
+			} as BuildingBlueprintGlobalModel;
 
 			const validationError = new QueueValidationError();
 
@@ -107,7 +107,7 @@ describe('End Level building queue validator', () => {
 						},
 					},
 				],
-			} as BuildingModel;
+			} as BuildingBlueprintGlobalModel;
 
 			const validationError = new QueueValidationError();
 
@@ -146,7 +146,7 @@ describe('End Level building queue validator', () => {
 					{details: {level: 2}},
 					{details: {level: 1}},
 				],
-			} as BuildingModel;
+			} as BuildingBlueprintGlobalModel;
 
 			const validationError = new QueueValidationError();
 
@@ -182,7 +182,7 @@ describe('End Level building queue validator', () => {
 						},
 					},
 				],
-			} as BuildingModel;
+			} as BuildingBlueprintGlobalModel;
 
 			const validationError = new QueueValidationError();
 

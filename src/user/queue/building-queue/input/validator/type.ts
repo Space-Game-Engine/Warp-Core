@@ -1,11 +1,11 @@
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 import {QueueValidationError} from '@warp-core/user/queue/core/exception/queue-validation.error';
 
 export type QueueInputValidation = {
 	addToQueueInput: AddToQueueInput;
-	building: BuildingModel;
+	building: BuildingBlueprintGlobalModel;
 	buildingZone: BuildingZoneModel;
 	validationError: QueueValidationError;
 };

@@ -14,7 +14,7 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-details/details-at-certain-level.model';
 import {ResearchNodeModel} from '@warp-core/database/model/research-node/research-node.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
@@ -96,14 +96,17 @@ export class RequirementsPerLevelModel {
 	@IsOptional()
 	public researchNodeLevel?: number;
 
-	@Field(() => BuildingModel, {
+	@Field(() => BuildingBlueprintGlobalModel, {
 		description: 'Required building',
 		nullable: true,
 	})
-	@ManyToOne(() => BuildingModel, {lazy: true, nullable: true})
+	@ManyToOne(() => BuildingBlueprintGlobalModel, {lazy: true, nullable: true})
 	@JoinColumn({name: 'buildingId'})
 	@IsOptional()
-	public building?: BuildingModel | Promise<BuildingModel> | null;
+	public building?:
+		| BuildingBlueprintGlobalModel
+		| Promise<BuildingBlueprintGlobalModel>
+		| null;
 
 	@Field(() => String, {
 		description: 'Id of required building',

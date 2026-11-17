@@ -1,18 +1,20 @@
 import {Injectable} from '@nestjs/common';
 
 import {calculateUpgradeTimeInSeconds} from '@warp-core/core/utils';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
-import {BuildingRepository} from '@warp-core/database/repository/building.repository';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
+import {BuildingBlueprintGlobalRepository} from '@warp-core/database/repository/building-blueprint-global.repository';
 
 @Injectable()
 export class BuildingService {
-	constructor(private buildingRepository: BuildingRepository) {}
+	constructor(private buildingRepository: BuildingBlueprintGlobalRepository) {}
 
-	public getBuildingById(buildingId: string): Promise<BuildingModel | null> {
+	public getBuildingById(
+		buildingId: string,
+	): Promise<BuildingBlueprintGlobalModel | null> {
 		return this.buildingRepository.getBuildingById(buildingId);
 	}
 
-	public getAllBuildings(): Promise<BuildingModel[]> {
+	public getAllBuildings(): Promise<BuildingBlueprintGlobalModel[]> {
 		return this.buildingRepository.getAllBuildings();
 	}
 

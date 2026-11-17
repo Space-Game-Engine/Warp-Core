@@ -6,18 +6,20 @@ buildings:
       - details:
           level: 1
           timeToUpdateInSeconds: 10
-        warehouse:
-          - warehouseType: any
-            amount: 100
+        capabilities:
+          storage:
+            - storageType: any
+              amount: 100
       - details:
           level: 2
           timeToUpdateInSeconds: 30
           requirements:
             - resourceId: wood
               cost: 20
-        warehouse:
-          - warehouseType: any
-            amount: 200
+        capabilities:
+          storage:
+            - storageType: any
+              amount: 200
   - role: resource
     name: Coal Mine
     id: coal_mine
@@ -28,18 +30,22 @@ buildings:
           requirements:
             - resourceId: wood
               cost: 20
-        productionRate:
-          - resourceId: coal
-            productionRate: 1
+        capabilities:
+          production:
+            - resourceId: coal
+              amount: 1
+              interval: 1
       - details:
           level: 2
           timeToUpdateInSeconds: 30
           requirements:
             - resourceId: wood
               cost: 100
-        productionRate:
-          - resourceId: coal
-            productionRate: 3
+        capabilities:
+          production:
+            - resourceId: coal
+              amount: 3
+              interval: 1
       - details:
           level: 3
           timeToUpdateInSeconds: 60
@@ -48,15 +54,19 @@ buildings:
               cost: 300
             - resourceId: stone_granite
               cost: 50
-        productionRate:
-          - resourceId: coal
-            productionRate: 4
+        capabilities:
+          production:
+            - resourceId: coal
+              amount: 4
+              interval: 1
       - details:
           level: 4
           timeToUpdateInSeconds: 80
-        productionRate:
-          - resourceId: coal
-            productionRate: 5
+        capabilities:
+          production:
+            - resourceId: coal
+              amount: 5
+              interval: 1
   - role: resource
     name: Lumber mill
     id: lumber_mill
@@ -67,27 +77,33 @@ buildings:
           requirements:
             - resourceId: wood
               cost: 10
-        productionRate:
-          - resourceId: wood
-            productionRate: 1
+        capabilities:
+          production:
+            - resourceId: wood
+              amount: 1
+              interval: 1
       - details:
           level: 2
           timeToUpdateInSeconds: 30
           requirements:
             - resourceId: wood
               cost: 50
-        productionRate:
-          - resourceId: wood
-            productionRate: 1
+        capabilities:
+          production:
+            - resourceId: wood
+              amount: 1
+              interval: 1
       - details:
           level: 3
           timeToUpdateInSeconds: 60
           requirements:
             - resourceId: wood
               cost: 300
-        productionRate:
-          - resourceId: wood
-            productionRate: 1
+        capabilities:
+          production:
+            - resourceId: wood
+              amount: 1
+              interval: 1
       - details:
           level: 4
           timeToUpdateInSeconds: 80
@@ -96,9 +112,11 @@ buildings:
               cost: 500
             - resourceId: stone_granite
               cost: 50
-        productionRate:
-          - resourceId: wood
-            productionRate: 1
+        capabilities:
+          production:
+            - resourceId: wood
+              amount: 1
+              interval: 1
   - role: technology
     name: University of Nothingness
     id: university

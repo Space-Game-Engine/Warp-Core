@@ -2,11 +2,14 @@ import {forwardRef, Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {EntityClassOrSchema} from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
 
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
+import {BuildingBlueprintPlayerModel} from '@warp-core/database/model/building/building-blueprint-player.model';
 import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building/building-details-at-certain-level.model';
-import {BuildingProductionRateModel} from '@warp-core/database/model/building/building-production-rate.model';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
+import {ProductionCapabilityModel} from '@warp-core/database/model/capability/production-capability.model';
+import {StorageCapabilityModel} from '@warp-core/database/model/capability/storage-capability.model';
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {InstallationDetailsModel} from '@warp-core/database/model/installation-details.model';
 import {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-details/details-at-certain-level.model';
@@ -18,10 +21,10 @@ import {ResearchNodeModel} from '@warp-core/database/model/research-node/researc
 import {ResearchQueueElementModel} from '@warp-core/database/model/research-queue-element.model';
 import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
-import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
+import {BuildingBlueprintGlobalRepository} from '@warp-core/database/repository/building-blueprint-global.repository';
+import {BuildingBlueprintPlayerRepository} from '@warp-core/database/repository/building-blueprint-player.repository';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
-import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {HabitatResearchNodeRepository} from '@warp-core/database/repository/habitat-research-node.repository';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
 import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
@@ -33,7 +36,8 @@ import {TransactionManagerService} from '@warp-core/database/transaction-manager
 
 @Module({
 	providers: [
-		BuildingRepository,
+		BuildingBlueprintGlobalRepository,
+		BuildingBlueprintPlayerRepository,
 		BuildingZoneRepository,
 		BuildingQueueRepository,
 		HabitatRepository,
@@ -49,7 +53,8 @@ import {TransactionManagerService} from '@warp-core/database/transaction-manager
 		forwardRef(() => TypeOrmModule.forFeature(DatabaseModule.entities())),
 	],
 	exports: [
-		BuildingRepository,
+		BuildingBlueprintGlobalRepository,
+		BuildingBlueprintPlayerRepository,
 		BuildingZoneRepository,
 		BuildingQueueRepository,
 		HabitatRepository,
@@ -64,14 +69,16 @@ import {TransactionManagerService} from '@warp-core/database/transaction-manager
 export class DatabaseModule {
 	public static entities(): EntityClassOrSchema[] {
 		return [
-			BuildingModel,
+			BuildingBlueprintGlobalModel,
+			BuildingBlueprintPlayerModel,
 			BuildingDetailsAtCertainLevelModel,
-			BuildingProductionRateModel,
+			CapabilitiesModel,
+			ProductionCapabilityModel,
+			StorageCapabilityModel,
 			DetailsAtCertainLevelModel,
 			HabitatResearchNodeModel,
 			ResearchNodeModel,
 			RequirementsPerLevelModel,
-			DetailsAtCertainLevelModel,
 			ResearchNodeDetailsAtCertainLevelModel,
 			HabitatResourceModel,
 			ResourceModel,
@@ -81,7 +88,6 @@ export class DatabaseModule {
 			HabitatModel,
 			InstallationDetailsModel,
 			QueueElementCostModel,
-			WarehouseDetailsModel,
 		];
 	}
 }

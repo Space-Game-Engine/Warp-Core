@@ -5,17 +5,19 @@ import {
 	InstallError,
 	LoadedConfig,
 } from '@warp-core/core/install';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 
 @Injectable()
-export class BuildingInstallService extends AbstractInstallationService<BuildingModel> {
-	protected modelType(): Type<BuildingModel> {
-		return BuildingModel;
+export class BuildingInstallService extends AbstractInstallationService<BuildingBlueprintGlobalModel> {
+	protected modelType(): Type<BuildingBlueprintGlobalModel> {
+		return BuildingBlueprintGlobalModel;
 	}
 
-	protected parseConfig(loadedConfig: LoadedConfig): BuildingModel[] {
+	protected parseConfig(
+		loadedConfig: LoadedConfig,
+	): BuildingBlueprintGlobalModel[] {
 		if (loadedConfig.buildings) {
-			return loadedConfig.buildings as BuildingModel[];
+			return loadedConfig.buildings as BuildingBlueprintGlobalModel[];
 		}
 
 		throw new InstallError('Buildings key not found in installation config');

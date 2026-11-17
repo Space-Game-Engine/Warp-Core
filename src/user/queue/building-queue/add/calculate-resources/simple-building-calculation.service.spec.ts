@@ -3,7 +3,7 @@ import {when} from 'jest-when';
 import {DeepPartial} from 'typeorm';
 
 import {ResourceTypeEnum} from '@warp-core/database/enum/resource-type.enum';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
@@ -32,7 +32,7 @@ describe('Simple calculation of resources for queue element', () => {
 		name: string;
 		addToQueue: Partial<AddToQueueInput>;
 		buildingZone: Partial<BuildingZoneModel>;
-		building: DeepPartial<BuildingModel>;
+		building: DeepPartial<BuildingBlueprintGlobalModel>;
 		existingBuildingZoneQueue?: Partial<BuildingQueueElementModel>[];
 		queueCosts: DeepPartial<QueueElementCostModel>[];
 	}[] = [
@@ -385,7 +385,7 @@ describe('Simple calculation of resources for queue element', () => {
 			it(`'should return ${singleData.name}`, async () => {
 				const addToQueue = singleData.addToQueue as AddToQueueInput;
 				const buildingZone = singleData.buildingZone as BuildingZoneModel;
-				const building = singleData.building as BuildingModel;
+				const building = singleData.building as BuildingBlueprintGlobalModel;
 
 				when(buildingQueueRepository.getCurrentBuildingQueueForBuildingZone)
 					.expectCalledWith(buildingZone)

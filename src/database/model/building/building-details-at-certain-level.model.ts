@@ -1,28 +1,25 @@
 import {Field, ID, ObjectType} from '@nestjs/graphql';
 import {Type} from 'class-transformer';
-import {IsOptional, ValidateNested, ValidatePromise} from 'class-validator';
+import {IsOptional, ValidateNested} from 'class-validator';
 import {
-	BeforeInsert,
-	BeforeUpdate,
 	Column,
 	Entity,
 	JoinColumn,
 	ManyToOne,
-	OneToMany,
 	OneToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {BuildingProductionRateModel} from '@warp-core/database/model/building/building-production-rate.model';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {CapabilitiesOwnerModelInterface} from '@warp-core/core/utils/model/capabilities-owner.model-interface';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
+import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
 import {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-details/details-at-certain-level.model';
-import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
 
 @ObjectType({
 	description: 'Details how to upgrade single building',
 })
 @Entity({name: 'building-details-at-certain-level'})
-export class BuildingDetailsAtCertainLevelModel {
+export class BuildingDetailsAtCertainLevelModel implements CapabilitiesOwnerModelInterface {
 	@Field(() => ID, {description: 'Id of building level details'})
 	@PrimaryGeneratedColumn()
 	public id: number;
@@ -42,80 +39,40 @@ export class BuildingDetailsAtCertainLevelModel {
 	@Column({name: 'detailsId'})
 	public detailsId: number;
 
-	@Field(() => BuildingModel, {
+	@Field(() => BuildingBlueprintGlobalModel, {
 		description: 'Building connected to that details',
 	})
 	@ManyToOne(
-		() => BuildingModel,
+		() => BuildingBlueprintGlobalModel,
 		building => building.buildingDetailsAtCertainLevel,
 		{
 			lazy: true,
 		},
 	)
-	public building: BuildingModel | Promise<BuildingModel>;
+	@JoinColumn({name: 'buildingId'})
+	public building:
+		| BuildingBlueprintGlobalModel
+		| Promise<BuildingBlueprintGlobalModel>;
 
-	@Field(() => [BuildingProductionRateModel], {
+	@Column({name: 'buildingId', nullable: true})
+	public buildingId?: string | null;
+
+	@Field(() => CapabilitiesModel, {
 		description:
-			'Production rate for single building. There is possibility that single building can produce more than one resource.',
+			'Global capabilities of the building on that level (production, storage). Empty when the level does nothing on its own.',
 		nullable: true,
 	})
 	@ValidateNested()
-	@ValidatePromise()
 	@IsOptional()
-	@OneToMany(
-		() => BuildingProductionRateModel,
-		productionRate => productionRate.buildingDetails,
-		{
-			lazy: true,
-			nullable: true,
-			persistence: false,
-			cascade: true,
-		},
-	)
-	@Type(() => BuildingProductionRateModel)
-	public productionRate?:
-		| BuildingProductionRateModel[]
-		| Promise<BuildingProductionRateModel[]>
-		| null;
-
-	@Field(() => [WarehouseDetailsModel], {
-		description: 'Resources stored by this level of building',
+	@OneToOne(() => CapabilitiesModel, {
+		cascade: true,
+		eager: true,
 		nullable: true,
 	})
-	@ValidateNested()
-	@ValidatePromise()
-	@IsOptional()
-	@OneToMany(
-		() => WarehouseDetailsModel,
-		requirement => requirement.buildingDetails,
-		{
-			lazy: true,
-			nullable: true,
-			persistence: false,
-			cascade: true,
-		},
-	)
-	@Type(() => WarehouseDetailsModel)
-	public warehouse?:
-		| WarehouseDetailsModel[]
-		| Promise<WarehouseDetailsModel[]>
-		| null;
+	@JoinColumn({name: 'capabilitiesId'})
+	@Type(() => CapabilitiesModel)
+	public capabilities?: CapabilitiesModel | null;
 
-	@BeforeInsert()
-	@BeforeUpdate()
-	public async setOneToManyRelationsForBuildingDetails(): Promise<void> {
-		const productionRates = (await this.productionRate) ?? [];
-		for (const productionRate of productionRates) {
-			if (!(await productionRate.buildingDetails)) {
-				productionRate.buildingDetails = this;
-			}
-		}
-
-		const warehouse = (await this.warehouse) ?? [];
-		for (const singleWarehouseDetail of warehouse) {
-			if (!(await singleWarehouseDetail.buildingDetails)) {
-				singleWarehouseDetail.buildingDetails = this;
-			}
-		}
-	}
+	@Column({name: 'capabilitiesId', nullable: true})
+	public capabilitiesId?: number | null;
 }

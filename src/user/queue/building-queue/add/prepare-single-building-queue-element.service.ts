@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
@@ -37,7 +37,7 @@ export class PrepareSingleBuildingQueueElementService extends AbstractPrepareQue
 				this.habitatModel.id,
 			)) as BuildingZoneModel;
 
-		let building = await buildingZone.building;
+		let building = await buildingZone.getBuilding();
 
 		if (!building) {
 			building = await this.getBuildingById(addToQueueElement.buildingId!);
@@ -91,7 +91,9 @@ export class PrepareSingleBuildingQueueElementService extends AbstractPrepareQue
 		return currentBuildingQueue.at(-1)?.endLevel ?? buildingZone.level;
 	}
 
-	private async getBuildingById(buildingId: string): Promise<BuildingModel> {
+	private async getBuildingById(
+		buildingId: string,
+	): Promise<BuildingBlueprintGlobalModel> {
 		const {data, error} =
 			await this.buildingService.getBuildingById(buildingId);
 

@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
 import {BuildingZoneEmitter} from '@warp-core/user/building-zone';
@@ -67,8 +67,8 @@ export class ValidateSingleQueueElementService extends AbstractValidateQueueElem
 		addToQueue: AddToQueueInput,
 		buildingZone: BuildingZoneModel,
 		validationError: QueueValidationError,
-	): Promise<BuildingModel> {
-		const buildingFromBuildingZone = await buildingZone.building;
+	): Promise<BuildingBlueprintGlobalModel> {
+		const buildingFromBuildingZone = await buildingZone.getBuilding();
 		if (buildingFromBuildingZone) {
 			return buildingFromBuildingZone;
 		}

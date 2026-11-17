@@ -3,7 +3,7 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {BuildingInstallService} from './building-install.service';
 
 import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 
 describe('BuildingInstallService', () => {
 	let buildingInstallService: BuildingInstallService;
@@ -26,7 +26,7 @@ describe('BuildingInstallService', () => {
 				role: 'totally_wrong_type',
 				name: 'Really wrong building',
 				buildingDetailsAtCertainLevel: [],
-			} as unknown as BuildingModel;
+			} as unknown as BuildingBlueprintGlobalModel;
 
 			expect(() =>
 				buildingInstallService.loadModels({buildings: [buildingModel]}),
@@ -45,14 +45,14 @@ describe('BuildingInstallService', () => {
 						timeToUpdateInSeconds: 10,
 					},
 				],
-			} as unknown as BuildingModel;
+			} as unknown as BuildingBlueprintGlobalModel;
 
 			const models = buildingInstallService.loadModels({
 				buildings: [buildingModel],
 			});
 
 			expect(models).toHaveLength(1);
-			expect(models.pop()).toBeInstanceOf(BuildingModel);
+			expect(models.pop()).toBeInstanceOf(BuildingBlueprintGlobalModel);
 		});
 	});
 });

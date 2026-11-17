@@ -4,24 +4,26 @@ import {when} from 'jest-when';
 import {BuildingService} from './building.service';
 
 import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
-import {BuildingRepository} from '@warp-core/database/repository/building.repository';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
+import {BuildingBlueprintGlobalRepository} from '@warp-core/database/repository/building-blueprint-global.repository';
 
-jest.mock('@warp-core/database/repository/building.repository');
+jest.mock(
+	'@warp-core/database/repository/building-blueprint-global.repository',
+);
 
 describe('Building service test', () => {
 	let buildingService: BuildingService;
-	let buildingRepository: jest.Mocked<BuildingRepository>;
+	let buildingRepository: jest.Mocked<BuildingBlueprintGlobalRepository>;
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
 
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [BuildingService, BuildingRepository],
+			providers: [BuildingService, BuildingBlueprintGlobalRepository],
 		}).compile();
 
 		buildingService = module.get<BuildingService>(BuildingService);
-		buildingRepository = module.get(BuildingRepository);
+		buildingRepository = module.get(BuildingBlueprintGlobalRepository);
 	});
 
 	describe('calculateTimeInSecondsToUpgradeBuilding', () => {
@@ -55,7 +57,7 @@ describe('Building service test', () => {
 				role: BuildingRoleEnum.RESOURCE_PRODUCTION,
 				name: 'Test building',
 				buildingDetailsAtCertainLevel: [],
-			} as unknown as BuildingModel;
+			} as unknown as BuildingBlueprintGlobalModel;
 
 			when(buildingRepository.getBuildingById)
 				.expectCalledWith(buildingId)
@@ -84,7 +86,7 @@ describe('Building service test', () => {
 					{details: {level: 2, timeToUpdateInSeconds: 10}},
 					{details: {level: 3, timeToUpdateInSeconds: 100}},
 				],
-			} as unknown as BuildingModel;
+			} as unknown as BuildingBlueprintGlobalModel;
 
 			when(buildingRepository.getBuildingById)
 				.expectCalledWith(buildingId)
@@ -113,7 +115,7 @@ describe('Building service test', () => {
 					{details: {level: 2, timeToUpdateInSeconds: 10}},
 					{details: {level: 3, timeToUpdateInSeconds: 100}},
 				],
-			} as unknown as BuildingModel;
+			} as unknown as BuildingBlueprintGlobalModel;
 
 			when(buildingRepository.getBuildingById)
 				.expectCalledWith(buildingId)
@@ -142,7 +144,7 @@ describe('Building service test', () => {
 					{details: {level: 2, timeToUpdateInSeconds: 10}},
 					{details: {level: 3, timeToUpdateInSeconds: 100}},
 				],
-			} as unknown as BuildingModel;
+			} as unknown as BuildingBlueprintGlobalModel;
 
 			when(buildingRepository.getBuildingById)
 				.expectCalledWith(buildingId)
@@ -167,7 +169,7 @@ describe('Building service test', () => {
 				role: BuildingRoleEnum.RESOURCE_PRODUCTION,
 				name: 'Test building',
 				buildingDetailsAtCertainLevel: [],
-			} as unknown as BuildingModel;
+			} as unknown as BuildingBlueprintGlobalModel;
 
 			when(buildingRepository.getBuildingById)
 				.expectCalledWith(buildingId)
@@ -194,7 +196,7 @@ describe('Building service test', () => {
 					name: 'Test building 2',
 					buildingDetailsAtCertainLevel: [],
 				},
-			] as unknown as BuildingModel[];
+			] as unknown as BuildingBlueprintGlobalModel[];
 
 			when(buildingRepository.getAllBuildings)
 				.expectCalledWith()

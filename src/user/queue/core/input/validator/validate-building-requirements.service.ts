@@ -37,12 +37,11 @@ export class ValidateBuildingRequirementsService {
 			);
 		const builtLevels = new Map<string, number>();
 		for (const singleBuildingZone of buildingZones) {
+			const buildingId = (await singleBuildingZone.getPlayerBlueprint())!
+				.buildingId;
 			builtLevels.set(
-				singleBuildingZone.buildingId!,
-				Math.max(
-					builtLevels.get(singleBuildingZone.buildingId!) ?? 0,
-					singleBuildingZone.level,
-				),
+				buildingId,
+				Math.max(builtLevels.get(buildingId) ?? 0, singleBuildingZone.level),
 			);
 		}
 

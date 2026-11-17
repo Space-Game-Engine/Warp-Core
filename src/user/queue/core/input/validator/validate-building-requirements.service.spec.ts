@@ -2,6 +2,7 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
+import {BuildingBlueprintPlayerModel} from '@warp-core/database/model/building/building-blueprint-player.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {RequirementsPerLevelModel} from '@warp-core/database/model/level-details/requirements-per-level.model';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
@@ -16,6 +17,14 @@ describe('Validate building requirements service', () => {
 	let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
 	let habitatModel: AuthorizedHabitatModel;
 	let validationError: QueueValidationError;
+
+	function builtZone(buildingId: string, level: number): BuildingZoneModel {
+		return {
+			level,
+			getPlayerBlueprint: async (): Promise<BuildingBlueprintPlayerModel> =>
+				({buildingId}) as BuildingBlueprintPlayerModel,
+		} as unknown as BuildingZoneModel;
+	}
 
 	beforeEach(async () => {
 		jest.clearAllMocks();
@@ -74,9 +83,7 @@ describe('Validate building requirements service', () => {
 		it('should not add error when required building is built to required level', async () => {
 			when(buildingZoneRepository.getBuildingZonesForHabitatAndBuildings)
 				.expectCalledWith(5, ['university'])
-				.mockResolvedValueOnce([
-					{buildingId: 'university', level: 1},
-				] as BuildingZoneModel[]);
+				.mockResolvedValueOnce([builtZone('university', 1)]);
 
 			await validateBuildingRequirementsService.validate(
 				[
@@ -92,10 +99,10 @@ describe('Validate building requirements service', () => {
 			when(buildingZoneRepository.getBuildingZonesForHabitatAndBuildings)
 				.expectCalledWith(5, ['university', 'coal_mine'])
 				.mockResolvedValueOnce([
-					{buildingId: 'university', level: 1},
-					{buildingId: 'university', level: 3},
-					{buildingId: 'coal_mine', level: 1},
-				] as BuildingZoneModel[]);
+					builtZone('university', 1),
+					builtZone('university', 3),
+					builtZone('coal_mine', 1),
+				]);
 
 			await validateBuildingRequirementsService.validate(
 				[

@@ -34,26 +34,29 @@ Example:
 
 ## Buildings
 
-This file defines the types of buildings that can be constructed. It also describes all building levels, including their requirements and capabilities. The structure of a single entry is as follows:
+This file defines the global building blueprints that can be constructed. It also describes all building levels, including their requirements and capabilities. See [Blueprints](../blueprints.md) for how global blueprints, player blueprints and building zones work together. The structure of a single entry is as follows:
 
 ```yaml
   - role: enum
     name: Name of the building
     id: string id of the building
     buildingDetailsAtCertainLevel: #[array]
-      - level: number
-        timeToUpdateBuildingInSeconds: time
-        requirements: #[optional array, if apply]
-          - resourceId: string id of the resource
-            cost: number
-        warehouse: #[optional array, if apply]
-          - warehouseType: enum
-            resourceType: enum #[optional, based on warehouseType - see keys description]
-            resourceId: string #[optional, based on warehouseType - see keys description]
-            amount: number
-        productionRate: #[optional array, if apply]
-          - resourceId: coal
-            productionRate: 1
+      - details:
+          level: number
+          timeToUpdateInSeconds: time
+          requirements: #[optional array, if apply]
+            - resourceId: string id of the resource
+              cost: number
+        capabilities: #[optional, if apply]
+          production: #[optional array]
+            - resourceId: string id of the resource
+              amount: number
+              interval: number of seconds
+          storage: #[optional array]
+            - storageType: enum
+              resourceType: enum #[optional, based on storageType - see keys description]
+              resourceId: string #[optional, based on storageType - see keys description]
+              amount: number
 ```
 
 Example (warehouse):
@@ -63,21 +66,25 @@ Example (warehouse):
     name: Warehouse
     id: warehouse
     buildingDetailsAtCertainLevel:
-      - level: 1
-        timeToUpdateBuildingInSeconds: 10
-        warehouse:
-          - warehouseType: by_resource_type
-            resourceType: construction
-            amount: 100
-      - level: 2
-        timeToUpdateBuildingInSeconds: 30
-        warehouse:
-          - warehouseType: by_resource_type
-            resourceType: construction
-            amount: 200
-        requirements:
-          - resourceId: wood
-            cost: 20
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 10
+        capabilities:
+          storage:
+            - storageType: by_resource_type
+              resourceType: construction
+              amount: 100
+      - details:
+          level: 2
+          timeToUpdateInSeconds: 30
+          requirements:
+            - resourceId: wood
+              cost: 20
+        capabilities:
+          storage:
+            - storageType: by_resource_type
+              resourceType: construction
+              amount: 200
 ```
 
 Example (mine):
@@ -87,22 +94,28 @@ Example (mine):
     name: Coal Mine
     id: coal_mine
     buildingDetailsAtCertainLevel:
-      - level: 1
-        timeToUpdateBuildingInSeconds: 1000
-        productionRate:
-          - resourceId: coal
-            productionRate: 1
-        requirements:
-          - resourceId: wood
-            cost: 20
-      - level: 2
-        timeToUpdateBuildingInSeconds: 3000
-        productionRate:
-          - resourceId: coal
-            productionRate: 3
-        requirements:
-          - resourceId: wood
-            cost: 100
+      - details:
+          level: 1
+          timeToUpdateInSeconds: 1000
+          requirements:
+            - resourceId: wood
+              cost: 20
+        capabilities:
+          production:
+            - resourceId: coal
+              amount: 1
+              interval: 1
+      - details:
+          level: 2
+          timeToUpdateInSeconds: 3000
+          requirements:
+            - resourceId: wood
+              cost: 100
+        capabilities:
+          production:
+            - resourceId: coal
+              amount: 3
+              interval: 1
 ```
 
 ### Keys description
@@ -113,25 +126,26 @@ Example (mine):
   * `technology` enables technological development, such as a research centre or university.
   * `unit` recruits units for the army, such as a barracks or shipyard.
   * `warehouse` stores resources according to their type.
-* `buildingDetailsAtCertainLevel` _[array]_ defines the behaviour of a building at a specific level, including requirements and other details. If empty, the building cannot be constructed. Based on this data, buildings can be built and upgraded.
-  * `level` _[number]_ the level corresponding to this entry, starting from 1.
-  * `timeToUpdateBuildingInSeconds` _[number]_ the time in seconds required to build or upgrade the building.
-  * `requirements` _[array] (optional)_ rules that define what is needed to upgrade a building. A level can have multiple requirements. If empty, no requirements are needed to upgrade to the next level.
-    * `resurce` _[string]_ the `id` of the resource required for the building upgrade
-    * `cost` _[number]_ the amount of the resource needed.
+* `buildingDetailsAtCertainLevel` _[array]_ defines the behaviour of a building at a specific level, including requirements and capabilities. It cannot be empty. Based on this data, buildings can be built and upgraded.
+  * `details.level` _[number]_ the level corresponding to this entry, starting from 1.
+  * `details.timeToUpdateInSeconds` _[number]_ the time in seconds required to build or upgrade the building to that level.
+  * `details.requirements` _[array] (optional)_ rules that define what is needed to upgrade a building. A level can have multiple requirements. If empty, no requirements are needed to upgrade to that level.
+    * `resourceId` _[string]_ and `cost` _[number]_ the resource and the amount consumed when the level is queued.
     * `researchNodeId` _[string]_ and `researchNodeLevel` _[number]_ a research node that must already be **developed** to at least that level.
     * `buildingId` _[string]_ and `buildingLevel` _[number]_ a building that must already be **built** (not only queued) in the habitat to at least that level.
-  * `productionRate` _[array] (optional)_ describes the production of resources. Each entry specifies what the building produces at this level. If empty, the building produces nothing.
-    * `resurce` _[string]_ the `id` of the resource being produced.
-    * `productionRate`_[number]_ the amount of the resource produced per second; decimal values are allowed.
-  * `warehouse` _[array] (optional)_ defines the resources a building can store. Each entry specifies a resource type or ID and the amount stored. If empty, the building does not store any resources.
-    * `warehouseType` _[enum]_ must match one of the following:
-      * `any` any type of resource can be stored. Acts as a wildcard.
-      * `by_resource_type` stores all resources of a single type, such as `construction`, `energy`, or `technology item`.
-      * `by_resource_id` stores only a single resource identified by its `id`.
-    * `resourceId` _[string] (optional)_ the id of the stored resource. Required if `warehouseType` is `by_resource_id`.
-    * `resourceType` _[string] (optional)_ the type of resource from the resource enum. Required if `warehouseType` is `by_resource_type`.
-    * `amount` _[number]_ the quantity of resources stored.
+  * `capabilities` _[object] (optional)_ what the building does on that level. Capabilities of the level are summed with the player blueprint bonuses of the habitat. If empty, the level does nothing on its own.
+    * `production` _[array] (optional)_ resources produced by the building. Each entry is a resource flow.
+      * `resourceId` _[string]_ the `id` of the resource being produced.
+      * `amount` _[number]_ the amount produced in every interval; decimal values are allowed.
+      * `interval` _[number]_ the production interval in seconds. `amount: 3, interval: 2` produces 1.5 units per second.
+    * `storage` _[array] (optional)_ resources the building can store. Each entry specifies a resource type or id and the amount stored.
+      * `storageType` _[enum]_ must match one of the following:
+        * `any` any type of resource can be stored. Acts as a wildcard.
+        * `by_resource_type` stores all resources of a single type, such as `construction`, `energy`, or `technology item`.
+        * `by_resource_id` stores only a single resource identified by its `id`.
+      * `resourceId` _[string] (optional)_ the id of the stored resource. Required if `storageType` is `by_resource_id`.
+      * `resourceType` _[string] (optional)_ the type of resource from the resource enum. Required if `storageType` is `by_resource_type`.
+      * `amount` _[number]_ the quantity of resources stored.
 
 ## Research nodes
 
