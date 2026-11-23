@@ -4,10 +4,16 @@ import {AuthModule} from '@warp-core/auth';
 import {BuildingQueueModule} from '@warp-core/user/queue/building-queue/building-queue.module';
 import {QueueConsumerMiddleware} from '@warp-core/user/queue/queue-consumer.middleware';
 import {ResearchQueueModule} from '@warp-core/user/queue/research-queue/research-queue.module';
+import {UnitQueueModule} from '@warp-core/user/queue/unit-queue/unit-queue.module';
 
 @Module({
 	providers: [QueueConsumerMiddleware],
-	imports: [AuthModule, BuildingQueueModule, ResearchQueueModule],
+	imports: [
+		AuthModule,
+		BuildingQueueModule,
+		ResearchQueueModule,
+		UnitQueueModule,
+	],
 })
 export class QueueModule implements NestModule {
 	public configure(consumer: MiddlewareConsumer): void {

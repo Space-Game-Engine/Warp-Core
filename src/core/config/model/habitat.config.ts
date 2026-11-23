@@ -3,6 +3,7 @@ import {IsOptional, ValidateNested} from 'class-validator';
 
 import {BuildingZoneConfig} from './building-zones.config';
 import {QueueConfig} from './queue.config';
+import {UnitQueueConfig} from './unit-queue.config';
 
 import {OnStartConfig} from '@warp-core/core/config/model/on-start.config';
 
@@ -28,6 +29,13 @@ export class HabitatConfig {
 	@Type(() => QueueConfig)
 	@ValidateNested()
 	public researchQueue: QueueConfig;
+
+	/**
+	 * Configuration related to unit queue
+	 */
+	@Type(() => UnitQueueConfig)
+	@ValidateNested()
+	public unitQueue: UnitQueueConfig;
 
 	/**
 	 * What should game do when user create its first habitat
