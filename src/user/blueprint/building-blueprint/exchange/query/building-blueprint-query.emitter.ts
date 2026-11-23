@@ -4,7 +4,7 @@ import {
 	InternalExchangeEmitter,
 	QueryExchangeResponse,
 } from '@warp-core/core/utils/internal-exchange';
-import {BuildingBlueprintPlayerModel} from '@warp-core/database/model/building/building-blueprint-player.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingBlueprintQueryNames} from '@warp-core/user/blueprint/building-blueprint/exchange/query/building-blueprint-query.names';
 
 @Injectable()
@@ -14,12 +14,13 @@ export class BuildingBlueprintQueryEmitter {
 		private readonly emitter: InternalExchangeEmitter,
 	) {}
 
-	public getOrCreateBlueprintPlayer(input: {
-		habitatId: number;
+	public assignBlueprintToBuildingZone(input: {
+		buildingZone: BuildingZoneModel;
 		buildingId: string;
-	}): Promise<QueryExchangeResponse<BuildingBlueprintPlayerModel>> {
-		return this.emitter.query<BuildingBlueprintPlayerModel>({
-			eventName: BuildingBlueprintQueryNames.GetOrCreateBlueprintPlayer,
+		level: number;
+	}): Promise<QueryExchangeResponse<void>> {
+		return this.emitter.query<void>({
+			eventName: BuildingBlueprintQueryNames.AssignBlueprintToBuildingZone,
 			requestData: input,
 		});
 	}

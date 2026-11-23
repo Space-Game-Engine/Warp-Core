@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 
 import {InternalExchangeQuery} from '@warp-core/core/utils/internal-exchange';
-import {BuildingBlueprintPlayerModel} from '@warp-core/database/model/building/building-blueprint-player.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingBlueprintQueryNames} from '@warp-core/user/blueprint/building-blueprint/exchange/query/building-blueprint-query.names';
 import {BuildingBlueprintPlayerService} from '@warp-core/user/blueprint/building-blueprint/service/building-blueprint-player.service';
 
@@ -11,17 +11,22 @@ export class BuildingBlueprintQuerySubscriber {
 		private readonly buildingBlueprintPlayerService: BuildingBlueprintPlayerService,
 	) {}
 
-	@InternalExchangeQuery(BuildingBlueprintQueryNames.GetOrCreateBlueprintPlayer)
-	public getOrCreateBlueprintPlayer({
-		habitatId,
+	@InternalExchangeQuery(
+		BuildingBlueprintQueryNames.AssignBlueprintToBuildingZone,
+	)
+	public assignBlueprintToBuildingZone({
+		buildingZone,
 		buildingId,
+		level,
 	}: {
-		habitatId: number;
+		buildingZone: BuildingZoneModel;
 		buildingId: string;
-	}): Promise<BuildingBlueprintPlayerModel> {
-		return this.buildingBlueprintPlayerService.getOrCreateForHabitat(
-			habitatId,
+		level: number;
+	}): Promise<void> {
+		return this.buildingBlueprintPlayerService.assignToBuildingZone(
+			buildingZone,
 			buildingId,
+			level,
 		);
 	}
 }

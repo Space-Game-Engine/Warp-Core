@@ -3,19 +3,23 @@ import {when} from 'jest-when';
 
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {BuildingBlueprintPlayerModel} from '@warp-core/database/model/building/building-blueprint-player.model';
+import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
 import {BuildingBlueprintPlayerRepository} from '@warp-core/database/repository/building-blueprint-player.repository';
+import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {prepareRepositoryMock} from '@warp-core/test/database/repository/prepare-repository-mock';
 import {BuildingBlueprintPlayerService} from '@warp-core/user/blueprint/building-blueprint/service/building-blueprint-player.service';
 
 jest.mock(
 	'@warp-core/database/repository/building-blueprint-player.repository',
 );
+jest.mock('@warp-core/database/repository/building-zone.repository');
 jest.mock('@warp-core/auth/payload/model/habitat.model');
 
 describe('Building blueprint player service', () => {
 	let buildingBlueprintPlayerService: BuildingBlueprintPlayerService;
 	let buildingBlueprintPlayerRepository: jest.Mocked<BuildingBlueprintPlayerRepository>;
+	let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
 	let habitatModel: AuthorizedHabitatModel;
 
 	beforeAll(() => {
@@ -29,6 +33,7 @@ describe('Building blueprint player service', () => {
 			providers: [
 				BuildingBlueprintPlayerService,
 				BuildingBlueprintPlayerRepository,
+				BuildingZoneRepository,
 				AuthorizedHabitatModel,
 			],
 		}).compile();
@@ -37,6 +42,7 @@ describe('Building blueprint player service', () => {
 		buildingBlueprintPlayerRepository = module.get(
 			BuildingBlueprintPlayerRepository,
 		);
+		buildingZoneRepository = module.get(BuildingZoneRepository);
 		habitatModel = module.get(AuthorizedHabitatModel);
 		habitatModel.id = 5;
 	});
@@ -94,6 +100,59 @@ describe('Building blueprint player service', () => {
 			expect(createInput.capabilities).toBeInstanceOf(CapabilitiesModel);
 			expect(createInput.capabilities.production).toEqual([]);
 			expect(createInput.capabilities.storage).toEqual([]);
+		});
+	});
+
+	describe('assignToBuildingZone', () => {
+		it('should create player blueprint and save zone when zone does not have blueprint', async () => {
+			const buildingZone = {
+				id: 1,
+				habitatId: 5,
+				level: 0,
+				buildingBlueprintPlayerId: null,
+			} as unknown as BuildingZoneModel;
+
+			when(buildingBlueprintPlayerRepository.getForHabitatAndGlobalBlueprint)
+				.expectCalledWith(5, 'warehouse')
+				.mockResolvedValueOnce({
+					id: 9,
+				} as BuildingBlueprintPlayerModel);
+
+			await buildingBlueprintPlayerService.assignToBuildingZone(
+				buildingZone,
+				'warehouse',
+				2,
+			);
+
+			expect(buildingZone.buildingBlueprintPlayerId).toBe(9);
+			expect(buildingZone.level).toBe(2);
+			expect(buildingZoneRepository.update).toHaveBeenCalledWith(1, {
+				buildingBlueprintPlayerId: 9,
+				level: 2,
+			});
+		});
+
+		it('should only update level when zone already has blueprint', async () => {
+			const buildingZone = {
+				id: 1,
+				habitatId: 5,
+				level: 1,
+				buildingBlueprintPlayerId: 7,
+			} as BuildingZoneModel;
+
+			await buildingBlueprintPlayerService.assignToBuildingZone(
+				buildingZone,
+				'warehouse',
+				2,
+			);
+
+			expect(
+				buildingBlueprintPlayerRepository.getForHabitatAndGlobalBlueprint,
+			).not.toHaveBeenCalled();
+			expect(buildingZoneRepository.update).toHaveBeenCalledWith(1, {
+				buildingBlueprintPlayerId: 7,
+				level: 2,
+			});
 		});
 	});
 

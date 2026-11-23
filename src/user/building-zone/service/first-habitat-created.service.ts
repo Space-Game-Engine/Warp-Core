@@ -2,11 +2,8 @@ import {Injectable} from '@nestjs/common';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
 import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
-import {BuildingBlueprintPlayerModel} from '@warp-core/database/model/building/building-blueprint-player.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {BuildingBlueprintGlobalRepository} from '@warp-core/database/repository/building-blueprint-global.repository';
-import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {BuildingBlueprintQueryEmitter} from '@warp-core/user/blueprint/building-blueprint';
 import {BuildingZoneService} from '@warp-core/user/building-zone/service/building-zone.service';
 import {HabitatCreatedEvent} from '@warp-core/user/habitat';
@@ -16,7 +13,6 @@ export class FirstHabitatCreatedService {
 	constructor(
 		private readonly runtimeConfig: RuntimeConfig,
 		private readonly buildingZoneService: BuildingZoneService,
-		private readonly buildingZoneRepository: BuildingZoneRepository,
 		private readonly buildingRepository: BuildingBlueprintGlobalRepository,
 		private readonly buildingBlueprintEmitter: BuildingBlueprintQueryEmitter,
 	) {}
@@ -51,35 +47,16 @@ export class FirstHabitatCreatedService {
 				singleBuilding => singleBuilding.id === habitatBuildingsConfig.id,
 			)!;
 
-			const playerBlueprint = await this.getOrCreatePlayerBlueprint(
-				habitat,
-				building.id,
-			);
+			const {error} =
+				await this.buildingBlueprintEmitter.assignBlueprintToBuildingZone({
+					buildingZone,
+					buildingId: building.id,
+					level: habitatBuildingsConfig.level,
+				});
 
-			buildingZone.buildingBlueprintPlayerId = playerBlueprint.id;
-			buildingZone.level = habitatBuildingsConfig.level;
-
-			await this.buildingZoneRepository.update(buildingZone.id, {
-				buildingBlueprintPlayerId: buildingZone.buildingBlueprintPlayerId,
-				level: buildingZone.level,
-			});
+			if (error) {
+				throw new InternalEmitterError(error.message);
+			}
 		}
-	}
-
-	private async getOrCreatePlayerBlueprint(
-		habitat: HabitatModel,
-		buildingId: string,
-	): Promise<BuildingBlueprintPlayerModel> {
-		const {data, error} =
-			await this.buildingBlueprintEmitter.getOrCreateBlueprintPlayer({
-				habitatId: habitat.id,
-				buildingId: buildingId,
-			});
-
-		if (error) {
-			throw new InternalEmitterError(error.message);
-		}
-
-		return data!;
 	}
 }

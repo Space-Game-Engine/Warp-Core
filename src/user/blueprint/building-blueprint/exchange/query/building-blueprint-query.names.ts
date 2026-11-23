@@ -1,3 +1,3 @@
 export enum BuildingBlueprintQueryNames {
-	GetOrCreateBlueprintPlayer = 'user.building_blueprint.get_or_create_blueprint_player',
+	AssignBlueprintToBuildingZone = 'user.building_blueprint.assign_blueprint_to_building_zone',
 }

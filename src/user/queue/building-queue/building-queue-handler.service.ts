@@ -5,7 +5,6 @@ import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
-import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
 import {BuildingBlueprintQueryEmitter} from '@warp-core/user/blueprint/building-blueprint';
 import {BuildingQueueProcessingEmitter} from '@warp-core/user/queue/building-queue/exchange/emit/building-queue-processing.emitter';
 import {AbstractQueueHandlerService} from '@warp-core/user/queue/core';
@@ -14,7 +13,6 @@ import {AbstractQueueHandlerService} from '@warp-core/user/queue/core';
 export class BuildingQueueHandlerService extends AbstractQueueHandlerService<BuildingQueueElementModel> {
 	constructor(
 		private readonly buildingQueueRepository: BuildingQueueRepository,
-		private readonly buildingZoneRepository: BuildingZoneRepository,
 		private readonly buildingBlueprintEmitter: BuildingBlueprintQueryEmitter,
 		habitatModel: AuthorizedHabitatModel,
 		buildingQueueEmitter: BuildingQueueProcessingEmitter,
@@ -45,36 +43,15 @@ export class BuildingQueueHandlerService extends AbstractQueueHandlerService<Bui
 			`Processing queue element for building zone with id ${buildingZone.id}`,
 		);
 
-		buildingZone.level = queueElement.endLevel;
-
-		if (!buildingZone.buildingBlueprintPlayerId) {
-			buildingZone.buildingBlueprintPlayerId =
-				await this.getOrCreatePlayerBlueprintId(
-					buildingZone.habitatId,
-					queueElement.buildingId!,
-				);
-		}
-
-		await this.buildingZoneRepository.update(buildingZone.id, {
-			buildingBlueprintPlayerId: buildingZone.buildingBlueprintPlayerId,
-			level: buildingZone.level,
-		});
-	}
-
-	private async getOrCreatePlayerBlueprintId(
-		habitatId: number,
-		buildingId: string,
-	): Promise<number> {
-		const {data, error} =
-			await this.buildingBlueprintEmitter.getOrCreateBlueprintPlayer({
-				habitatId,
-				buildingId,
+		const {error} =
+			await this.buildingBlueprintEmitter.assignBlueprintToBuildingZone({
+				buildingZone,
+				buildingId: queueElement.buildingId!,
+				level: queueElement.endLevel,
 			});
 
 		if (error) {
 			throw new InternalEmitterError(error.message);
 		}
-
-		return data!.id;
 	}
 }

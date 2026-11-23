@@ -5,6 +5,7 @@ import {BuildingZoneService} from './service/building-zone.service';
 
 import {AuthModule} from '@warp-core/auth';
 import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
+import {SumCapabilitiesModule} from '@warp-core/core/utils/capabilities/sum-capabilities.module';
 import {DatabaseModule} from '@warp-core/database/database.module';
 import {BuildingBlueprintQueryEmitter} from '@warp-core/user/blueprint/building-blueprint';
 import {BuildingZoneSubscriber} from '@warp-core/user/building-zone/exchange/subscriber/building-zone.subscriber';
@@ -24,7 +25,12 @@ import {NewHabitatCreatedService} from '@warp-core/user/building-zone/service/ne
 		BuildingZoneSubscriber,
 		NewHabitatSubscriber,
 	],
-	imports: [DatabaseModule, CoreConfigModule, AuthModule],
+	imports: [
+		DatabaseModule,
+		CoreConfigModule,
+		AuthModule,
+		SumCapabilitiesModule,
+	],
 	exports: [BuildingZoneService],
 })
 export class BuildingZoneModule {}

@@ -1,6 +1,7 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
+import {SumCapabilitiesModule} from '@warp-core/core/utils/capabilities/sum-capabilities.module';
 import {StorageTypeEnum} from '@warp-core/database/enum/storage-type.enum';
 import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingBlueprintPlayerModel} from '@warp-core/database/model/building/building-blueprint-player.model';
@@ -52,6 +53,7 @@ describe('Calculate building zone capabilities service', () => {
 		jest.clearAllMocks();
 
 		const module: TestingModule = await Test.createTestingModule({
+			imports: [SumCapabilitiesModule],
 			providers: [
 				CalculateBuildingZoneCapabilitiesService,
 				BuildingBlueprintGlobalRepository,

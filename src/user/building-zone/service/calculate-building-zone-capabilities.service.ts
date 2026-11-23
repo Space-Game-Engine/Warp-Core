@@ -1,6 +1,6 @@
 import {Injectable} from '@nestjs/common';
 
-import {sumCapabilities} from '@warp-core/core/utils';
+import {SumCapabilitiesService} from '@warp-core/core/utils';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {CalculatedCapabilitiesModel} from '@warp-core/database/model/capability/calculated-capabilities.model';
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
@@ -22,6 +22,7 @@ export class CalculateBuildingZoneCapabilitiesService {
 		private readonly buildingBlueprintGlobalRepository: BuildingBlueprintGlobalRepository,
 		private readonly buildingBlueprintPlayerRepository: BuildingBlueprintPlayerRepository,
 		private readonly buildingZoneRepository: BuildingZoneRepository,
+		private readonly sumCapabilitiesService: SumCapabilitiesService,
 	) {}
 
 	public async calculate({
@@ -34,7 +35,10 @@ export class CalculateBuildingZoneCapabilitiesService {
 			this.getPlayerCapabilities(habitatId, buildingId),
 		]);
 
-		return sumCapabilities([globalCapabilities, playerCapabilities]);
+		return this.sumCapabilitiesService.sum([
+			globalCapabilities,
+			playerCapabilities,
+		]);
 	}
 
 	public async forBuildingZone(
