@@ -20,7 +20,7 @@ import {HabitatModel} from '@warp-core/database/model/habitat.model';
 
 @ObjectType({
 	description:
-		'Player building blueprint: per-habitat view of a global building blueprint. Created when the first building of that kind is built and holds bonus capabilities added to the global ones.',
+		'Player building blueprint: per-habitat view of a building blueprint.',
 })
 @Entity({name: 'building-blueprint-player'})
 @Unique(['habitatId', 'buildingId'])
