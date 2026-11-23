@@ -6,6 +6,7 @@ import {HabitatModule} from '@warp-core/user/habitat/habitat.module';
 import {QueueModule} from '@warp-core/user/queue/queue.module';
 import {ResourcesModule} from '@warp-core/user/resources/resources.module';
 import {TechnologyModule} from '@warp-core/user/technology/technology.module';
+import {UnitInstanceModule} from '@warp-core/user/unit-instance/unit-instance.module';
 
 @Module({
 	imports: [
@@ -15,6 +16,7 @@ import {TechnologyModule} from '@warp-core/user/technology/technology.module';
 		QueueModule,
 		ResourcesModule,
 		TechnologyModule,
+		UnitInstanceModule,
 	],
 })
 export class UserModule {}

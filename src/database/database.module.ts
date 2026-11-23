@@ -31,7 +31,10 @@ import {ResearchQueueElementModel} from '@warp-core/database/model/research-queu
 import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 import {UnitBlueprintGlobalModel} from '@warp-core/database/model/unit/unit-blueprint-global.model';
+import {UnitBlueprintPlayerModel} from '@warp-core/database/model/unit/unit-blueprint-player.model';
 import {UnitBlueprintTagModel} from '@warp-core/database/model/unit/unit-blueprint-tag.model';
+import {UnitInstanceModel} from '@warp-core/database/model/unit/unit-instance.model';
+import {UnitQueueElementModel} from '@warp-core/database/model/unit-queue-element.model';
 import {BuildingBlueprintGlobalRepository} from '@warp-core/database/repository/building-blueprint-global.repository';
 import {BuildingBlueprintPlayerRepository} from '@warp-core/database/repository/building-blueprint-player.repository';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
@@ -44,6 +47,9 @@ import {ResearchNodeRepository} from '@warp-core/database/repository/research-no
 import {ResearchQueueRepository} from '@warp-core/database/repository/research-queue.repository';
 import {ResourceRepository} from '@warp-core/database/repository/resource.repository';
 import {UnitBlueprintGlobalRepository} from '@warp-core/database/repository/unit-blueprint-global.repository';
+import {UnitBlueprintPlayerRepository} from '@warp-core/database/repository/unit-blueprint-player.repository';
+import {UnitInstanceRepository} from '@warp-core/database/repository/unit-instance.repository';
+import {UnitQueueRepository} from '@warp-core/database/repository/unit-queue.repository';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
 
 @Module({
@@ -59,6 +65,9 @@ import {TransactionManagerService} from '@warp-core/database/transaction-manager
 		ResearchQueueRepository,
 		ResourceRepository,
 		UnitBlueprintGlobalRepository,
+		UnitBlueprintPlayerRepository,
+		UnitInstanceRepository,
+		UnitQueueRepository,
 		InstallationDetailsRepository,
 		TransactionManagerService,
 	],
@@ -77,6 +86,9 @@ import {TransactionManagerService} from '@warp-core/database/transaction-manager
 		ResearchQueueRepository,
 		ResourceRepository,
 		UnitBlueprintGlobalRepository,
+		UnitBlueprintPlayerRepository,
+		UnitInstanceRepository,
+		UnitQueueRepository,
 		InstallationDetailsRepository,
 	],
 })
@@ -99,7 +111,10 @@ export class DatabaseModule {
 			DetectionCapabilityModel,
 			StealthCapabilityModel,
 			UnitBlueprintGlobalModel,
+			UnitBlueprintPlayerModel,
 			UnitBlueprintTagModel,
+			UnitInstanceModel,
+			UnitQueueElementModel,
 			DetailsAtCertainLevelModel,
 			HabitatResearchNodeModel,
 			ResearchNodeModel,

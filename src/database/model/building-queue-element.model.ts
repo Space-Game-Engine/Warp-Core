@@ -8,14 +8,14 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {QueueElementModelInterface} from '@warp-core/core/utils';
+import {LevelBasedQueueElementModelInterface} from '@warp-core/core/utils';
 import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 
 @ObjectType({description: 'Defines one pending item in building queue'})
 @Entity({name: 'building-queue-element'})
-export class BuildingQueueElementModel implements QueueElementModelInterface {
+export class BuildingQueueElementModel implements LevelBasedQueueElementModelInterface {
 	@Field(() => ID)
 	@IsNumber()
 	@PrimaryGeneratedColumn()

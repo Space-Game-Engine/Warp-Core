@@ -14,4 +14,8 @@ export class QueueMechanicsConfig {
 	@Type(() => SingleQueueMechanicsConfig)
 	@ValidateNested()
 	public research: SingleQueueMechanicsConfig;
+
+	@Type(() => SingleQueueMechanicsConfig)
+	@ValidateNested()
+	public unit: SingleQueueMechanicsConfig;
 }

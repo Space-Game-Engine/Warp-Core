@@ -9,6 +9,10 @@ import {
 	ResearchQueueNames,
 	ResearchQueueProcessing,
 } from '@warp-core/user/queue/research-queue';
+import {
+	UnitQueueNames,
+	UnitQueueProcessing,
+} from '@warp-core/user/queue/unit-queue';
 import {QueueResourceExtractorService} from '@warp-core/user/resources/service/queue-resource-extractor.service';
 import {RecalculateResourcesOnQueueUpdate} from '@warp-core/user/resources/service/recalculate-resources-on-queue-update.service';
 import {ValidateQueueResourcesService} from '@warp-core/user/resources/service/validate-queue-resources.service';
@@ -54,6 +58,20 @@ export class QueueProcessingSubscriber {
 	@InternalExchangeEmitListener(ResearchQueueNames.AfterAddingElement)
 	public consumeResourcesOnResearchQueue(
 		input: ResearchQueueProcessing,
+	): Promise<void> {
+		return this.queueExtractor.useResourcesOnQueueUpdate(input);
+	}
+
+	@InternalExchangeEmitListener(UnitQueueNames.BeforeAddingElement)
+	public async validateResourcesToBeConsumedByUnitQueue(
+		input: UnitQueueProcessing,
+	): Promise<void> {
+		await this.validateQueueResourcesService.validate(input);
+	}
+
+	@InternalExchangeEmitListener(UnitQueueNames.AfterAddingElement)
+	public consumeResourcesOnUnitQueue(
+		input: UnitQueueProcessing,
 	): Promise<void> {
 		return this.queueExtractor.useResourcesOnQueueUpdate(input);
 	}

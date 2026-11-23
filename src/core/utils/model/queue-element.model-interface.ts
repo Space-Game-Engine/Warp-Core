@@ -3,12 +3,10 @@ import type {QueueElementCostModel} from '@warp-core/database/model/queue-elemen
 
 /**
  * Common shape of a single queue element, no matter what entity
- * (building, research node etc.) is processed by that queue.
+ * (building, research node, unit etc.) is processed by that queue.
  */
 export interface QueueElementModelInterface extends DraftModelInterface {
 	id?: number | null;
-	startLevel: number;
-	endLevel: number;
 	startTime: Date;
 	endTime: Date;
 	isConsumed: boolean;

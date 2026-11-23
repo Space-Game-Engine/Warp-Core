@@ -4,6 +4,7 @@ import {NextFunction} from 'connect';
 import {AuthorizedHabitatModel} from '@warp-core/auth';
 import {BuildingQueueHandlerService} from '@warp-core/user/queue/building-queue/building-queue-handler.service';
 import {ResearchQueueHandlerService} from '@warp-core/user/queue/research-queue/research-queue-handler.service';
+import {UnitQueueHandlerService} from '@warp-core/user/queue/unit-queue/unit-queue-handler.service';
 
 @Injectable()
 export class QueueConsumerMiddleware implements NestMiddleware {
@@ -11,6 +12,7 @@ export class QueueConsumerMiddleware implements NestMiddleware {
 		private readonly habitatModel: AuthorizedHabitatModel,
 		private readonly buildingQueueHandlerService: BuildingQueueHandlerService,
 		private readonly researchQueueHandlerService: ResearchQueueHandlerService,
+		private readonly unitQueueHandlerService: UnitQueueHandlerService,
 	) {}
 
 	public async use(
@@ -21,6 +23,7 @@ export class QueueConsumerMiddleware implements NestMiddleware {
 		if (this.habitatModel.id) {
 			await this.buildingQueueHandlerService.resolveQueue();
 			await this.researchQueueHandlerService.resolveQueue();
+			await this.unitQueueHandlerService.resolveQueue();
 		}
 
 		next();
