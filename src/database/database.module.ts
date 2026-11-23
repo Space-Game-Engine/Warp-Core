@@ -7,8 +7,17 @@ import {BuildingBlueprintPlayerModel} from '@warp-core/database/model/building/b
 import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building/building-details-at-certain-level.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
+import {AttackCapabilityModel} from '@warp-core/database/model/capability/attack-capability.model';
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
+import {CapabilityTargetModel} from '@warp-core/database/model/capability/capability-target.model';
+import {ConstructionBuildableUnitModel} from '@warp-core/database/model/capability/construction-buildable-unit.model';
+import {ConstructionCapabilityModel} from '@warp-core/database/model/capability/construction-capability.model';
+import {DefenseCapabilityModel} from '@warp-core/database/model/capability/defense-capability.model';
+import {DetectionCapabilityModel} from '@warp-core/database/model/capability/detection-capability.model';
+import {HealingCapabilityModel} from '@warp-core/database/model/capability/healing-capability.model';
+import {MovementCapabilityModel} from '@warp-core/database/model/capability/movement-capability.model';
 import {ProductionCapabilityModel} from '@warp-core/database/model/capability/production-capability.model';
+import {StealthCapabilityModel} from '@warp-core/database/model/capability/stealth-capability.model';
 import {StorageCapabilityModel} from '@warp-core/database/model/capability/storage-capability.model';
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {InstallationDetailsModel} from '@warp-core/database/model/installation-details.model';
@@ -21,6 +30,8 @@ import {ResearchNodeModel} from '@warp-core/database/model/research-node/researc
 import {ResearchQueueElementModel} from '@warp-core/database/model/research-queue-element.model';
 import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
+import {UnitBlueprintGlobalModel} from '@warp-core/database/model/unit/unit-blueprint-global.model';
+import {UnitBlueprintTagModel} from '@warp-core/database/model/unit/unit-blueprint-tag.model';
 import {BuildingBlueprintGlobalRepository} from '@warp-core/database/repository/building-blueprint-global.repository';
 import {BuildingBlueprintPlayerRepository} from '@warp-core/database/repository/building-blueprint-player.repository';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
@@ -32,6 +43,7 @@ import {InstallationDetailsRepository} from '@warp-core/database/repository/inst
 import {ResearchNodeRepository} from '@warp-core/database/repository/research-node.repository';
 import {ResearchQueueRepository} from '@warp-core/database/repository/research-queue.repository';
 import {ResourceRepository} from '@warp-core/database/repository/resource.repository';
+import {UnitBlueprintGlobalRepository} from '@warp-core/database/repository/unit-blueprint-global.repository';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
 
 @Module({
@@ -46,6 +58,7 @@ import {TransactionManagerService} from '@warp-core/database/transaction-manager
 		ResearchNodeRepository,
 		ResearchQueueRepository,
 		ResourceRepository,
+		UnitBlueprintGlobalRepository,
 		InstallationDetailsRepository,
 		TransactionManagerService,
 	],
@@ -63,6 +76,7 @@ import {TransactionManagerService} from '@warp-core/database/transaction-manager
 		ResearchNodeRepository,
 		ResearchQueueRepository,
 		ResourceRepository,
+		UnitBlueprintGlobalRepository,
 		InstallationDetailsRepository,
 	],
 })
@@ -75,6 +89,17 @@ export class DatabaseModule {
 			CapabilitiesModel,
 			ProductionCapabilityModel,
 			StorageCapabilityModel,
+			MovementCapabilityModel,
+			AttackCapabilityModel,
+			DefenseCapabilityModel,
+			ConstructionCapabilityModel,
+			ConstructionBuildableUnitModel,
+			CapabilityTargetModel,
+			HealingCapabilityModel,
+			DetectionCapabilityModel,
+			StealthCapabilityModel,
+			UnitBlueprintGlobalModel,
+			UnitBlueprintTagModel,
 			DetailsAtCertainLevelModel,
 			HabitatResearchNodeModel,
 			ResearchNodeModel,

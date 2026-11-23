@@ -147,6 +147,64 @@ Example (mine):
       * `resourceType` _[string] (optional)_ the type of resource from the resource enum. Required if `storageType` is `by_resource_type`.
       * `amount` _[number]_ the quantity of resources stored.
 
+## Units
+
+Unit definitions (global unit blueprints) live in a file with the `units` key. See `install/units.template.yaml`. The key is optional: if it is missing, no units are installed. Query them with `unit_getAll` and `unit_get(id)`.
+
+```yaml
+units:
+  - id: string id of the unit
+    name: Name of the unit
+    kind: enum
+    tags: [array of strings, optional]
+    timeToBuildInSeconds: time
+    requirements: #[optional array, same as in buildings]
+      - resourceId: string id of the resource
+        cost: number
+    capabilities: #[optional]
+      production: #[optional array, same as in buildings]
+      storage: #[optional array, same as in buildings, with extra carriesUnits]
+      movement: #[optional array]
+        - layer: string
+          speed: number
+      attack: #[optional]
+        damage: number
+        cooldown: number of seconds
+        targets: #[array]
+          - type: enum
+            value: string
+      defense: #[optional]
+        armor: number
+      construction: #[optional]
+        buildableUnits: #[array]
+          - unitBlueprintId: string id of the unit
+      healing: #[optional]
+        amount: number
+        interval: number of seconds
+        targets: #[array, same as in attack]
+          - type: enum
+            value: string
+      detection: #[optional]
+        sightRange: number
+        detectsStealth: boolean
+      stealth: #[optional]
+        level: number
+```
+
+### Keys description
+* `id` _[string]_ must be unique across all units.
+* `name` _[string]_ a descriptive name.
+* `kind` _[enum]_ `mobile` or `stationary`.
+* `tags` _[array] (optional)_ labels defined by the game designer that connect many units (used e.g. by `healing.targets`).
+* `timeToBuildInSeconds` _[number]_ the time in seconds required to build a **single** unit. Units are not upgraded, so there are no levels.
+* `requirements` _[array] (optional)_ what is needed to build a single unit, with the same rules as for buildings.
+* `capabilities` what the unit does. Global capabilities are the default for the world; player blueprints will extend them later.
+  * `production` and `storage` work like in buildings. `storage.carriesUnits` (default `0`) is how many units fit in that storage.
+  * `movement` one entry per movement `layer` (`land`, `water`, `air`, `space`...) with its `speed`.
+  * `attack`, `defense`, `construction`, `healing`, `detection` and `stealth` are single objects as shown above.
+  * `attack.targets` and `healing.targets` share one definition. Each target has a `type` and a `value`: `unit` (id of a unit), `tag` (a unit tag) or `movement_layer` (id of a movement layer). A target list cannot be empty.
+  * `construction.buildableUnits` lists the ids of units that can be built; it cannot be empty.
+
 ## Research nodes
 
 Research nodes are defined in a file with the `researchNodes` key. See `install/research-nodes.template.yaml`. The key is optional: if it is missing, no research nodes are installed.

@@ -18,6 +18,7 @@ import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/b
 import {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-details/details-at-certain-level.model';
 import {ResearchNodeModel} from '@warp-core/database/model/research-node/research-node.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
+import {UnitBlueprintGlobalModel} from '@warp-core/database/model/unit/unit-blueprint-global.model';
 
 @ObjectType({
 	description:
@@ -31,19 +32,40 @@ export class RequirementsPerLevelModel {
 	public id: number;
 
 	@Field(() => DetailsAtCertainLevelModel, {
-		description: 'Details how to upgrade that entity',
+		description:
+			'Details how to upgrade that entity. Empty when requirements belong to a unit blueprint.',
+		nullable: true,
 	})
 	@ValidateNested()
+	@IsOptional()
 	@ManyToOne(
 		() => DetailsAtCertainLevelModel,
 		levelDetails => levelDetails.requirements,
 		{
 			lazy: true,
+			nullable: true,
 		},
 	)
-	public levelDetails:
+	public levelDetails?:
 		| DetailsAtCertainLevelModel
-		| Promise<DetailsAtCertainLevelModel>;
+		| Promise<DetailsAtCertainLevelModel>
+		| null;
+
+	@Field(() => UnitBlueprintGlobalModel, {
+		description:
+			'Unit blueprint that requires that entry to build a single unit',
+		nullable: true,
+	})
+	@IsOptional()
+	@ManyToOne(() => UnitBlueprintGlobalModel, unit => unit.requirements, {
+		lazy: true,
+		nullable: true,
+	})
+	@JoinColumn({name: 'unitBlueprintId'})
+	public unitBlueprint?:
+		| UnitBlueprintGlobalModel
+		| Promise<UnitBlueprintGlobalModel>
+		| null;
 
 	@Field(() => ResourceModel, {
 		description: 'Get connected resource details',

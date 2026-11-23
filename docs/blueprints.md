@@ -1,6 +1,6 @@
 # Blueprints, capabilities and instances
 
-Everything a player can build in `Warp Core` follows the same three layers. Buildings use them today; units will reuse them.
+Everything a player can build in `Warp Core` follows the same three layers. Buildings use them today; units reuse the same capabilities. Only the global unit blueprint exists for now.
 
 | Layer | Buildings | Who creates it |
 |---|---|---|
@@ -41,3 +41,7 @@ global capabilities of the zone's level + player blueprint bonus capabilities
 * Storage entries with the same storage type, resource type and resource id are summed. Entries with different rules stay separate; all entries that accept a resource count towards its storage limit.
 
 Every resource calculation (production rate shown on resources, storage limits, recalculation when a queue element finishes) uses these effective values. They are exposed on `buildingZone_get` / `buildingZone_getAll` as the `capabilities` field.
+
+## Units
+
+`UnitBlueprintGlobalModel` is the global blueprint of a unit, installed from `install/units.yaml`. It has a kind (`mobile` / `stationary`), designer tags, `timeToBuildInSeconds` and `requirements` (cost of one unit, stored as `RequirementsPerLevelModel` rows). Units have no levels and one set of capabilities. Capabilities of units use the same `CapabilitiesModel` as buildings, extended with movement, attack, defense, construction, healing, detection and stealth. Query them with `unit_getAll` and `unit_get(id)`; other modules read them through `UnitQueryEmitter` from `@warp-core/global/unit`.

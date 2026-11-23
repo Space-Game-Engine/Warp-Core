@@ -1,9 +1,11 @@
-import {Field, Float, ObjectType} from '@nestjs/graphql';
+import {Field, Float, Int, ObjectType} from '@nestjs/graphql';
 import {
 	IsEnum,
+	IsInt,
 	IsNotEmpty,
 	IsNumber,
 	IsOptional,
+	Min,
 	ValidateIf,
 	ValidateNested,
 } from 'class-validator';
@@ -79,6 +81,14 @@ export class StorageCapabilityModel {
 	@IsNumber()
 	@Column({type: 'float', precision: 10, scale: 4})
 	public amount: number;
+
+	@Field(() => Int, {
+		description: 'How many units can be carried in that storage',
+	})
+	@IsInt()
+	@Min(0)
+	@Column('int', {default: 0})
+	public carriesUnits: number = 0;
 
 	@Field(() => CapabilitiesModel, {
 		description: 'Capabilities set that storage belongs to',

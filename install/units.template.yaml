@@ -1,0 +1,81 @@
+units:
+  - id: light_tank
+    name: Light tank
+    kind: mobile
+    tags:
+      - tank
+      - ground
+    timeToBuildInSeconds: 60
+    requirements:
+      - resourceId: wood
+        cost: 20
+      - buildingId: train_factory
+        buildingLevel: 1
+    capabilities:
+      movement:
+        - layer: land
+          speed: 5
+      storage:
+        - storageType: any
+          amount: 10
+          carriesUnits: 1
+      attack:
+        damage: 10
+        cooldown: 2
+        targets:
+          - type: movement_layer
+            value: land
+      defense:
+        armor: 5
+      detection:
+        sightRange: 8
+        detectsStealth: false
+  - id: engineer
+    name: Engineer
+    kind: mobile
+    tags:
+      - ground
+      - infantry
+    timeToBuildInSeconds: 30
+    requirements:
+      - resourceId: wood
+        cost: 10
+    capabilities:
+      movement:
+        - layer: land
+          speed: 2
+      construction:
+        buildableUnits:
+          - unitBlueprintId: gun_turret
+      healing:
+        amount: 1
+        interval: 5
+        targets:
+          - type: tag
+            value: infantry
+      stealth:
+        level: 1
+  - id: gun_turret
+    name: Gun turret
+    kind: stationary
+    tags:
+      - defense
+    timeToBuildInSeconds: 45
+    requirements:
+      - resourceId: stone_granite
+        cost: 15
+    capabilities:
+      production:
+        - resourceId: coal
+          amount: 1
+          interval: 10
+      attack:
+        damage: 15
+        cooldown: 1
+        targets:
+          - type: movement_layer
+            value: land
+          - type: movement_layer
+            value: air
+      defense:
+        armor: 10
