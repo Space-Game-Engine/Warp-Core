@@ -2,7 +2,6 @@ import {Test, TestingModule} from '@nestjs/testing';
 
 import {UnitInstallService} from './unit-install.service';
 
-import {UnitKindEnum} from '@warp-core/database/enum/unit-kind.enum';
 import {UnitBlueprintGlobalModel} from '@warp-core/database/model/unit/unit-blueprint-global.model';
 
 describe('UnitInstallService', () => {
@@ -23,24 +22,10 @@ describe('UnitInstallService', () => {
 			expect(unitInstallService.loadModels({})).toHaveLength(0);
 		});
 
-		it('should throw error when unit kind is wrong', () => {
-			const unit = {
-				id: 'wrong_unit',
-				name: 'Wrong unit',
-				kind: 'flying_spaghetti',
-				timeToBuildInSeconds: 10,
-			};
-
-			expect(() => unitInstallService.loadModels({units: [unit]})).toThrow(
-				'Validation error, see logs',
-			);
-		});
-
 		it('should convert plain string tags into tag models', async () => {
 			const unit = {
 				id: 'light_tank',
 				name: 'Light tank',
-				kind: UnitKindEnum.MOBILE,
 				tags: ['tank', 'ground'],
 				timeToBuildInSeconds: 10,
 			};
@@ -57,7 +42,6 @@ describe('UnitInstallService', () => {
 			const unit = {
 				id: 'light_tank',
 				name: 'Light tank',
-				kind: UnitKindEnum.MOBILE,
 				timeToBuildInSeconds: 10,
 			};
 

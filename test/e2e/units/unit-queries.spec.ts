@@ -26,7 +26,7 @@ describe('Unit definitions', () => {
 
 		it('should return all installed units', async () => {
 			const response = await requestTest
-				.query({root: 'unit_getAll', fields: {fields: ['id', 'name', 'kind']}})
+				.query({root: 'unit_getAll', fields: {fields: ['id', 'name']}})
 				.send()
 				.expect(HttpStatus.OK);
 
@@ -34,8 +34,8 @@ describe('Unit definitions', () => {
 			expect(response.body.data.unit_getAll).toHaveLength(3);
 			expect(response.body.data.unit_getAll).toEqual(
 				expect.arrayContaining([
-					{id: 'light_tank', name: 'Light tank', kind: 'MOBILE'},
-					{id: 'gun_turret', name: 'Gun turret', kind: 'STATIONARY'},
+					{id: 'light_tank', name: 'Light tank'},
+					{id: 'gun_turret', name: 'Gun turret'},
 				]),
 			);
 		});

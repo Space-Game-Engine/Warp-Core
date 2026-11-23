@@ -1,7 +1,6 @@
 import {Field, ID, Int, ObjectType} from '@nestjs/graphql';
 import {Type} from 'class-transformer';
 import {
-	IsEnum,
 	IsNumber,
 	IsOptional,
 	IsString,
@@ -23,7 +22,6 @@ import {
 
 import {BlueprintGlobalModelInterface} from '@warp-core/core/utils/model/blueprint-global.model-interface';
 import {CapabilitiesOwnerModelInterface} from '@warp-core/core/utils/model/capabilities-owner.model-interface';
-import {UnitKindEnum} from '@warp-core/database/enum/unit-kind.enum';
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
 import {RequirementsPerLevelModel} from '@warp-core/database/model/level-details/requirements-per-level.model';
 import {UnitBlueprintTagModel} from '@warp-core/database/model/unit/unit-blueprint-tag.model';
@@ -45,11 +43,6 @@ export class UnitBlueprintGlobalModel
 	@Length(2, 255)
 	@Column('varchar')
 	public name: string;
-
-	@Field(() => UnitKindEnum, {description: 'Is the unit mobile or stationary?'})
-	@IsEnum(UnitKindEnum)
-	@Column('varchar')
-	public kind: UnitKindEnum;
 
 	@Field(() => [UnitBlueprintTagModel], {
 		description: 'Tags that connect that blueprint with other ones',
