@@ -2,20 +2,20 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {DataSource} from 'typeorm';
 
 import {BuildingRoleEnum} from '@warp-core/database/enum/building-role.enum';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
-import {BuildingRepository} from '@warp-core/database/repository/building.repository';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
+import {BuildingBlueprintGlobalRepository} from '@warp-core/database/repository/building-blueprint-global.repository';
 import {TransactionManagerService} from '@warp-core/database/transaction-manager.service';
 jest.mock('../transaction-manager.service');
 
 describe('Building repository test', () => {
-	let buildingRepository: BuildingRepository;
+	let buildingRepository: BuildingBlueprintGlobalRepository;
 	let findOneBuildingSpy: jest.SpyInstance;
 	let findBuildingSpy: jest.SpyInstance;
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [
-				BuildingRepository,
+				BuildingBlueprintGlobalRepository,
 				{
 					provide: DataSource,
 					useValue: {
@@ -26,7 +26,9 @@ describe('Building repository test', () => {
 			],
 		}).compile();
 
-		buildingRepository = module.get<BuildingRepository>(BuildingRepository);
+		buildingRepository = module.get<BuildingBlueprintGlobalRepository>(
+			BuildingBlueprintGlobalRepository,
+		);
 		findOneBuildingSpy = jest.spyOn(buildingRepository, 'findOne');
 		findBuildingSpy = jest.spyOn(buildingRepository, 'find');
 	});
@@ -42,7 +44,7 @@ describe('Building repository test', () => {
 				role: BuildingRoleEnum.RESOURCE_PRODUCTION,
 				name: 'Test building',
 				buildingDetailsAtCertainLevel: [],
-			} as unknown as BuildingModel;
+			} as unknown as BuildingBlueprintGlobalModel;
 
 			findOneBuildingSpy.mockResolvedValue(buildingModel);
 
@@ -69,7 +71,7 @@ describe('Building repository test', () => {
 				role: BuildingRoleEnum.RESOURCE_PRODUCTION,
 				name: 'Test building',
 				buildingDetailsAtCertainLevel: [],
-			} as unknown as BuildingModel;
+			} as unknown as BuildingBlueprintGlobalModel;
 
 			findBuildingSpy.mockResolvedValue([buildingModel]);
 

@@ -5,6 +5,7 @@ import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
 import {RegisterMechanic} from '@warp-core/core/utils/mechanics';
 import {DatabaseModule} from '@warp-core/database/database.module';
 import {BuildingQueryEmitter} from '@warp-core/global/building';
+import {BuildingBlueprintQueryEmitter} from '@warp-core/user/blueprint/building-blueprint';
 import {BuildingZoneEmitter} from '@warp-core/user/building-zone/exchange';
 import {BuildingQueueAddService} from '@warp-core/user/queue/building-queue/add/building-queue-add.service';
 import {BuildingQueueDraftService} from '@warp-core/user/queue/building-queue/add/building-queue-draft.service';
@@ -31,6 +32,7 @@ import {
 @Module({
 	providers: [
 		BuildingQueryEmitter,
+		BuildingBlueprintQueryEmitter,
 		BuildingZoneEmitter,
 		BuildingQueueAddService,
 		BuildingQueueDraftService,

@@ -36,6 +36,7 @@ $ npm run test
 
 ## Documentation
 
+* [Blueprints](./docs/blueprints.md)
 * [Mechanics](./docs/mechanics.md)
 * [Security](./docs/security.md)
 

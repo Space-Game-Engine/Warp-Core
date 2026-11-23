@@ -1,9 +1,7 @@
 import {Injectable} from '@nestjs/common';
-import {DataSource, FindOptionsUtils, In} from 'typeorm';
+import {DataSource, In, IsNull, Not} from 'typeorm';
 
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
-import {WarehouseDetailsModel} from '@warp-core/database/model/warehouse-details.model';
 import {AbstractRepository} from '@warp-core/database/repository/abstract.repository';
 
 @Injectable()
@@ -48,6 +46,9 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 		});
 	}
 
+	/**
+	 * Returns building zones of a habitat that have one of provided buildings placed on them.
+	 */
 	public getBuildingZonesForHabitatAndBuildings(
 		habitatId: number,
 		buildingIds: string[],
@@ -55,7 +56,23 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 		return this.find({
 			where: {
 				habitatId: habitatId,
-				buildingId: In(buildingIds),
+				buildingBlueprintPlayer: {
+					buildingId: In(buildingIds),
+				},
+			},
+		});
+	}
+
+	/**
+	 * Returns building zones of a habitat that have any building placed on them.
+	 */
+	public getBuiltBuildingZonesForHabitat(
+		habitatId: number,
+	): Promise<BuildingZoneModel[]> {
+		return this.find({
+			where: {
+				habitatId: habitatId,
+				buildingBlueprintPlayerId: Not(IsNull()),
 			},
 		});
 	}
@@ -72,60 +89,5 @@ export class BuildingZoneRepository extends AbstractRepository<BuildingZoneModel
 		}
 
 		return maxCounterValue;
-	}
-
-	public getBuildingZoneProducersForSingleResource(
-		habitatId: number,
-		resourceType: ResourceModel,
-	): Promise<BuildingZoneModel[]> {
-		const queryBuilder = this.createQueryBuilder('buildingZone');
-		FindOptionsUtils.joinEagerRelations(
-			queryBuilder,
-			'buildingZone',
-			this.metadata,
-		);
-		queryBuilder
-			.select()
-			.innerJoinAndSelect('buildingZone.building', 'building')
-			.innerJoinAndSelect(
-				'building.buildingDetailsAtCertainLevel',
-				'buildingDetails',
-			)
-			.innerJoinAndSelect(
-				'buildingDetails.details',
-				'levelDetails',
-				'buildingZone.level = levelDetails.level',
-			)
-			.innerJoinAndSelect('buildingDetails.productionRate', 'productionRate')
-			.where('buildingZone.habitatId = :habitatId', {habitatId: habitatId})
-			.andWhere('productionRate.resourceId = :resourceId', {
-				resourceId: resourceType.id,
-			});
-
-		return queryBuilder.getMany();
-	}
-
-	public async getWarehouseForResourceAndHabitat(
-		resource: ResourceModel,
-		habitatId: number,
-	): Promise<WarehouseDetailsModel[]> {
-		const buildingZonesForHabitat =
-			await this.getAllBuildingZonesByHabitatId(habitatId);
-		const warehouses = (
-			await Promise.all(
-				buildingZonesForHabitat.map(async singleBuildingZone => {
-					if ((await singleBuildingZone.hasWarehouse()) === false) {
-						return [];
-					}
-					const buildingLevelDetails =
-						await singleBuildingZone.getBuildingLevelDetails();
-					return buildingLevelDetails!.warehouse;
-				}),
-			)
-		).flat();
-
-		return warehouses.filter(singleWarehouse =>
-			singleWarehouse!.isWarehouseLinkedToResource(resource),
-		) as WarehouseDetailsModel[];
 	}
 }

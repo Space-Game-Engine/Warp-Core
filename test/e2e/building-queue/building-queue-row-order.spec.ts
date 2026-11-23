@@ -2,9 +2,9 @@ import {HttpStatus, INestApplication} from '@nestjs/common';
 import {DataSource} from 'typeorm';
 
 import {DetailsAtCertainLevelModel} from '@warp-core/database/model/level-details/details-at-certain-level.model';
+import {BuildingBlueprintGlobalRepository} from '@warp-core/database/repository/building-blueprint-global.repository';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
-import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {HabitatRepository} from '@warp-core/database/repository/habitat.repository';
 import {requestGraphQL} from '@warp-core/test/e2e/utils/graphql-request-test';
 import {GraphqlRequestTest} from '@warp-core/test/e2e/utils/graphql-request-test/graphql-request-test';
@@ -81,7 +81,7 @@ describe('Building queue does not depend on database row order', () => {
 
 	it('should allow the highest level when level details are stored out of order', async () => {
 		const building = await app
-			.get(BuildingRepository)
+			.get(BuildingBlueprintGlobalRepository)
 			.getBuildingById('warehouse');
 		const [firstLevelDetails, secondLevelDetails] =
 			await building!.buildingDetailsAtCertainLevel;

@@ -1,6 +1,6 @@
 import {Test, TestingModule} from '@nestjs/testing';
 
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {AddToQueueInput} from '@warp-core/user/queue/building-queue/input/add-to-queue.input';
 import {BuildingRequirementsValidator} from '@warp-core/user/queue/building-queue/input/validator/building-requirements.validator';
@@ -44,7 +44,7 @@ describe('Building requirements validator', () => {
 					buildingDetailsAtCertainLevel: levelDetails.map(details => ({
 						details,
 					})),
-				} as unknown as BuildingModel,
+				} as unknown as BuildingBlueprintGlobalModel,
 				validationError: new QueueValidationError(),
 			} as QueueInputValidation;
 

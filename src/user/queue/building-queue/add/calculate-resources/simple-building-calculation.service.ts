@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 
 import {AddMechanic} from '@warp-core/core/utils/mechanics';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
@@ -24,7 +24,7 @@ export class SimpleBuildingCalculationService
 	public async calculateResourcesCosts(
 		addToQueueElement: AddToQueueInput,
 		buildingZone: BuildingZoneModel,
-		building: BuildingModel,
+		building: BuildingBlueprintGlobalModel,
 	): Promise<QueueElementCostModel[]> {
 		const allBuildingDetails = await building.buildingDetailsAtCertainLevel;
 		const levelDetails = allBuildingDetails.map(

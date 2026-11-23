@@ -1,9 +1,9 @@
 import {Injectable, Logger} from '@nestjs/common';
 
-import {BuildingProductionRateModel} from '@warp-core/database/model/building/building-production-rate.model';
+import {InternalEmitterError} from '@warp-core/core/utils/internal-exchange';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
-import {BuildingRepository} from '@warp-core/database/repository/building.repository';
 import {HabitatResourceRepository} from '@warp-core/database/repository/habitat-resource.repository';
+import {BuildingZoneEmitter} from '@warp-core/user/building-zone';
 import {BuildingQueueProcessing} from '@warp-core/user/queue/building-queue';
 import {ResourceCalculatorService} from '@warp-core/user/resources/service/calculate/resource-calculator.service';
 
@@ -12,7 +12,7 @@ export class RecalculateResourcesOnQueueUpdate {
 	private readonly logger = new Logger(RecalculateResourcesOnQueueUpdate.name);
 
 	constructor(
-		private readonly buildingRepository: BuildingRepository,
+		private readonly buildingZoneEmitter: BuildingZoneEmitter,
 		private readonly habitatResourceRepository: HabitatResourceRepository,
 		private readonly resourceCalculatorService: ResourceCalculatorService,
 	) {}
@@ -24,10 +24,13 @@ export class RecalculateResourcesOnQueueUpdate {
 
 		this.logger.debug('Checking building production resources');
 
-		const buildingProduction =
-			await this.getProducedResourcesListForQueueElement(queueElement);
+		const habitatId = await queueElement.getHabitatId();
+		const producedResourcesIds = await this.getProducedResourcesIds(
+			queueElement,
+			habitatId,
+		);
 
-		if (buildingProduction.length === 0) {
+		if (producedResourcesIds.length === 0) {
 			this.logger.debug('Queued building does not produce anything');
 			return;
 		}
@@ -36,10 +39,8 @@ export class RecalculateResourcesOnQueueUpdate {
 
 		const resources =
 			await this.habitatResourceRepository.getHabitatResourcesByIds(
-				buildingProduction.map(
-					singleBuildingProduction => singleBuildingProduction.resourceId,
-				),
-				await queueElement.getHabitatId(),
+				producedResourcesIds,
+				habitatId,
 			);
 
 		for (const resource of resources) {
@@ -55,12 +56,23 @@ export class RecalculateResourcesOnQueueUpdate {
 		this.logger.debug('Last calculation time from habitat resources updated');
 	}
 
-	private getProducedResourcesListForQueueElement(
+	private async getProducedResourcesIds(
 		queueElement: BuildingQueueElementModel,
-	): Promise<BuildingProductionRateModel[]> {
-		return this.buildingRepository.getProductionRateForProvidedLevel(
-			queueElement.buildingId!,
-			queueElement.endLevel,
+		habitatId: number,
+	): Promise<string[]> {
+		const {data: capabilities, error} =
+			await this.buildingZoneEmitter.getCalculatedCapabilities({
+				habitatId: habitatId,
+				buildingId: queueElement.buildingId!,
+				level: queueElement.endLevel,
+			});
+
+		if (error) {
+			throw new InternalEmitterError(error.message);
+		}
+
+		return (capabilities?.production ?? []).map(
+			production => production.resourceId,
 		);
 	}
 }

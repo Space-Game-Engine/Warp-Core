@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 import {QueueElementModelInterface} from '@warp-core/core/utils';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 
@@ -46,15 +46,18 @@ export class BuildingQueueElementModel implements QueueElementModelInterface {
 	@Column('boolean')
 	public isConsumed: boolean = false;
 
-	@Field(() => BuildingModel, {
+	@Field(() => BuildingBlueprintGlobalModel, {
 		nullable: true,
 		description: 'Building connected to queue element',
 	})
-	@ManyToOne(() => BuildingModel, {
+	@ManyToOne(() => BuildingBlueprintGlobalModel, {
 		lazy: true,
 	})
 	@JoinColumn({name: 'buildingId'})
-	public building?: BuildingModel | Promise<BuildingModel> | null;
+	public building?:
+		| BuildingBlueprintGlobalModel
+		| Promise<BuildingBlueprintGlobalModel>
+		| null;
 
 	@Column({nullable: true})
 	public buildingId?: string;

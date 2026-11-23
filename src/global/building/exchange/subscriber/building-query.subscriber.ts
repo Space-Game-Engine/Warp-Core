@@ -1,7 +1,7 @@
 import {Injectable} from '@nestjs/common';
 
 import {InternalExchangeQuery} from '@warp-core/core/utils/internal-exchange';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingService} from '@warp-core/global/building/building.service';
 import {BuildingQueryNames} from '@warp-core/global/building/exchange/query/building-query.names';
 
@@ -10,7 +10,11 @@ export class BuildingQuerySubscriber {
 	constructor(private readonly buildingService: BuildingService) {}
 
 	@InternalExchangeQuery(BuildingQueryNames.GetBuildingById)
-	public getBuildingById({id}: {id: string}): Promise<BuildingModel | null> {
+	public getBuildingById({
+		id,
+	}: {
+		id: string;
+	}): Promise<BuildingBlueprintGlobalModel | null> {
 		return this.buildingService.getBuildingById(id);
 	}
 

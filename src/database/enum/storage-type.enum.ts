@@ -1,13 +1,13 @@
 import {registerEnumType} from '@nestjs/graphql';
 
-export enum WarehouseTypeEnum {
+export enum StorageTypeEnum {
 	ANY_RESOURCE = 'any',
 	ONE_TYPE_OF_RESOURCE = 'by_resource_type',
 	ONE_KIND_OF_RESOURCE = 'by_resource_id',
 }
 
-registerEnumType(WarehouseTypeEnum, {
-	name: 'Warehouse_type',
+registerEnumType(StorageTypeEnum, {
+	name: 'Storage_type',
 	description: 'What kind of resource can be stored here?',
 	valuesMap: {
 		ANY_RESOURCE: {

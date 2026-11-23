@@ -1,241 +1,100 @@
 import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
-import {BuildingDetailsAtCertainLevelModel} from '@warp-core/database/model/building/building-details-at-certain-level.model';
-import {BuildingProductionRateModel} from '@warp-core/database/model/building/building-production-rate.model';
-import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
-import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {HabitatResourceModel} from '@warp-core/database/model/resource/habitat-resource.model';
-import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
-import {BuildingZoneRepository} from '@warp-core/database/repository/building-zone.repository';
+import {
+	BuildingZoneCapabilities,
+	BuildingZoneEmitter,
+} from '@warp-core/user/building-zone';
 import {NoDistanceSimpleMultiplyResourceCalculationMechanicService} from '@warp-core/user/resources/service/calculate/resource-calculation/no-distance-simple-multiply-resource-calculation-mechanic.service';
 
-jest.mock('@warp-core/database/repository/habitat-resource.repository');
-jest.mock('@warp-core/database/repository/building-zone.repository');
-jest.mock(
-	'@warp-core/user/resources/service/calculate/warehouse-storage/base-resource-storage.service',
-);
+jest.mock('@warp-core/user/building-zone/exchange/query/building-zone.emitter');
 
 const testCases: {
 	name: string;
 	expectedProductionRate: number;
 	expectedResourcesAmount: number;
-	parameters: {
-		resourceId: string;
-		buildingZones: {
-			level: number;
-			building: {
-				buildingDetailsAtCertainLevel: {
-					level: number;
-					productionRate: {
-						productionRate: number;
-						resource: {
-							id: string;
-						};
-					}[];
-				}[];
-			};
-		}[];
-	};
+	zonesProduction: {resourceId: string; amountPerSecond: number}[][];
 }[] = [
 	{
 		name: 'there is single building zone',
 		expectedProductionRate: 1,
 		expectedResourcesAmount: 100,
-		parameters: {
-			resourceId: 'wood',
-			buildingZones: [
-				{
-					level: 1,
-					building: {
-						buildingDetailsAtCertainLevel: [
-							{
-								level: 1,
-								productionRate: [
-									{
-										productionRate: 1,
-										resource: {
-											id: 'wood',
-										},
-									},
-								],
-							},
-						],
-					},
-				},
-			],
-		},
+		zonesProduction: [[{resourceId: 'wood', amountPerSecond: 1}]],
 	},
 	{
-		name: 'there are two building zones with different production rates with corresponding building zone levels',
+		name: 'there are two building zones producing the same resource',
 		expectedProductionRate: 1.5,
 		expectedResourcesAmount: 150,
-		parameters: {
-			resourceId: 'wood',
-			buildingZones: [
-				{
-					level: 1,
-					building: {
-						buildingDetailsAtCertainLevel: [
-							{
-								level: 1,
-								productionRate: [
-									{
-										productionRate: 1,
-										resource: {
-											id: 'wood',
-										},
-									},
-								],
-							},
-						],
-					},
-				},
-				{
-					level: 2,
-					building: {
-						buildingDetailsAtCertainLevel: [
-							{
-								level: 2,
-								productionRate: [
-									{
-										productionRate: 0.5,
-										resource: {
-											id: 'wood',
-										},
-									},
-								],
-							},
-						],
-					},
-				},
-			],
-		},
+		zonesProduction: [
+			[{resourceId: 'wood', amountPerSecond: 1}],
+			[{resourceId: 'wood', amountPerSecond: 0.5}],
+		],
 	},
 	{
-		name: 'there are two building zones with different production rates but second does not have expected level',
+		name: 'there is a building zone producing another resource',
 		expectedProductionRate: 1,
 		expectedResourcesAmount: 100,
-		parameters: {
-			resourceId: 'wood',
-			buildingZones: [
-				{
-					level: 1,
-					building: {
-						buildingDetailsAtCertainLevel: [
-							{
-								level: 1,
-								productionRate: [
-									{
-										productionRate: 1,
-										resource: {
-											id: 'wood',
-										},
-									},
-								],
-							},
-						],
-					},
-				},
-				{
-					level: 3,
-					building: {
-						buildingDetailsAtCertainLevel: [
-							{
-								level: 1,
-								productionRate: [
-									{
-										productionRate: 0.25,
-										resource: {
-											id: 'wood',
-										},
-									},
-								],
-							},
-							{
-								level: 2,
-								productionRate: [
-									{
-										productionRate: 0.5,
-										resource: {
-											id: 'wood',
-										},
-									},
-								],
-							},
-						],
-					},
-				},
+		zonesProduction: [
+			[{resourceId: 'wood', amountPerSecond: 1}],
+			[{resourceId: 'coal', amountPerSecond: 0.5}],
+		],
+	},
+	{
+		name: 'single building zone produces multiple resources',
+		expectedProductionRate: 0.5,
+		expectedResourcesAmount: 50,
+		zonesProduction: [
+			[
+				{resourceId: 'coal', amountPerSecond: 2},
+				{resourceId: 'wood', amountPerSecond: 0.5},
 			],
-		},
+		],
+	},
+	{
+		name: 'there are no built building zones',
+		expectedProductionRate: 0,
+		expectedResourcesAmount: 0,
+		zonesProduction: [],
 	},
 ];
 
-describe.each(testCases)(
-	'No distance simple multiply resource calculation mechanic service',
-	singleTestCase => {
-		let resourcesCalculator: NoDistanceSimpleMultiplyResourceCalculationMechanicService;
-		let buildingZoneRepository: jest.Mocked<BuildingZoneRepository>;
+describe('No distance simple multiply resource calculation mechanic service', () => {
+	let resourcesCalculator: NoDistanceSimpleMultiplyResourceCalculationMechanicService;
+	let buildingZoneEmitter: jest.Mocked<BuildingZoneEmitter>;
 
+	beforeEach(async () => {
+		jest.clearAllMocks();
+		const module: TestingModule = await Test.createTestingModule({
+			providers: [
+				NoDistanceSimpleMultiplyResourceCalculationMechanicService,
+				BuildingZoneEmitter,
+			],
+		}).compile();
+
+		resourcesCalculator = module.get(
+			NoDistanceSimpleMultiplyResourceCalculationMechanicService,
+		);
+		buildingZoneEmitter = module.get(BuildingZoneEmitter);
+	});
+
+	describe.each(testCases)('with calculated capabilities', singleTestCase => {
 		let habitatResource: HabitatResourceModel;
 
-		beforeEach(async () => {
-			jest.clearAllMocks();
-			const module: TestingModule = await Test.createTestingModule({
-				providers: [
-					NoDistanceSimpleMultiplyResourceCalculationMechanicService,
-					BuildingZoneRepository,
-				],
-			}).compile();
-
-			resourcesCalculator =
-				module.get<NoDistanceSimpleMultiplyResourceCalculationMechanicService>(
-					NoDistanceSimpleMultiplyResourceCalculationMechanicService,
-				);
-			buildingZoneRepository = module.get(BuildingZoneRepository);
-
-			const parameters = singleTestCase.parameters;
-			const habitat = {} as HabitatModel;
-			const resource = {
-				id: parameters.resourceId,
-			} as ResourceModel;
+		beforeEach(() => {
 			habitatResource = {
-				resource,
-				resourceId: parameters.resourceId,
+				resourceId: 'wood',
+				habitatId: 3,
 				currentAmount: 0,
-				habitat,
 			} as HabitatResourceModel;
 
-			const buildingZones = parameters.buildingZones.map(singleBuildingZone => {
-				return {
-					level: singleBuildingZone.level,
-					building: {
-						buildingDetailsAtCertainLevel:
-							singleBuildingZone.building.buildingDetailsAtCertainLevel.map(
-								levelDetails => {
-									return {
-										details: {level: levelDetails.level},
-										productionRate: levelDetails.productionRate.map(
-											parameterProductionRate => {
-												return {
-													productionRate:
-														parameterProductionRate.productionRate,
-													resource: {
-														id: parameterProductionRate.resource.id,
-													},
-												};
-											},
-										) as BuildingProductionRateModel[],
-									};
-								},
-							) as unknown as BuildingDetailsAtCertainLevelModel[],
-					},
-				};
-			}) as unknown as BuildingZoneModel[];
+			const zonesCapabilities = singleTestCase.zonesProduction.map(
+				production => ({capabilities: {production, storage: []}}),
+			) as unknown as BuildingZoneCapabilities[];
 
-			when(buildingZoneRepository.getBuildingZoneProducersForSingleResource)
-				.expectCalledWith(habitat.id, resource)
-				.mockResolvedValue(buildingZones);
+			when(buildingZoneEmitter.getCalculatedCapabilitiesForHabitat)
+				.expectCalledWith({habitatId: 3})
+				.mockResolvedValue({data: zonesCapabilities, error: undefined});
 		});
 
 		describe('getProductionRate', () => {
@@ -249,15 +108,34 @@ describe.each(testCases)(
 
 		describe('calculateCurrentResourceValue', () => {
 			it(`should return resource amount when ${singleTestCase.name}`, async () => {
-				const secondsToCalculateResources = 100;
 				const resourceValue =
 					await resourcesCalculator.calculateCurrentResourceValue(
 						habitatResource,
-						secondsToCalculateResources,
+						100,
 					);
 
 				expect(resourceValue).toEqual(singleTestCase.expectedResourcesAmount);
 			});
 		});
-	},
-);
+	});
+
+	describe('getProductionRate', () => {
+		it('should throw internal emitter error when capabilities cannot be fetched', async () => {
+			const habitatResource = {
+				resourceId: 'wood',
+				habitatId: 3,
+			} as HabitatResourceModel;
+
+			when(buildingZoneEmitter.getCalculatedCapabilitiesForHabitat)
+				.expectCalledWith({habitatId: 3})
+				.mockResolvedValue({
+					data: undefined,
+					error: {message: 'boom', trace: undefined},
+				});
+
+			await expect(
+				resourcesCalculator.getProductionRate(habitatResource),
+			).rejects.toThrow('boom');
+		});
+	});
+});

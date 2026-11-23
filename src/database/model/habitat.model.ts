@@ -3,6 +3,7 @@ import {IsBoolean, IsNumber} from 'class-validator';
 import {Column, Entity, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
 
 import {AuthModelInterface} from '@warp-core/auth/interface/auth-model.interface';
+import {BuildingBlueprintPlayerModel} from '@warp-core/database/model/building/building-blueprint-player.model';
 import {BuildingQueueElementModel} from '@warp-core/database/model/building-queue-element.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {HabitatResearchNodeModel} from '@warp-core/database/model/research-node/habitat-research-node.model';
@@ -57,6 +58,17 @@ export class HabitatModel implements AuthModelInterface {
 	public habitatResearchNode:
 		| HabitatResearchNodeModel[]
 		| Promise<HabitatResearchNodeModel[]>;
+
+	@OneToMany(
+		() => BuildingBlueprintPlayerModel,
+		buildingBlueprint => buildingBlueprint.habitat,
+		{
+			lazy: true,
+		},
+	)
+	public buildingBlueprints:
+		| BuildingBlueprintPlayerModel[]
+		| Promise<BuildingBlueprintPlayerModel[]>;
 
 	@Field(() => [BuildingQueueElementModel])
 	@OneToMany(

@@ -2,7 +2,7 @@ import {Test, TestingModule} from '@nestjs/testing';
 import {when} from 'jest-when';
 
 import {RuntimeConfig} from '@warp-core/core/config/runtime.config';
-import {BuildingModel} from '@warp-core/database/model/building/building.model';
+import {BuildingBlueprintGlobalModel} from '@warp-core/database/model/building/building-blueprint-global.model';
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {BuildingQueueRepository} from '@warp-core/database/repository/building-queue.repository';
 import {coreConfigMock} from '@warp-core/test/core-config-mock';
@@ -41,7 +41,7 @@ describe('max queue elements count validator', () => {
 			const maxQueueElements = 10;
 			const queueValidationInput: QueueInputValidation = {
 				addToQueueInput: {} as AddToQueueInput,
-				building: {} as BuildingModel,
+				building: {} as BuildingBlueprintGlobalModel,
 				buildingZone: {
 					habitatId: 5,
 				} as BuildingZoneModel,
@@ -65,7 +65,7 @@ describe('max queue elements count validator', () => {
 			const maxQueueElements = 10;
 			const queueValidationInput: QueueInputValidation = {
 				addToQueueInput: {} as AddToQueueInput,
-				building: {} as BuildingModel,
+				building: {} as BuildingBlueprintGlobalModel,
 				buildingZone: {
 					habitatId: 5,
 				} as BuildingZoneModel,

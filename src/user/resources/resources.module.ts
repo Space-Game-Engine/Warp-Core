@@ -5,6 +5,7 @@ import {CoreConfigModule} from '@warp-core/core/config/core-config.module';
 import {AddInstallService} from '@warp-core/core/install/add-install-service.decorator';
 import {RegisterMechanic} from '@warp-core/core/utils/mechanics';
 import {DatabaseModule} from '@warp-core/database/database.module';
+import {BuildingZoneEmitter} from '@warp-core/user/building-zone';
 import {HabitatResourceRecalculateSubscriber} from '@warp-core/user/resources/database-subscriber/habitat-resource-recalculate.subscriber';
 import {NewHabitatSubscriber} from '@warp-core/user/resources/exchange/subscriber/new-habitat.subscriber';
 import {QueueProcessingSubscriber} from '@warp-core/user/resources/exchange/subscriber/queue-processing.subscriber';
@@ -26,6 +27,7 @@ import {ValidateQueueResourcesService} from '@warp-core/user/resources/service/v
 
 @Module({
 	providers: [
+		BuildingZoneEmitter,
 		CreateResourcesPerHabitatService,
 		HabitatResourceRecalculateSubscriber,
 		ResourcesService,
