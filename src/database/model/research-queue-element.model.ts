@@ -8,14 +8,14 @@ import {
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {QueueElementModelInterface} from '@warp-core/core/utils';
+import {LevelBasedQueueElementModelInterface} from '@warp-core/core/utils';
 import {HabitatModel} from '@warp-core/database/model/habitat.model';
 import {QueueElementCostModel} from '@warp-core/database/model/queue-element-cost.model';
 import {ResearchNodeModel} from '@warp-core/database/model/research-node/research-node.model';
 
 @ObjectType({description: 'Defines one pending item in research queue'})
 @Entity({name: 'research-queue-element'})
-export class ResearchQueueElementModel implements QueueElementModelInterface {
+export class ResearchQueueElementModel implements LevelBasedQueueElementModelInterface {
 	@Field(() => ID)
 	@IsNumber()
 	@PrimaryGeneratedColumn()
