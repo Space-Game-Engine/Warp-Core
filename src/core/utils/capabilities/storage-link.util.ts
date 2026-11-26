@@ -1,12 +1,11 @@
-import {ResourceTypeEnum} from '@warp-core/database/enum/resource-type.enum';
 import {StorageTypeEnum} from '@warp-core/database/enum/storage-type.enum';
+import {StorageCapabilityModel} from '@warp-core/database/model/capability/storage-capability.model';
 import {ResourceModel} from '@warp-core/database/model/resource/resource.model';
 
-export type StorageLink = {
-	storageType: StorageTypeEnum;
-	resourceType?: ResourceTypeEnum | null;
-	resourceId?: string | null;
-};
+export type StorageLink = Pick<
+	StorageCapabilityModel,
+	'storageType' | 'resourceType' | 'resourceId'
+>;
 
 /**
  * Checks if a storage entry (from a blueprint or a calculated one) accepts provided resource.

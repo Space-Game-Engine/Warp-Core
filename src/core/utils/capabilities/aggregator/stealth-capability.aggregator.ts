@@ -6,20 +6,21 @@ import {
 	CalculatedStealthCapabilityModel,
 } from '@warp-core/database/model/capability/calculated-capabilities.model';
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
+import {StealthCapabilityModel} from '@warp-core/database/model/capability/stealth-capability.model';
+
+type StealthState = {stealth: Pick<StealthCapabilityModel, 'level'> | null};
 
 /**
  * Stealth levels from all sources are summed.
  */
 @Injectable()
-export class StealthCapabilityAggregator extends CapabilityAggregatorInterface<{
-	level: number | null;
-}> {
-	public createState(): {level: number | null} {
-		return {level: null};
+export class StealthCapabilityAggregator extends CapabilityAggregatorInterface<StealthState> {
+	public createState(): StealthState {
+		return {stealth: null};
 	}
 
 	public async addSource(
-		state: {level: number | null},
+		state: StealthState,
 		source: CapabilitiesModel,
 	): Promise<void> {
 		const stealth = await source.stealth;
@@ -27,19 +28,19 @@ export class StealthCapabilityAggregator extends CapabilityAggregatorInterface<{
 			return;
 		}
 
-		state.level = (state.level ?? 0) + stealth.level;
+		state.stealth = {level: (state.stealth?.level ?? 0) + stealth.level};
 	}
 
 	public applyToResult(
-		state: {level: number | null},
+		state: StealthState,
 		result: CalculatedCapabilitiesModel,
 	): void {
-		if (state.level === null) {
+		if (!state.stealth) {
 			return;
 		}
 
 		const stealth = new CalculatedStealthCapabilityModel();
-		stealth.level = state.level;
+		stealth.level = state.stealth.level;
 		result.stealth = stealth;
 	}
 }

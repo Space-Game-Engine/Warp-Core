@@ -120,7 +120,6 @@ describe('Unit capability aggregators', () => {
 		expect(result.healing).toEqual({
 			amount: 1.5,
 			interval: 1,
-			amountPerSecond: 1.5,
 			targets: [target],
 		});
 	});

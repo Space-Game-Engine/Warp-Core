@@ -87,7 +87,7 @@ describe('Calculate building zone capabilities service', () => {
 			});
 
 			expect(result.production).toEqual([
-				{resourceId: 'wood', amount: 1, interval: 1, amountPerSecond: 1},
+				{resourceId: 'wood', amount: 1, interval: 1},
 			]);
 			expect(result.storage).toEqual([]);
 		});
@@ -109,7 +109,7 @@ describe('Calculate building zone capabilities service', () => {
 			});
 
 			expect(result.production).toEqual([
-				{resourceId: 'wood', amount: 4, interval: 1, amountPerSecond: 4},
+				{resourceId: 'wood', amount: 4, interval: 1},
 			]);
 			expect(result.storage).toEqual([
 				{
@@ -138,7 +138,7 @@ describe('Calculate building zone capabilities service', () => {
 			});
 
 			expect(result.production).toEqual([
-				{resourceId: 'coal', amount: 2, interval: 4, amountPerSecond: 0.5},
+				{resourceId: 'coal', amount: 2, interval: 4},
 			]);
 		});
 
@@ -191,7 +191,7 @@ describe('Calculate building zone capabilities service', () => {
 				await calculateCapabilitiesService.forBuildingZone(buildingZone);
 
 			expect(result!.production).toEqual([
-				{resourceId: 'wood', amount: 3, interval: 1, amountPerSecond: 3},
+				{resourceId: 'wood', amount: 3, interval: 1},
 			]);
 		});
 
@@ -243,7 +243,7 @@ describe('Calculate building zone capabilities service', () => {
 
 			expect(result).toHaveLength(1);
 			expect(result[0].buildingZone).toBe(builtZone);
-			expect(result[0].capabilities.production[0].amountPerSecond).toEqual(1);
+			expect(result[0].capabilities.production[0].amount).toEqual(1);
 		});
 	});
 });

@@ -6,8 +6,13 @@ import {
 	CalculatedConstructionCapabilityModel,
 } from '@warp-core/database/model/capability/calculated-capabilities.model';
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
+import {ConstructionBuildableUnitModel} from '@warp-core/database/model/capability/construction-buildable-unit.model';
 
-type ConstructionState = {buildableUnitIds: Set<string> | null};
+type ConstructionState = {
+	buildableUnitIds: Set<
+		ConstructionBuildableUnitModel['unitBlueprintId']
+	> | null;
+};
 
 /**
  * Buildable units from all sources are merged, without duplicates.

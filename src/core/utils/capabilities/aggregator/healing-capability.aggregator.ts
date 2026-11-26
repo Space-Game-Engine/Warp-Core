@@ -1,17 +1,21 @@
 import {Injectable} from '@nestjs/common';
 
-import {mergeCapabilityTargets} from '@warp-core/core/utils/capabilities/aggregator/capability-target.util';
+import {
+	CapabilityTarget,
+	mergeCapabilityTargets,
+	toCalculatedCapabilityTargets,
+} from '@warp-core/core/utils/capabilities/aggregator/capability-target.util';
 import {CapabilityAggregatorInterface} from '@warp-core/core/utils/capabilities/capability-aggregator.interface';
 import {
 	CalculatedCapabilitiesModel,
-	CalculatedCapabilityTargetModel,
 	CalculatedHealingCapabilityModel,
 } from '@warp-core/database/model/capability/calculated-capabilities.model';
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
+import {HealingCapabilityModel} from '@warp-core/database/model/capability/healing-capability.model';
 
 type HealingState = {
-	healing: CalculatedHealingCapabilityModel | null;
-	targets: Map<string, CalculatedCapabilityTargetModel>;
+	healing: Pick<HealingCapabilityModel, 'amount' | 'interval'> | null;
+	targets: Map<string, CapabilityTarget>;
 };
 
 /**
@@ -36,18 +40,12 @@ export class HealingCapabilityAggregator extends CapabilityAggregatorInterface<H
 		mergeCapabilityTargets(state.targets, await healing.targets);
 
 		if (!state.healing) {
-			const entry = new CalculatedHealingCapabilityModel();
-			entry.amount = healing.amount;
-			entry.interval = healing.interval;
-			entry.amountPerSecond = healing.amount / healing.interval;
-			state.healing = entry;
+			state.healing = {amount: healing.amount, interval: healing.interval};
 			return;
 		}
 
 		state.healing.amount +=
 			(healing.amount * state.healing.interval) / healing.interval;
-		state.healing.amountPerSecond =
-			state.healing.amount / state.healing.interval;
 	}
 
 	public applyToResult(
@@ -58,7 +56,10 @@ export class HealingCapabilityAggregator extends CapabilityAggregatorInterface<H
 			return;
 		}
 
-		state.healing.targets = Array.from(state.targets.values());
-		result.healing = state.healing;
+		const healing = new CalculatedHealingCapabilityModel();
+		healing.amount = state.healing.amount;
+		healing.interval = state.healing.interval;
+		healing.targets = toCalculatedCapabilityTargets(state.targets);
+		result.healing = healing;
 	}
 }

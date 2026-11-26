@@ -28,7 +28,7 @@ export class NoDistanceSimpleMultiplyResourceCalculationMechanicService implemen
 		for (const {capabilities} of zonesCapabilities ?? []) {
 			for (const production of capabilities.production) {
 				if (production.resourceId === habitatResource.resourceId) {
-					productionRate += production.amountPerSecond;
+					productionRate += production.amount / production.interval;
 				}
 			}
 		}

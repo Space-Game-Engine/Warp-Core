@@ -59,7 +59,7 @@ describe('Sum capabilities service', () => {
 			]);
 
 			expect(result.production).toEqual([
-				{resourceId: 'wood', amount: 3, interval: 2, amountPerSecond: 1.5},
+				{resourceId: 'wood', amount: 3, interval: 2},
 			]);
 			expect(result.storage).toEqual([
 				{
@@ -85,8 +85,8 @@ describe('Sum capabilities service', () => {
 			]);
 
 			expect(result.production).toEqual([
-				{resourceId: 'wood', amount: 1.5, interval: 1, amountPerSecond: 1.5},
-				{resourceId: 'coal', amount: 2, interval: 4, amountPerSecond: 0.5},
+				{resourceId: 'wood', amount: 1.5, interval: 1},
+				{resourceId: 'coal', amount: 2, interval: 4},
 			]);
 		});
 
@@ -147,7 +147,7 @@ describe('Sum capabilities service', () => {
 			]);
 
 			expect(result.production).toEqual([
-				{resourceId: 'wood', amount: 2, interval: 1, amountPerSecond: 2},
+				{resourceId: 'wood', amount: 2, interval: 1},
 			]);
 			expect(result.storage).toEqual([]);
 		});

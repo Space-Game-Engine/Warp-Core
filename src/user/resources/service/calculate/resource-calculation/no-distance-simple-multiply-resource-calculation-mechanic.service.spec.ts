@@ -14,21 +14,21 @@ const testCases: {
 	name: string;
 	expectedProductionRate: number;
 	expectedResourcesAmount: number;
-	zonesProduction: {resourceId: string; amountPerSecond: number}[][];
+	zonesProduction: {resourceId: string; amount: number; interval: number}[][];
 }[] = [
 	{
 		name: 'there is single building zone',
 		expectedProductionRate: 1,
 		expectedResourcesAmount: 100,
-		zonesProduction: [[{resourceId: 'wood', amountPerSecond: 1}]],
+		zonesProduction: [[{resourceId: 'wood', amount: 1, interval: 1}]],
 	},
 	{
 		name: 'there are two building zones producing the same resource',
 		expectedProductionRate: 1.5,
 		expectedResourcesAmount: 150,
 		zonesProduction: [
-			[{resourceId: 'wood', amountPerSecond: 1}],
-			[{resourceId: 'wood', amountPerSecond: 0.5}],
+			[{resourceId: 'wood', amount: 1, interval: 1}],
+			[{resourceId: 'wood', amount: 0.5, interval: 1}],
 		],
 	},
 	{
@@ -36,8 +36,8 @@ const testCases: {
 		expectedProductionRate: 1,
 		expectedResourcesAmount: 100,
 		zonesProduction: [
-			[{resourceId: 'wood', amountPerSecond: 1}],
-			[{resourceId: 'coal', amountPerSecond: 0.5}],
+			[{resourceId: 'wood', amount: 1, interval: 1}],
+			[{resourceId: 'coal', amount: 0.5, interval: 1}],
 		],
 	},
 	{
@@ -46,8 +46,8 @@ const testCases: {
 		expectedResourcesAmount: 50,
 		zonesProduction: [
 			[
-				{resourceId: 'coal', amountPerSecond: 2},
-				{resourceId: 'wood', amountPerSecond: 0.5},
+				{resourceId: 'coal', amount: 2, interval: 1},
+				{resourceId: 'wood', amount: 0.5, interval: 1},
 			],
 		],
 	},

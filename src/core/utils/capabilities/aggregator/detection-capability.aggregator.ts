@@ -6,8 +6,14 @@ import {
 	CalculatedDetectionCapabilityModel,
 } from '@warp-core/database/model/capability/calculated-capabilities.model';
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
+import {DetectionCapabilityModel} from '@warp-core/database/model/capability/detection-capability.model';
 
-type DetectionState = {detection: CalculatedDetectionCapabilityModel | null};
+type DetectionState = {
+	detection: Pick<
+		DetectionCapabilityModel,
+		'sightRange' | 'detectsStealth'
+	> | null;
+};
 
 /**
  * Sight range is summed. Stealth detection is enabled when any source enables it.
@@ -28,10 +34,10 @@ export class DetectionCapabilityAggregator extends CapabilityAggregatorInterface
 		}
 
 		if (!state.detection) {
-			const entry = new CalculatedDetectionCapabilityModel();
-			entry.sightRange = detection.sightRange;
-			entry.detectsStealth = detection.detectsStealth;
-			state.detection = entry;
+			state.detection = {
+				sightRange: detection.sightRange,
+				detectsStealth: detection.detectsStealth,
+			};
 			return;
 		}
 
@@ -43,6 +49,13 @@ export class DetectionCapabilityAggregator extends CapabilityAggregatorInterface
 		state: DetectionState,
 		result: CalculatedCapabilitiesModel,
 	): void {
-		result.detection = state.detection;
+		if (!state.detection) {
+			return;
+		}
+
+		const detection = new CalculatedDetectionCapabilityModel();
+		detection.sightRange = state.detection.sightRange;
+		detection.detectsStealth = state.detection.detectsStealth;
+		result.detection = detection;
 	}
 }
