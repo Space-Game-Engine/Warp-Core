@@ -1,5 +1,5 @@
 import {Field, Int, ObjectType} from '@nestjs/graphql';
-import {IsNumber, Min} from 'class-validator';
+import {IsNumber} from 'class-validator';
 import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
 
 @ObjectType({
@@ -12,7 +12,6 @@ export class StealthCapabilityModel {
 
 	@Field(() => Int, {description: 'Stealth level of the unit'})
 	@IsNumber()
-	@Min(0)
 	@Column('int')
 	public level: number;
 }

@@ -109,7 +109,7 @@ describe('Calculate building zone capabilities service', () => {
 			});
 
 			expect(result.production).toEqual([
-				{resourceId: 'wood', amount: 4, interval: 1},
+				{resourceId: 'wood', amount: 4, interval: 2},
 			]);
 			expect(result.storage).toEqual([
 				{

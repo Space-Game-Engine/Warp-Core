@@ -26,17 +26,20 @@ describe('Building with attack capability', () => {
 					{
 						details: {level: 1, timeToUpdateInSeconds: 10},
 						capabilities: {
-							attack: {
-								damage: 20,
-								cooldown: 3,
-								targets: [
-									{
-										type: CapabilityTargetTypeEnum.MOVEMENT_LAYER,
-										value: 'land',
-									},
-									{type: CapabilityTargetTypeEnum.TAG, value: 'infantry'},
-								],
-							},
+							attack: [
+								{
+									targetType: CapabilityTargetTypeEnum.MOVEMENT_LAYER,
+									targetValue: 'land',
+									damage: 20,
+									cooldown: 3,
+								},
+								{
+									targetType: CapabilityTargetTypeEnum.TAG,
+									targetValue: 'infantry',
+									damage: 20,
+									cooldown: 3,
+								},
+							],
 						},
 					},
 				],
@@ -56,8 +59,7 @@ describe('Building with attack capability', () => {
 						details: {fields: ['level']},
 						capabilities: {
 							attack: {
-								fields: ['damage', 'cooldown'],
-								targets: {fields: ['type', 'value']},
+								fields: ['targetType', 'targetValue', 'damage', 'cooldown'],
 							},
 						},
 					},
@@ -74,21 +76,27 @@ describe('Building with attack capability', () => {
 		);
 
 		expect(tower.buildingDetailsAtCertainLevel).toHaveLength(1);
-		expect(tower.buildingDetailsAtCertainLevel[0].capabilities.attack).toEqual({
-			damage: 20,
-			cooldown: 3,
-			targets: [
-				{type: 'MOVEMENT_LAYER', value: 'land'},
-				{type: 'TAG', value: 'infantry'},
-			],
-		});
+		expect(tower.buildingDetailsAtCertainLevel[0].capabilities.attack).toEqual([
+			{
+				targetType: 'MOVEMENT_LAYER',
+				targetValue: 'land',
+				damage: 20,
+				cooldown: 3,
+			},
+			{
+				targetType: 'TAG',
+				targetValue: 'infantry',
+				damage: 20,
+				cooldown: 3,
+			},
+		]);
 
 		const buildingsWithoutAttack = buildings.filter(
 			(building: {id: string}) => building.id !== 'defense_tower',
 		);
 		for (const building of buildingsWithoutAttack) {
 			for (const level of building.buildingDetailsAtCertainLevel) {
-				expect(level.capabilities?.attack ?? null).toBeNull();
+				expect(level.capabilities?.attack ?? []).toEqual([]);
 			}
 		}
 	});

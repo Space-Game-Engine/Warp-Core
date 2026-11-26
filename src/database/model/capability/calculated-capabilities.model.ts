@@ -1,7 +1,6 @@
 import {Field, ObjectType, PickType} from '@nestjs/graphql';
 
 import {AttackCapabilityModel} from '@warp-core/database/model/capability/attack-capability.model';
-import {CapabilityTargetModel} from '@warp-core/database/model/capability/capability-target.model';
 import {DefenseCapabilityModel} from '@warp-core/database/model/capability/defense-capability.model';
 import {DetectionCapabilityModel} from '@warp-core/database/model/capability/detection-capability.model';
 import {HealingCapabilityModel} from '@warp-core/database/model/capability/healing-capability.model';
@@ -39,24 +38,15 @@ export class CalculatedMovementCapabilityModel extends PickType(
 	ObjectType,
 ) {}
 
-@ObjectType({description: 'Effective target of attack or healing capability'})
-export class CalculatedCapabilityTargetModel extends PickType(
-	CapabilityTargetModel,
-	['type', 'value'] as const,
-	ObjectType,
-) {}
-
-@ObjectType({description: 'Effective attack, summed from all sources'})
+@ObjectType({
+	description:
+		'Effective attack against a single target, summed from all sources',
+})
 export class CalculatedAttackCapabilityModel extends PickType(
 	AttackCapabilityModel,
-	['damage', 'cooldown'] as const,
+	['targetType', 'targetValue', 'damage', 'cooldown'] as const,
 	ObjectType,
-) {
-	@Field(() => [CalculatedCapabilityTargetModel], {
-		description: 'Targets that can be attacked',
-	})
-	public targets: CalculatedCapabilityTargetModel[];
-}
+) {}
 
 @ObjectType({description: 'Effective defense, summed from all sources'})
 export class CalculatedDefenseCapabilityModel extends PickType(
@@ -71,17 +61,14 @@ export class CalculatedConstructionCapabilityModel {
 	public buildableUnitIds: string[];
 }
 
-@ObjectType({description: 'Effective healing, summed from all sources'})
+@ObjectType({
+	description: 'Effective healing of a single target, summed from all sources',
+})
 export class CalculatedHealingCapabilityModel extends PickType(
 	HealingCapabilityModel,
-	['amount', 'interval'] as const,
+	['targetType', 'targetValue', 'amount', 'interval'] as const,
 	ObjectType,
-) {
-	@Field(() => [CalculatedCapabilityTargetModel], {
-		description: 'Targets that can be healed',
-	})
-	public targets: CalculatedCapabilityTargetModel[];
-}
+) {}
 
 @ObjectType({description: 'Effective detection, summed from all sources'})
 export class CalculatedDetectionCapabilityModel extends PickType(
@@ -117,8 +104,10 @@ export class CalculatedCapabilitiesModel {
 	})
 	public movement: CalculatedMovementCapabilityModel[] = [];
 
-	@Field(() => CalculatedAttackCapabilityModel, {nullable: true})
-	public attack: CalculatedAttackCapabilityModel | null = null;
+	@Field(() => [CalculatedAttackCapabilityModel], {
+		description: 'Effective attack, one entry per target',
+	})
+	public attack: CalculatedAttackCapabilityModel[] = [];
 
 	@Field(() => CalculatedDefenseCapabilityModel, {nullable: true})
 	public defense: CalculatedDefenseCapabilityModel | null = null;
@@ -126,8 +115,10 @@ export class CalculatedCapabilitiesModel {
 	@Field(() => CalculatedConstructionCapabilityModel, {nullable: true})
 	public construction: CalculatedConstructionCapabilityModel | null = null;
 
-	@Field(() => CalculatedHealingCapabilityModel, {nullable: true})
-	public healing: CalculatedHealingCapabilityModel | null = null;
+	@Field(() => [CalculatedHealingCapabilityModel], {
+		description: 'Effective healing, one entry per target',
+	})
+	public healing: CalculatedHealingCapabilityModel[] = [];
 
 	@Field(() => CalculatedDetectionCapabilityModel, {nullable: true})
 	public detection: CalculatedDetectionCapabilityModel | null = null;

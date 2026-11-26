@@ -20,11 +20,10 @@ units:
           amount: 10
           carriesUnits: 1
       attack:
-        damage: 10
-        cooldown: 2
-        targets:
-          - type: movement_layer
-            value: land
+        - targetType: movement_layer
+          targetValue: land
+          damage: 10
+          cooldown: 2
       defense:
         armor: 5
       detection:
@@ -48,11 +47,10 @@ units:
         buildableUnits:
           - unitBlueprintId: gun_turret
       healing:
-        amount: 1
-        interval: 5
-        targets:
-          - type: tag
-            value: infantry
+        - targetType: tag
+          targetValue: infantry
+          amount: 1
+          interval: 5
       stealth:
         level: 1
   - id: gun_turret
@@ -70,12 +68,13 @@ units:
           amount: 1
           interval: 10
       attack:
-        damage: 15
-        cooldown: 1
-        targets:
-          - type: movement_layer
-            value: land
-          - type: movement_layer
-            value: air
+        - targetType: movement_layer
+          targetValue: land
+          damage: 15
+          cooldown: 1
+        - targetType: movement_layer
+          targetValue: air
+          damage: 15
+          cooldown: 1
       defense:
         armor: 10

@@ -71,7 +71,7 @@ describe('Sum capabilities service', () => {
 			]);
 		});
 
-		it('should sum production per resource and rescale bonus flows to the first interval', async () => {
+		it('should sum amount and interval of production per resource', async () => {
 			const result = await sumCapabilitiesService.sum([
 				capabilities({
 					production: [
@@ -85,7 +85,7 @@ describe('Sum capabilities service', () => {
 			]);
 
 			expect(result.production).toEqual([
-				{resourceId: 'wood', amount: 1.5, interval: 1},
+				{resourceId: 'wood', amount: 2, interval: 3},
 				{resourceId: 'coal', amount: 2, interval: 4},
 			]);
 		});

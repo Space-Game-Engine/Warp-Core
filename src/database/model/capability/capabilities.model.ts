@@ -93,23 +93,23 @@ export class CapabilitiesModel {
 		| Promise<MovementCapabilityModel[]>
 		| null;
 
-	@Field(() => AttackCapabilityModel, {
-		description: 'How the unit attacks',
+	@Field(() => [AttackCapabilityModel], {
+		description: 'How the unit attacks. One entry per target.',
 		nullable: true,
 	})
 	@ValidateNested()
 	@ValidatePromise()
 	@IsOptional()
-	@OneToOne(() => AttackCapabilityModel, {
+	@OneToMany(() => AttackCapabilityModel, attack => attack.capabilities, {
 		lazy: true,
-		cascade: true,
 		nullable: true,
+		persistence: false,
+		cascade: true,
 	})
-	@JoinColumn({name: 'attackId'})
 	@Type(() => AttackCapabilityModel)
 	public attack?:
-		| AttackCapabilityModel
-		| Promise<AttackCapabilityModel | null>
+		| AttackCapabilityModel[]
+		| Promise<AttackCapabilityModel[]>
 		| null;
 
 	@Field(() => DefenseCapabilityModel, {
@@ -150,23 +150,23 @@ export class CapabilitiesModel {
 		| Promise<ConstructionCapabilityModel | null>
 		| null;
 
-	@Field(() => HealingCapabilityModel, {
-		description: 'How the unit heals others',
+	@Field(() => [HealingCapabilityModel], {
+		description: 'How the unit heals others. One entry per target.',
 		nullable: true,
 	})
 	@ValidateNested()
 	@ValidatePromise()
 	@IsOptional()
-	@OneToOne(() => HealingCapabilityModel, {
+	@OneToMany(() => HealingCapabilityModel, healing => healing.capabilities, {
 		lazy: true,
-		cascade: true,
 		nullable: true,
+		persistence: false,
+		cascade: true,
 	})
-	@JoinColumn({name: 'healingId'})
 	@Type(() => HealingCapabilityModel)
 	public healing?:
-		| HealingCapabilityModel
-		| Promise<HealingCapabilityModel | null>
+		| HealingCapabilityModel[]
+		| Promise<HealingCapabilityModel[]>
 		| null;
 
 	@Field(() => DetectionCapabilityModel, {
@@ -221,6 +221,20 @@ export class CapabilitiesModel {
 		for (const singleMovement of movement) {
 			if (!(await singleMovement.capabilities)) {
 				singleMovement.capabilities = this;
+			}
+		}
+
+		const attack = (await this.attack) ?? [];
+		for (const singleAttack of attack) {
+			if (!(await singleAttack.capabilities)) {
+				singleAttack.capabilities = this;
+			}
+		}
+
+		const healing = (await this.healing) ?? [];
+		for (const singleHealing of healing) {
+			if (!(await singleHealing.capabilities)) {
+				singleHealing.capabilities = this;
 			}
 		}
 

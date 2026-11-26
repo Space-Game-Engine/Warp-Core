@@ -39,7 +39,10 @@ The **effective capabilities** of a zone are calculated by the building-zone mod
 global capabilities of the zone's level + player blueprint bonus capabilities
 ```
 
-* Production flows are summed per resource. The interval of the global flow is kept and bonus flows are rescaled to it, so `amount: 1, interval: 1` plus a bonus of `amount: 1, interval: 2` gives `amount: 1.5, interval: 1`.
+* The global capabilities are the base values. The player blueprint stores **changes** of them, which can be negative. Aggregators do not calculate time or rescale intervals, they only add values. `0` means "no change" of a field.
+* Production flows are aggregated per resource: `amount: 1, interval: 1` plus a bonus of `amount: 1, interval: 2` gives `amount: 2, interval: 3`. To change only part of a flow, set the other field to `0`: `amount: 1, interval: 5` plus a bonus of `amount: 0, interval: -3` gives `amount: 1, interval: 2`.
+* Attack (`damage`, `cooldown`) and healing (`amount`, `interval`) are aggregated per target (`targetType` + `targetValue`) in the same way. A healer of turrets with `amount: 10, interval: 15` and a bonus of `amount: 5, interval: 2` for the same target gives `amount: 15, interval: 17`. A target that exists only in the player capabilities (for example tanks, when the global attack hits only planes) is added as a new entry.
+* Movement speed is summed per layer. Defense `armor`, detection `sightRange` and stealth `level` are summed; stealth detection is enabled when any source enables it. Buildable units are merged without duplicates.
 * Storage entries with the same storage type, resource type and resource id are summed. Entries with different rules stay separate; all entries that accept a resource count towards its storage limit.
 
 Every resource calculation (production rate shown on resources, storage limits, recalculation when a queue element finishes) uses these effective values. They are exposed on `buildingZone_get` / `buildingZone_getAll` as the `capabilities` field.

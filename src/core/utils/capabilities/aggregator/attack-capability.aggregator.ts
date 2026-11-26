@@ -1,66 +1,57 @@
 import {Injectable} from '@nestjs/common';
 
-import {
-	CapabilityTarget,
-	mergeCapabilityTargets,
-	toCalculatedCapabilityTargets,
-} from '@warp-core/core/utils/capabilities/aggregator/capability-target.util';
 import {CapabilityAggregatorInterface} from '@warp-core/core/utils/capabilities/capability-aggregator.interface';
-import {AttackCapabilityModel} from '@warp-core/database/model/capability/attack-capability.model';
 import {
 	CalculatedAttackCapabilityModel,
 	CalculatedCapabilitiesModel,
 } from '@warp-core/database/model/capability/calculated-capabilities.model';
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
 
-type AttackState = {
-	attack: Pick<AttackCapabilityModel, 'damage' | 'cooldown'> | null;
-	targets: Map<string, CapabilityTarget>;
-};
-
 /**
- * Damage is summed, targets are merged without duplicates.
- * Cooldown is the shortest positive cooldown of all sources, so a bonus with cooldown 0
- * (meaning "no change") does not remove the cooldown.
+ * Attacks are aggregated per target (target type and value). The first source is the base,
+ * the next ones change `damage` and `cooldown` by their (possibly negative) values.
+ * A target that appears only in a later source is added as a new entry.
  */
 @Injectable()
-export class AttackCapabilityAggregator extends CapabilityAggregatorInterface<AttackState> {
-	public createState(): AttackState {
-		return {attack: null, targets: new Map()};
+export class AttackCapabilityAggregator extends CapabilityAggregatorInterface<
+	Map<string, CalculatedAttackCapabilityModel>
+> {
+	public createState(): Map<string, CalculatedAttackCapabilityModel> {
+		return new Map();
 	}
 
 	public async addSource(
-		state: AttackState,
+		state: Map<string, CalculatedAttackCapabilityModel>,
 		source: CapabilitiesModel,
 	): Promise<void> {
-		const attack = await source.attack;
-		if (!attack) {
-			return;
-		}
+		for (const {
+			targetType,
+			targetValue,
+			damage,
+			cooldown,
+		} of (await source.attack) ?? []) {
+			const key = `${targetType}|${targetValue}`;
+			const existing = state.get(key);
 
-		const current = state.attack ?? {damage: 0, cooldown: 0};
-		state.attack = {
-			damage: current.damage + attack.damage,
-			cooldown:
-				attack.cooldown > 0 && current.cooldown > 0
-					? Math.min(current.cooldown, attack.cooldown)
-					: Math.max(current.cooldown, attack.cooldown),
-		};
-		mergeCapabilityTargets(state.targets, await attack.targets);
+			if (!existing) {
+				const entry = new CalculatedAttackCapabilityModel();
+				entry.targetType = targetType;
+				entry.targetValue = targetValue;
+				entry.damage = damage ?? 0;
+				entry.cooldown = cooldown ?? 0;
+				state.set(key, entry);
+				continue;
+			}
+
+			existing.damage += damage ?? 0;
+			existing.cooldown += cooldown ?? 0;
+		}
 	}
 
 	public applyToResult(
-		state: AttackState,
+		state: Map<string, CalculatedAttackCapabilityModel>,
 		result: CalculatedCapabilitiesModel,
 	): void {
-		if (!state.attack) {
-			return;
-		}
-
-		const attack = new CalculatedAttackCapabilityModel();
-		attack.damage = state.attack.damage;
-		attack.cooldown = state.attack.cooldown;
-		attack.targets = toCalculatedCapabilityTargets(state.targets);
-		result.attack = attack;
+		result.attack = Array.from(state.values());
 	}
 }

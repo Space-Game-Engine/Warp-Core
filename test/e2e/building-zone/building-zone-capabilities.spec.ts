@@ -144,7 +144,7 @@ describe('Building zone capabilities', () => {
 				blueprintRepository.manager.create(ProductionCapabilityModel, {
 					resourceId: 'wood',
 					amount: 1,
-					interval: 2,
+					interval: 0,
 					capabilities: lumberMillBlueprint.capabilities,
 				}),
 			];
@@ -164,7 +164,7 @@ describe('Building zone capabilities', () => {
 
 			const lumberMill = zones.find(zone => zone.localBuildingZoneId === 2)!;
 			expect(lumberMill.capabilities!.production).toEqual([
-				{resourceId: 'wood', amount: 1.5, interval: 1},
+				{resourceId: 'wood', amount: 2, interval: 1},
 			]);
 
 			const warehouse = zones.find(zone => zone.localBuildingZoneId === 1)!;
@@ -183,9 +183,7 @@ describe('Building zone capabilities', () => {
 				.send()
 				.expect(HttpStatus.OK);
 
-			expect(productionResponse.body.data.resource_get.productionRate).toBe(
-				1.5,
-			);
+			expect(productionResponse.body.data.resource_get.productionRate).toBe(2);
 
 			jest
 				.useFakeTimers()

@@ -1,5 +1,5 @@
 import {Field, Float, Int, ObjectType} from '@nestjs/graphql';
-import {IsNumber, IsOptional, Min, ValidateNested} from 'class-validator';
+import {IsNumber, IsOptional, ValidateNested} from 'class-validator';
 import {
 	Column,
 	Entity,
@@ -45,13 +45,11 @@ export class ProductionCapabilityModel {
 
 	@Field(() => Float, {description: 'Amount of resource produced per interval'})
 	@IsNumber()
-	@Min(0)
 	@Column({type: 'float', precision: 10, scale: 4})
 	public amount: number;
 
 	@Field(() => Int, {description: 'Production interval in seconds'})
 	@IsNumber()
-	@Min(1)
 	@Column('int')
 	public interval: number;
 }

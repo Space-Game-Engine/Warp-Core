@@ -1,65 +1,57 @@
 import {Injectable} from '@nestjs/common';
 
-import {
-	CapabilityTarget,
-	mergeCapabilityTargets,
-	toCalculatedCapabilityTargets,
-} from '@warp-core/core/utils/capabilities/aggregator/capability-target.util';
 import {CapabilityAggregatorInterface} from '@warp-core/core/utils/capabilities/capability-aggregator.interface';
 import {
 	CalculatedCapabilitiesModel,
 	CalculatedHealingCapabilityModel,
 } from '@warp-core/database/model/capability/calculated-capabilities.model';
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
-import {HealingCapabilityModel} from '@warp-core/database/model/capability/healing-capability.model';
-
-type HealingState = {
-	healing: Pick<HealingCapabilityModel, 'amount' | 'interval'> | null;
-	targets: Map<string, CapabilityTarget>;
-};
 
 /**
- * Works like production: the interval of the first source is kept and amounts
- * from other sources are rescaled to it. Targets are merged without duplicates.
+ * Healing is aggregated per target (target type and value). The first source is the base,
+ * the next ones change `amount` and `interval` by their (possibly negative) values.
+ * A target that appears only in a later source is added as a new entry.
  */
 @Injectable()
-export class HealingCapabilityAggregator extends CapabilityAggregatorInterface<HealingState> {
-	public createState(): HealingState {
-		return {healing: null, targets: new Map()};
+export class HealingCapabilityAggregator extends CapabilityAggregatorInterface<
+	Map<string, CalculatedHealingCapabilityModel>
+> {
+	public createState(): Map<string, CalculatedHealingCapabilityModel> {
+		return new Map();
 	}
 
 	public async addSource(
-		state: HealingState,
+		state: Map<string, CalculatedHealingCapabilityModel>,
 		source: CapabilitiesModel,
 	): Promise<void> {
-		const healing = await source.healing;
-		if (!healing) {
-			return;
+		for (const {
+			targetType,
+			targetValue,
+			amount,
+			interval,
+		} of (await source.healing) ?? []) {
+			const key = `${targetType}|${targetValue}`;
+			const existing = state.get(key);
+
+			if (!existing) {
+				const entry = new CalculatedHealingCapabilityModel();
+				entry.targetType = targetType;
+				entry.targetValue = targetValue;
+				entry.amount = amount ?? 0;
+				entry.interval = interval ?? 0;
+				state.set(key, entry);
+				continue;
+			}
+
+			existing.amount += amount ?? 0;
+			existing.interval += interval ?? 0;
 		}
-
-		mergeCapabilityTargets(state.targets, await healing.targets);
-
-		if (!state.healing) {
-			state.healing = {amount: healing.amount, interval: healing.interval};
-			return;
-		}
-
-		state.healing.amount +=
-			(healing.amount * state.healing.interval) / healing.interval;
 	}
 
 	public applyToResult(
-		state: HealingState,
+		state: Map<string, CalculatedHealingCapabilityModel>,
 		result: CalculatedCapabilitiesModel,
 	): void {
-		if (!state.healing) {
-			return;
-		}
-
-		const healing = new CalculatedHealingCapabilityModel();
-		healing.amount = state.healing.amount;
-		healing.interval = state.healing.interval;
-		healing.targets = toCalculatedCapabilityTargets(state.targets);
-		result.healing = healing;
+		result.healing = Array.from(state.values());
 	}
 }
