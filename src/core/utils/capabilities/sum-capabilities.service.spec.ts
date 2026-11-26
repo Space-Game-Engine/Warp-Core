@@ -59,7 +59,7 @@ describe('Sum capabilities service', () => {
 			]);
 
 			expect(result.production).toEqual([
-				{resourceId: 'wood', amount: 3, interval: 2, amountPerSecond: 1.5},
+				{resourceId: 'wood', amount: 3, interval: 2},
 			]);
 			expect(result.storage).toEqual([
 				{
@@ -71,7 +71,7 @@ describe('Sum capabilities service', () => {
 			]);
 		});
 
-		it('should sum production per resource and rescale bonus flows to the first interval', async () => {
+		it('should sum amount and interval of production per resource', async () => {
 			const result = await sumCapabilitiesService.sum([
 				capabilities({
 					production: [
@@ -85,8 +85,8 @@ describe('Sum capabilities service', () => {
 			]);
 
 			expect(result.production).toEqual([
-				{resourceId: 'wood', amount: 1.5, interval: 1, amountPerSecond: 1.5},
-				{resourceId: 'coal', amount: 2, interval: 4, amountPerSecond: 0.5},
+				{resourceId: 'wood', amount: 2, interval: 3},
+				{resourceId: 'coal', amount: 2, interval: 4},
 			]);
 		});
 
@@ -147,7 +147,7 @@ describe('Sum capabilities service', () => {
 			]);
 
 			expect(result.production).toEqual([
-				{resourceId: 'wood', amount: 2, interval: 1, amountPerSecond: 2},
+				{resourceId: 'wood', amount: 2, interval: 1},
 			]);
 			expect(result.storage).toEqual([]);
 		});

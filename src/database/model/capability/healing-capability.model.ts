@@ -1,64 +1,42 @@
 import {Field, Float, Int, ObjectType} from '@nestjs/graphql';
-import {Type} from 'class-transformer';
+import {IsNumber, ValidateNested} from 'class-validator';
 import {
-	ArrayNotEmpty,
-	IsNumber,
-	Min,
-	ValidateNested,
-	ValidatePromise,
-} from 'class-validator';
-import {
-	BeforeInsert,
-	BeforeUpdate,
 	Column,
 	Entity,
-	OneToMany,
+	JoinColumn,
+	ManyToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {CapabilityTargetModel} from '@warp-core/database/model/capability/capability-target.model';
+import {AbstractTargetedCapabilityModel} from '@warp-core/database/model/capability/abstract-targeted-capability.model';
+import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
 
 @ObjectType({
-	description: 'Healing capability: how many HP are restored to tagged units',
+	description:
+		'Healing capability: how many HP are restored to a single target. Player capabilities store changes of those values.',
 })
 @Entity({name: 'healing-capability'})
-export class HealingCapabilityModel {
+export class HealingCapabilityModel extends AbstractTargetedCapabilityModel {
 	@PrimaryGeneratedColumn()
 	public id: number;
 
+	@Field(() => CapabilitiesModel, {
+		description: 'Capabilities set that healing belongs to',
+	})
+	@ValidateNested()
+	@ManyToOne(() => CapabilitiesModel, capabilities => capabilities.healing, {
+		lazy: true,
+	})
+	@JoinColumn({name: 'capabilitiesId'})
+	public capabilities: CapabilitiesModel | Promise<CapabilitiesModel>;
+
 	@Field(() => Float, {description: 'Amount of HP healed in every interval'})
 	@IsNumber()
-	@Min(0)
 	@Column({type: 'float', precision: 10, scale: 4})
 	public amount: number;
 
 	@Field(() => Int, {description: 'Healing interval in seconds'})
 	@IsNumber()
-	@Min(1)
 	@Column('int')
 	public interval: number;
-
-	@Field(() => [CapabilityTargetModel], {
-		description: 'Targets that can be healed',
-	})
-	@ValidateNested()
-	@ValidatePromise()
-	@ArrayNotEmpty()
-	@OneToMany(() => CapabilityTargetModel, target => target.healingCapability, {
-		lazy: true,
-		persistence: false,
-		cascade: true,
-	})
-	@Type(() => CapabilityTargetModel)
-	public targets: CapabilityTargetModel[] | Promise<CapabilityTargetModel[]>;
-
-	@BeforeInsert()
-	@BeforeUpdate()
-	public async setOneToManyRelations(): Promise<void> {
-		for (const target of await this.targets) {
-			if (!(await target.healingCapability)) {
-				target.healingCapability = this;
-			}
-		}
-	}
 }

@@ -1,64 +1,42 @@
 import {Field, Float, Int, ObjectType} from '@nestjs/graphql';
-import {Type} from 'class-transformer';
+import {IsNumber, ValidateNested} from 'class-validator';
 import {
-	ArrayNotEmpty,
-	IsNumber,
-	Min,
-	ValidateNested,
-	ValidatePromise,
-} from 'class-validator';
-import {
-	BeforeInsert,
-	BeforeUpdate,
 	Column,
 	Entity,
-	OneToMany,
+	JoinColumn,
+	ManyToOne,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import {CapabilityTargetModel} from '@warp-core/database/model/capability/capability-target.model';
+import {AbstractTargetedCapabilityModel} from '@warp-core/database/model/capability/abstract-targeted-capability.model';
+import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
 
 @ObjectType({
-	description: 'Attack capability: how much damage can be done and how often',
+	description:
+		'Attack capability: how much damage can be done to a single target and how often. Player capabilities store changes of those values.',
 })
 @Entity({name: 'attack-capability'})
-export class AttackCapabilityModel {
+export class AttackCapabilityModel extends AbstractTargetedCapabilityModel {
 	@PrimaryGeneratedColumn()
 	public id: number;
 
+	@Field(() => CapabilitiesModel, {
+		description: 'Capabilities set that attack belongs to',
+	})
+	@ValidateNested()
+	@ManyToOne(() => CapabilitiesModel, capabilities => capabilities.attack, {
+		lazy: true,
+	})
+	@JoinColumn({name: 'capabilitiesId'})
+	public capabilities: CapabilitiesModel | Promise<CapabilitiesModel>;
+
 	@Field(() => Float, {description: 'Damage done by a single attack'})
 	@IsNumber()
-	@Min(0)
 	@Column({type: 'float', precision: 10, scale: 4})
 	public damage: number;
 
 	@Field(() => Int, {description: 'Cooldown between attacks in seconds'})
 	@IsNumber()
-	@Min(0)
 	@Column('int')
 	public cooldown: number;
-
-	@Field(() => [CapabilityTargetModel], {
-		description: 'Targets that can be attacked',
-	})
-	@ValidateNested()
-	@ValidatePromise()
-	@ArrayNotEmpty()
-	@OneToMany(() => CapabilityTargetModel, target => target.attackCapability, {
-		lazy: true,
-		persistence: false,
-		cascade: true,
-	})
-	@Type(() => CapabilityTargetModel)
-	public targets: CapabilityTargetModel[] | Promise<CapabilityTargetModel[]>;
-
-	@BeforeInsert()
-	@BeforeUpdate()
-	public async setOneToManyRelations(): Promise<void> {
-		for (const target of await this.targets) {
-			if (!(await target.attackCapability)) {
-				target.attackCapability = this;
-			}
-		}
-	}
 }

@@ -5,7 +5,6 @@ import {
 	IsNotEmpty,
 	IsNumber,
 	IsOptional,
-	Min,
 	ValidateIf,
 	ValidateNested,
 } from 'class-validator';
@@ -86,7 +85,6 @@ export class StorageCapabilityModel {
 		description: 'How many units can be carried in that storage',
 	})
 	@IsInt()
-	@Min(0)
 	@Column('int', {default: 0})
 	public carriesUnits: number = 0;
 

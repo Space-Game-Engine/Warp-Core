@@ -9,7 +9,6 @@ import {BuildingQueueElementModel} from '@warp-core/database/model/building-queu
 import {BuildingZoneModel} from '@warp-core/database/model/building-zone.model';
 import {AttackCapabilityModel} from '@warp-core/database/model/capability/attack-capability.model';
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
-import {CapabilityTargetModel} from '@warp-core/database/model/capability/capability-target.model';
 import {ConstructionBuildableUnitModel} from '@warp-core/database/model/capability/construction-buildable-unit.model';
 import {ConstructionCapabilityModel} from '@warp-core/database/model/capability/construction-capability.model';
 import {DefenseCapabilityModel} from '@warp-core/database/model/capability/defense-capability.model';
@@ -106,7 +105,6 @@ export class DatabaseModule {
 			DefenseCapabilityModel,
 			ConstructionCapabilityModel,
 			ConstructionBuildableUnitModel,
-			CapabilityTargetModel,
 			HealingCapabilityModel,
 			DetectionCapabilityModel,
 			StealthCapabilityModel,

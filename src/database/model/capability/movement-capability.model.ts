@@ -1,5 +1,5 @@
 import {Field, Float, ObjectType} from '@nestjs/graphql';
-import {IsNumber, IsString, Min, ValidateNested} from 'class-validator';
+import {IsNumber, IsString, ValidateNested} from 'class-validator';
 import {
 	Column,
 	Entity,
@@ -38,7 +38,6 @@ export class MovementCapabilityModel {
 
 	@Field(() => Float, {description: 'Speed of the unit on that layer'})
 	@IsNumber()
-	@Min(0)
 	@Column({type: 'float', precision: 10, scale: 4})
 	public speed: number;
 }

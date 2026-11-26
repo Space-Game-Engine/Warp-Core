@@ -1,49 +1,88 @@
-import {Field, Float, Int, ObjectType} from '@nestjs/graphql';
+import {Field, ObjectType, PickType} from '@nestjs/graphql';
 
-import {ResourceTypeEnum} from '@warp-core/database/enum/resource-type.enum';
-import {StorageTypeEnum} from '@warp-core/database/enum/storage-type.enum';
+import {AttackCapabilityModel} from '@warp-core/database/model/capability/attack-capability.model';
+import {DefenseCapabilityModel} from '@warp-core/database/model/capability/defense-capability.model';
+import {DetectionCapabilityModel} from '@warp-core/database/model/capability/detection-capability.model';
+import {HealingCapabilityModel} from '@warp-core/database/model/capability/healing-capability.model';
+import {MovementCapabilityModel} from '@warp-core/database/model/capability/movement-capability.model';
+import {ProductionCapabilityModel} from '@warp-core/database/model/capability/production-capability.model';
+import {StealthCapabilityModel} from '@warp-core/database/model/capability/stealth-capability.model';
+import {StorageCapabilityModel} from '@warp-core/database/model/capability/storage-capability.model';
 
 @ObjectType({
 	description:
 		'Effective production of a single resource, summed from all capability sources',
 })
-export class CalculatedProductionCapabilityModel {
-	@Field(() => String, {description: 'Id of produced resource'})
-	public resourceId: string;
-
-	@Field(() => Float, {description: 'Amount produced per interval'})
-	public amount: number;
-
-	@Field(() => Int, {description: 'Production interval in seconds'})
-	public interval: number;
-
-	@Field(() => Float, {description: 'Amount produced every second'})
-	public amountPerSecond: number;
-}
+export class CalculatedProductionCapabilityModel extends PickType(
+	ProductionCapabilityModel,
+	['resourceId', 'amount', 'interval'] as const,
+	ObjectType,
+) {}
 
 @ObjectType({
 	description:
 		'Effective storage entry, summed from all capability sources with the same storage rules',
 })
-export class CalculatedStorageCapabilityModel {
-	@Field(() => StorageTypeEnum, {description: 'What type of storage is it?'})
-	public storageType: StorageTypeEnum;
+export class CalculatedStorageCapabilityModel extends PickType(
+	StorageCapabilityModel,
+	['storageType', 'resourceType', 'resourceId', 'amount'] as const,
+	ObjectType,
+) {}
 
-	@Field(() => ResourceTypeEnum, {
-		description: 'What kind of resource can be hold in here?',
-		nullable: true,
-	})
-	public resourceType?: ResourceTypeEnum | null;
+@ObjectType({
+	description: 'Effective movement speed on a single movement layer',
+})
+export class CalculatedMovementCapabilityModel extends PickType(
+	MovementCapabilityModel,
+	['layer', 'speed'] as const,
+	ObjectType,
+) {}
 
-	@Field(() => String, {
-		description: 'Id of the only resource that can be stored here',
-		nullable: true,
-	})
-	public resourceId?: string | null;
+@ObjectType({
+	description:
+		'Effective attack against a single target, summed from all sources',
+})
+export class CalculatedAttackCapabilityModel extends PickType(
+	AttackCapabilityModel,
+	['targetType', 'targetValue', 'damage', 'cooldown'] as const,
+	ObjectType,
+) {}
 
-	@Field(() => Float, {description: 'Amount of resources stored here'})
-	public amount: number;
+@ObjectType({description: 'Effective defense, summed from all sources'})
+export class CalculatedDefenseCapabilityModel extends PickType(
+	DefenseCapabilityModel,
+	['armor'] as const,
+	ObjectType,
+) {}
+
+@ObjectType({description: 'Effective construction, merged from all sources'})
+export class CalculatedConstructionCapabilityModel {
+	@Field(() => [String], {description: 'Ids of units that can be built'})
+	public buildableUnitIds: string[];
 }
+
+@ObjectType({
+	description: 'Effective healing of a single target, summed from all sources',
+})
+export class CalculatedHealingCapabilityModel extends PickType(
+	HealingCapabilityModel,
+	['targetType', 'targetValue', 'amount', 'interval'] as const,
+	ObjectType,
+) {}
+
+@ObjectType({description: 'Effective detection, summed from all sources'})
+export class CalculatedDetectionCapabilityModel extends PickType(
+	DetectionCapabilityModel,
+	['sightRange', 'detectsStealth'] as const,
+	ObjectType,
+) {}
+
+@ObjectType({description: 'Effective stealth, summed from all sources'})
+export class CalculatedStealthCapabilityModel extends PickType(
+	StealthCapabilityModel,
+	['level'] as const,
+	ObjectType,
+) {}
 
 @ObjectType({
 	description:
@@ -59,4 +98,31 @@ export class CalculatedCapabilitiesModel {
 		description: 'Effective storage entries',
 	})
 	public storage: CalculatedStorageCapabilityModel[] = [];
+
+	@Field(() => [CalculatedMovementCapabilityModel], {
+		description: 'Effective movement, one entry per layer',
+	})
+	public movement: CalculatedMovementCapabilityModel[] = [];
+
+	@Field(() => [CalculatedAttackCapabilityModel], {
+		description: 'Effective attack, one entry per target',
+	})
+	public attack: CalculatedAttackCapabilityModel[] = [];
+
+	@Field(() => CalculatedDefenseCapabilityModel, {nullable: true})
+	public defense: CalculatedDefenseCapabilityModel | null = null;
+
+	@Field(() => CalculatedConstructionCapabilityModel, {nullable: true})
+	public construction: CalculatedConstructionCapabilityModel | null = null;
+
+	@Field(() => [CalculatedHealingCapabilityModel], {
+		description: 'Effective healing, one entry per target',
+	})
+	public healing: CalculatedHealingCapabilityModel[] = [];
+
+	@Field(() => CalculatedDetectionCapabilityModel, {nullable: true})
+	public detection: CalculatedDetectionCapabilityModel | null = null;
+
+	@Field(() => CalculatedStealthCapabilityModel, {nullable: true})
+	public stealth: CalculatedStealthCapabilityModel | null = null;
 }

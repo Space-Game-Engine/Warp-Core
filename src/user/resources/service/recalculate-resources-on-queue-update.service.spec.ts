@@ -62,7 +62,10 @@ describe('Add last calculation date for new resource producers', () => {
 			when(buildingZoneEmitter.getCalculatedCapabilities)
 				.expectCalledWith({habitatId, buildingId: 'test', level: 5})
 				.mockResolvedValue({
-					data: {production: [], storage: []} as CalculatedCapabilitiesModel,
+					data: {
+						production: [],
+						storage: [],
+					} as unknown as CalculatedCapabilitiesModel,
 					error: undefined,
 				});
 

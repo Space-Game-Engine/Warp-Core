@@ -8,8 +8,8 @@ import {
 import {CapabilitiesModel} from '@warp-core/database/model/capability/capabilities.model';
 
 /**
- * Production flows are grouped per resource. The interval of the first flow
- * for a resource is kept and other flows are rescaled to it.
+ * Production flows are grouped per resource. The first flow is the base, the next ones
+ * change `amount` and `interval` by their (possibly negative) values.
  */
 @Injectable()
 export class ProductionCapabilityAggregator extends CapabilityAggregatorInterface<
@@ -32,14 +32,12 @@ export class ProductionCapabilityAggregator extends CapabilityAggregatorInterfac
 				flow.resourceId = resourceId;
 				flow.amount = amount;
 				flow.interval = interval;
-				flow.amountPerSecond = amount / interval;
 				state.set(resourceId, flow);
 				continue;
 			}
 
-			existingFlow.amount += (amount * existingFlow.interval) / interval;
-			existingFlow.amountPerSecond =
-				existingFlow.amount / existingFlow.interval;
+			existingFlow.amount += amount ?? 0;
+			existingFlow.interval += interval ?? 0;
 		}
 	}
 

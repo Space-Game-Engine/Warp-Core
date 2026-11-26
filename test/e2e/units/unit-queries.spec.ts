@@ -52,8 +52,7 @@ describe('Unit definitions', () => {
 							movement: {fields: ['layer', 'speed']},
 							storage: {fields: ['amount', 'carriesUnits']},
 							attack: {
-								fields: ['damage', 'cooldown'],
-								targets: {fields: ['type', 'value']},
+								fields: ['targetType', 'targetValue', 'damage', 'cooldown'],
 							},
 							defense: {fields: ['armor']},
 							detection: {fields: ['sightRange', 'detectsStealth']},
@@ -74,11 +73,14 @@ describe('Unit definitions', () => {
 			expect(unit.capabilities.storage).toEqual([
 				{amount: 10, carriesUnits: 1},
 			]);
-			expect(unit.capabilities.attack).toEqual({
-				damage: 10,
-				cooldown: 2,
-				targets: [{type: 'MOVEMENT_LAYER', value: 'land'}],
-			});
+			expect(unit.capabilities.attack).toEqual([
+				{
+					targetType: 'MOVEMENT_LAYER',
+					targetValue: 'land',
+					damage: 10,
+					cooldown: 2,
+				},
+			]);
 			expect(unit.capabilities.defense).toEqual({armor: 5});
 			expect(unit.capabilities.detection).toEqual({
 				sightRange: 8,
@@ -119,8 +121,7 @@ describe('Unit definitions', () => {
 						fields: ['name'],
 						capabilities: {
 							healing: {
-								fields: ['amount', 'interval'],
-								targets: {fields: ['type', 'value']},
+								fields: ['targetType', 'targetValue', 'amount', 'interval'],
 							},
 							construction: {
 								buildableUnits: {fields: ['unitBlueprintId']},
@@ -134,11 +135,14 @@ describe('Unit definitions', () => {
 
 			expect(response.body.errors).toBeUndefined();
 			const capabilities = response.body.data.unit_get.capabilities;
-			expect(capabilities.healing).toEqual({
-				amount: 1,
-				interval: 5,
-				targets: [{type: 'TAG', value: 'infantry'}],
-			});
+			expect(capabilities.healing).toEqual([
+				{
+					targetType: 'TAG',
+					targetValue: 'infantry',
+					amount: 1,
+					interval: 5,
+				},
+			]);
 			expect(capabilities.construction.buildableUnits).toEqual([
 				{unitBlueprintId: 'gun_turret'},
 			]);
